@@ -305,10 +305,30 @@ namespace ICSharpCode.ILSpy
 				return parent.LookupReferencedModule(mainModule, moduleName)?.GetPEFileOrNull();
 			}
 
+            public MetadataFile ResolveModule(MetadataFile mainModule, string moduleName)
+			{
+				return ResolveModuleAsync(mainModule, moduleName).GetAwaiter().GetResult();
+			}
+
             public Task<PEFile> ResolveModuleAsync(PEFile mainModule, string moduleName)
 			{
 				return Task.Run(() => ResolveModule(mainModule, moduleName));
 			}
+
+            public Task<MetadataFile> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
+            {
+                throw new NotImplementedException();
+            }
+
+            MetadataFile IAssemblyResolver.Resolve(IAssemblyReference reference)
+            {
+              return ResolveAsync(reference).GetAwaiter().GetResult();
+            }
+
+            Task<MetadataFile> IAssemblyResolver.ResolveAsync(IAssemblyReference reference)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 		public IAssemblyResolver GetAssemblyResolver()

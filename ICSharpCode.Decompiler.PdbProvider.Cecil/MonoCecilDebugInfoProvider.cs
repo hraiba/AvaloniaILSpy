@@ -109,7 +109,12 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil
 			return info.Variables;
 		}
 
-		public bool TryGetName(SRM.MethodDefinitionHandle handle, int index, out string name)
+        public bool TryGetExtraTypeInfo(SRM.MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetName(SRM.MethodDefinitionHandle handle, int index, out string name)
 		{
 			name = null;
 			if (!debugInfo.TryGetValue(handle, out var info)) {

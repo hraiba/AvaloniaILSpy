@@ -43,14 +43,14 @@ namespace ICSharpCode.ILSpy.TextView
 		public bool IsLocal;
 		public bool IsDefinition;
 	}
-	
+
 	/// <summary>
 	/// Stores the positions of the definitions that were written to the text output.
 	/// </summary>
 	sealed class DefinitionLookup
 	{
 		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
-		
+
 		public int GetDefinitionPosition(object definition)
 		{
 			int val;
@@ -59,13 +59,13 @@ namespace ICSharpCode.ILSpy.TextView
 			else
 				return -1;
 		}
-		
+
 		public void AddDefinition(object definition, int offset)
 		{
 			definitions[definition] = offset;
 		}
 	}
-	
+
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
 	/// </summary>
@@ -74,25 +74,25 @@ namespace ICSharpCode.ILSpy.TextView
 		int lastLineStart = 0;
 		int lineNumber = 1;
 		readonly StringBuilder b = new StringBuilder();
-		
+
 		/// <summary>Current indentation level</summary>
 		int indent;
 		/// <summary>Whether indentation should be inserted on the next write</summary>
 		bool needsIndent;
 
 		public string IndentationString { get; set; } = "\t";
-		
+
 		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
-		
+
 		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-		
+
 		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
 		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
-		
+
 		/// <summary>List of all foldings that were written to the output</summary>
 		internal readonly List<NewFolding> Foldings = new List<NewFolding>();
-		
+
 		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 
         internal bool EnableHyperlinks { get; set; }
@@ -101,43 +101,43 @@ namespace ICSharpCode.ILSpy.TextView
         internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = new List<KeyValuePair<int, Lazy<IControl>>>();
 
 		public RichTextModel HighlightingModel { get; } = new RichTextModel();
-		
+
 		public AvaloniaEditTextOutput()
 		{
 		}
-		
+
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
 		internal TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
-		
+
 		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
 		{
 			elementGenerators.Add(elementGenerator);
 		}
-		
+
 		/// <summary>
 		/// Controls the maximum length of the text.
 		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
 		/// thus aborting the decompilation.
 		/// </summary>
 		public int LengthLimit = int.MaxValue;
-		
+
 		public int TextLength {
 			get { return b.Length; }
 		}
-		
+
 		public TextLocation Location {
 			get {
 				return new TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 			}
 		}
-		
+
 		#region Text Document
 		TextDocument textDocument;
-		
+
 		/// <summary>
 		/// Prepares the TextDocument.
 		/// This method may be called by the background thread writing to the output.
@@ -154,7 +154,7 @@ namespace ICSharpCode.ILSpy.TextView
 				textDocument.SetOwnerThread(null); // release ownership
 			}
 		}
-		
+
 		/// <summary>
 		/// Retrieves the TextDocument.
 		/// Once the document is retrieved, it can no longer be written to.
@@ -166,17 +166,17 @@ namespace ICSharpCode.ILSpy.TextView
 			return textDocument;
 		}
 		#endregion
-		
+
 		public void Indent()
 		{
 			indent++;
 		}
-		
+
 		public void Unindent()
 		{
 			indent--;
 		}
-		
+
 		void WriteIndent()
 		{
 			Debug.Assert(textDocument == null);
@@ -187,19 +187,19 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 		}
-		
+
 		public void Write(char ch)
 		{
 			WriteIndent();
 			b.Append(ch);
 		}
-		
+
 		public void Write(string text)
 		{
 			WriteIndent();
 			b.Append(text);
 		}
-		
+
 		public void WriteLine()
 		{
 			Debug.Assert(textDocument == null);
@@ -212,6 +212,18 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
+
+//'ITextOutput.WriteReference(MetadataFile, Handle, string, string, bool)'
+//
+public void WriteReference(
+    MetadataFile metadata,
+    Handle handle,
+    string text,
+    string protocol = "decompile",
+    bool isDefinition = false)
+{
+
+}
         public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
         {
             WriteIndent();
@@ -290,14 +302,14 @@ namespace ICSharpCode.ILSpy.TextView
 					DefaultClosed = defaultCollapsed
 				});
 		}
-		
+
 		public void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
 			f.EndOffset = this.TextLength;
 			this.Foldings.Add(f);
 		}
-		
+
 		public void AddUIElement(Func<IControl> element)
 		{
 			if (element != null) {
