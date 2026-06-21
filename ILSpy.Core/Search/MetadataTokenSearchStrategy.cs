@@ -23,7 +23,7 @@ namespace ICSharpCode.ILSpy.Search
             }
         }
 
-        public override void Search(PEFile module, CancellationToken cancellationToken)
+        public override void Search(MetadataFile module, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (searchTermToken.IsNil) return;

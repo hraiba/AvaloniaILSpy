@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = method.ParentModule.PEFile;
+			MetadataFile module = method.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleMethod(module, (MethodDefinitionHandle)method.MetadataToken);
@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileField(IField field, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = field.ParentModule.PEFile;
+			MetadataFile module = field.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleField(module, (FieldDefinitionHandle)field.MetadataToken);
@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileProperty(IProperty property, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = property.ParentModule.PEFile;
+			MetadataFile module = property.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleProperty(module, (PropertyDefinitionHandle)property.MetadataToken);
@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileEvent(IEvent ev, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = ev.ParentModule.PEFile;
+			MetadataFile module = ev.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleEvent(module, (EventDefinitionHandle)ev.MetadataToken);
@@ -137,7 +137,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileType(ITypeDefinition type, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = type.ParentModule.PEFile;
+			MetadataFile module = type.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleType(module, (TypeDefinitionHandle)type.MetadataToken);
@@ -146,7 +146,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileNamespace(string nameSpace, IEnumerable<ITypeDefinition> types, ITextOutput output, DecompilationOptions options)
 		{
 			var dis = CreateDisassembler(output, options);
-			PEFile module = types.FirstOrDefault()?.ParentModule.PEFile;
+			MetadataFile module = types.FirstOrDefault()?.ParentModule.MetadataFile;
 			dis.AssemblyResolver = module.GetAssemblyResolver();
 			dis.DebugInfo = module.GetDebugInfoOrNull();
 			dis.DisassembleNamespace(nameSpace, module, types.Select(t => (TypeDefinitionHandle)t.MetadataToken));

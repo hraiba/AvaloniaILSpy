@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			Debug.Assert(analyzedSymbol is IField);
 			var scope = context.GetScopeOf((IEntity)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
-				var mappingInfo = context.Language.GetCodeMappingInfo(type.ParentModule.PEFile, type.MetadataToken);
+				var mappingInfo = context.Language.GetCodeMappingInfo(type.ParentModule.MetadataFile, type.MetadataToken);
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
 					if (IsUsedInMethod((IField)analyzedSymbol, method, mappingInfo, context))
@@ -115,13 +115,13 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 		{
 			if (method.MetadataToken.IsNil)
 				return false;
-			var module = method.ParentModule.PEFile;
+			var module = method.ParentModule.MetadataFile;
 			foreach (var part in mappingInfo.GetMethodParts((MethodDefinitionHandle)method.MetadataToken)) {
 				var md = module.Metadata.GetMethodDefinition(part);
 				if (!md.HasBody()) continue;
 				MethodBodyBlock body;
 				try {
-					body = module.Reader.GetMethodBody(md.RelativeVirtualAddress);
+					body = module.GetMethodBody(md.RelativeVirtualAddress);
 				} catch (BadImageFormatException) {
 					return false;
 				}
@@ -164,7 +164,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 					continue;
 
 				if (field.MetadataToken == analyzedField.MetadataToken
-					&& field.ParentModule.PEFile == analyzedField.ParentModule.PEFile)
+					&& field.ParentModule.MetadataFile== analyzedField.ParentModule.MetadataFile)
 					return true;
 			}
 

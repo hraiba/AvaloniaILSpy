@@ -25,7 +25,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		IEnumerable<IEntity> ScanType(ITypeDefinition analyzedType, ITypeDefinition type, AnalyzerContext context)
 		{
-			if (!type.HasExtensionMethods)
+			if (!type.HasExtensions)
+				yield break;
+
+			if (analyzedType.ParentModule?.MetadataFile == null)
 				yield break;
 
 			foreach (IMethod method in type.Methods) {
@@ -34,7 +37,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 				var firstParamType = method.Parameters[0].Type.GetDefinition();
 				if (firstParamType != null &&
 					firstParamType.MetadataToken == analyzedType.MetadataToken &&
-					firstParamType.ParentModule.PEFile == analyzedType.ParentModule.PEFile)
+					firstParamType.ParentModule.MetadataFile == analyzedType.ParentModule.MetadataFile)
 					yield return method;
 			}
 		}

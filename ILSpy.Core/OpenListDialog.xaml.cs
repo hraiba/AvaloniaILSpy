@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!manager.AssemblyLists.Contains(DotNetCoreList))
 			{
-				AssemblyList netcore = new AssemblyList(DotNetCoreList);
+				AssemblyList netcore = new AssemblyList(manager, DotNetCoreList);
 				//AddToList(netcore, "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
 				AddToList(netcore, "netstandard.library");
 				if (netcore.assemblies.Count > 0)
@@ -146,7 +146,7 @@ namespace ICSharpCode.ILSpy
 			};
 			if (await dlg.ShowDialog<bool>(this) == true)
 			{
-				manager.CreateList(new AssemblyList(dlg.NewListName));
+				manager.CreateList(new AssemblyList(manager ,dlg.NewListName));
 			}
 		}
 
