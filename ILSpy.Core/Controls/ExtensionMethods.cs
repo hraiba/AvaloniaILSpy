@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.Controls
 			public SetValueToExtensionServiceProvider(AvaloniaObject targetObject, AvaloniaProperty property)
 			{
 				this.targetObject = targetObject;
-				this.targetProperty = property;
+				targetProperty = property;
 			}
 			
 			public object GetService(Type serviceType)

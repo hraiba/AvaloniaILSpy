@@ -106,8 +106,8 @@ namespace ICSharpCode.ILSpy
 
 		public Entry(string name, Stream stream)
 		{
-			this.Name = name;
-			this.Stream = stream;
+			Name = name;
+			Stream = stream;
 		}
 	}
 }

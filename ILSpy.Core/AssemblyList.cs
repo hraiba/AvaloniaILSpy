@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy
 			foreach (var asm in listElement.Elements("Assembly")) {
 				OpenAssembly((string)asm);
 			}
-			this.dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
+			dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
 		}
 		
 		/// <summary>
@@ -89,7 +89,7 @@ namespace ICSharpCode.ILSpy
 		{
 			return new XElement(
 				"List",
-				new XAttribute("name", this.ListName),
+				new XAttribute("name", ListName),
 				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
@@ -171,7 +171,7 @@ namespace ICSharpCode.ILSpy
 			
 			file = Path.GetFullPath(file);
 			
-			foreach (LoadedAssembly asm in this.assemblies) {
+			foreach (LoadedAssembly asm in assemblies) {
 				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
@@ -179,7 +179,7 @@ namespace ICSharpCode.ILSpy
 			var newAsm = new LoadedAssembly(this, file);
 			newAsm.IsAutoLoaded = isAutoLoaded;
 			lock (assemblies) {
-				this.assemblies.Add(newAsm);
+				assemblies.Add(newAsm);
 			}
 			return newAsm;
 		}
@@ -191,7 +191,7 @@ namespace ICSharpCode.ILSpy
 		{
 			Dispatcher.UIThread.VerifyAccess();
 
-			foreach (LoadedAssembly asm in this.assemblies) {
+			foreach (LoadedAssembly asm in assemblies) {
 				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
@@ -199,7 +199,7 @@ namespace ICSharpCode.ILSpy
 			var newAsm = new LoadedAssembly(this, file, stream);
 			newAsm.IsAutoLoaded = isAutoLoaded;
 			lock (assemblies) {
-				this.assemblies.Add(newAsm);
+				assemblies.Add(newAsm);
 			}
 			return newAsm;
 		}
@@ -213,16 +213,16 @@ namespace ICSharpCode.ILSpy
 			Dispatcher.UIThread.VerifyAccess();
 			file = Path.GetFullPath(file);
 
-			var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
+			var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
 			if (target == null)
 				return null;
 
-			var index = this.assemblies.IndexOf(target);
+			var index = assemblies.IndexOf(target);
 			var newAsm = new LoadedAssembly(this, file, stream);
 			newAsm.IsAutoLoaded = target.IsAutoLoaded;
 			lock (assemblies) {
-				this.assemblies.Remove(target);
-				this.assemblies.Insert(index, newAsm);
+				assemblies.Remove(target);
+				assemblies.Insert(index, newAsm);
 			}
 			return newAsm;
 		}
@@ -232,16 +232,16 @@ namespace ICSharpCode.ILSpy
 			Dispatcher.UIThread.VerifyAccess();
 			file = Path.GetFullPath(file);
 
-			var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
+			var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
 			if (target == null)
 				return null;
 
-			var index = this.assemblies.IndexOf(target);
+			var index = assemblies.IndexOf(target);
 			var newAsm = new LoadedAssembly(this, file);
 			newAsm.IsAutoLoaded = target.IsAutoLoaded;
 			lock (assemblies) {
-				this.assemblies.Remove(target);
-				this.assemblies.Insert(index, newAsm);
+				assemblies.Remove(target);
+				assemblies.Insert(index, newAsm);
 			}
 			return newAsm;
 		}
@@ -287,6 +287,6 @@ namespace ICSharpCode.ILSpy
 
 		public bool ApplyWinRTProjections { get; set; }
 		public bool UseDebugSymbols { get; set; }
-		public FileLoaderRegistry LoaderRegistry => this.Manager.LoaderRegistry;
+		public FileLoaderRegistry LoaderRegistry => Manager.LoaderRegistry;
 	}
 }

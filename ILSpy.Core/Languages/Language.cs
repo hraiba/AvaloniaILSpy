@@ -40,13 +40,13 @@ namespace ICSharpCode.ILSpy
 
 		public LanguageVersion(string version, string name = null)
 		{
-			this.Version = version ?? "";
-			this.DisplayName = name ?? version.ToString();
+			Version = version ?? "";
+			DisplayName = name ?? version.ToString();
 		}
 
 		public bool Equals(LanguageVersion other)
 		{
-			return other.Version == this.Version && other.DisplayName == this.DisplayName;
+			return other.Version == Version && other.DisplayName == DisplayName;
 		}
 
 		public override bool Equals(object obj)
@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy
 		{
 			get
 			{
-				return HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension);
+				return HighlightingManager.Instance.GetDefinitionByExtension(FileExtension);
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace ICSharpCode.ILSpy
 			public TypeToStringVisitor(bool includeNamespace)
 			{
 				this.includeNamespace = includeNamespace;
-				this.builder = new StringBuilder();
+				builder = new StringBuilder();
 			}
 
 			public override IType VisitArrayType(ArrayType type)

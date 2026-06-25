@@ -323,7 +323,7 @@ namespace ICSharpCode.TreeView
 		
 		public IEnumerable<SharpTreeNode> Descendants()
 		{
-			return TreeTraversal.PreOrder(this.Children, n => n.Children);
+			return TreeTraversal.PreOrder(Children, n => n.Children);
 		}
 		
 		public IEnumerable<SharpTreeNode> DescendantsAndSelf()
@@ -333,7 +333,7 @@ namespace ICSharpCode.TreeView
 		
 		internal IEnumerable<SharpTreeNode> VisibleDescendants()
 		{
-			return TreeTraversal.PreOrder(this.Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
+			return TreeTraversal.PreOrder(Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
 		}
 		
 		internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf()
@@ -682,7 +682,7 @@ namespace ICSharpCode.TreeView
 		public override string ToString()
 		{
 			// used for keyboard navigation
-			object text = this.Text;
+			object text = Text;
 			return text != null ? text.ToString() : string.Empty;
 		}
 	}

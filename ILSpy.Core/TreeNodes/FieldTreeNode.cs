@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public FieldTreeNode(IField field)
 		{
-			this.FieldDefinition = field ?? throw new ArgumentNullException(nameof(field));
+			FieldDefinition = field ?? throw new ArgumentNullException(nameof(field));
 		}
 
 		public override object Text => GetText(FieldDefinition, Language) + FieldDefinition.MetadataToken.ToSuffixString();

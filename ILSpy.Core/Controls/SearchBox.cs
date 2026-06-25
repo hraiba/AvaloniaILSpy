@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.Controls
         #region Handlers
 
 		private void IconBorder_MouseLeftButtonUp(object obj, PointerReleasedEventArgs e) {
-            this.Text = string.Empty;
+            Text = string.Empty;
 		}
 
         #endregion
@@ -116,8 +116,8 @@ namespace ICSharpCode.ILSpy.Controls
 
         protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.Key == Key.Escape && this.Text.Length > 0) {
-				this.Text = string.Empty;
+			if (e.Key == Key.Escape && Text.Length > 0) {
+				Text = string.Empty;
 				e.Handled = true;
 			} else {
 				base.OnKeyDown(e);

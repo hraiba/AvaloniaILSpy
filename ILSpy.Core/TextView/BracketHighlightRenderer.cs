@@ -46,10 +46,10 @@ namespace ICSharpCode.ILSpy.TextView
 		public BracketSearchResult(int openingBracketOffset, int openingBracketLength,
 								   int closingBracketOffset, int closingBracketLength)
 		{
-			this.OpeningBracketOffset = openingBracketOffset;
-			this.OpeningBracketLength = openingBracketLength;
-			this.ClosingBracketOffset = closingBracketOffset;
-			this.ClosingBracketLength = closingBracketLength;
+			OpeningBracketOffset = openingBracketOffset;
+			OpeningBracketLength = openingBracketLength;
+			ClosingBracketOffset = closingBracketOffset;
+			ClosingBracketLength = closingBracketLength;
 		}
 	}
 
@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (this.result != result) {
 				this.result = result;
-				textView.InvalidateLayer(this.Layer);
+				textView.InvalidateLayer(Layer);
 			}
 		}
 
@@ -73,9 +73,9 @@ namespace ICSharpCode.ILSpy.TextView
 			if (textView == null)
 				throw new ArgumentNullException("textView");
 
-			this.borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
+			borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
 
-			this.backgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0, 0, 255)).ToImmutable();
+			backgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0, 0, 255)).ToImmutable();
 
 			this.textView = textView;
 
@@ -90,7 +90,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
 		{
-			if (this.result == null)
+			if (result == null)
 				return;
 
 			BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();

@@ -39,22 +39,22 @@ namespace ICSharpCode.ILSpy
 					continue;
 				if (arg[0] == '/') {
 					if (arg.Equals("/singleInstance", StringComparison.OrdinalIgnoreCase))
-						this.SingleInstance = true;
+						SingleInstance = true;
 					else if (arg.Equals("/separate", StringComparison.OrdinalIgnoreCase))
-						this.SingleInstance = false;
+						SingleInstance = false;
 					else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
-						this.NavigateTo = arg.Substring("/navigateTo:".Length);
+						NavigateTo = arg.Substring("/navigateTo:".Length);
 					else if (arg.StartsWith("/search:", StringComparison.OrdinalIgnoreCase))
-						this.Search = arg.Substring("/search:".Length);
+						Search = arg.Substring("/search:".Length);
 					else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
-						this.Language = arg.Substring("/language:".Length);
+						Language = arg.Substring("/language:".Length);
 					else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
-						this.NoActivate = true;
+						NoActivate = true;
 					else if (arg.StartsWith("/config:", StringComparison.OrdinalIgnoreCase))
-						this.ConfigFile = arg.Substring("/config:".Length);
+						ConfigFile = arg.Substring("/config:".Length);
 				}
 				else {
-					this.AssembliesToLoad.Add(arg);
+					AssembliesToLoad.Add(arg);
 				}
 			}
 		}

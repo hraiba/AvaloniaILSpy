@@ -39,26 +39,26 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			if (this.UIElements == null)
+			if (UIElements == null)
 				return -1;
-			int r = this.UIElements.BinarySearch(new Pair(startOffset, null), this);
+			int r = UIElements.BinarySearch(new Pair(startOffset, null), this);
 			// If the element isn't found, BinarySearch returns the complement of "insertion position".
 			// We use this to find the next element (if there wasn't any exact match).
 			if (r < 0)
 				r = ~r;
-			if (r < this.UIElements.Count)
-				return this.UIElements[r].Key;
+			if (r < UIElements.Count)
+				return UIElements[r].Key;
 			else
 				return -1;
 		}
 		
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			if (this.UIElements == null)
+			if (UIElements == null)
 				return null;
 			int r = UIElements.BinarySearch(new Pair(offset, null), this);
 			if (r >= 0)
-				return new InlineObjectElement(0, this.UIElements[r].Value.Value);
+				return new InlineObjectElement(0, UIElements[r].Value.Value);
 			else
 				return null;
 		}

@@ -54,7 +54,7 @@ namespace ICSharpCode.TreeView
 			Debug.Assert(left == null || left.listParent == this);
 			Debug.Assert(right == null || right.listParent == this);
 			Debug.Assert(height == 1 + Math.Max(Height(left), Height(right)));
-			Debug.Assert(Math.Abs(this.Balance) <= 1);
+			Debug.Assert(Math.Abs(Balance) <= 1);
 			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (isVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
 			if (left != null) left.CheckInvariants();
 			if (right != null) right.CheckInvariants();
@@ -188,10 +188,10 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode newTop = right;
 			
 			if (b != null) b.listParent = this;
-			this.right = b;
+			right = b;
 			newTop.left = this;
-			newTop.listParent = this.listParent;
-			this.listParent = newTop;
+			newTop.listParent = listParent;
+			listParent = newTop;
 			// rebalance the 'this' node - this is necessary in some bulk insertion cases:
 			newTop.left = Rebalance(this);
 			return newTop;
@@ -211,10 +211,10 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode newTop = left;
 			
 			if (b != null) b.listParent = this;
-			this.left = b;
+			left = b;
 			newTop.right = this;
-			newTop.listParent = this.listParent;
-			this.listParent = newTop;
+			newTop.listParent = listParent;
+			listParent = newTop;
 			newTop.right = Rebalance(this);
 			return newTop;
 		}
@@ -388,8 +388,8 @@ namespace ICSharpCode.TreeView
 				node.listParent = null;
 				if (treeFlattener != null) {
 					Debug.Assert(node.treeFlattener == null);
-					node.treeFlattener = this.treeFlattener;
-					this.treeFlattener = null;
+					node.treeFlattener = treeFlattener;
+					treeFlattener = null;
 					node.treeFlattener.root = node;
 				}
 			}

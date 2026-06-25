@@ -36,20 +36,20 @@ namespace ICSharpCode.ILSpy
 	{
 		public FilterSettings(XElement element)
 		{
-			this.ShowApiLevel = (ApiVisibility?)(int?)element.Element("ShowAPILevel") ?? ApiVisibility.PublicAndInternal;
-			this.Language = Languages.GetLanguage((string)element.Element("Language"));
-			this.LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
-			if (this.LanguageVersion == default(LanguageVersion))
-				this.LanguageVersion = language.LanguageVersions.LastOrDefault();
+			ShowApiLevel = (ApiVisibility?)(int?)element.Element("ShowAPILevel") ?? ApiVisibility.PublicAndInternal;
+			Language = Languages.GetLanguage((string)element.Element("Language"));
+			LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
+			if (LanguageVersion == default(LanguageVersion))
+				LanguageVersion = language.LanguageVersions.LastOrDefault();
 		}
 
 		public XElement SaveAsXml()
 		{
 			return new XElement(
 				"FilterSettings",
-				new XElement("ShowAPILevel", (int)this.ShowApiLevel),
-				new XElement("Language", this.Language.Name),
-				new XElement("LanguageVersion", this.LanguageVersion.Version)
+				new XElement("ShowAPILevel", (int)ShowApiLevel),
+				new XElement("Language", Language.Name),
+				new XElement("LanguageVersion", LanguageVersion.Version)
 			);
 		}
 

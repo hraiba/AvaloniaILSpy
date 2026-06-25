@@ -30,20 +30,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		public EventTreeNode(IEvent @event)
 		{
-			this.EventDefinition = @event ?? throw new ArgumentNullException(nameof(@event));
+			EventDefinition = @event ?? throw new ArgumentNullException(nameof(@event));
 			if (@event.CanAdd)
-				this.Children.Add(new MethodTreeNode(@event.AddAccessor));
+				Children.Add(new MethodTreeNode(@event.AddAccessor));
 			if (@event.CanRemove)
-				this.Children.Add(new MethodTreeNode(@event.RemoveAccessor));
+				Children.Add(new MethodTreeNode(@event.RemoveAccessor));
 			if (@event.CanInvoke)
-				this.Children.Add(new MethodTreeNode(@event.InvokeAccessor));
+				Children.Add(new MethodTreeNode(@event.InvokeAccessor));
 			//foreach (var m in ev.OtherMethods)
 			//	this.Children.Add(new MethodTreeNode(m));
 		}
 
 		public IEvent EventDefinition { get; }
 
-		public override object Text => GetText(EventDefinition, this.Language) + EventDefinition.MetadataToken.ToSuffixString();
+		public override object Text => GetText(EventDefinition, Language) + EventDefinition.MetadataToken.ToSuffixString();
 
 		public static object GetText(IEvent ev, Language language)
 		{

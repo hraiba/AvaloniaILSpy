@@ -43,13 +43,13 @@ public class LoadedPackage
 
     public LoadedPackage(PackageKind kind, IEnumerable<PackageEntry> entries)
     {
-        this.Kind = kind;
-        this.Entries = entries.ToArray();
+        Kind = kind;
+        Entries = entries.ToArray();
         var topLevelEntries = new List<PackageEntry>();
         var folders = new Dictionary<string, PackageFolder>();
         var rootFolder = new PackageFolder(this, null, "");
         folders.Add("", rootFolder);
-        foreach (var entry in this.Entries)
+        foreach (var entry in Entries)
         {
             var (dirname, filename) = SplitName(entry.Name);
             if (!string.IsNullOrEmpty(filename))
@@ -57,7 +57,7 @@ public class LoadedPackage
                 GetFolder(dirname).Entries.Add(new FolderEntry(filename, entry));
             }
         }
-        this.RootFolder = rootFolder;
+        RootFolder = rootFolder;
 
         static (string, string) SplitName(string filename)
         {
@@ -128,7 +128,7 @@ public class LoadedPackage
 
         public FolderEntry(string name, PackageEntry originalEntry)
         {
-            this.Name = name;
+            Name = name;
             this.originalEntry = originalEntry;
         }
 
@@ -150,7 +150,7 @@ public class LoadedPackage
         public ZipFileEntry(string zipFile, ZipArchiveEntry entry)
         {
             this.zipFile = zipFile;
-            this.Name = entry.FullName;
+            Name = entry.FullName;
         }
 
         public override Stream? TryOpenStream()
@@ -260,7 +260,7 @@ public sealed class PackageFolder : IAssemblyResolver
     {
         this.package = package;
         this.parent = parent;
-        this.Name = name;
+        Name = name;
     }
 
     public PackageFolder? Parent => parent;

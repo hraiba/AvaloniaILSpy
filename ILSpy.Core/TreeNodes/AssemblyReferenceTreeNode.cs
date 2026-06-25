@@ -35,7 +35,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.r = r ?? throw new ArgumentNullException(nameof(r));
 			this.parentAssembly = parentAssembly ?? throw new ArgumentNullException(nameof(parentAssembly));
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public IAssemblyReference AssemblyNameReference => r;
@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					var module = refNode.LoadedAssembly.GetPEFileOrNull();
 					if (module != null) {
 						foreach (var childRef in module.AssemblyReferences)
-							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
+							Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
 					}
 				}
 			}

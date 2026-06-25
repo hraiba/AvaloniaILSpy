@@ -206,7 +206,7 @@ namespace ICSharpCode.ILSpy.TextView
 			needsIndent = true;
 			lastLineStart = b.Length;
 			lineNumber++;
-			if (this.TextLength > LengthLimit) {
+			if (TextLength > LengthLimit) {
 				throw new OutputLengthExceededException();
 			}
 		}
@@ -226,7 +226,7 @@ public void WriteReference(
         public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
         {
             WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
             if (omitSuffix)
             {
                 int lastDot = opCode.Name.LastIndexOf('.');
@@ -239,18 +239,18 @@ public void WriteReference(
             {
                 b.Append(opCode.Name);
             }
-            int end = this.TextLength - 1;
+            int end = TextLength - 1;
             references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
 		}
 
 		public void WriteReference(PEFile module, Handle handle, string text, string protocol = "decompile", bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition((module, handle), this.TextLength);
+				DefinitionLookup.AddDefinition((module, handle), TextLength);
             }
             references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
         }
@@ -258,11 +258,11 @@ public void WriteReference(
 		public void WriteReference(IType type, string text, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(type, this.TextLength);
+				DefinitionLookup.AddDefinition(type, TextLength);
 			}
             references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
         }
@@ -270,11 +270,11 @@ public void WriteReference(
         public void WriteReference(IMember member, string text, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(member, this.TextLength);
+				DefinitionLookup.AddDefinition(member, TextLength);
             }
             references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
         }
@@ -282,11 +282,11 @@ public void WriteReference(
         public void WriteLocalReference(string text, object reference, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(reference, this.TextLength);
+				DefinitionLookup.AddDefinition(reference, TextLength);
             }
             references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
         }
@@ -296,7 +296,7 @@ public void WriteReference(
 			WriteIndent();
 			openFoldings.Push(
 				new NewFolding {
-					StartOffset = this.TextLength,
+					StartOffset = TextLength,
 					Name = collapsedText,
 					DefaultClosed = defaultCollapsed
 				});
@@ -305,16 +305,16 @@ public void WriteReference(
 		public void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
-			f.EndOffset = this.TextLength;
-			this.Foldings.Add(f);
+			f.EndOffset = TextLength;
+			Foldings.Add(f);
 		}
 
 		public void AddUIElement(Func<IControl> element)
 		{
 			if (element != null) {
-				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
+				if (UIElements.Count > 0 && UIElements.Last().Key == TextLength)
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
-				this.UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(this.TextLength, new Lazy<IControl>(element)));
+				UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(TextLength, new Lazy<IControl>(element)));
 			}
 		}
 

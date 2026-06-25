@@ -21,7 +21,7 @@ namespace ICSharpCode.TreeView
 		
 		public TreeFlattener(SharpTreeNode modelRoot, bool includeRoot)
 		{
-			this.root = modelRoot;
+			root = modelRoot;
 			while (root.listParent != null)
 				root = root.listParent;
 			root.treeFlattener = this;
@@ -60,7 +60,7 @@ namespace ICSharpCode.TreeView
 		
 		public object this[int index] {
 			get {
-				if (index < 0 || index >= this.Count)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException();
 				return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
 			}
@@ -144,7 +144,7 @@ namespace ICSharpCode.TreeView
 		
 		public IEnumerator GetEnumerator()
 		{
-			for (int i = 0; i < this.Count; i++) {
+			for (int i = 0; i < Count; i++) {
 				yield return this[i];
 			}
 		}

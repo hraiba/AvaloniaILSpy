@@ -134,7 +134,7 @@ namespace ICSharpCode.TreeView
 		
 		public void AddRange(IEnumerable<SharpTreeNode> nodes)
 		{
-			InsertRange(this.Count, nodes);
+			InsertRange(Count, nodes);
 		}
 		
 		public void Clear()

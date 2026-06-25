@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.module = module;
 			this.parentAssembly = parentAssembly;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 		
 		public override object Text {
@@ -56,9 +56,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var metadata = module.Metadata;
 			foreach (var r in module.AssemblyReferences.OrderBy(r => r.Name))
-				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
+				Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
 			foreach (var r in metadata.GetModuleReferences().OrderBy(r => metadata.GetString(metadata.GetModuleReference(r).Name)))
-				this.Children.Add(new ModuleReferenceTreeNode(parentAssembly, r, metadata));
+				Children.Add(new ModuleReferenceTreeNode(parentAssembly, r, metadata));
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			output.WriteLine();
 			language.WriteCommentLine(output, "Referenced assemblies (in metadata order):");
 			// Show metadata order of references
-			foreach (var node in this.Children.OfType<ILSpyTreeNode>())
+			foreach (var node in Children.OfType<ILSpyTreeNode>())
 				node.Decompile(language, output, options);
 
             output.WriteLine();

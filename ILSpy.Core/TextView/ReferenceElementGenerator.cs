@@ -48,18 +48,18 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			if (this.References == null)
+			if (References == null)
 				return -1;
 			// inform AvalonEdit about the next position where we want to build a hyperlink
-			var segment = this.References.FindFirstSegmentWithStartAfter(startOffset);
+			var segment = References.FindFirstSegmentWithStartAfter(startOffset);
 			return segment != null ? segment.StartOffset : -1;
 		}
 		
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			if (this.References == null)
+			if (References == null)
 				return null;
-			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
+			foreach (var segment in References.FindSegmentsContaining(offset)) {
 				// skip all non-links
 				if (!isLink(segment))
 					continue;

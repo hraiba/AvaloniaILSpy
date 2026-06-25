@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy
 
 		public override void Fail(string message)
 		{
-			this.Fail(message, null);
+			Fail(message, null);
 		}
 
 		public override void Fail(string message, string detailMessage)

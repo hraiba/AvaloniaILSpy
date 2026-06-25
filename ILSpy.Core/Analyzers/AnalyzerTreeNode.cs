@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.Analyzers
 			set {
 				if (language != value) {
 					language = value;
-					foreach (var child in this.Children.OfType<AnalyzerTreeNode>())
+					foreach (var child in Children.OfType<AnalyzerTreeNode>())
 						child.Language = value;
 				}
 			}
@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
-					a.Language = this.Language;
+					a.Language = Language;
 			}
 			base.OnChildrenChanged(e);
 		}

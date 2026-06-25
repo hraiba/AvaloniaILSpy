@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		public void Load(ILSpySettings settings)
 		{
-			this.DataContext = LoadDisplaySettings(settings);
+			DataContext = LoadDisplaySettings(settings);
         }
 
         static DisplaySettings currentDisplaySettings;
@@ -130,7 +130,7 @@ namespace ICSharpCode.ILSpy.Options
 		
 		public void Save(XElement root)
 		{
-			var s = (DisplaySettings)this.DataContext;
+			var s = (DisplaySettings)DataContext;
 			
 			var section = new XElement("DisplaySettings");
 			section.SetAttributeValue("Font", s.SelectedFont.Name);

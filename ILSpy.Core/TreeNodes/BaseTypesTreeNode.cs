@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.module = module;
 			this.type = type;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Text => "Base Types";
@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected override void LoadChildren()
 		{
-			AddBaseTypes(this.Children, module, type);
+			AddBaseTypes(Children, module, type);
 		}
 
 		internal static void AddBaseTypes(SharpTreeNodeCollection children, MetadataFile module, ITypeDefinition typeDefinition)
@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
-			foreach (ILSpyTreeNode child in this.Children) {
+			foreach (ILSpyTreeNode child in Children) {
 				child.Decompile(language, output, options);
 			}
 		}

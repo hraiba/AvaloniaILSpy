@@ -71,13 +71,13 @@ namespace ICSharpCode.ILSpy.Options
 
         public void Load(ILSpySettings settings)
         {
-            this.DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
+            DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
         }
 
         public void Save(XElement root)
         {
             XElement section = new XElement("DecompilerSettings");
-            var newSettings = ((DecompilerSettings)this.DataContext).ToDecompilerSettings();
+            var newSettings = ((DecompilerSettings)DataContext).ToDecompilerSettings();
             var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
                 .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
             foreach (var p in properties)
@@ -148,9 +148,9 @@ namespace ICSharpCode.ILSpy.Options
 
         public CSharpDecompilerSetting(PropertyInfo p)
         {
-            this.Property = p;
-            this.Category = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
-            this.Description = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
+            Property = p;
+            Category = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
+            Description = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
         }
 
         public PropertyInfo Property { get; }

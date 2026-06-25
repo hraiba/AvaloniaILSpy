@@ -28,16 +28,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		public TypeTreeNode(ITypeDefinition typeDefinition, AssemblyTreeNode parentAssemblyNode)
 		{
-			this.ParentAssemblyNode = parentAssemblyNode ?? throw new ArgumentNullException(nameof(parentAssemblyNode));
-			this.TypeDefinition = typeDefinition ?? throw new ArgumentNullException(nameof(typeDefinition));
-			this.LazyLoading = true;
+			ParentAssemblyNode = parentAssemblyNode ?? throw new ArgumentNullException(nameof(parentAssemblyNode));
+			TypeDefinition = typeDefinition ?? throw new ArgumentNullException(nameof(typeDefinition));
+			LazyLoading = true;
 		}
 
 		public ITypeDefinition TypeDefinition { get; }
 
 		public AssemblyTreeNode ParentAssemblyNode { get; }
 
-		public override object Text => this.Language.TypeToString(TypeDefinition, includeNamespace: false)
+		public override object Text => Language.TypeToString(TypeDefinition, includeNamespace: false)
 			+ TypeDefinition.MetadataToken.ToSuffixString();
 
 		public override bool IsPublicAPI {
@@ -71,31 +71,31 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void LoadChildren()
 		{
 			if (TypeDefinition.DirectBaseTypes.Any())
-				this.Children.Add(new BaseTypesTreeNode(ParentAssemblyNode.LoadedAssembly.GetPEFileOrNull(), TypeDefinition));
+				Children.Add(new BaseTypesTreeNode(ParentAssemblyNode.LoadedAssembly.GetPEFileOrNull(), TypeDefinition));
 			if (!TypeDefinition.IsSealed)
-				this.Children.Add(new DerivedTypesTreeNode(ParentAssemblyNode.AssemblyList, TypeDefinition));
+				Children.Add(new DerivedTypesTreeNode(ParentAssemblyNode.AssemblyList, TypeDefinition));
 			foreach (var nestedType in TypeDefinition.NestedTypes.OrderBy(t => t.Name, NaturalStringComparer.Instance)) {
-				this.Children.Add(new TypeTreeNode(nestedType, ParentAssemblyNode));
+				Children.Add(new TypeTreeNode(nestedType, ParentAssemblyNode));
 			}
             if (TypeDefinition.Kind == TypeKind.Enum) {
                 // if the type is an enum, it's better to not sort by field name.
                 foreach (var field in TypeDefinition.Fields) {
-                    this.Children.Add(new FieldTreeNode(field));
+                    Children.Add(new FieldTreeNode(field));
                 }
             } else {
     			foreach (var field in TypeDefinition.Fields.OrderBy(f => f.Name, NaturalStringComparer.Instance)) {
-    				this.Children.Add(new FieldTreeNode(field));
+    				Children.Add(new FieldTreeNode(field));
     			}
 			}
 			foreach (var property in TypeDefinition.Properties.OrderBy(p => p.Name, NaturalStringComparer.Instance)) {
-				this.Children.Add(new PropertyTreeNode(property));
+				Children.Add(new PropertyTreeNode(property));
 			}
 			foreach (var ev in TypeDefinition.Events.OrderBy(e => e.Name, NaturalStringComparer.Instance)) {
-				this.Children.Add(new EventTreeNode(ev));
+				Children.Add(new EventTreeNode(ev));
 			}
 			foreach (var method in TypeDefinition.Methods.OrderBy(m => m.Name, NaturalStringComparer.Instance)) {
 				if (method.MetadataToken.IsNil) continue;
-				this.Children.Add(new MethodTreeNode(method));
+				Children.Add(new MethodTreeNode(method));
 			}
 		}
 

@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.handle = handle;
 			this.type = type;
 			this.isInterface = isInterface;
-			this.LazyLoading = true;
+			LazyLoading = true;
 			TryResolve(module, handle, type);
 		}
 
@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override bool ShowExpander => showExpander && base.ShowExpander;
 
-		public override object Text => this.Language.TypeToString(type, includeNamespace: true) + handle.ToSuffixString();
+		public override object Text => Language.TypeToString(type, includeNamespace: true) + handle.ToSuffixString();
 
 		public override object Icon => isInterface ? Images.Interface : Images.Class;
 
@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var t = TryResolve(module, handle, type, false);
 			if (t != null) {
-				BaseTypesTreeNode.AddBaseTypes(this.Children, t.ParentModule.MetadataFile, t);
+				BaseTypesTreeNode.AddBaseTypes(Children, t.ParentModule.MetadataFile, t);
 			}
 		}
 

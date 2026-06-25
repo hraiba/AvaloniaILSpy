@@ -35,7 +35,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.list = list;
 			this.type = type;
-			this.LazyLoading = true;
+			LazyLoading = true;
 			threading = new ThreadingSupport();
 		}
 

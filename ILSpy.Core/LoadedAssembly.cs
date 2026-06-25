@@ -60,10 +60,10 @@ namespace ICSharpCode.ILSpy
             this.assemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
             this.fileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
 
-            this.assemblyTask = stream != null || File.Exists(fileName) ?
+            assemblyTask = stream != null || File.Exists(fileName) ?
                                 Task.Factory.StartNew(LoadAssembly, stream) : // requires that this.fileName is set
                                 Task.FromException<PEFile>(new FileNotFoundException("Assembly file not found", fileName));
-            this.shortName = Path.GetFileNameWithoutExtension(fileName);
+            shortName = Path.GetFileNameWithoutExtension(fileName);
         }
 
         /// <summary>
@@ -584,7 +584,7 @@ namespace ICSharpCode.ILSpy
 
         public Task ContinueWhenLoaded(Action<Task<PEFile>> onAssemblyLoaded, TaskScheduler taskScheduler)
         {
-            return this.assemblyTask.ContinueWith(onAssemblyLoaded, default(CancellationToken), TaskContinuationOptions.RunContinuationsAsynchronously, taskScheduler);
+            return assemblyTask.ContinueWith(onAssemblyLoaded, default(CancellationToken), TaskContinuationOptions.RunContinuationsAsynchronously, taskScheduler);
         }
 
         /// <summary>

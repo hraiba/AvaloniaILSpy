@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			this.symbol = symbol;
 			this.analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-			this.LazyLoading = true;
+			LazyLoading = true;
 			this.analyzerHeader = analyzerHeader;
 		}
 
@@ -74,27 +74,27 @@ namespace ICSharpCode.ILSpy.Analyzers
 			switch (symbol) {
 				case IModule module:
 					return new AnalyzedModuleTreeNode(module) {
-						Language = this.Language
+						Language = Language
 					};
 				case ITypeDefinition td:
 					return new AnalyzedTypeTreeNode(td) {
-						Language = this.Language
+						Language = Language
 					};
 				case IField fd:
 					return new AnalyzedFieldTreeNode(fd) {
-						Language = this.Language
+						Language = Language
 					};
 				case IMethod md:
 					return new AnalyzedMethodTreeNode(md) {
-						Language = this.Language
+						Language = Language
 					};
 				case IProperty pd:
 					return new AnalyzedPropertyTreeNode(pd) {
-						Language = this.Language
+						Language = Language
 					};
 				case IEvent ed:
 					return new AnalyzedEventTreeNode(ed) {
-						Language = this.Language
+						Language = Language
 					};
 				default:
 					throw new ArgumentOutOfRangeException(nameof(symbol), $"Symbol {symbol.GetType().FullName} is not supported.");
@@ -104,10 +104,10 @@ namespace ICSharpCode.ILSpy.Analyzers
 		protected override void OnIsVisibleChanged()
 		{
 			base.OnIsVisibleChanged();
-			if (!this.IsVisible && threading.IsRunning) {
-				this.LazyLoading = true;
+			if (!IsVisible && threading.IsRunning) {
+				LazyLoading = true;
 				threading.Cancel();
-				this.Children.Clear();
+				Children.Clear();
 			}
 		}
 
@@ -120,9 +120,9 @@ namespace ICSharpCode.ILSpy.Analyzers
 					manualAdd = true;
 			}
 			if (removedAssemblies.Count > 0 || manualAdd) {
-				this.LazyLoading = true;
+				LazyLoading = true;
 				threading.Cancel();
-				this.Children.Clear();
+				Children.Clear();
 			}
 			return true;
 		}

@@ -34,12 +34,12 @@ partial class CustomOptionPage : UserControl, IOptionPage
         Options s = new Options();
         s.UselessOption1 = (bool?)e.Attribute("useless1") ?? s.UselessOption1;
         s.UselessOption2 = (double?)e.Attribute("useless2") ?? s.UselessOption2;
-        this.DataContext = s;
+        DataContext = s;
     }
 
     public void Save(XElement root)
     {
-        Options s = (Options)this.DataContext;
+        Options s = (Options)DataContext;
         // Save the options back into XML:
         XElement section = new XElement(ns + "CustomOptions");
         section.SetAttributeValue("useless1", s.UselessOption1);

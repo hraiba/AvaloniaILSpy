@@ -85,10 +85,10 @@ namespace ICSharpCode.ILSpy.TextView
         {
             InitializeComponent();
 
-            this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
+            referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, IsLink);
             textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
-            this.uiElementGenerator = new UIElementGenerator();
-            this.bracketHighlightRenderer = new BracketHighlightRenderer(textEditor.TextArea.TextView);
+            uiElementGenerator = new UIElementGenerator();
+            bracketHighlightRenderer = new BracketHighlightRenderer(textEditor.TextArea.TextView);
             textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
             textEditor.Options.RequireControlModifierForHyperlinkClick = false;
             textEditor.TextArea.TextView.PointerHover += TextViewMouseHover;
@@ -154,7 +154,7 @@ namespace ICSharpCode.ILSpy.TextView
 
         void ShowLineMargin()
         {
-            foreach (var margin in this.textEditor.TextArea.LeftMargins)
+            foreach (var margin in textEditor.TextArea.LeftMargins)
             {
                 if (margin is LineNumberMargin || margin is Line)
                 {
@@ -397,11 +397,11 @@ namespace ICSharpCode.ILSpy.TextView
                 currentCancellationTokenSource.Cancel();
                 currentCancellationTokenSource = null; // prevent canceled task from producing output
             }
-            if (this.nextDecompilationRun != null)
+            if (nextDecompilationRun != null)
             {
                 // remove scheduled decompilation run
-                this.nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-                this.nextDecompilationRun = null;
+                nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
+                nextDecompilationRun = null;
             }
             ShowOutput(textOutput, highlighting);
             decompiledNodes = nodes;
@@ -495,19 +495,19 @@ namespace ICSharpCode.ILSpy.TextView
             // Some actions like loading an assembly list cause several selection changes in the tree view,
             // and each of those will start a decompilation action.
 
-            bool isDecompilationScheduled = this.nextDecompilationRun != null;
-            if (this.nextDecompilationRun != null)
-                this.nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-            this.nextDecompilationRun = new DecompilationContext(language, treeNodes.ToArray(), options);
-            var task = this.nextDecompilationRun.TaskCompletionSource.Task;
+            bool isDecompilationScheduled = nextDecompilationRun != null;
+            if (nextDecompilationRun != null)
+                nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
+            nextDecompilationRun = new DecompilationContext(language, treeNodes.ToArray(), options);
+            var task = nextDecompilationRun.TaskCompletionSource.Task;
             if (!isDecompilationScheduled)
             {
                 Dispatcher.UIThread.InvokeAsync(
                     new Action(
                     delegate
                     {
-                        var context = this.nextDecompilationRun;
-                        this.nextDecompilationRun = null;
+                        var context = nextDecompilationRun;
+                        nextDecompilationRun = null;
                         if (context != null)
                             DoDecompile(context, DefaultOutputLengthLimit)
                                 .ContinueWith(t => context.TaskCompletionSource.SetFromTask(t)).HandleExceptions();
@@ -526,9 +526,9 @@ namespace ICSharpCode.ILSpy.TextView
 
             public DecompilationContext(ILSpy.Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
             {
-                this.Language = language;
-                this.TreeNodes = treeNodes;
-                this.Options = options;
+                Language = language;
+                TreeNodes = treeNodes;
+                Options = options;
             }
         }
 

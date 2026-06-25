@@ -96,25 +96,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		void ApplyFilterToChild(ILSpyTreeNode child)
 		{
 			FilterResult r;
-			if (this.FilterSettings == null)
+			if (FilterSettings == null)
 				r = FilterResult.Match;
 			else
-				r = child.Filter(this.FilterSettings);
+				r = child.Filter(FilterSettings);
 			switch (r) {
 				case FilterResult.Hidden:
 					child.IsHidden = true;
 					break;
 				case FilterResult.Match:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.FilterSettings = StripSearchTerm(FilterSettings);
 					child.IsHidden = false;
 					break;
 				case FilterResult.Recurse:
-					child.FilterSettings = this.FilterSettings;
+					child.FilterSettings = FilterSettings;
 					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
 				case FilterResult.MatchAndRecurse:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.FilterSettings = StripSearchTerm(FilterSettings);
 					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			RaisePropertyChanged("Text");
 			if (IsVisible) {
-				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
 					ApplyFilterToChild(node);
 			} else {
 				childrenNeedFiltering = true;
@@ -156,7 +156,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			EnsureLazyChildren();
 			if (childrenNeedFiltering) {
 				childrenNeedFiltering = false;
-				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
+				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
 					ApplyFilterToChild(node);
 			}
 		}

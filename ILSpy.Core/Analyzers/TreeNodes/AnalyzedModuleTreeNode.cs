@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		public AnalyzedModuleTreeNode(IModule analyzedModule)
 		{
 			this.analyzedModule = analyzedModule ?? throw new ArgumentNullException(nameof(analyzedModule));
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Icon => Images.Assembly;
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedModule)) {
-					this.Children.Add(new AnalyzerSearchTreeNode(analyzedModule, analyzer, lazy.Metadata.Header));
+					Children.Add(new AnalyzerSearchTreeNode(analyzedModule, analyzer, lazy.Metadata.Header));
 				}
 			}
 		}

@@ -32,13 +32,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public PropertyTreeNode(IProperty property)
 		{
-			this.PropertyDefinition = property ?? throw new ArgumentNullException(nameof(property));
-			this.isIndexer = property.IsIndexer;
+			PropertyDefinition = property ?? throw new ArgumentNullException(nameof(property));
+			isIndexer = property.IsIndexer;
 
 			if (property.CanGet)
-				this.Children.Add(new MethodTreeNode(property.Getter));
+				Children.Add(new MethodTreeNode(property.Getter));
 			if (property.CanSet)
-				this.Children.Add(new MethodTreeNode(property.Setter));
+				Children.Add(new MethodTreeNode(property.Setter));
 			/*foreach (var m in property.OtherMethods)
 				this.Children.Add(new MethodTreeNode(m));*/
 		}

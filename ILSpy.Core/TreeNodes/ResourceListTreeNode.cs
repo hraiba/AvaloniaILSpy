@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public ResourceListTreeNode(PEFile module)
 		{
-			this.LazyLoading = true;
+			LazyLoading = true;
 			this.module = module;
 		}
 		
@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void LoadChildren()
 		{
 			foreach (Resource r in module.Resources.OrderBy(m => m.Name, NaturalStringComparer.Instance))
-				this.Children.Add(ResourceTreeNode.Create(r));
+				Children.Add(ResourceTreeNode.Create(r));
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
-            foreach (ILSpyTreeNode child in this.Children) {
+            foreach (ILSpyTreeNode child in Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();
 			}

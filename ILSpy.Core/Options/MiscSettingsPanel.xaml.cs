@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		public void Load(ILSpySettings settings)
 		{
-			this.DataContext = LoadMiscSettings(settings);
+			DataContext = LoadMiscSettings(settings);
 		}
 
 		static MiscSettings currentMiscSettings;
@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		public void Save(XElement root)
 		{
-			var s = (MiscSettings)this.DataContext;
+			var s = (MiscSettings)DataContext;
 
 			var section = new XElement("MiscSettings");
 			section.SetAttributeValue("AllowMultipleInstances", s.AllowMultipleInstances);

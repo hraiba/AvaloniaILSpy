@@ -90,12 +90,12 @@ namespace ICSharpCode.ILSpy
 					var st = decompiler.Decompile(handle);
 					WriteCode(csharpOutput, options.DecompilerSettings, st, decompiler.TypeSystem);
                     var mapping = decompiler.CreateSequencePoints(st).FirstOrDefault(kvp => (kvp.Key.MoveNextMethod ?? kvp.Key.Method).MetadataToken == handle);
-                    this.sequencePoints = mapping.Value ?? (IList<SequencePoint>)EmptyList<SequencePoint>.Instance;
-					this.codeLines = csharpOutput.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                    sequencePoints = mapping.Value ?? (IList<SequencePoint>)EmptyList<SequencePoint>.Instance;
+					codeLines = csharpOutput.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 					base.Disassemble(module, handle);
 				} finally {
-					this.sequencePoints = null;
-					this.codeLines = null;
+					sequencePoints = null;
+					codeLines = null;
 				}
 			}
 

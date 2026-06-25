@@ -50,8 +50,8 @@ namespace ICSharpCode.ILSpy
 #if DEBUG
 			this.AttachDevTools();
 #endif
-			this.Package = package;
-			this.Package.PropertyChanged += Package_PropertyChanged;
+			Package = package;
+			Package.PropertyChanged += Package_PropertyChanged;
 			DataContext = this;
 		}
 

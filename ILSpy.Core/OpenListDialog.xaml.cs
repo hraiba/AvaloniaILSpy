@@ -170,7 +170,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (listView.SelectedItem != null)
 				//this.DialogResult = true;
-				this.Close(true);
+				Close(true);
 		}
 
 	}

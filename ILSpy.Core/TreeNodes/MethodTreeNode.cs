@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public MethodTreeNode(IMethod method)
 		{
-			this.MethodDefinition = method ?? throw new ArgumentNullException(nameof(method));
+			MethodDefinition = method ?? throw new ArgumentNullException(nameof(method));
 		}
 
 		public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();

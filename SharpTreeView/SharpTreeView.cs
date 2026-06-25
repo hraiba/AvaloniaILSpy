@@ -138,7 +138,7 @@ namespace ICSharpCode.TreeView
 
 			public void Dispose()
 			{
-				this.instance.updatesLocked = false;
+				instance.updatesLocked = false;
 			}
 		}
 
@@ -153,7 +153,7 @@ namespace ICSharpCode.TreeView
 				}
 				flattener = new TreeFlattener(Root, ShowRoot);
 				flattener.CollectionChanged += flattener_CollectionChanged;
-				this.Items = flattener;
+				Items = flattener;
 			}
 		}
 
@@ -276,7 +276,7 @@ namespace ICSharpCode.TreeView
 						if (container.Node.IsExpanded) {
 							container.Node.IsExpanded = false;
 						} else if (container.Node.Parent != null) {
-							this.FocusNode(container.Node.Parent);
+							FocusNode(container.Node.Parent);
 						}
 						e.Handled = true;
 					}
@@ -296,7 +296,7 @@ namespace ICSharpCode.TreeView
 					break;
 				case Key.Return:
 				case Key.Space:
-					if (container != null && e.KeyModifiers == KeyModifiers.None && this.SelectedItems.Count == 1 && this.SelectedItem == container.Node) {
+					if (container != null && e.KeyModifiers == KeyModifiers.None && SelectedItems.Count == 1 && SelectedItem == container.Node) {
 						container.Node.ActivateItem(e);
 					}
 					break;
@@ -379,7 +379,7 @@ namespace ICSharpCode.TreeView
 			//if (this.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated) {
 			//	OnFocusItem(node);
 			//} else {
-				Dispatcher.UIThread.InvokeAsync(()=> this.OnFocusItem(node), DispatcherPriority.Loaded);
+				Dispatcher.UIThread.InvokeAsync(()=> OnFocusItem(node), DispatcherPriority.Loaded);
 			//}
 		}
 		
@@ -740,7 +740,7 @@ namespace ICSharpCode.TreeView
 		/// </summary>
 		public IEnumerable<SharpTreeNode> GetTopLevelSelection()
 		{
-			var selection = this.SelectedItems.OfType<SharpTreeNode>();
+			var selection = SelectedItems.OfType<SharpTreeNode>();
 			var selectionHash = new HashSet<SharpTreeNode>(selection);
 			return selection.Where(item => item.Ancestors().All(a => !selectionHash.Contains(a)));
 		}
@@ -749,9 +749,9 @@ namespace ICSharpCode.TreeView
 
 		public void SetSelectedNodes(IEnumerable<SharpTreeNode> nodes)
 		{
-			this.SelectedItems.Clear();
+			SelectedItems.Clear();
 			foreach (var item in nodes) {
-				this.SelectedItems.Add(item);
+				SelectedItems.Add(item);
 			}
 		}
 	}

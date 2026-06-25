@@ -191,7 +191,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		public TypeDefinitionUsedVisitor(ITypeDefinition definition, bool topLevelOnly)
 		{
-			this.TypeDefinition = definition;
+			TypeDefinition = definition;
 			this.topLevelOnly = topLevelOnly;
 		}
 

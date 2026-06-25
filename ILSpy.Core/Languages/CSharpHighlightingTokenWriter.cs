@@ -70,38 +70,38 @@ namespace ICSharpCode.ILSpy
 
 			//this.defaultTextColor = ???;
 
-			this.visibilityKeywordsColor = highlighting.GetNamedColor("Visibility");
-			this.namespaceKeywordsColor = highlighting.GetNamedColor("NamespaceKeywords");
-			this.structureKeywordsColor = highlighting.GetNamedColor("Keywords");
-			this.gotoKeywordsColor = highlighting.GetNamedColor("GotoKeywords");
-			this.queryKeywordsColor = highlighting.GetNamedColor("QueryKeywords");
-			this.exceptionKeywordsColor = highlighting.GetNamedColor("ExceptionKeywords");
-			this.checkedKeywordColor = highlighting.GetNamedColor("CheckedKeyword");
-			this.unsafeKeywordsColor = highlighting.GetNamedColor("UnsafeKeywords");
-			this.valueTypeKeywordsColor = highlighting.GetNamedColor("ValueTypeKeywords");
-			this.referenceTypeKeywordsColor = highlighting.GetNamedColor("ReferenceTypeKeywords");
-			this.operatorKeywordsColor = highlighting.GetNamedColor("OperatorKeywords");
-			this.parameterModifierColor = highlighting.GetNamedColor("ParameterModifiers");
-			this.modifiersColor = highlighting.GetNamedColor("Modifiers");
-			this.accessorKeywordsColor = highlighting.GetNamedColor("GetSetAddRemove");
+			visibilityKeywordsColor = highlighting.GetNamedColor("Visibility");
+			namespaceKeywordsColor = highlighting.GetNamedColor("NamespaceKeywords");
+			structureKeywordsColor = highlighting.GetNamedColor("Keywords");
+			gotoKeywordsColor = highlighting.GetNamedColor("GotoKeywords");
+			queryKeywordsColor = highlighting.GetNamedColor("QueryKeywords");
+			exceptionKeywordsColor = highlighting.GetNamedColor("ExceptionKeywords");
+			checkedKeywordColor = highlighting.GetNamedColor("CheckedKeyword");
+			unsafeKeywordsColor = highlighting.GetNamedColor("UnsafeKeywords");
+			valueTypeKeywordsColor = highlighting.GetNamedColor("ValueTypeKeywords");
+			referenceTypeKeywordsColor = highlighting.GetNamedColor("ReferenceTypeKeywords");
+			operatorKeywordsColor = highlighting.GetNamedColor("OperatorKeywords");
+			parameterModifierColor = highlighting.GetNamedColor("ParameterModifiers");
+			modifiersColor = highlighting.GetNamedColor("Modifiers");
+			accessorKeywordsColor = highlighting.GetNamedColor("GetSetAddRemove");
 
-			this.referenceTypeColor = highlighting.GetNamedColor("ReferenceTypes");
-			this.valueTypeColor = highlighting.GetNamedColor("ValueTypes");
-			this.interfaceTypeColor = highlighting.GetNamedColor("InterfaceTypes");
-			this.enumerationTypeColor = highlighting.GetNamedColor("EnumTypes");
-			this.typeParameterTypeColor = highlighting.GetNamedColor("TypeParameters");
-			this.delegateTypeColor = highlighting.GetNamedColor("DelegateTypes");
-			this.methodDeclarationColor = this.methodCallColor = highlighting.GetNamedColor("MethodCall");
+			referenceTypeColor = highlighting.GetNamedColor("ReferenceTypes");
+			valueTypeColor = highlighting.GetNamedColor("ValueTypes");
+			interfaceTypeColor = highlighting.GetNamedColor("InterfaceTypes");
+			enumerationTypeColor = highlighting.GetNamedColor("EnumTypes");
+			typeParameterTypeColor = highlighting.GetNamedColor("TypeParameters");
+			delegateTypeColor = highlighting.GetNamedColor("DelegateTypes");
+			methodDeclarationColor = methodCallColor = highlighting.GetNamedColor("MethodCall");
 			//this.eventDeclarationColor = this.eventAccessColor = defaultTextColor;
 			//this.propertyDeclarationColor = this.propertyAccessColor = defaultTextColor;
-			this.fieldDeclarationColor = this.fieldAccessColor = highlighting.GetNamedColor("FieldAccess");
+			fieldDeclarationColor = fieldAccessColor = highlighting.GetNamedColor("FieldAccess");
 			//this.variableDeclarationColor = this.variableAccessColor = defaultTextColor;
 			//this.parameterDeclarationColor = this.parameterAccessColor = defaultTextColor;
-			this.valueKeywordColor = highlighting.GetNamedColor("NullOrValueKeywords");
-			this.thisKeywordColor = highlighting.GetNamedColor("ThisOrBaseReference");
-			this.trueKeywordColor = highlighting.GetNamedColor("TrueFalse");
-			this.typeKeywordsColor = highlighting.GetNamedColor("TypeKeywords");
-			this.attributeKeywordsColor = highlighting.GetNamedColor("AttributeKeywords");
+			valueKeywordColor = highlighting.GetNamedColor("NullOrValueKeywords");
+			thisKeywordColor = highlighting.GetNamedColor("ThisOrBaseReference");
+			trueKeywordColor = highlighting.GetNamedColor("TrueFalse");
+			typeKeywordsColor = highlighting.GetNamedColor("TypeKeywords");
+			attributeKeywordsColor = highlighting.GetNamedColor("AttributeKeywords");
 			//this.externAliasKeywordColor = ...;
 		}
 

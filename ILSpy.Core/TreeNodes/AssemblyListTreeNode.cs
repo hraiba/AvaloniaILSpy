@@ -56,22 +56,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
 		{
-			this.Children.Clear();
-			this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+			Children.Clear();
+			Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
 			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
 				switch (e.Action) {
 					case NotifyCollectionChangedAction.Add:
-						this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
+						Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
 						break;
 					case NotifyCollectionChangedAction.Remove:
-						this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+						Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
 						break;
 					case NotifyCollectionChangedAction.Replace:
 					case NotifyCollectionChangedAction.Move:
 						throw new NotImplementedException();
 					case NotifyCollectionChangedAction.Reset:
-						this.Children.Clear();
-						this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+						Children.Clear();
+						Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
 						break;
 					default:
 						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
@@ -146,7 +146,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
 			output.WriteLine();
-			foreach (AssemblyTreeNode asm in this.Children) {
+			foreach (AssemblyTreeNode asm in Children) {
 				language.WriteCommentLine(output, new string('-', 60));
 				output.WriteLine();
 				asm.Decompile(language, output, options);
@@ -159,7 +159,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (resource == null)
 				return null;
-			foreach (AssemblyTreeNode node in this.Children)
+			foreach (AssemblyTreeNode node in Children)
 			{
 				if (node.LoadedAssembly.IsLoaded)
 				{
@@ -189,7 +189,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (module == null)
 				return null;
             Dispatcher.UIThread.VerifyAccess();
-            foreach (AssemblyTreeNode node in this.Children) {
+            foreach (AssemblyTreeNode node in Children) {
 				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.GetPEFileOrNull() == module)
 					return node;
 			}
@@ -201,7 +201,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (asm == null)
 				return null;
 			Dispatcher.UIThread.VerifyAccess();
-			foreach (AssemblyTreeNode node in this.Children) {
+			foreach (AssemblyTreeNode node in Children) {
 				if (node.LoadedAssembly == asm)
 					return node;
 			}

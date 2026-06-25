@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public ResourcesFileTreeNode(Resource er)
 			: base(er)
 		{
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Icon {
@@ -186,9 +186,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			public SerializedObjectRepresentation(string key, string type, string value)
 			{
-				this.Key = key;
-				this.Type = type;
-				this.Value = value;
+				Key = key;
+				Type = type;
+				Value = value;
 			}
 
 			public string Key { get; private set; }

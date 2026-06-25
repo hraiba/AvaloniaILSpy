@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.Controls
 		{
 			if (!(color >= 105 && color <= 255))
 				throw new ArgumentOutOfRangeException(nameof(color));
-			this.Color = color;
+			Color = color;
 		}
 		
 		public override object ProvideValue(IServiceProvider serviceProvider)

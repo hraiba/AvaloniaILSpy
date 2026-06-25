@@ -40,8 +40,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.list = list;
 			this.type = type;
-			this.LazyLoading = true;
-			this.threading = new ThreadingSupport();
+			LazyLoading = true;
+			threading = new ThreadingSupport();
 		}
 
 		public override object Text => Resources.DerivedTypes;

@@ -41,23 +41,23 @@ namespace ICSharpCode.ILSpy
 			XElement filterSettings = doc.Element("FilterSettings");
 			if (filterSettings == null) filterSettings = new XElement("FilterSettings");
 			
-			this.FilterSettings = new FilterSettings(filterSettings);
+			FilterSettings = new FilterSettings(filterSettings);
 			
-			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
+			ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
 			
 			XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
 			if (activeTreeViewPath != null) {
-				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => Unescape((string)e)).ToArray();
+				ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => Unescape((string)e)).ToArray();
 			}
-			this.ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
+			ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
 			
-			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
-			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
-			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
-			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
-			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
-			this.SelectedSearchMode = FromString((string)doc.Element("SelectedSearchMode"), Search.SearchMode.TypeAndMember);
-			this.Theme = (string)doc.Element("Theme");
+			WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
+			WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
+			SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
+			TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
+			BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
+			SelectedSearchMode = FromString((string)doc.Element("SelectedSearchMode"), Search.SearchMode.TypeAndMember);
+			Theme = (string)doc.Element("Theme");
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -89,24 +89,24 @@ namespace ICSharpCode.ILSpy
 		public void Save()
 		{
 			XElement doc = new XElement("SessionSettings");
-			doc.Add(this.FilterSettings.SaveAsXml());
-			if (this.ActiveAssemblyList != null) {
-				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
+			doc.Add(FilterSettings.SaveAsXml());
+			if (ActiveAssemblyList != null) {
+				doc.Add(new XElement("ActiveAssemblyList", ActiveAssemblyList));
 			}
-			if (this.ActiveTreeViewPath != null) {
+			if (ActiveTreeViewPath != null) {
 				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", Escape(p)))));
 			}
-			if (this.ActiveAutoLoadedAssembly != null) {
-				doc.Add(new XElement("ActiveAutoLoadedAssembly", this.ActiveAutoLoadedAssembly));
+			if (ActiveAutoLoadedAssembly != null) {
+				doc.Add(new XElement("ActiveAutoLoadedAssembly", ActiveAutoLoadedAssembly));
 			}
-			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
-			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
-			doc.Add(new XElement("SplitterPosition", ToString(this.SplitterPosition)));
-			doc.Add(new XElement("TopPaneSplitterPosition", ToString(this.TopPaneSplitterPosition)));
-			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(this.BottomPaneSplitterPosition)));
-			doc.Add(new XElement("SelectedSearchMode", ToString(this.SelectedSearchMode)));
+			doc.Add(new XElement("WindowState", ToString(WindowState)));
+			doc.Add(new XElement("WindowBounds", ToString(WindowBounds)));
+			doc.Add(new XElement("SplitterPosition", ToString(SplitterPosition)));
+			doc.Add(new XElement("TopPaneSplitterPosition", ToString(TopPaneSplitterPosition)));
+			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(BottomPaneSplitterPosition)));
+			doc.Add(new XElement("SelectedSearchMode", ToString(SelectedSearchMode)));
 
-			doc.Add(new XElement("Theme", this.Theme));
+			doc.Add(new XElement("Theme", Theme));
 
 			ILSpySettings.SaveSettings(doc);
 		}

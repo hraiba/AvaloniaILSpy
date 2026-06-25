@@ -248,15 +248,15 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit
 			if (service == null)
 				throw new ArgumentNullException(nameof(service));
 			this.service = service;
-			this.StartOffset = startOffset;
-			this.Length = length;
-			this.markerTypes = TextMarkerTypes.None;
+			StartOffset = startOffset;
+			Length = length;
+			markerTypes = TextMarkerTypes.None;
 		}
 		
 		public event EventHandler Deleted;
 		
 		public bool IsDeleted {
-			get { return !this.IsConnectedToCollection; }
+			get { return !IsConnectedToCollection; }
 		}
 		
 		public void Delete()

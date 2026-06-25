@@ -88,13 +88,13 @@ namespace ICSharpCode.ILSpy.Search
 			searchModeComboBox.SelectionChanged += (sender, e) => MainWindow.Instance.SessionSettings.SelectedSearchMode = (Search.SearchMode)searchModeComboBox.SelectedIndex;
             updateResultTimer.Tick += UpdateResults;
 
-            this.DataContext = new DataGridCollectionView(Results);
+            DataContext = new DataGridCollectionView(Results);
         }
 
         void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (VisualRoot != null) {
-				StartSearch(this.SearchTerm);
+				StartSearch(SearchTerm);
 			} else {
 				StartSearch(null);
 				runSearchOnNextShow = true;
@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy.Search
 				return;
 
 			if (IsVisible) {
-				StartSearch(this.SearchTerm);
+				StartSearch(SearchTerm);
 			} else {
 				StartSearch(null);
 				runSearchOnNextShow = true;
@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy.Search
 				MainWindow.Instance.ShowInTopPane(Properties.Resources.SearchPane_Search, this);
 				if (runSearchOnNextShow) {
 					runSearchOnNextShow = false;
-					StartSearch(this.SearchTerm);
+					StartSearch(SearchTerm);
 				}
 			}
             Dispatcher.UIThread.InvokeAsync(
@@ -154,12 +154,12 @@ namespace ICSharpCode.ILSpy.Search
         void SearchModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			MainWindow.Instance.SessionSettings.SelectedSearchMode = (SearchMode)searchModeComboBox.SelectedIndex;
-			StartSearch(this.SearchTerm);
+			StartSearch(SearchTerm);
 		}
 
 		void IPane.Closed()
 		{
-			this.SearchTerm = string.Empty;
+			SearchTerm = string.Empty;
             updateResultTimer.Stop();
         }
 		

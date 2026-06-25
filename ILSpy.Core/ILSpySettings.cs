@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy
 		
 		ILSpySettings()
 		{
-			this.root = new XElement("ILSpy");
+			root = new XElement("ILSpy");
 		}
 		
 		ILSpySettings(XElement root)
@@ -134,7 +134,7 @@ namespace ICSharpCode.ILSpy
 			public MutexProtector(string name)
 			{
 				bool createdNew;
-				this.mutex = new Mutex(true, name, out createdNew);
+				mutex = new Mutex(true, name, out createdNew);
 				if (!createdNew) {
 					try {
 						mutex.WaitOne();

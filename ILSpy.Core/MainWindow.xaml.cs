@@ -117,13 +117,13 @@ namespace ICSharpCode.ILSpy
         {
             instance = this;
             var spySettings = ILSpySettings.Load();
-            this.spySettingsForMainWindow_Loaded = spySettings;
-            this.sessionSettings = new SessionSettings(spySettings);
-            this.assemblyListManager = new AssemblyListManager(spySettings);
+            spySettingsForMainWindow_Loaded = spySettings;
+            sessionSettings = new SessionSettings(spySettings);
+            assemblyListManager = new AssemblyListManager(spySettings);
 
             InitializeComponent();
 
-            this.DataContext = sessionSettings;
+            DataContext = sessionSettings;
 
 #if DEBUG
             this.AttachDevTools();
@@ -728,19 +728,19 @@ namespace ICSharpCode.ILSpy
 
             InitToolbar();
 
-            ILSpySettings spySettings = this.spySettingsForMainWindow_Loaded;
-            this.spySettingsForMainWindow_Loaded = null;
+            ILSpySettings spySettings = spySettingsForMainWindow_Loaded;
+            spySettingsForMainWindow_Loaded = null;
             var loadPreviousAssemblies = Options.MiscSettingsPanel.CurrentMiscSettings.LoadPreviousAssemblies;
 
             if (loadPreviousAssemblies)
             {
                 // Load AssemblyList only in Loaded event so that WPF is initialized before we start the CPU-heavy stuff.
                 // This makes the UI come up a bit faster.
-                this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
+                assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
             }
             else
             {
-                this.assemblyList = new AssemblyList(assemblyListManager, AssemblyListManager.DefaultListName);
+                assemblyList = new AssemblyList(assemblyListManager, AssemblyListManager.DefaultListName);
                 assemblyListManager.ClearAll();
             }
 
@@ -753,11 +753,11 @@ namespace ICSharpCode.ILSpy
                 LoadInitialAssemblies();
             }
 
-            ShowAssemblyList(this.assemblyList);
+            ShowAssemblyList(assemblyList);
 
             if (sessionSettings.ActiveAutoLoadedAssembly != null)
             {
-                this.assemblyList.Open(sessionSettings.ActiveAutoLoadedAssembly, true);
+                assemblyList.Open(sessionSettings.ActiveAutoLoadedAssembly, true);
             }
 
             Dispatcher.UIThread.InvokeAsync(new Action(() => OpenAssemblies(spySettings)), DispatcherPriority.Loaded);
@@ -867,7 +867,7 @@ namespace ICSharpCode.ILSpy
         public void ShowAssemblyList(string name)
         {
             ILSpySettings settings = ILSpySettings.Load();
-            AssemblyList list = this.assemblyListManager.LoadList(settings, name);
+            AssemblyList list = assemblyListManager.LoadList(settings, name);
             //Only load a new list when it is a different one
             if (list.ListName != CurrentAssemblyList.ListName)
             {
@@ -889,13 +889,13 @@ namespace ICSharpCode.ILSpy
 
             if (assemblyList.ListName == AssemblyListManager.DefaultListName)
 #if DEBUG
-                this.Title = $"ILSpy {RevisionClass.FullVersion}";
+                Title = $"ILSpy {RevisionClass.FullVersion}";
 #else
 				this.Title = "ILSpy";
 #endif
             else
 #if DEBUG
-                this.Title = $"ILSpy {RevisionClass.FullVersion} - " + assemblyList.ListName;
+                Title = $"ILSpy {RevisionClass.FullVersion} - " + assemblyList.ListName;
 #else
 				this.Title = "ILSpy - " + assemblyList.ListName;
 #endif
@@ -1217,7 +1217,7 @@ namespace ICSharpCode.ILSpy
                 switch (Path.GetExtension(file))
                 {
                     case ".nupkg":
-                        this.handlingNugetPackageSelection = true;
+                        handlingNugetPackageSelection = true;
                         try
                         {
                             LoadedNugetPackage package = new LoadedNugetPackage(file);
@@ -1245,7 +1245,7 @@ namespace ICSharpCode.ILSpy
                         }
                         finally
                         {
-                            this.handlingNugetPackageSelection = false;
+                            handlingNugetPackageSelection = false;
                         }
 
                         break;
@@ -1338,7 +1338,7 @@ namespace ICSharpCode.ILSpy
                 if (node != null && node.View(decompilerTextView))
                     return;
             }
-            decompilationTask = decompilerTextView.DecompileAsync(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions() { TextViewState = state });
+            decompilationTask = decompilerTextView.DecompileAsync(CurrentLanguage, SelectedNodes, new DecompilationOptions() { TextViewState = state });
         }
 
         void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1441,8 +1441,8 @@ namespace ICSharpCode.ILSpy
         {
             base.HandleWindowStateChanged(state);
             // store window state in settings only if it's not minimized
-            if (this.WindowState != WindowState.Minimized)
-                sessionSettings.WindowState = this.WindowState;
+            if (WindowState != WindowState.Minimized)
+                sessionSettings.WindowState = WindowState;
         }
 
         protected override bool HandleClosing()
@@ -1584,10 +1584,10 @@ namespace ICSharpCode.ILSpy
 
         public void SetStatus(string status, IBrush foreground)
         {
-            if (this.statusBar.IsVisible == false)
-                this.statusBar.IsVisible = true;
-            this.StatusLabel.Foreground = foreground;
-            this.StatusLabel.Text = status;
+            if (statusBar.IsVisible == false)
+                statusBar.IsVisible = true;
+            StatusLabel.Foreground = foreground;
+            StatusLabel.Text = status;
         }
 
         public IEnumerable GetMainMenuItems()

@@ -107,8 +107,8 @@ namespace ICSharpCode.ILSpy
 			
 			public MyLinkElementGenerator(string matchText, string url) : base(new Regex(Regex.Escape(matchText)))
 			{
-				this.uri = new Uri(url);
-				this.RequireControlModifierForClick = false;
+				uri = new Uri(url);
+				RequireControlModifierForClick = false;
 			}
 			
 			protected override Uri GetUriFromMatch(Match match)
@@ -229,9 +229,9 @@ namespace ICSharpCode.ILSpy
 			public UpdateSettings(ILSpySettings spySettings)
 			{
 				XElement s = spySettings["UpdateSettings"];
-				this.automaticUpdateCheckEnabled = (bool?)s.Element("AutomaticUpdateCheckEnabled") ?? true;
+				automaticUpdateCheckEnabled = (bool?)s.Element("AutomaticUpdateCheckEnabled") ?? true;
 				try {
-					this.lastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
+					lastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
 				} catch (FormatException) {
 					// avoid crashing on settings files invalid due to
 					// https://github.com/icsharpcode/ILSpy/issues/closed/#issue/2

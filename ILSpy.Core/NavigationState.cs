@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy
 
 		public NavigationState(DecompilerTextViewState viewState)
 		{
-			this.treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
+			treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
 			ViewState = viewState;
 		}
 
@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy
 		public bool Equals(NavigationState other)
 		{
 			// TODO: should this care about the view state as well?
-			return this.treeNodes.SetEquals(other.treeNodes);
+			return treeNodes.SetEquals(other.treeNodes);
 		}
 	}
 }

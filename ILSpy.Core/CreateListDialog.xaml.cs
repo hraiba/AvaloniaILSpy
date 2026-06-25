@@ -21,7 +21,7 @@ namespace ICSharpCode.ILSpy
 
 		public CreateListDialog()
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 #if DEBUG
 			this.AttachDevTools();
 #endif
@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!string.IsNullOrWhiteSpace(ListName.Text))
 			{
-				this.Close(true);
+				Close(true);
 			}
 		}
 

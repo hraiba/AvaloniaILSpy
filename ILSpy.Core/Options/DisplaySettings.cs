@@ -272,21 +272,21 @@ namespace ICSharpCode.ILSpy.Options
 
         public void CopyValues(DisplaySettings s)
         {
-            this.SelectedFont = s.selectedFont;
-            this.SelectedFontSize = s.selectedFontSize;
-            this.ShowLineNumbers = s.showLineNumbers;
-            this.ShowMetadataTokens = s.showMetadataTokens;
-            this.ShowMetadataTokensInBase10 = s.showMetadataTokensInBase10;
-            this.ShowDebugInfo = s.showDebugInfo;
-            this.EnableWordWrap = s.enableWordWrap;
-            this.SortResults = s.sortResults;
-            this.FoldBraces = s.foldBraces;
-            this.ExpandMemberDefinitions = s.expandMemberDefinitions;
-            this.ExpandUsingDeclarations = s.expandUsingDeclarations;
-            this.IndentationUseTabs = s.indentationUseTabs;
-            this.IndentationTabSize = s.indentationTabSize;
-            this.IndentationSize = s.indentationSize;
-            this.HighlightMatchingBraces = s.highlightMatchingBraces;
+            SelectedFont = s.selectedFont;
+            SelectedFontSize = s.selectedFontSize;
+            ShowLineNumbers = s.showLineNumbers;
+            ShowMetadataTokens = s.showMetadataTokens;
+            ShowMetadataTokensInBase10 = s.showMetadataTokensInBase10;
+            ShowDebugInfo = s.showDebugInfo;
+            EnableWordWrap = s.enableWordWrap;
+            SortResults = s.sortResults;
+            FoldBraces = s.foldBraces;
+            ExpandMemberDefinitions = s.expandMemberDefinitions;
+            ExpandUsingDeclarations = s.expandUsingDeclarations;
+            IndentationUseTabs = s.indentationUseTabs;
+            IndentationTabSize = s.indentationTabSize;
+            IndentationSize = s.indentationSize;
+            HighlightMatchingBraces = s.highlightMatchingBraces;
         }
     }
 }

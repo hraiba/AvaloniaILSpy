@@ -47,10 +47,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public AssemblyTreeNode(LoadedAssembly assembly)
 		{
-			this.LoadedAssembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+			LoadedAssembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
 			assembly.ContinueWhenLoaded(OnAssemblyLoaded, TaskScheduler.FromCurrentSynchronizationContext());
 
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public AssemblyList AssemblyList {
@@ -178,9 +178,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var assembly = (MetadataModule)typeSystem.MainModule;
 			var metadata = module.Metadata;
 
-			this.Children.Add(new ReferenceFolderTreeNode(module, this));
+			Children.Add(new ReferenceFolderTreeNode(module, this));
 			if (module.Resources.Any())
-				this.Children.Add(new ResourceListTreeNode(module));
+				Children.Add(new ResourceListTreeNode(module));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
@@ -196,7 +196,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name, NaturalStringComparer.Instance)) {
 				if (ns.Children.Count > 0)
-					this.Children.Add(ns);
+					Children.Add(ns);
 			}
 		}
 
@@ -312,7 +312,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override async Task<bool> Save(DecompilerTextView textView)
 		{
-			Language language = this.Language;
+			Language language = Language;
 			if (string.IsNullOrEmpty(language.ProjectFileExtension))
 				return false;
 			SaveFileDialog dlg = new SaveFileDialog();

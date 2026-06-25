@@ -42,17 +42,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.parentAssembly = parentAssembly ?? throw new ArgumentNullException(nameof(parentAssembly));
 			if (r.IsNil)
 				throw new ArgumentNullException(nameof(r));
-			this.metadata = module;
-			this.handle = r;
-			this.reference = module.GetModuleReference(r);
-			this.moduleName = metadata.GetString(reference.Name);
+			metadata = module;
+			handle = r;
+			reference = module.GetModuleReference(r);
+			moduleName = metadata.GetString(reference.Name);
 
 			foreach (var h in module.AssemblyFiles) {
 				var file = module.GetAssemblyFile(h);
 				if (module.StringComparer.Equals(file.Name, moduleName)) {
 					this.file = file;
-					this.fileHandle = h;
-					this.containsMetadata = file.ContainsMetadata;
+					fileHandle = h;
+					containsMetadata = file.ContainsMetadata;
 					break;
 				}
 			}
