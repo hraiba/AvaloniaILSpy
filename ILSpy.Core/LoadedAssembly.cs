@@ -381,39 +381,30 @@ namespace ICSharpCode.ILSpy
                 this.parent = parent;
             }
 
-            public bool IsGacAssembly(IAssemblyReference reference)
+            public MetadataFile? Resolve(IAssemblyReference reference)
             {
-                return UniversalAssemblyResolver.GetAssemblyInGac(reference) != null;
-            }
 
-            public MetadataFile Resolve(Decompiler.Metadata.IAssemblyReference reference)
-            {
                 return parent.LookupReferencedAssembly(reference)?.GetPEFileOrNull();
             }
 
-            public Task<MetadataFile> ResolveAsync(IAssemblyReference reference)
+            public Task<MetadataFile?> ResolveAsync(IAssemblyReference reference)
             {
-                return Task.Run(() => Resolve(reference));
+                 return Task.Run(() => Resolve(reference));
             }
 
-            public MetadataFile ResolveModule(MetadataFile mainModule, string moduleName)
+            public MetadataFile? ResolveModule(MetadataFile mainModule, string moduleName)
             {
                 return parent.LookupReferencedModule(mainModule, moduleName)?.GetPEFileOrNull();
             }
 
-            public Task<MetadataFile> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
+            public Task<MetadataFile?> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
             {
                 return Task.Run(() => ResolveModule(mainModule, moduleName));
             }
 
-            MetadataFile IAssemblyResolver.Resolve(IAssemblyReference reference)
+            public bool IsGacAssembly(IAssemblyReference reference)
             {
-                return ResolveAsync(reference).GetAwaiter().GetResult();
-            }
-
-            Task<MetadataFile> IAssemblyResolver.ResolveAsync(IAssemblyReference reference)
-            {
-                throw new NotImplementedException();
+                return UniversalAssemblyResolver.GetAssemblyInGac(reference) != null;
             }
         }
 
