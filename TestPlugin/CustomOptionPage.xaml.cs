@@ -29,21 +29,21 @@ partial class CustomOptionPage : UserControl, IOptionPage
     {
         // For loading options, use ILSpySetting's indexer.
         // If the specified section does exist, the indexer will return a new empty element.
-        XElement e = settings[ns + "CustomOptions"];
+        XElement element = settings[ns + "CustomOptions"];
         // Now load the options from the XML document:
-        Options s = new Options();
-        s.UselessOption1 = (bool?)e.Attribute("useless1") ?? s.UselessOption1;
-        s.UselessOption2 = (double?)e.Attribute("useless2") ?? s.UselessOption2;
-        DataContext = s;
+        var options = new Options();
+        options.UselessOption1 = (bool?)element.Attribute("useless1") ?? options.UselessOption1;
+        options.UselessOption2 = (double?)element.Attribute("useless2") ?? options.UselessOption2;
+        DataContext = options;
     }
 
     public void Save(XElement root)
     {
-        Options s = (Options)DataContext;
+        Options options = (Options)DataContext;
         // Save the options back into XML:
-        XElement section = new XElement(ns + "CustomOptions");
-        section.SetAttributeValue("useless1", s.UselessOption1);
-        section.SetAttributeValue("useless2", s.UselessOption2);
+        var section = new XElement(ns + "CustomOptions");
+        section.SetAttributeValue("useless1", options.UselessOption1);
+        section.SetAttributeValue("useless2", options.UselessOption2);
 
         // Replace the existing section in the settings file, or add a new section,
         // if required.
@@ -67,7 +67,7 @@ class Options : INotifyPropertyChanged
             if (uselessOption1 != value)
             {
                 uselessOption1 = value;
-                OnPropertyChanged("UselessOption1");
+                OnPropertyChanged(nameof(UselessOption1));
             }
         }
     }
@@ -82,18 +82,13 @@ class Options : INotifyPropertyChanged
             if (uselessOption2 != value)
             {
                 uselessOption2 = value;
-                OnPropertyChanged("UselessOption2");
+                OnPropertyChanged(nameof(UselessOption2));
             }
         }
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        if (PropertyChanged != null)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    protected virtual void OnPropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
