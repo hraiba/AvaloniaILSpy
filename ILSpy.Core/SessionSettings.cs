@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy;
 			
 			XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
 			if (activeTreeViewPath != null) {
-				ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => Unescape((string)e)).ToArray();
+				ActiveTreeViewPath = [.. activeTreeViewPath.Elements().Select(e => Unescape((string)e))];
 			}
 			ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
 			

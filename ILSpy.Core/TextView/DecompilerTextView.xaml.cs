@@ -498,7 +498,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         bool isDecompilationScheduled = nextDecompilationRun != null;
         if (nextDecompilationRun != null)
             nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-        nextDecompilationRun = new DecompilationContext(language, treeNodes.ToArray(), options);
+        nextDecompilationRun = new DecompilationContext(language, [.. treeNodes], options);
         var task = nextDecompilationRun.TaskCompletionSource.Task;
         if (!isDecompilationScheduled)
         {
@@ -767,13 +767,13 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         var fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
         if (fileName != null)
         {
-            SaveToDisk(new DecompilationContext(language, treeNodes.ToArray(), options), fileName);
+            SaveToDisk(new DecompilationContext(language, [.. treeNodes], options), fileName);
         }
     }
 
     public void SaveToDisk(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options, string fileName)
     {
-        SaveToDisk(new DecompilationContext(language, treeNodes.ToArray(), options), fileName);
+        SaveToDisk(new DecompilationContext(language, [.. treeNodes], options), fileName);
     }
 
 
@@ -942,7 +942,7 @@ public class DecompilerTextViewState
 
     public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
     {
-        ExpandedFoldings = foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset)).ToList();
+        ExpandedFoldings = [.. foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset))];
         FoldingsChecksum = unchecked(foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
     }
 

@@ -327,7 +327,7 @@ namespace ICSharpCode.ILSpy.Search;
         {
             bool inQuotes = false;
 
-            return Split(commandLine, c =>
+            return [.. Split(commandLine, c =>
             {
                 if (c == '\"')
                 {
@@ -335,8 +335,7 @@ namespace ICSharpCode.ILSpy.Search;
                 }
                 return !inQuotes && c == ' ';
             }).Select(arg => TrimMatchingQuotes(arg, '\"'))
-            .Where(arg => !string.IsNullOrEmpty(arg))
-            .ToArray();
+            .Where(arg => !string.IsNullOrEmpty(arg))];
         }
 			
 			public void Cancel()

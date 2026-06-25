@@ -759,7 +759,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments, spySettings);
 
         AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
-        if (FormatExceptions(App.StartupExceptions.ToArray(), output))
+        if (FormatExceptions([.. App.StartupExceptions], output))
             decompilerTextView.ShowText(output);
     }
 
@@ -1014,7 +1014,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             node = node.Parent;
         }
         path.Reverse();
-        return path.ToArray();
+        return [.. path];
     }
 
     public ILSpyTreeNode FindTreeNode(object reference)

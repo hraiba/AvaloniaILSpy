@@ -157,7 +157,7 @@ namespace ICSharpCode.ILSpy;
 		
 		private ContextMenuProvider()
 		{
-			entries = App.ExportProvider.GetExports<IContextMenuEntry, IContextMenuEntryMetadata>().ToArray();
+			entries = [.. App.ExportProvider.GetExports<IContextMenuEntry, IContextMenuEntryMetadata>()];
 		}
 		
 		ContextMenuProvider(SharpTreeView treeView, DecompilerTextView textView = null) : this()

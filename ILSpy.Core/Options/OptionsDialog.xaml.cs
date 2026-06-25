@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.Options;
 			// ExportProvider instance.
 			// FIXME: Ideally, the export provider should be disposed when it's no longer needed.
 			var ep = App.ExportProviderFactory.CreateExportProvider();
-			optionPages = ep.GetExports<IControl, IOptionsMetadata>("OptionPages").ToArray();
+			optionPages = [.. ep.GetExports<IControl, IOptionsMetadata>("OptionPages")];
 			ILSpySettings settings = ILSpySettings.Load();
 			var tabItems = new List<TabItem>();
 			foreach (var optionPage in optionPages.OrderBy(p => p.Metadata.Order)) {

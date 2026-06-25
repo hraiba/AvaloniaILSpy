@@ -164,7 +164,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 if (node.isVisible)
                 {
                     visibleIndexOfRemoval = GetVisibleIndexForNode(node);
-                    removedNodes = node.VisibleDescendantsAndSelf().ToList();
+                    removedNodes = [.. node.VisibleDescendantsAndSelf()];
                 }
 
                 RemoveNodes(node, removeEnd);

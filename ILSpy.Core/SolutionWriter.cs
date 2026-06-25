@@ -101,7 +101,7 @@ internal sealed class SolutionWriter
             await Task.Run(() => Parallel.ForEach(assemblies, n => WriteProject(n, language, solutionDirectory, ct)))
                 .ConfigureAwait(false);
 
-            await Task.Run(() => SolutionCreator.WriteSolutionFile(solutionFilePath, projects.ToList()))
+            await Task.Run(() => SolutionCreator.WriteSolutionFile(solutionFilePath, [.. projects]), ct)
                 .ConfigureAwait(false);
         }
         catch (AggregateException ae)

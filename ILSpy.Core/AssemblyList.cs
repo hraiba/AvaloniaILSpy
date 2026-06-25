@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy;
 		public LoadedAssembly[] GetAssemblies()
 		{
 			lock (assemblies) {
-				return assemblies.ToArray();
+				return [.. assemblies];
 			}
 		}
 		

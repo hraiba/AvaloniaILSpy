@@ -92,7 +92,7 @@ namespace ICSharpCode.TreeView;
 			if (nodes == null)
 				throw new ArgumentNullException("nodes");
 			ThrowOnReentrancy();
-			List<SharpTreeNode> newNodes = nodes.ToList();
+			List<SharpTreeNode> newNodes = [.. nodes];
 			if (newNodes.Count == 0)
 				return;
 			foreach (SharpTreeNode node in newNodes) {

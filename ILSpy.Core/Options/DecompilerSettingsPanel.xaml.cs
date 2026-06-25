@@ -110,12 +110,11 @@ public class DecompilerSettings : INotifyPropertyChanged
 
     public DecompilerSettings(Decompiler.DecompilerSettings settings)
     {
-        Settings = typeof(Decompiler.DecompilerSettings).GetProperties()
+        Settings = [.. typeof(Decompiler.DecompilerSettings).GetProperties()
             .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false)
             .Select(p => new CSharpDecompilerSetting(p) { IsEnabled = (bool)p.GetValue(settings) })
             .OrderBy(item => item.Category)
-            .ThenBy(item => item.Description)
-            .ToArray();
+            .ThenBy(item => item.Description)];
     }
 
     public event PropertyChangedEventHandler PropertyChanged;

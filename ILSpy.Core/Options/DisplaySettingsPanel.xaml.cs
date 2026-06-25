@@ -98,7 +98,7 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
     static FontFamily[] FontLoader()
 		{
 			// TODO: filter SymbolFonts
-			return FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x)).ToArray();
+			return [.. FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x))];
 		}
 
 		public static DisplaySettings LoadDisplaySettings(ILSpySettings settings)
