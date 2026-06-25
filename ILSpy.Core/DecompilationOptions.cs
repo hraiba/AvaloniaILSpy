@@ -22,30 +22,30 @@ using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Options passed to the decompiler.
-	/// </summary>
-	public class DecompilationOptions
-	{
-		/// <summary>
-		/// Gets whether a full decompilation (all members recursively) is desired.
-		/// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.
-		/// </summary>
-		public bool FullDecompilation { get; set; }
+/// <summary>
+/// Options passed to the decompiler.
+/// </summary>
+public class DecompilationOptions
+{
+    /// <summary>
+    /// Gets whether a full decompilation (all members recursively) is desired.
+    /// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.
+    /// </summary>
+    public bool FullDecompilation { get; set; }
 
-		/// <summary>
-		/// Gets/Sets the directory into which the project is saved.
-		/// </summary>
-		public string SaveAsProjectDirectory { get; set; }
+    /// <summary>
+    /// Gets/Sets the directory into which the project is saved.
+    /// </summary>
+    public string SaveAsProjectDirectory { get; set; }
 
-		/// <summary>
-		/// Gets the cancellation token that is used to abort the decompiler.
-		/// </summary>
-		/// <remarks>
-		/// Decompilers should regularly call <c>options.CancellationToken.ThrowIfCancellationRequested();</c>
-		/// to allow for cooperative cancellation of the decompilation task.
-		/// </remarks>
-		public CancellationToken CancellationToken { get; set; }
+    /// <summary>
+    /// Gets the cancellation token that is used to abort the decompiler.
+    /// </summary>
+    /// <remarks>
+    /// Decompilers should regularly call <c>options.CancellationToken.ThrowIfCancellationRequested();</c>
+    /// to allow for cooperative cancellation of the decompilation task.
+    /// </remarks>
+    public CancellationToken CancellationToken { get; set; }
 
     /// <summary>
     /// Gets the settings for the decompiler.
@@ -60,47 +60,47 @@ namespace ICSharpCode.ILSpy;
     /// </remarks>
     public TextView.DecompilerTextViewState TextViewState { get; set; }
 
-		/// <summary>
-		/// Used internally for debugging.
-		/// </summary>
-		internal int StepLimit = int.MaxValue;
-		internal bool IsDebug = false;
+    /// <summary>
+    /// Used internally for debugging.
+    /// </summary>
+    internal int StepLimit = int.MaxValue;
+    internal bool IsDebug;
 
-		public DecompilationOptions()
-			: this(MainWindow.Instance.CurrentLanguageVersion, DecompilerSettingsPanel.CurrentDecompilerSettings, DisplaySettingsPanel.CurrentDisplaySettings)
-		{
-		}
+    public DecompilationOptions()
+        : this(MainWindow.Instance.CurrentLanguageVersion, DecompilerSettingsPanel.CurrentDecompilerSettings, DisplaySettingsPanel.CurrentDisplaySettings)
+    {
+    }
 
-		public DecompilationOptions(LanguageVersion version)
-			: this(version, DecompilerSettingsPanel.CurrentDecompilerSettings, DisplaySettingsPanel.CurrentDisplaySettings)
-		{
-		}
+    public DecompilationOptions(LanguageVersion version)
+        : this(version, DecompilerSettingsPanel.CurrentDecompilerSettings, DisplaySettingsPanel.CurrentDisplaySettings)
+    {
+    }
 
-		public DecompilationOptions(LanguageVersion version, Decompiler.DecompilerSettings settings, DisplaySettings displaySettings)
-		{
-			if (!Enum.TryParse(version.Version, out Decompiler.CSharp.LanguageVersion languageVersion))
+    public DecompilationOptions(LanguageVersion version, Decompiler.DecompilerSettings settings, DisplaySettings displaySettings)
+    {
+        if (!Enum.TryParse(version.Version, out Decompiler.CSharp.LanguageVersion languageVersion))
         {
             languageVersion = Decompiler.CSharp.LanguageVersion.Latest;
         }
 
         var newSettings = DecompilerSettings = settings.Clone();
-			newSettings.SetLanguageVersion(languageVersion);
-			newSettings.ExpandMemberDefinitions = displaySettings.ExpandMemberDefinitions;
-			newSettings.ExpandUsingDeclarations = displaySettings.ExpandUsingDeclarations;
-			newSettings.FoldBraces = displaySettings.FoldBraces;
-			newSettings.ShowDebugInfo = displaySettings.ShowDebugInfo;
-			newSettings.CSharpFormattingOptions.IndentationString = GetIndentationString(displaySettings);
-		}
+        newSettings.SetLanguageVersion(languageVersion);
+        newSettings.ExpandMemberDefinitions = displaySettings.ExpandMemberDefinitions;
+        newSettings.ExpandUsingDeclarations = displaySettings.ExpandUsingDeclarations;
+        newSettings.FoldBraces = displaySettings.FoldBraces;
+        newSettings.ShowDebugInfo = displaySettings.ShowDebugInfo;
+        newSettings.CSharpFormattingOptions.IndentationString = GetIndentationString(displaySettings);
+    }
 
-		private string GetIndentationString(DisplaySettings displaySettings)
-		{
-			if (displaySettings.IndentationUseTabs)
-			{
-				int numberOfTabs = displaySettings.IndentationSize / displaySettings.IndentationTabSize;
-				int numberOfSpaces = displaySettings.IndentationSize % displaySettings.IndentationTabSize;
-				return new string('\t', numberOfTabs) + new string(' ', numberOfSpaces);
-			}
-			return new string(' ', displaySettings.IndentationSize);
+    private string GetIndentationString(DisplaySettings displaySettings)
+    {
+        if (displaySettings.IndentationUseTabs)
+        {
+            int numberOfTabs = displaySettings.IndentationSize / displaySettings.IndentationTabSize;
+            int numberOfSpaces = displaySettings.IndentationSize % displaySettings.IndentationTabSize;
+            return new string('\t', numberOfTabs) + new string(' ', numberOfSpaces);
+        }
+        return new string(' ', displaySettings.IndentationSize);
 
-		}
-	}
+    }
+}

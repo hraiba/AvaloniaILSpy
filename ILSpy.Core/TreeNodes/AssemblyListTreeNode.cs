@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
     public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
-			this.AssemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
+			AssemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
 			BindToObservableCollection(assemblyList.assemblies);
 		}
 

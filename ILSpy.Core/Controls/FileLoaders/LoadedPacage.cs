@@ -252,7 +252,7 @@ public sealed class PackageFolder : IAssemblyResolver
     internal PackageFolder(LoadedPackage package, PackageFolder? parent, string name)
     {
         this.package = package;
-        this.Parent = parent;
+        Parent = parent;
         Name = name;
     }
 

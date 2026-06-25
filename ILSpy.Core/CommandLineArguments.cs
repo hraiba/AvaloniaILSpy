@@ -21,27 +21,29 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.ILSpy;
 
-	sealed class CommandLineArguments
-	{
-		// see /doc/Command Line.txt for details
-		public List<string> AssembliesToLoad = [];
-		public bool? SingleInstance;
-		public string NavigateTo;
-		public string Search;
-		public string Language;
-		public bool NoActivate;
-		public string ConfigFile;
+sealed class CommandLineArguments
+{
+    // see /doc/Command Line.txt for details
+    public List<string> AssembliesToLoad = [];
+    public bool? SingleInstance;
+    public string NavigateTo;
+    public string Search;
+    public string Language;
+    public bool NoActivate;
+    public string ConfigFile;
 
-		public CommandLineArguments(IEnumerable<string> arguments)
-		{
-			foreach (string arg in arguments) {
-				if (arg.Length == 0)
+    public CommandLineArguments(IEnumerable<string> arguments)
+    {
+        foreach (string arg in arguments)
+        {
+            if (arg.Length == 0)
             {
                 continue;
             }
 
-            if (arg[0] == '/') {
-					if (arg.Equals("/singleInstance", StringComparison.OrdinalIgnoreCase))
+            if (arg[0] == '/')
+            {
+                if (arg.Equals("/singleInstance", StringComparison.OrdinalIgnoreCase))
                 {
                     SingleInstance = true;
                 }
@@ -51,15 +53,15 @@ namespace ICSharpCode.ILSpy;
                 }
                 else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
                 {
-                    NavigateTo = arg.Substring("/navigateTo:".Length);
+                    NavigateTo = arg["/navigateTo:".Length..];
                 }
                 else if (arg.StartsWith("/search:", StringComparison.OrdinalIgnoreCase))
                 {
-                    Search = arg.Substring("/search:".Length);
+                    Search = arg["/search:".Length..];
                 }
                 else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
                 {
-                    Language = arg.Substring("/language:".Length);
+                    Language = arg["/language:".Length..];
                 }
                 else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
                 {
@@ -67,12 +69,13 @@ namespace ICSharpCode.ILSpy;
                 }
                 else if (arg.StartsWith("/config:", StringComparison.OrdinalIgnoreCase))
                 {
-                    ConfigFile = arg.Substring("/config:".Length);
+                    ConfigFile = arg["/config:".Length..];
                 }
             }
-				else {
-					AssembliesToLoad.Add(arg);
-				}
-			}
-		}
-	}
+            else
+            {
+                AssembliesToLoad.Add(arg);
+            }
+        }
+    }
+}

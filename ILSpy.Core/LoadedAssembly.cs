@@ -302,7 +302,6 @@ public sealed class LoadedAssembly
                 if (File.Exists(pdbFileName))
                 {
                     debugInfoProvider = new MonoCecilDebugInfoProvider(module, pdbFileName);
-                    return;
                 }
 
                 // TODO: use symbol cache, get symbols from microsoft
@@ -505,7 +504,7 @@ public sealed class LoadedAssembly
             }
             loadingAssemblies.Add(file, asm);
         }
-        Dispatcher.UIThread.InvokeAsync((Action)delegate ()
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
             lock (AssemblyList.assemblies)
             {
@@ -577,7 +576,7 @@ public sealed class LoadedAssembly
             }
             loadingAssemblies.Add(file, asm);
         }
-        Dispatcher.UIThread.InvokeAsync((Action)delegate ()
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
             lock (AssemblyList.assemblies)
             {

@@ -10,55 +10,55 @@ using Avalonia.Markup.Xaml;
 namespace ICSharpCode.ILSpy;
 
 
-	/// <summary>
-	/// Interaktionslogik für DebugSteps.xaml
-	/// </summary>
-	public partial class DebugSteps : UserControl, IPane
-	{
+/// <summary>
+/// Interaktionslogik für DebugSteps.xaml
+/// </summary>
+public partial class DebugSteps : UserControl, IPane
+{
 
     public static ILAstWritingOptions Options { get; } = new()
-        {
-            UseFieldSugar = true,
-            UseLogicOperationSugar = true
-        };
+    {
+        UseFieldSugar = true,
+        UseLogicOperationSugar = true
+    };
 
 #if DEBUG
     ILAstLanguage language;
 #endif
 
-		internal Avalonia.Controls.TreeView tree;
+    internal Avalonia.Controls.TreeView tree;
 
-		// wasn't public, workaround for https://github.com/AvaloniaUI/Avalonia/issues/2593
-		public DebugSteps()
-		{
-			InitializeComponent();
+    // wasn't public, workaround for https://github.com/AvaloniaUI/Avalonia/issues/2593
+    public DebugSteps()
+    {
+        InitializeComponent();
 
 #if DEBUG
-			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged += FilterSettings_PropertyChanged;
-			MainWindow.Instance.SelectionChanged += SelectionChanged;
+        MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged += FilterSettings_PropertyChanged;
+        MainWindow.Instance.SelectionChanged += SelectionChanged;
         Options.PropertyChanged += WritingOptions_PropertyChanged;
 
-			if (MainWindow.Instance.CurrentLanguage is ILAstLanguage l) {
-				l.StepperUpdated += ILAstStepperUpdated;
-				language = l;
-				ILAstStepperUpdated(null, null);
-			}
+        if (MainWindow.Instance.CurrentLanguage is ILAstLanguage l)
+        {
+            l.StepperUpdated += ILAstStepperUpdated;
+            language = l;
+            ILAstStepperUpdated(null, null);
+        }
 #endif
-		}
+    }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-			tree = this.FindControl<Avalonia.Controls.TreeView>("tree");
-			tree.DoubleTapped +=  ShowStateAfter_Click;
-			tree.KeyDown += tree_KeyDown;
-			// var items = tree.ContextMenu.Items.Cast<MenuItem>().ToList();
-			tree.FindControl<MenuItem>("ShowStateBefore").Click += ShowStateBefore_Click;
-			tree.FindControl<MenuItem>("ShowStateAfter").Click += ShowStateAfter_Click;
-			tree.FindControl<MenuItem>("DebugStep").Click += DebugStep_Click;
-		}
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        tree = this.FindControl<Avalonia.Controls.TreeView>("tree");
+        tree.DoubleTapped += ShowStateAfter_Click;
+        tree.KeyDown += tree_KeyDown;
+        tree.FindControl<MenuItem>("ShowStateBefore").Click += ShowStateBefore_Click;
+        tree.FindControl<MenuItem>("ShowStateAfter").Click += ShowStateAfter_Click;
+        tree.FindControl<MenuItem>("DebugStep").Click += DebugStep_Click;
+    }
 
-    private void WritingOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => DecompileAsync(lastSelectedStep);
+    private void WritingOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => Decompile(lastSelectedStep);
 
     private void SelectionChanged(object sender, SelectionChangedEventArgs e) => Dispatcher.UIThread.InvokeAsync(() =>
     {
@@ -67,102 +67,103 @@ namespace ICSharpCode.ILSpy;
     });
 
     private void FilterSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
+    {
 #if DEBUG
-			if (e.PropertyName == "Language") {
-				if (language != null) {
-					language.StepperUpdated -= ILAstStepperUpdated;
-				}
-				if (MainWindow.Instance.CurrentLanguage is ILAstLanguage l) {
-					l.StepperUpdated += ILAstStepperUpdated;
-					language = l;
-					ILAstStepperUpdated(null, null);
-				}
-			}
+        if (e.PropertyName == "Language")
+        {
+            language?.StepperUpdated -= ILAstStepperUpdated;
+            if (MainWindow.Instance.CurrentLanguage is ILAstLanguage l)
+            {
+                l.StepperUpdated += ILAstStepperUpdated;
+                language = l;
+                ILAstStepperUpdated(null, null);
+            }
+        }
 #endif
-		}
+    }
 
-		private void ILAstStepperUpdated(object sender, EventArgs e)
-		{
+    private void ILAstStepperUpdated(object sender, EventArgs e)
+    {
 #if DEBUG
-			if (language == null)
+        if (language == null)
         {
             return;
         }
 
-        Dispatcher.UIThread.InvokeAsync(() => {
-				tree.Items = language.Stepper.Steps;
-				lastSelectedStep = int.MaxValue;
-			});
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            tree.Items = language.Stepper.Steps;
+            lastSelectedStep = int.MaxValue;
+        });
 #endif
-		}
+    }
 
     public static void Show() => MainWindow.Instance.ShowInTopPane(Properties.Resources.DebugSteps, new DebugSteps());
 
     void IPane.Closed()
-		{
+    {
 #if DEBUG
-			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged -= FilterSettings_PropertyChanged;
-			MainWindow.Instance.SelectionChanged -= SelectionChanged;
+        MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged -= FilterSettings_PropertyChanged;
+        MainWindow.Instance.SelectionChanged -= SelectionChanged;
         Options.PropertyChanged -= WritingOptions_PropertyChanged;
-			if (language != null) {
-				language.StepperUpdated -= ILAstStepperUpdated;
-			}
+        language?.StepperUpdated -= ILAstStepperUpdated;
 #endif
-		}
+    }
 
-		private void ShowStateAfter_Click(object sender, RoutedEventArgs e)
-		{
-			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null)
+    private void ShowStateAfter_Click(object sender, RoutedEventArgs e)
+    {
+        Stepper.Node n = (Stepper.Node)tree.SelectedItem;
+        if (n == null)
         {
             return;
         }
 
-        DecompileAsync(n.EndStep);
-		}
+        Decompile(n.EndStep);
+    }
 
-		private void ShowStateBefore_Click(object sender, RoutedEventArgs e)
-		{
-			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null)
+    private void ShowStateBefore_Click(object sender, RoutedEventArgs e)
+    {
+        Stepper.Node n = (Stepper.Node)tree.SelectedItem;
+        if (n == null)
         {
             return;
         }
 
-        DecompileAsync(n.BeginStep);
-		}
+        Decompile(n.BeginStep);
+    }
 
-		private void DebugStep_Click(object sender, RoutedEventArgs e)
-		{
-			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null)
+    private void DebugStep_Click(object sender, RoutedEventArgs e)
+    {
+        Stepper.Node n = (Stepper.Node)tree.SelectedItem;
+        if (n == null)
         {
             return;
         }
 
-        DecompileAsync(n.BeginStep, true);
-		}
+        Decompile(n.BeginStep, true);
+    }
 
-		int lastSelectedStep = int.MaxValue;
+    int lastSelectedStep = int.MaxValue;
 
-		void DecompileAsync(int step, bool isDebug = false)
-		{
-			lastSelectedStep = step;
-			var window = MainWindow.Instance;
-			var state = window.TextView.GetState();
-			window.TextView.DecompileAsync(window.CurrentLanguage, window.SelectedNodes,
-				new DecompilationOptions(window.CurrentLanguageVersion) {
-					StepLimit = step,
-					IsDebug = isDebug,
-					TextViewState = state
-				});
-		}
+    void Decompile(int step, bool isDebug = false)
+    {
+        lastSelectedStep = step;
+        var window = MainWindow.Instance;
+        var state = window.TextView.GetState();
+        window.TextView.DecompileAsync(window.CurrentLanguage, window.SelectedNodes,
+            new DecompilationOptions(window.CurrentLanguageVersion)
+            {
+                StepLimit = step,
+                IsDebug = isDebug,
+                TextViewState = state
+            });
+    }
 
-		private void tree_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.Enter || e.Key == Key.Return) {
-				if (e.KeyModifiers == KeyModifiers.Shift)
+    private void tree_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter || e.Key == Key.Return)
+        {
+            if (e.KeyModifiers == KeyModifiers.Shift)
             {
                 ShowStateBefore_Click(sender, e);
             }
@@ -172,6 +173,6 @@ namespace ICSharpCode.ILSpy;
             }
 
             e.Handled = true;
-			}
-		}
-	}
+        }
+    }
+}

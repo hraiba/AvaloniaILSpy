@@ -28,26 +28,27 @@ using Avalonia.Interactivity;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Adds additional WPF-specific output features to <see cref="ITextOutput"/>.
-	/// </summary>
-	public interface ISmartTextOutput : ITextOutput
-	{
-		/// <summary>
-		/// Inserts an interactive UI element at the current position in the text output.
-		/// </summary>
-		void AddUIElement(Func<IControl> element);
+/// <summary>
+/// Adds additional WPF-specific output features to <see cref="ITextOutput"/>.
+/// </summary>
+public interface ISmartTextOutput : ITextOutput
+{
+    /// <summary>
+    /// Inserts an interactive UI element at the current position in the text output.
+    /// </summary>
+    void AddUIElement(Func<IControl> element);
 
-		void BeginSpan(HighlightingColor highlightingColor);
-		void EndSpan();
-	}
-	
-	public static class SmartTextOutputExtensions
-	{
+    void BeginSpan(HighlightingColor highlightingColor);
+    void EndSpan();
+}
+
+public static class SmartTextOutputExtensions
+{
     /// <summary>
     /// Creates a button.
     /// </summary>
-    public static void AddButton(this ISmartTextOutput output, IBitmap icon, string text, EventHandler<RoutedEventArgs> click) => output.AddUIElement(
+    public static void AddButton(this ISmartTextOutput output, IBitmap icon, string text, EventHandler<RoutedEventArgs> click) =>
+        output.AddUIElement(
             delegate
             {
                 Button button = new();

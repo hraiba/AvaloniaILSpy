@@ -23,51 +23,54 @@ using ICSharpCode.ILSpy.Controls.FileLoaders;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Manages the available assembly lists.
-	/// 
-	/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
-	/// </summary>
-	public sealed class AssemblyListManager
-	{
-		public AssemblyListManager(ILSpySettings spySettings)
-		{
-			XElement doc = spySettings["AssemblyLists"];
-			foreach (var list in doc.Elements("List")) {
-				AssemblyLists.Add((string)list.Attribute("name"));
-			}
-		}
-		
-		public readonly ObservableCollection<string> AssemblyLists = [];
-    public FileLoaderRegistry LoaderRegistry {get;} = new();
-		
-		/// <summary>
-		/// Loads an assembly list from the ILSpySettings.
-		/// If no list with the specified name is found, the default list is loaded instead.
-		/// </summary>
-		public AssemblyList LoadList(ILSpySettings spySettings, string listName)
-		{
-			AssemblyList list = DoLoadList(spySettings, listName);
-			if (!AssemblyLists.Contains(list.ListName))
+/// <summary>
+/// Manages the available assembly lists.
+/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
+/// </summary>
+public sealed class AssemblyListManager
+{
+    public AssemblyListManager(ILSpySettings spySettings)
+    {
+        XElement doc = spySettings["AssemblyLists"];
+        foreach (var list in doc.Elements("List"))
+        {
+            AssemblyLists.Add((string)list.Attribute("name"));
+        }
+    }
+
+    public readonly ObservableCollection<string> AssemblyLists = [];
+    public FileLoaderRegistry LoaderRegistry { get; } = new();
+
+    /// <summary>
+    /// Loads an assembly list from the ILSpySettings.
+    /// If no list with the specified name is found, the default list is loaded instead.
+    /// </summary>
+    public AssemblyList LoadList(ILSpySettings spySettings, string listName)
+    {
+        AssemblyList list = DoLoadList(spySettings, listName);
+        if (!AssemblyLists.Contains(list.ListName))
         {
             AssemblyLists.Add(list.ListName);
         }
 
         return list;
-		}
-		
-		AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
-		{
-			XElement doc = spySettings["AssemblyLists"];
-			if (listName != null) {
-				foreach (var list in doc.Elements("List")) {
-					if ((string)list.Attribute("name") == listName) {
-						return new AssemblyList(this, list);
-					}
-				}
-			}
-			XElement firstList = doc.Elements("List").FirstOrDefault();
-			if (firstList != null)
+    }
+
+    AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
+    {
+        XElement doc = spySettings["AssemblyLists"];
+        if (listName != null)
+        {
+            foreach (var list in doc.Elements("List"))
+            {
+                if ((string)list.Attribute("name") == listName)
+                {
+                    return new AssemblyList(this, list);
+                }
+            }
+        }
+        XElement firstList = doc.Elements("List").FirstOrDefault();
+        if (firstList != null)
         {
             return new AssemblyList(this, firstList);
         }
@@ -76,14 +79,15 @@ namespace ICSharpCode.ILSpy;
             return new AssemblyList(this, listName ?? DefaultListName);
         }
     }
-		
-		public const string DefaultListName = "(Default)";
+
+    public const string DefaultListName = "(Default)";
 
     /// <summary>
     /// Saves the specifies assembly list into the config file.
     /// </summary>
-    public static void SaveList(AssemblyList list) => ILSpySettings.Update(
-            delegate (XElement root)
+    public static void SaveList(AssemblyList list) =>
+        ILSpySettings.Update(
+            root =>
             {
                 XElement doc = root.Element("AssemblyLists");
                 if (doc == null)
@@ -103,48 +107,50 @@ namespace ICSharpCode.ILSpy;
             });
 
     public bool CreateList(AssemblyList list)
-		{
-			if (!AssemblyLists.Contains(list.ListName))
-			{
-				AssemblyLists.Add(list.ListName);
-				SaveList(list);
-				return true;
-			}
-			return false;
-		}
+    {
+        if (!AssemblyLists.Contains(list.ListName))
+        {
+            AssemblyLists.Add(list.ListName);
+            SaveList(list);
+            return true;
+        }
+        return false;
+    }
 
-		public bool DeleteList(string Name)
-		{
-			if (AssemblyLists.Contains(Name))
-			{
-				AssemblyLists.Remove(Name);
+    public bool DeleteList(string Name)
+    {
+        if (AssemblyLists.Contains(Name))
+        {
+            AssemblyLists.Remove(Name);
 
-				ILSpySettings.Update(
-					delegate(XElement root)
-					{
-						XElement doc = root.Element("AssemblyLists");
-						if (doc == null)
-						{
-							return;
-						}
-						XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
-						listElement?.Remove();
-                    });
-				return true;
-			}
-			return false;
-		}
+            ILSpySettings.Update(
+                root =>
+                {
+                    XElement doc = root.Element("AssemblyLists");
+                    if (doc == null)
+                    {
+                        return;
+                    }
+                    XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
+                    listElement?.Remove();
+                });
+            return true;
+        }
+        return false;
+    }
 
-		public void ClearAll()
-		{
-			AssemblyLists.Clear();
-			ILSpySettings.Update(
-				delegate (XElement root) {
-					XElement doc = root.Element("AssemblyLists");
-					if (doc == null) {
-						return;
-					}
-					doc.Remove();
-				});
-		}
-	}
+    public void ClearAll()
+    {
+        AssemblyLists.Clear();
+        ILSpySettings.Update(
+            root =>
+            {
+                XElement doc = root.Element("AssemblyLists");
+                if (doc == null)
+                {
+                    return;
+                }
+                doc.Remove();
+            });
+    }
+}

@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(data);
         this.key = key;
-			this.Data = data;
+			Data = data;
 		}
 
 		public static ILSpyTreeNode Create(string key, object data)

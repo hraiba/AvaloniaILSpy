@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public ResourceTreeNode(Resource r)
 		{
         ArgumentNullException.ThrowIfNull(r);
-        this.Resource = r;
+        Resource = r;
 		}
 
     public Resource Resource { get; }

@@ -24,22 +24,22 @@ using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Represents the filters applied to the tree view.
-	/// </summary>
-	/// <remarks>
-	/// This class is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
-	/// Thus, the main window will use one mutable instance (for data-binding), and will assign a new
-	/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
-	/// </remarks>
-	public class FilterSettings : INotifyPropertyChanged
-	{
-		public FilterSettings(XElement element)
-		{
-			ShowApiLevel = (ApiVisibility?)(int?)element.Element("ShowAPILevel") ?? ApiVisibility.PublicAndInternal;
-			Language = Languages.GetLanguage((string)element.Element("Language"));
-			LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
-			if (LanguageVersion == default(LanguageVersion))
+/// <summary>
+/// Represents the filters applied to the tree view.
+/// </summary>
+/// <remarks>
+/// This class is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
+/// Thus, the main window will use one mutable instance (for data-binding), and will assign a new
+/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
+/// </remarks>
+public class FilterSettings : INotifyPropertyChanged
+{
+    public FilterSettings(XElement element)
+    {
+        ShowApiLevel = (ApiVisibility?)(int?)element.Element("ShowAPILevel") ?? ApiVisibility.PublicAndInternal;
+        Language = Languages.GetLanguage((string)element.Element("Language"));
+        LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
+        if (LanguageVersion == default)
         {
             LanguageVersion = Language.LanguageVersions.LastOrDefault();
         }
@@ -57,82 +57,82 @@ namespace ICSharpCode.ILSpy;
     /// Only tree nodes containing the search term will be shown.
     /// </summary>
     public string SearchTerm
-		{
-			get;
+    {
+        get;
         set
-			{
-				if (field != value)
-				{
-					field = value;
-					OnPropertyChanged(nameof(SearchTerm));
-				}
-			}
-		}
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged(nameof(SearchTerm));
+            }
+        }
+    }
 
-		/// <summary>
-		/// Gets whether a node with the specified text is matched by the current search term.
-		/// </summary>
-		public bool SearchTermMatches(string text)
-		{
-			if (string.IsNullOrEmpty(SearchTerm))
+    /// <summary>
+    /// Gets whether a node with the specified text is matched by the current search term.
+    /// </summary>
+    public bool SearchTermMatches(string text)
+    {
+        if (string.IsNullOrEmpty(SearchTerm))
         {
             return true;
         }
 
-        return text.IndexOf(SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
-		}
+        return text.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase);
+    }
 
     /// <summary>
     /// Gets/Sets whether public, internal or all API members should be shown.
     /// </summary>
     public ApiVisibility ShowApiLevel
-		{
-			get;
+    {
+        get;
         set
-			{
-				if (field != value)
-				{
-					field = value;
-					OnPropertyChanged(nameof(ShowApiLevel));
-				}
-			}
-		}
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged(nameof(ShowApiLevel));
+            }
+        }
+    }
 
-		public bool ShowInternalApi
-		{
-			get { return ShowApiLevel == ApiVisibility.PublicAndInternal; }
-			set
-			{
-				if (ShowApiLevel == ApiVisibility.PublicAndInternal)
-				{
-					ShowApiLevel = ApiVisibility.PublicOnly;
-				}
-				else
-				{
-					ShowApiLevel = ApiVisibility.PublicAndInternal;
-				}
-				OnPropertyChanged(nameof(ShowInternalApi));
-				OnPropertyChanged(nameof(ShowAllApi));
-			}
-		}
+    public bool ShowInternalApi
+    {
+        get { return ShowApiLevel == ApiVisibility.PublicAndInternal; }
+        set
+        {
+            if (ShowApiLevel == ApiVisibility.PublicAndInternal)
+            {
+                ShowApiLevel = ApiVisibility.PublicOnly;
+            }
+            else
+            {
+                ShowApiLevel = ApiVisibility.PublicAndInternal;
+            }
+            OnPropertyChanged(nameof(ShowInternalApi));
+            OnPropertyChanged(nameof(ShowAllApi));
+        }
+    }
 
-		public bool ShowAllApi
-		{
-			get { return ShowApiLevel == ApiVisibility.All; }
-			set
-			{
-				if (ShowApiLevel == ApiVisibility.All)
-				{
-					ShowApiLevel = ApiVisibility.PublicOnly;
-				}
-				else
-				{
-					ShowApiLevel = ApiVisibility.All;
-				}
-				OnPropertyChanged(nameof(ShowInternalApi));
-				OnPropertyChanged(nameof(ShowAllApi));
-			}
-		}
+    public bool ShowAllApi
+    {
+        get { return ShowApiLevel == ApiVisibility.All; }
+        set
+        {
+            if (ShowApiLevel == ApiVisibility.All)
+            {
+                ShowApiLevel = ApiVisibility.PublicOnly;
+            }
+            else
+            {
+                ShowApiLevel = ApiVisibility.All;
+            }
+            OnPropertyChanged(nameof(ShowInternalApi));
+            OnPropertyChanged(nameof(ShowAllApi));
+        }
+    }
 
     /// <summary>
     /// Gets/Sets the current language.
@@ -142,18 +142,18 @@ namespace ICSharpCode.ILSpy;
     /// makes it easy to pass it down into all tree nodes.
     /// </remarks>
     public Language Language
-		{
-			get;
+    {
+        get;
         set
-			{
-				if (field != value)
-				{
-					field = value;
-					LanguageVersion = field.LanguageVersions.LastOrDefault();
-					OnPropertyChanged();
-				}
-			}
-		}
+        {
+            if (field != value)
+            {
+                field = value;
+                LanguageVersion = field.LanguageVersions.LastOrDefault();
+                OnPropertyChanged();
+            }
+        }
+    }
 
     /// <summary>
     /// Gets/Sets the current language version.
@@ -163,33 +163,33 @@ namespace ICSharpCode.ILSpy;
     /// makes it easy to pass it down into all tree nodes.
     /// </remarks>
     public LanguageVersion LanguageVersion
-		{
-			get;
+    {
+        get;
         set
-			{
-				if (field != value)
-				{
-					field = value;
-					OnPropertyChanged();
-				}
-			}
-		}
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public FilterSettings Clone()
-		{
-			FilterSettings f = (FilterSettings)MemberwiseClone();
-			f.PropertyChanged = null;
-			return f;
-		}
-	}
+    {
+        FilterSettings f = (FilterSettings)MemberwiseClone();
+        f.PropertyChanged = null;
+        return f;
+    }
+}
 
-	public enum ApiVisibility
-	{
-		PublicOnly,
-		PublicAndInternal,
-		All
-	}
+public enum ApiVisibility
+{
+    PublicOnly,
+    PublicAndInternal,
+    All
+}

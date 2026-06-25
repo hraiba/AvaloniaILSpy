@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public NamespaceTreeNode(string name)
 		{
         ArgumentNullException.ThrowIfNull(name);
-        this.Name = name;
+        Name = name;
 		}
 
     public override object Text => Name.Length == 0 ? "-" : Name;
