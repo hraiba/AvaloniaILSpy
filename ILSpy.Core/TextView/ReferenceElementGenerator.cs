@@ -70,12 +70,9 @@ namespace ICSharpCode.ILSpy.TextView;
 			}
 			return null;
 		}
-		
-		internal void JumpToReference(ReferenceSegment referenceSegment)
-		{
-			referenceClicked(referenceSegment);
-		}
-	}
+
+    internal void JumpToReference(ReferenceSegment referenceSegment) => referenceClicked(referenceSegment);
+}
 	
 	/// <summary>
 	/// VisualLineElement that represents a piece of text and is a clickable link.
@@ -108,10 +105,7 @@ namespace ICSharpCode.ILSpy.TextView;
             inputElement.Cursor = referenceSegment.IsLocal ? Cursor.Default : HandCursor;
         }
     }
-		
-		/// <inheritdoc/>
-		protected override VisualLineText CreateInstance(int length)
-		{
-			return new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
-		}
-	}
+
+    /// <inheritdoc/>
+    protected override VisualLineText CreateInstance(int length) => new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
+}

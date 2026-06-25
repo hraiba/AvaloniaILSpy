@@ -30,12 +30,9 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			return false;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
+    public bool IsEnabled(TextViewContext context) => true;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {

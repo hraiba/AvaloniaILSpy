@@ -107,9 +107,8 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		internal void Redraw(ISegment segment)
 		{
 			textView.Redraw(segment, DispatcherPriority.Normal);
-			if (RedrawRequested != null)
-				RedrawRequested(this, EventArgs.Empty);
-		}
+        RedrawRequested?.Invoke(this, EventArgs.Empty);
+    }
 		
 		public event EventHandler RedrawRequested;
 		#endregion
@@ -246,23 +245,13 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 
     public bool IsDeleted => !IsConnectedToCollection;
 
-    public void Delete()
-		{
-			service.Remove(this);
-		}
-		
-		internal void OnDeleted()
-		{
-			if (Deleted != null)
-				Deleted(this, EventArgs.Empty);
-		}
-		
-		void Redraw()
-		{
-			service.Redraw(this);
-		}
-		
-		Color? backgroundColor;
+    public void Delete() => service.Remove(this);
+
+    internal void OnDeleted() => Deleted?.Invoke(this, EventArgs.Empty);
+
+    void Redraw() => service.Redraw(this);
+
+    Color? backgroundColor;
 		
 		public Color? BackgroundColor {
 			get { return backgroundColor; }

@@ -10,17 +10,11 @@ namespace TestPlugin;
 	[ExportContextMenuEntryAttribute(Header = "_Save Assembly")]
 	public class SaveAssembly : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
-		}
-		
-		public bool IsEnabled(TextViewContext context)
-		{
-			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
-		}
-		
-		public void Execute(TextViewContext context)
+    public bool IsVisible(TextViewContext context) => context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+
+    public bool IsEnabled(TextViewContext context) => context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
+
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;

@@ -277,10 +277,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     public virtual bool ShowIcon => Icon != null;
 
-    protected virtual void LoadChildren()
-    {
-        throw new NotSupportedException(GetType().Name + " does not support lazy loading");
-    }
+    protected virtual void LoadChildren() => throw new NotSupportedException(GetType().Name + " does not support lazy loading");
 
     /// <summary>
     /// Ensures the children were initialized (loads children if lazy loading is enabled)
@@ -307,25 +304,13 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region Ancestors / Descendants
 
-    public IEnumerable<SharpTreeNode> Descendants()
-    {
-        return TreeTraversal.PreOrder(Children, n => n.Children);
-    }
+    public IEnumerable<SharpTreeNode> Descendants() => TreeTraversal.PreOrder(Children, n => n.Children);
 
-    public IEnumerable<SharpTreeNode> DescendantsAndSelf()
-    {
-        return TreeTraversal.PreOrder(this, n => n.Children);
-    }
+    public IEnumerable<SharpTreeNode> DescendantsAndSelf() => TreeTraversal.PreOrder(this, n => n.Children);
 
-    internal IEnumerable<SharpTreeNode> VisibleDescendants()
-    {
-        return TreeTraversal.PreOrder(Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
-    }
+    internal IEnumerable<SharpTreeNode> VisibleDescendants() => TreeTraversal.PreOrder(Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
 
-    internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf()
-    {
-        return TreeTraversal.PreOrder(this, n => n.Children.Where(c => c.isVisible));
-    }
+    internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf() => TreeTraversal.PreOrder(this, n => n.Children.Where(c => c.isVisible));
 
     public IEnumerable<SharpTreeNode> Ancestors()
     {
@@ -367,15 +352,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
         }
     }
 
-    public virtual string LoadEditText()
-    {
-        return null;
-    }
+    public virtual string LoadEditText() => null;
 
-    public virtual bool SaveEditText(string value)
-    {
-        return true;
-    }
+    public virtual bool SaveEditText(string value) => true;
 
     #endregion
 
@@ -441,32 +420,17 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     #region Cut / Copy / Paste / Delete
 
     public bool IsCut => false;
-    public virtual bool CanDelete()
-    {
-        return false;
-    }
+    public virtual bool CanDelete() => false;
 
-    public virtual void Delete()
-    {
-        throw new NotSupportedException(GetType().Name + " does not support deletion");
-    }
+    public virtual void Delete() => throw new NotSupportedException(GetType().Name + " does not support deletion");
 
-    public virtual void DeleteCore()
-    {
-        throw new NotSupportedException(GetType().Name + " does not support deletion");
-    }
+    public virtual void DeleteCore() => throw new NotSupportedException(GetType().Name + " does not support deletion");
 
-    public virtual IDataObject Copy(SharpTreeNode[] nodes)
-    {
-        throw new NotSupportedException(GetType().Name + " does not support copy/paste or drag'n'drop");
-    }
+    public virtual IDataObject Copy(SharpTreeNode[] nodes) => throw new NotSupportedException(GetType().Name + " does not support copy/paste or drag'n'drop");
     #endregion
 
     #region Drag and Drop
-    public virtual bool CanDrag(SharpTreeNode[] nodes)
-    {
-        return false;
-    }
+    public virtual bool CanDrag(SharpTreeNode[] nodes) => false;
 
     public virtual async void StartDrag(PointerEventArgs e, AvaloniaObject dragSource, SharpTreeNode[] nodes)
     {
@@ -481,10 +445,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
         }
     }
 
-    public virtual bool CanDrop(DragEventArgs e, int index)
-    {
-        return false;
-    }
+    public virtual bool CanDrop(DragEventArgs e, int index) => false;
 
     internal void InternalDrop(DragEventArgs e, int index)
     {
@@ -497,10 +458,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
         Drop(e, index);
     }
 
-    public virtual void Drop(DragEventArgs e, int index)
-    {
-        throw new NotSupportedException(GetType().Name + " does not support Drop()");
-    }
+    public virtual void Drop(DragEventArgs e, int index) => throw new NotSupportedException(GetType().Name + " does not support Drop()");
     #endregion
 
     #region IsLast (for TreeView lines)

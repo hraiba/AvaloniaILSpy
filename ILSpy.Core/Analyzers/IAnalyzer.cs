@@ -72,11 +72,8 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			}
 		}
 
-		public AnalyzerScope GetScopeOf(IEntity entity)
-		{
-			return new AnalyzerScope(AssemblyList, entity);
-		}
-	}
+    public AnalyzerScope GetScopeOf(IEntity entity) => new AnalyzerScope(AssemblyList, entity);
+}
 
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

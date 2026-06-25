@@ -62,11 +62,9 @@ namespace ICSharpCode.ILSpy.TextView;
 			else
 				return null;
 		}
-		
-		int IComparer<Pair>.Compare(Pair x, Pair y)
-		{
-			// Compare (offset,Lazy<UIElement>) pairs by the offset.
-			// Used in BinarySearch()
-			return x.Key.CompareTo(y.Key);
-		}
-	}
+
+    int IComparer<Pair>.Compare(Pair x, Pair y) =>
+        // Compare (offset,Lazy<UIElement>) pairs by the offset.
+        // Used in BinarySearch()
+        x.Key.CompareTo(y.Key);
+}

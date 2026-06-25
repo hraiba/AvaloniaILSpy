@@ -20,10 +20,7 @@ partial class CustomOptionPage : UserControl, IOptionPage
         InitializeComponent();
     }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
+    private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
     public void Load(ILSpySettings settings)
     {

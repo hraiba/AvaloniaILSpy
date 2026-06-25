@@ -58,20 +58,15 @@ namespace ICSharpCode.ILSpy;
 			tree.FindControl<MenuItem>("DebugStep").Click += DebugStep_Click;
 		}
 
-		private void WritingOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			DecompileAsync(lastSelectedStep);
-		}
+    private void WritingOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => DecompileAsync(lastSelectedStep);
 
-		private void SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			Dispatcher.UIThread.InvokeAsync(() => {
-				tree.Items = null;
-				lastSelectedStep = int.MaxValue;
-			});
-		}
+    private void SelectionChanged(object sender, SelectionChangedEventArgs e) => Dispatcher.UIThread.InvokeAsync(() =>
+    {
+        tree.Items = null;
+        lastSelectedStep = int.MaxValue;
+    });
 
-		private void FilterSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void FilterSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 #if DEBUG
 			if (e.PropertyName == "Language") {
@@ -98,12 +93,9 @@ namespace ICSharpCode.ILSpy;
 #endif
 		}
 
-		public static void Show()
-		{
-			MainWindow.Instance.ShowInTopPane(Properties.Resources.DebugSteps, new DebugSteps());
-		}
+    public static void Show() => MainWindow.Instance.ShowInTopPane(Properties.Resources.DebugSteps, new DebugSteps());
 
-		void IPane.Closed()
+    void IPane.Closed()
 		{
 #if DEBUG
 			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged -= FilterSettings_PropertyChanged;

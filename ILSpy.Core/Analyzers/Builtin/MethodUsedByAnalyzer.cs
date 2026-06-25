@@ -79,12 +79,9 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context)
-		{
-			return ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
-		}
+    bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context) => ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
 
-		static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
+    static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
 				return false;
@@ -148,9 +145,6 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
         }
     }
 
-    static bool IsSameMember(IMember analyzedMethod, IMember m)
-		{
-			return m.MetadataToken == analyzedMethod.MetadataToken
-				&& m.ParentModule.MetadataFile == analyzedMethod.ParentModule.MetadataFile;
-		}
-	}
+    static bool IsSameMember(IMember analyzedMethod, IMember m) => m.MetadataToken == analyzedMethod.MetadataToken
+                && m.ParentModule.MetadataFile == analyzedMethod.ParentModule.MetadataFile;
+}

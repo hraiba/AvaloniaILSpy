@@ -44,12 +44,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Icon => Images.SuperTypes;
 
-		protected override void LoadChildren()
-		{
-			AddBaseTypes(Children, module, type);
-		}
+    protected override void LoadChildren() => AddBaseTypes(Children, module, type);
 
-		internal static void AddBaseTypes(SharpTreeNodeCollection children, MetadataFile module, ITypeDefinition typeDefinition)
+    internal static void AddBaseTypes(SharpTreeNodeCollection children, MetadataFile module, ITypeDefinition typeDefinition)
 		{
 			var typeDef = module.Metadata.GetTypeDefinition((TypeDefinitionHandle)typeDefinition.MetadataToken);
 			var baseTypes = typeDefinition.DirectBaseTypes.ToArray();

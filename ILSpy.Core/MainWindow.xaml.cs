@@ -803,10 +803,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         result.ContinueWith(task => AdjustUpdateUIAfterCheck(task, forceCheck), TaskScheduler.FromCurrentSynchronizationContext());
     }
 
-    void updatePanelCloseButtonClick(object sender, RoutedEventArgs e)
-    {
-        updatePanel.IsVisible = false;
-    }
+    void updatePanelCloseButtonClick(object sender, RoutedEventArgs e) => updatePanel.IsVisible = false;
 
     void downloadOrCheckUpdateButtonClick(object sender, RoutedEventArgs e)
     {
@@ -889,8 +886,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
                     a => oldAssemblies.Contains(a.LoadedAssembly))));
         }
-        if (CurrentAssemblyListChanged != null)
-            CurrentAssemblyListChanged(this, e);
+        CurrentAssemblyListChanged?.Invoke(this, e);
     }
 
     void LoadInitialAssemblies()
@@ -1024,10 +1020,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         }
     }
 
-    public void JumpToReference(object reference)
-    {
-        JumpToReferenceAsync(reference).HandleExceptions();
-    }
+    public void JumpToReference(object reference) => JumpToReferenceAsync(reference).HandleExceptions();
 
     /// <summary>
     /// Jumps to the specified reference.
@@ -1266,10 +1259,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     }
 
-    void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-    {
-        SearchPane.Instance.Show();
-    }
+    void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SearchPane.Instance.Show();
     #endregion
 
     #region Decompile (TreeView_SelectionChanged)
@@ -1277,8 +1267,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     {
         DecompileSelectedNodes();
 
-        if (SelectionChanged != null)
-            SelectionChanged(sender, e);
+        SelectionChanged?.Invoke(sender, e);
     }
 
     Task decompilationTask;
@@ -1318,10 +1307,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         e.CanExecute = SaveCodeContextMenuEntry.CanExecute(SelectedNodes.ToList());
     }
 
-    void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-    {
-        SaveCodeContextMenuEntry.Execute(SelectedNodes.ToList());
-    }
+    void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCodeContextMenuEntry.Execute(SelectedNodes.ToList());
 
     public void RefreshDecompiledView()
     {
@@ -1539,10 +1525,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     }
     #endregion
 
-    public void UnselectAll()
-    {
-        treeView.UnselectAll();
-    }
+    public void UnselectAll() => treeView.UnselectAll();
 
     public void SetStatus(string status, IBrush foreground)
     {
@@ -1552,13 +1535,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         StatusLabel.Text = status;
     }
 
-    public IEnumerable GetMainMenuItems()
-    {
-        return mainMenu.Items;
-    }
+    public IEnumerable GetMainMenuItems() => mainMenu.Items;
 
-    public IEnumerable GetToolBarItems()
-    {
-        return toolBar.Items;
-    }
+    public IEnumerable GetToolBarItems() => toolBar.Items;
 }

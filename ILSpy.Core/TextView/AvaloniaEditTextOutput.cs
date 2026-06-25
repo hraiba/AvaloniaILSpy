@@ -59,11 +59,8 @@ namespace ICSharpCode.ILSpy.TextView;
 				return -1;
 		}
 
-		public void AddDefinition(object definition, int offset)
-		{
-			definitions[definition] = offset;
-		}
-	}
+    public void AddDefinition(object definition, int offset) => definitions[definition] = offset;
+}
 
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
@@ -110,17 +107,14 @@ namespace ICSharpCode.ILSpy.TextView;
     /// </summary>
     internal TextSegmentCollection<ReferenceSegment> References => references;
 
-    public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
-		{
-			elementGenerators.Add(elementGenerator);
-		}
+    public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) => elementGenerators.Add(elementGenerator);
 
-		/// <summary>
-		/// Controls the maximum length of the text.
-		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
-		/// thus aborting the decompilation.
-		/// </summary>
-		public int LengthLimit = int.MaxValue;
+    /// <summary>
+    /// Controls the maximum length of the text.
+    /// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
+    /// thus aborting the decompilation.
+    /// </summary>
+    public int LengthLimit = int.MaxValue;
 
     public int TextLength => b.Length;
 
@@ -156,19 +150,13 @@ namespace ICSharpCode.ILSpy.TextView;
 			textDocument.SetOwnerThread(System.Threading.Thread.CurrentThread); // acquire ownership
 			return textDocument;
 		}
-		#endregion
+    #endregion
 
-		public void Indent()
-		{
-			indent++;
-		}
+    public void Indent() => indent++;
 
-		public void Unindent()
-		{
-			indent--;
-		}
+    public void Unindent() => indent--;
 
-		void WriteIndent()
+    void WriteIndent()
 		{
 			Debug.Assert(textDocument == null);
 			if (needsIndent) {

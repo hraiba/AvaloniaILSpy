@@ -24,12 +24,9 @@ namespace ICSharpCode.ILSpy;
 [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources._RemoveAssembliesWithLoadErrors), MenuCategory = nameof(Resources.Remove), MenuOrder = 2.6)]
 class RemoveAssembliesWithLoadErrors : SimpleCommand
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return MainWindow.Instance.CurrentAssemblyList?.GetAssemblies().Any(l => l.HasLoadError) == true;
-		}
+    public override bool CanExecute(object parameter) => MainWindow.Instance.CurrentAssemblyList?.GetAssemblies().Any(l => l.HasLoadError) == true;
 
-		public override void Execute(object parameter)
+    public override void Execute(object parameter)
 		{
 			foreach (var asm in MainWindow.Instance.CurrentAssemblyList.GetAssemblies()) {
 				if (!asm.HasLoadError) continue;

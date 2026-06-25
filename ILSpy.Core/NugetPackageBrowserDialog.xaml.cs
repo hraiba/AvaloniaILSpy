@@ -74,20 +74,11 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(true);
-		}
+    void OKButton_Click(object sender, RoutedEventArgs e) => Close(true);
 
-		void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(false);
-		}
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			PropertyChanged?.Invoke(this, e);
-		}
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
     public Entry[] SelectedItems => [.. Package.SelectedEntries];
 

@@ -55,8 +55,5 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		public bool Show(ISymbol symbol)
-		{
-			return symbol is IProperty entity && entity.DeclaringType.Kind == TypeKind.Interface;
-		}
-	}
+    public bool Show(ISymbol symbol) => symbol is IProperty entity && entity.DeclaringType.Kind == TypeKind.Interface;
+}

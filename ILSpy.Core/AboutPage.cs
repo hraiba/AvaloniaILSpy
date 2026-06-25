@@ -110,12 +110,9 @@ namespace ICSharpCode.ILSpy;
 				uri = new Uri(url);
 				RequireControlModifierForClick = false;
 			}
-			
-			protected override Uri GetUriFromMatch(Match match)
-			{
-				return uri;
-			}
-		}
+
+        protected override Uri GetUriFromMatch(Match match) => uri;
+    }
 		
 		static void AddUpdateCheckButton(StackPanel stackPanel, DecompilerTextView textView)
 		{
@@ -274,14 +271,9 @@ namespace ICSharpCode.ILSpy;
 			}
 			
 			public event PropertyChangedEventHandler PropertyChanged;
-			
-			void OnPropertyChanged(string propertyName)
-			{
-				if (PropertyChanged != null) {
-					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-				}
-			}
-		}
+
+        void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 		
 		/// <summary>
 		/// If automatic update checking is enabled, checks if there are any updates available.
@@ -317,24 +309,25 @@ namespace ICSharpCode.ILSpy;
 			return tcs.Task;
 		}
 
-		static void CheckForUpdateInternal(TaskCompletionSource<string> tcs, UpdateSettings s)
-		{
-			GetLatestVersionAsync().ContinueWith(
-				delegate (Task<AvailableVersionInfo> task) {
-					try {
-						s.LastSuccessfulUpdateCheck = DateTime.UtcNow;
-						AvailableVersionInfo v = task.Result;
-						if (v.Version > currentVersion)
-							tcs.SetResult(v.DownloadUrl);
-						else
-							tcs.SetResult(null);
-					} catch (AggregateException) {
-						// ignore errors getting the version info
-						tcs.SetResult(null);
-					}
-				});
-		}
-	}
+    static void CheckForUpdateInternal(TaskCompletionSource<string> tcs, UpdateSettings s) => GetLatestVersionAsync().ContinueWith(
+            delegate (Task<AvailableVersionInfo> task)
+            {
+                try
+                {
+                    s.LastSuccessfulUpdateCheck = DateTime.UtcNow;
+                    AvailableVersionInfo v = task.Result;
+                    if (v.Version > currentVersion)
+                        tcs.SetResult(v.DownloadUrl);
+                    else
+                        tcs.SetResult(null);
+                }
+                catch (AggregateException)
+                {
+                    // ignore errors getting the version info
+                    tcs.SetResult(null);
+                }
+            });
+}
 	
 	/// <summary>
 	/// Interface that allows plugins to extend the about page.

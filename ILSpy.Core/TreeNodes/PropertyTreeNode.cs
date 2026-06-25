@@ -47,20 +47,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Text => GetText(PropertyDefinition, Language) + PropertyDefinition.MetadataToken.ToSuffixString();
 
-		public static object GetText(IProperty property, Language language)
-		{
-			return language.PropertyToString(property, false, false, false);
-		}
+    public static object GetText(IProperty property, Language language) => language.PropertyToString(property, false, false, false);
 
-		public override object Icon => GetIcon(PropertyDefinition);
+    public override object Icon => GetIcon(PropertyDefinition);
 
-		public static IBitmap GetIcon(IProperty property)
-		{
-			return Images.GetIcon(property.IsIndexer ? MemberIcon.Indexer : MemberIcon.Property,
-				MethodTreeNode.GetOverlayIcon(property.Accessibility), property.IsStatic);
-		}
+    public static IBitmap GetIcon(IProperty property) => Images.GetIcon(property.IsIndexer ? MemberIcon.Indexer : MemberIcon.Property,
+            MethodTreeNode.GetOverlayIcon(property.Accessibility), property.IsStatic);
 
-		public override FilterResult Filter(FilterSettings settings)
+    public override FilterResult Filter(FilterSettings settings)
 		{
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
             return FilterResult.Hidden;
@@ -70,12 +64,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				return FilterResult.Hidden;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileProperty(PropertyDefinition, output, options);
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileProperty(PropertyDefinition, output, options);
 
-		public override bool IsPublicAPI {
+    public override bool IsPublicAPI {
 			get {
 				switch (PropertyDefinition.Accessibility) {
 					case Accessibility.Public:

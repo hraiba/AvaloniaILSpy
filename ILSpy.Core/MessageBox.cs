@@ -35,32 +35,17 @@ namespace ICSharpCode.ILSpy;
 		};
 
 
-		public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)
-		{
-			return Show(null, messageBoxText, caption, button, icon, defaultResult, MessageBoxOptions.None);
-		}
+    public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult) => Show(null, messageBoxText, caption, button, icon, defaultResult, MessageBoxOptions.None);
 
-		public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon)
-		{
-			return Show(null, messageBoxText, caption, button, icon, MessageBoxResult.None, MessageBoxOptions.None);
-		}
+    public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon) => Show(null, messageBoxText, caption, button, icon, MessageBoxResult.None, MessageBoxOptions.None);
 
-		public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button)
-		{
-			return Show(null, messageBoxText, caption, button, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
-		}
+    public static Task<MessageBoxResult> Show(string messageBoxText, string caption, MessageBoxButton button) => Show(null, messageBoxText, caption, button, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
 
-		public static Task<MessageBoxResult> Show(string messageBoxText, string caption)
-		{
-			return Show(null, messageBoxText, caption, MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
-		}
+    public static Task<MessageBoxResult> Show(string messageBoxText, string caption) => Show(null, messageBoxText, caption, MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
 
-		public static Task<MessageBoxResult> Show(string messageBoxText)
-		{
-			return Show(null, messageBoxText, "Message", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
-		}
+    public static Task<MessageBoxResult> Show(string messageBoxText) => Show(null, messageBoxText, "Message", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.None, MessageBoxOptions.None);
 
-		public static async Task<MessageBoxResult> Show(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult, MessageBoxOptions options)
+    public static async Task<MessageBoxResult> Show(Window owner, string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult, MessageBoxOptions options)
 		{
         ArgumentNullException.ThrowIfNull(caption);
         ArgumentNullException.ThrowIfNull(messageBoxText);

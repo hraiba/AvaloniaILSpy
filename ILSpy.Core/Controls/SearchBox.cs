@@ -81,9 +81,7 @@ namespace ICSharpCode.ILSpy.Controls;
 
     #region Handlers
 
-		private void IconBorder_MouseLeftButtonUp(object obj, PointerReleasedEventArgs e) {
-        Text = string.Empty;
-		}
+    private void IconBorder_MouseLeftButtonUp(object obj, PointerReleasedEventArgs e) => Text = string.Empty;
 
     #endregion
 
@@ -109,10 +107,7 @@ namespace ICSharpCode.ILSpy.Controls;
         }
     }
 
-    private void UpdatePseudoclasses()
-    {
-        PseudoClasses.Set(":hastext", !string.IsNullOrWhiteSpace(Text));
-    }
+    private void UpdatePseudoclasses() => PseudoClasses.Set(":hastext", !string.IsNullOrWhiteSpace(Text));
 
     protected override void OnKeyDown(KeyEventArgs e)
 		{

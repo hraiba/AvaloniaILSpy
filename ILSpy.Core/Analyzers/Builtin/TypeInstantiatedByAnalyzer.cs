@@ -76,12 +76,9 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		bool IsUsedInMethod(ITypeDefinition analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context)
-		{
-			return ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
-		}
+    bool IsUsedInMethod(ITypeDefinition analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context) => ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
 
-		bool ScanMethodBody(ITypeDefinition analyzedEntity, IMethod method, MethodBodyBlock methodBody)
+    bool ScanMethodBody(ITypeDefinition analyzedEntity, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
 				return false;
@@ -120,10 +117,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			return false;
 		}
 
-		bool CanBeReference(ILOpCode opCode)
-		{
-			return opCode == ILOpCode.Newobj || opCode == ILOpCode.Initobj;
-		}
+    bool CanBeReference(ILOpCode opCode) => opCode == ILOpCode.Newobj || opCode == ILOpCode.Initobj;
 
-		public bool Show(ISymbol symbol) => symbol is ITypeDefinition entity && !entity.IsAbstract && !entity.IsStatic;
+    public bool Show(ISymbol symbol) => symbol is ITypeDefinition entity && !entity.IsAbstract && !entity.IsStatic;
 	}

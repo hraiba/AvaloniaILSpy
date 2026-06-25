@@ -44,12 +44,9 @@ namespace ICSharpCode.ILSpy.Analyzers;
 
 		public override object Icon => Images.Search;
 
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
+    protected override void LoadChildren() => threading.LoadChildren(this, FetchChildren);
 
-		protected IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
+    protected IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			if (symbol is IEntity) {
 				var context = new AnalyzerContext() {

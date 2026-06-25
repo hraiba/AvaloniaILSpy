@@ -83,10 +83,7 @@ public sealed class LoadedAssembly
     /// <summary>
     /// Gets the Cecil ModuleDefinition.
     /// </summary>
-    public Task<PEFile> GetPEFileAsync()
-    {
-        return assemblyTask;
-    }
+    public Task<PEFile> GetPEFileAsync() => assemblyTask;
 
     /// <summary>
     /// Gets the Cecil ModuleDefinition.
@@ -181,10 +178,7 @@ public sealed class LoadedAssembly
                 MinimalCorlib.Instance);
         }
     }
-		public Task<LoadResult> GetLoadResultAsync()
-		{
-			return loadingTask;
-		}
+    public Task<LoadResult> GetLoadResultAsync() => loadingTask;
 
     public AssemblyList AssemblyList => assemblyList;
 
@@ -381,37 +375,18 @@ public sealed class LoadedAssembly
             this.parent = parent;
         }
 
-        public MetadataFile? Resolve(IAssemblyReference reference)
-        {
+        public MetadataFile? Resolve(IAssemblyReference reference) => parent.LookupReferencedAssembly(reference)?.GetPEFileOrNull();
 
-            return parent.LookupReferencedAssembly(reference)?.GetPEFileOrNull();
-        }
+        public Task<MetadataFile?> ResolveAsync(IAssemblyReference reference) => Task.Run(() => Resolve(reference));
 
-        public Task<MetadataFile?> ResolveAsync(IAssemblyReference reference)
-        {
-             return Task.Run(() => Resolve(reference));
-        }
+        public MetadataFile? ResolveModule(MetadataFile mainModule, string moduleName) => parent.LookupReferencedModule(mainModule, moduleName)?.GetPEFileOrNull();
 
-        public MetadataFile? ResolveModule(MetadataFile mainModule, string moduleName)
-        {
-            return parent.LookupReferencedModule(mainModule, moduleName)?.GetPEFileOrNull();
-        }
+        public Task<MetadataFile?> ResolveModuleAsync(MetadataFile mainModule, string moduleName) => Task.Run(() => ResolveModule(mainModule, moduleName));
 
-        public Task<MetadataFile?> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
-        {
-            return Task.Run(() => ResolveModule(mainModule, moduleName));
-        }
-
-        public bool IsGacAssembly(IAssemblyReference reference)
-        {
-            return UniversalAssemblyResolver.GetAssemblyInGac(reference) != null;
-        }
+        public bool IsGacAssembly(IAssemblyReference reference) => UniversalAssemblyResolver.GetAssemblyInGac(reference) != null;
     }
 
-    public IAssemblyResolver GetAssemblyResolver(bool loadOnDemand = true)
-    {
-        return new MyAssemblyResolver(this);
-    }
+    public IAssemblyResolver GetAssemblyResolver(bool loadOnDemand = true) => new MyAssemblyResolver(this);
 
     /// <summary>
     /// Returns the debug info for this assembly. Returns null in case of load errors or no debug info is available.
@@ -579,18 +554,12 @@ public sealed class LoadedAssembly
         return asm;
     }
 
-    public Task ContinueWhenLoaded(Action<Task<PEFile>> onAssemblyLoaded, TaskScheduler taskScheduler)
-    {
-        return assemblyTask.ContinueWith(onAssemblyLoaded, default(CancellationToken), TaskContinuationOptions.RunContinuationsAsynchronously, taskScheduler);
-    }
+    public Task ContinueWhenLoaded(Action<Task<PEFile>> onAssemblyLoaded, TaskScheduler taskScheduler) => assemblyTask.ContinueWith(onAssemblyLoaded, default(CancellationToken), TaskContinuationOptions.RunContinuationsAsynchronously, taskScheduler);
 
     /// <summary>
     /// Wait until the assembly is loaded.
     /// Throws an AggregateException when loading the assembly fails.
     /// </summary>
-    public void WaitUntilLoaded()
-    {
-        assemblyTask.Wait();
-    }
+    public void WaitUntilLoaded() => assemblyTask.Wait();
 
 }

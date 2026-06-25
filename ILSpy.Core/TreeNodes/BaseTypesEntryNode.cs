@@ -98,10 +98,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return false;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
 
     IEntity IMemberTreeNode.Member => TryResolve(module, handle, type, false);
 }

@@ -77,12 +77,9 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context)
-		{
-			return ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
-		}
+    bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context) => ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
 
-		static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
+    static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
 				return false;

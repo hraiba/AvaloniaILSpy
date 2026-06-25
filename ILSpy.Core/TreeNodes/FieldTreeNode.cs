@@ -37,12 +37,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Text => GetText(FieldDefinition, Language) + FieldDefinition.MetadataToken.ToSuffixString();
 
-		public static object GetText(IField field, Language language)
-		{
-			return language.FieldToString(field, includeDeclaringTypeName: false, includeNamespace: false, includeNamespaceOfDeclaringTypeName: false);
-		}
+    public static object GetText(IField field, Language language) => language.FieldToString(field, includeDeclaringTypeName: false, includeNamespace: false, includeNamespaceOfDeclaringTypeName: false);
 
-		public override object Icon => GetIcon(FieldDefinition);
+    public override object Icon => GetIcon(FieldDefinition);
 
 		public static IBitmap GetIcon(IField field)
 		{
@@ -68,12 +65,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				return FilterResult.Hidden;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileField(FieldDefinition, output, options);
-		}
-		
-		public override bool IsPublicAPI {
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileField(FieldDefinition, output, options);
+
+    public override bool IsPublicAPI {
 			get {
 				switch (FieldDefinition.Accessibility) {
 					case Accessibility.Public:

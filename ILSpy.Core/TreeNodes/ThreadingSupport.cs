@@ -118,12 +118,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
         public override object Text => Resources.Loading;
 
-        public override FilterResult Filter(FilterSettings settings)
-			{
-				return FilterResult.Match;
-			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+        public override FilterResult Filter(FilterSettings settings) => FilterResult.Match;
+
+        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}
@@ -138,13 +135,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			{
 				this.text = text;
 			}
-			
-			public override FilterResult Filter(FilterSettings settings)
-			{
-				return FilterResult.Match;
-			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+
+        public override FilterResult Filter(FilterSettings settings) => FilterResult.Match;
+
+        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}
@@ -159,12 +153,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				return false;
 			}
 
-			public bool IsEnabled(TextViewContext context)
-			{
-				return true;
-			}
+        public bool IsEnabled(TextViewContext context) => true;
 
-			public void Execute(TextViewContext context)
+        public void Execute(TextViewContext context)
 			{
 				StringBuilder builder = new StringBuilder();
 				if (context.SelectedTreeNodes != null) {

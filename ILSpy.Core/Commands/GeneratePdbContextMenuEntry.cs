@@ -44,14 +44,11 @@ namespace ICSharpCode.ILSpy;
 
 		public bool IsEnabled(TextViewContext context) => true;
 
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.SelectedTreeNodes?.Length == 1
-				&& context.SelectedTreeNodes?.FirstOrDefault() is AssemblyTreeNode tn
-				&& !tn.LoadedAssembly.HasLoadError;
-		}
+    public bool IsVisible(TextViewContext context) => context.SelectedTreeNodes?.Length == 1
+            && context.SelectedTreeNodes?.FirstOrDefault() is AssemblyTreeNode tn
+            && !tn.LoadedAssembly.HasLoadError;
 
-		internal static async void GeneratePdbForAssembly(LoadedAssembly assembly)
+    internal static async void GeneratePdbForAssembly(LoadedAssembly assembly)
 		{
 			var file = assembly.GetPEFileOrNull();
 			if (!PortablePdbWriter.HasCodeViewDebugDirectoryEntry(file)) {
@@ -92,14 +89,11 @@ namespace ICSharpCode.ILSpy;
 [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.GeneratePortable), MenuCategory = "Save")]
 class GeneratePdbMainMenuEntry : SimpleCommand
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return MainWindow.Instance.SelectedNodes?.Count() == 1
-				&& MainWindow.Instance.SelectedNodes?.FirstOrDefault() is AssemblyTreeNode tn
-				&& !tn.LoadedAssembly.HasLoadError;
-		}
+    public override bool CanExecute(object parameter) => MainWindow.Instance.SelectedNodes?.Count() == 1
+            && MainWindow.Instance.SelectedNodes?.FirstOrDefault() is AssemblyTreeNode tn
+            && !tn.LoadedAssembly.HasLoadError;
 
-		public override void Execute(object parameter)
+    public override void Execute(object parameter)
 		{
 			var assembly = (MainWindow.Instance.SelectedNodes?.FirstOrDefault() as AssemblyTreeNode)?.LoadedAssembly;
 			if (assembly == null) return;

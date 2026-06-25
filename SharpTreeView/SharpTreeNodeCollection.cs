@@ -31,9 +31,8 @@ namespace ICSharpCode.TreeView;
 			isRaisingEvent = true;
 			try {
 				parent.OnChildrenChanged(e);
-				if (CollectionChanged != null)
-					CollectionChanged(this, e);
-			} finally {
+            CollectionChanged?.Invoke(this, e);
+        } finally {
 				isRaisingEvent = false;
 			}
 		}
@@ -127,31 +126,22 @@ namespace ICSharpCode.TreeView;
 			list.Add(node);
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, list.Count - 1));
 		}
-		
-		public void AddRange(IEnumerable<SharpTreeNode> nodes)
-		{
-			InsertRange(Count, nodes);
-		}
-		
-		public void Clear()
+
+    public void AddRange(IEnumerable<SharpTreeNode> nodes) => InsertRange(Count, nodes);
+
+    public void Clear()
 		{
 			ThrowOnReentrancy();
 			var oldList = list;
 			list = [];
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldList, 0));
 		}
-		
-		public bool Contains(SharpTreeNode node)
-		{
-			return IndexOf(node) >= 0;
-		}
-		
-		public void CopyTo(SharpTreeNode[] array, int arrayIndex)
-		{
-			list.CopyTo(array, arrayIndex);
-		}
-		
-		public bool Remove(SharpTreeNode item)
+
+    public bool Contains(SharpTreeNode node) => IndexOf(node) >= 0;
+
+    public void CopyTo(SharpTreeNode[] array, int arrayIndex) => list.CopyTo(array, arrayIndex);
+
+    public bool Remove(SharpTreeNode item)
 		{
 			int pos = IndexOf(item);
 			if (pos >= 0) {
@@ -161,18 +151,12 @@ namespace ICSharpCode.TreeView;
 				return false;
 			}
 		}
-		
-		public IEnumerator<SharpTreeNode> GetEnumerator()
-		{
-			return list.GetEnumerator();
-		}
-		
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return list.GetEnumerator();
-		}
-		
-		public void RemoveAll(Predicate<SharpTreeNode> match)
+
+    public IEnumerator<SharpTreeNode> GetEnumerator() => list.GetEnumerator();
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => list.GetEnumerator();
+
+    public void RemoveAll(Predicate<SharpTreeNode> match)
 		{
 			if (match == null)
 				throw new ArgumentNullException("match");

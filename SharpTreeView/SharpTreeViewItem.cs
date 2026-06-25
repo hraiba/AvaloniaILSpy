@@ -113,25 +113,13 @@ public class SharpTreeViewItem : ListBoxItem
 
     #region Drag and Drop
 
-    protected virtual void OnDragEnter(DragEventArgs e)
-    {
-        ParentTreeView.HandleDragEnter(this, e);
-    }
+    protected virtual void OnDragEnter(DragEventArgs e) => ParentTreeView.HandleDragEnter(this, e);
 
-    protected virtual void OnDragOver(DragEventArgs e)
-    {
-        ParentTreeView.HandleDragOver(this, e);
-    }
+    protected virtual void OnDragOver(DragEventArgs e) => ParentTreeView.HandleDragOver(this, e);
 
-    protected virtual void OnDrop(DragEventArgs e)
-    {
-        ParentTreeView.HandleDrop(this, e);
-    }
+    protected virtual void OnDrop(DragEventArgs e) => ParentTreeView.HandleDrop(this, e);
 
-    protected virtual void OnDragLeave(RoutedEventArgs e)
-    {
-        ParentTreeView.HandleDragLeave(this, e);
-    }
+    protected virtual void OnDragLeave(RoutedEventArgs e) => ParentTreeView.HandleDragLeave(this, e);
 
     #endregion
 }

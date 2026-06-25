@@ -37,12 +37,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();
 
-		public static object GetText(IMethod method, Language language)
-		{
-			return language.MethodToString(method, false, false, false);
-		}
+    public static object GetText(IMethod method, Language language) => language.MethodToString(method, false, false, false);
 
-		public override object Icon => GetIcon(MethodDefinition);
+    public override object Icon => GetIcon(MethodDefinition);
 
 		public static IBitmap GetIcon(IMethod method)
 		{
@@ -82,12 +79,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileMethod(MethodDefinition, output, options);
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileMethod(MethodDefinition, output, options);
 
-		public override FilterResult Filter(FilterSettings settings)
+    public override FilterResult Filter(FilterSettings settings)
 		{
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
             return FilterResult.Hidden;

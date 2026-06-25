@@ -43,12 +43,9 @@ namespace ICSharpCode.ILSpy;
 		HashSet<string> ignoredStacks = [];
 		bool dialogIsOpen;
 
-		public override void Fail(string message)
-		{
-			Fail(message, null);
-		}
+    public override void Fail(string message) => Fail(message, null);
 
-		public override void Fail(string message, string detailMessage)
+    public override void Fail(string message, string detailMessage)
 		{
 			base.Fail(message, detailMessage); // let base class write the assert to the debug console
 			string topFrame = "";

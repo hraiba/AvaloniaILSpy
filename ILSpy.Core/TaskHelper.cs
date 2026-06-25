@@ -184,21 +184,15 @@ public static class TaskHelper
     /// <summary>
     /// Ignore exceptions thrown by the task.
     /// </summary>
-    public static void IgnoreExceptions(this Task task)
-    {
-        ArgumentNullException.ThrowIfNull(task);
-    }
+    public static void IgnoreExceptions(this Task task) => ArgumentNullException.ThrowIfNull(task);
 
     /// <summary>
     /// Handle exceptions by displaying the error message in the text view.
     /// </summary>
-    public static void HandleExceptions(this Task task)
-    {
-        task.Catch<Exception>(exception => Dispatcher.UIThread.InvokeAsync(new Action(delegate
-        {
-            var output = new AvaloniaEditTextOutput();
-            output.Write(exception.ToString());
-            MainWindow.Instance.TextView.ShowText(output);
-        }))).IgnoreExceptions();
-    }
+    public static void HandleExceptions(this Task task) => task.Catch<Exception>(exception => Dispatcher.UIThread.InvokeAsync(new Action(delegate
+                                                                {
+                                                                    var output = new AvaloniaEditTextOutput();
+                                                                    output.Write(exception.ToString());
+                                                                    MainWindow.Instance.TextView.ShowText(output);
+                                                                }))).IgnoreExceptions();
 }

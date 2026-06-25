@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy;
 /// Per-session setting:
 /// Loaded at startup; saved at exit.
 /// </summary>
-public sealed class SessionSettings : INotifyPropertyChanged
+public sealed partial class SessionSettings : INotifyPropertyChanged
 {
     public SessionSettings(ILSpySettings spySettings)
     {
@@ -63,13 +63,9 @@ public sealed class SessionSettings : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    void OnPropertyChanged(string propertyName)
-    {
-        if (PropertyChanged != null)
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }
+    void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public FilterSettings FilterSettings { get; private set; }
+    public FilterSettings FilterSettings { get; }
     public Search.SearchMode SelectedSearchMode { get; set; }
 
     public string[] ActiveTreeViewPath;
@@ -89,7 +85,7 @@ public sealed class SessionSettings : INotifyPropertyChanged
 
     public void Save()
     {
-        XElement doc = new XElement("SessionSettings");
+        var doc = new XElement("SessionSettings");
         doc.Add(FilterSettings.SaveAsXml());
         if (ActiveAssemblyList != null)
         {
@@ -115,11 +111,11 @@ public sealed class SessionSettings : INotifyPropertyChanged
         ILSpySettings.SaveSettings(doc);
     }
 
-    static Regex regex = new Regex("\\\\x(?<num>[0-9A-f]{4})");
+    static readonly Regex regex = MyRegex();
 
     static string Escape(string p)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         foreach (char ch in p)
         {
             if (char.IsLetterOrDigit(ch))
@@ -130,10 +126,8 @@ public sealed class SessionSettings : INotifyPropertyChanged
         return sb.ToString();
     }
 
-    static string Unescape(string p)
-    {
-        return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
-    }
+    static string Unescape(string p) => regex.Replace(p, m =>
+            ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
 
     static T FromString<T>(string s, T defaultValue)
     {
@@ -162,4 +156,7 @@ public sealed class SessionSettings : INotifyPropertyChanged
         TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
         return c.ConvertToInvariantString(obj);
     }
+
+    [GeneratedRegex("\\\\x(?<num>[0-9A-f]{4})")]
+    private static partial Regex MyRegex();
 }

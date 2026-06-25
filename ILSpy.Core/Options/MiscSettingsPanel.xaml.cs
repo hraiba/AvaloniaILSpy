@@ -33,17 +33,11 @@ public partial class MiscSettingsPanel : UserControl, IOptionPage
 			InitializeComponent();
 		}
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+    private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-		public void Load(ILSpySettings settings)
-		{
-			DataContext = LoadMiscSettings(settings);
-		}
+    public void Load(ILSpySettings settings) => DataContext = LoadMiscSettings(settings);
 
-		static MiscSettings currentMiscSettings;
+    static MiscSettings currentMiscSettings;
 
     public static MiscSettings CurrentMiscSettings => currentMiscSettings ??= LoadMiscSettings(ILSpySettings.Load());
 

@@ -44,31 +44,33 @@ namespace ICSharpCode.ILSpy;
 	
 	public static class SmartTextOutputExtensions
 	{
-		/// <summary>
-		/// Creates a button.
-		/// </summary>
-		public static void AddButton(this ISmartTextOutput output, IBitmap icon, string text, EventHandler<RoutedEventArgs> click)
-		{
-			output.AddUIElement(
-				delegate {
-					Button button = new Button();
-					button.Cursor = Cursor.Default;
-					button.Margin = new Thickness(2);
-					button.Padding = new Thickness(9, 1, 9, 1);
-					button.MinWidth = 73;
-					if (icon != null) {
-						button.Content = new StackPanel {
-							Orientation = Orientation.Horizontal,
-							Children = {
-								new Image { Width = 16, Height = 16, Source = icon, Margin = new Thickness(0, 0, 4, 0) },
-								new TextBlock { Text = text }
-							}
-						};
-					} else {
-						button.Content = text;
-					}
-					button.Click += click;
-					return button;
-				});
-		}
-	}
+    /// <summary>
+    /// Creates a button.
+    /// </summary>
+    public static void AddButton(this ISmartTextOutput output, IBitmap icon, string text, EventHandler<RoutedEventArgs> click) => output.AddUIElement(
+            delegate
+            {
+                Button button = new Button();
+                button.Cursor = Cursor.Default;
+                button.Margin = new Thickness(2);
+                button.Padding = new Thickness(9, 1, 9, 1);
+                button.MinWidth = 73;
+                if (icon != null)
+                {
+                    button.Content = new StackPanel
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Children = {
+                                new Image { Width = 16, Height = 16, Source = icon, Margin = new Thickness(0, 0, 4, 0) },
+                                new TextBlock { Text = text }
+                        }
+                    };
+                }
+                else
+                {
+                    button.Content = text;
+                }
+                button.Click += click;
+                return button;
+            });
+}

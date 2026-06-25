@@ -67,13 +67,7 @@ namespace ICSharpCode.ILSpy.Controls;
 			return Add(Multiple(c, (1 - Highlight)), Multiple(SystemColors.HighlightColor, Highlight));
 		}
 
-		static Color Multiple(Color c, float multiplier)
-		{
-			return new Color((byte)((float)c.A * multiplier), (byte)((float)c.R * multiplier), (byte)((float)c.G * multiplier), (byte)((float)c.B * multiplier));
-		}
+    static Color Multiple(Color c, float multiplier) => new Color((byte)((float)c.A * multiplier), (byte)((float)c.R * multiplier), (byte)((float)c.G * multiplier), (byte)((float)c.B * multiplier));
 
-		static Color Add(Color c1, Color c2)
-		{
-			return new Color((byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A));
-		}
-	}
+    static Color Add(Color c1, Color c2) => new Color((byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A));
+}

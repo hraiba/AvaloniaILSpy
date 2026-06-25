@@ -22,10 +22,7 @@ internal class NavigationCommand: RoutedCommand, ICommand
     {
     }
 
-    private static void HandlePointerEvent(object sender, RoutedEventArgs args)
-    {
-        interactiveEventHandler?.Invoke(sender, args);
-    }
+    private static void HandlePointerEvent(object sender, RoutedEventArgs args) => interactiveEventHandler?.Invoke(sender, args);
 
     event EventHandler ICommand.CanExecuteChanged
     {

@@ -81,18 +81,15 @@ namespace ICSharpCode.ILSpy;
 				return [.. assemblies];
 			}
 		}
-		
-		/// <summary>
-		/// Saves this assembly list to XML.
-		/// </summary>
-		internal XElement SaveAsXml()
-		{
-			return new XElement(
-				"List",
-				new XAttribute("name", ListName),
-				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
-			);
-		}
+
+    /// <summary>
+    /// Saves this assembly list to XML.
+    /// </summary>
+    internal XElement SaveAsXml() => new XElement(
+            "List",
+            new XAttribute("name", ListName),
+            assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
+        );
 
     /// <summary>
     /// Gets the name of this list.
@@ -132,13 +129,10 @@ namespace ICSharpCode.ILSpy;
 				);
 			}
 		}
-		
-		internal void ClearCache()
-		{
-			assemblyLookupCache.Clear();
-		}
 
-		public LoadedAssembly Open(string assemblyUri, bool isAutoLoaded = false)
+    internal void ClearCache() => assemblyLookupCache.Clear();
+
+    public LoadedAssembly Open(string assemblyUri, bool isAutoLoaded = false)
 		{
 			if (assemblyUri.StartsWith("nupkg://", StringComparison.OrdinalIgnoreCase)) {
 				string fileName = assemblyUri.Substring("nupkg://".Length);
@@ -265,13 +259,10 @@ namespace ICSharpCode.ILSpy;
 					GC.Collect();
 				}), DispatcherPriority.ContextIdle);
 		}
-		
-		public void Sort(IComparer<LoadedAssembly> comparer)
-		{
-			Sort(0, int.MaxValue, comparer);
-		}
-		
-		public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
+
+    public void Sort(IComparer<LoadedAssembly> comparer) => Sort(0, int.MaxValue, comparer);
+
+    public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
 		{
 			Dispatcher.UIThread.VerifyAccess();
 			lock (assemblies) {

@@ -57,8 +57,5 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		public bool Show(ISymbol entity)
-		{
-			return entity is IProperty property && property.IsOverridable && property.DeclaringType.Kind != TypeKind.Interface;
-		}
-	}
+    public bool Show(ISymbol entity) => entity is IProperty property && property.IsOverridable && property.DeclaringType.Kind != TypeKind.Interface;
+}

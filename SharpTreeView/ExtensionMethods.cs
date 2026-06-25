@@ -10,12 +10,9 @@ namespace ICSharpCode.TreeView;
 
 	static class ExtensionMethods
 	{
-		public static T FindAncestor<T>(this IVisual d) where T : class
-		{
-			return d.GetVisualAncestors().OfType<T>().FirstOrDefault();
-		}
+    public static T FindAncestor<T>(this IVisual d) where T : class => d.GetVisualAncestors().OfType<T>().FirstOrDefault();
 
-		public static void AddOnce(this IList list, object item)
+    public static void AddOnce(this IList list, object item)
 		{
 			if (!list.Contains(item)) {
 				list.Add(item);

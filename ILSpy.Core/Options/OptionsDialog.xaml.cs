@@ -74,12 +74,9 @@ namespace ICSharpCode.ILSpy.Options;
 			this.FindControl<Button>("cancelButton").Click += CancelButton_Click;;
 		}
 
-    void CancelButton_Click(object sender, RoutedEventArgs e)
-    {
-        Close(false);
-    }
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
+    void OKButton_Click(object sender, RoutedEventArgs e)
 		{
 			ILSpySettings.Update(
 				delegate (XElement root) {

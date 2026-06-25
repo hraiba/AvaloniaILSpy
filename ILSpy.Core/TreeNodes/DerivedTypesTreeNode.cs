@@ -48,12 +48,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Icon => Images.SubTypes;
 
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
+    protected override void LoadChildren() => threading.LoadChildren(this, FetchChildren);
 
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
+    IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.GetPEFileOrNull()).Where(asm => asm != null).ToArray();
@@ -85,15 +82,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			yield break;
 		}
 
-		static bool IsSameType(SRM.MetadataReader referenceMetadata, SRM.EntityHandle typeRef,
-			                   SRM.MetadataReader definitionMetadata, SRM.TypeDefinitionHandle typeDef)
-		{
-			// FullName contains only namespace, name and type parameter count, therefore this should suffice.
-			return typeRef.GetFullTypeName(referenceMetadata) == typeDef.GetFullTypeName(definitionMetadata);
-		}
+    static bool IsSameType(SRM.MetadataReader referenceMetadata, SRM.EntityHandle typeRef,
+                           SRM.MetadataReader definitionMetadata, SRM.TypeDefinitionHandle typeDef) =>
+        // FullName contains only namespace, name and type parameter count, therefore this should suffice.
+        typeRef.GetFullTypeName(referenceMetadata) == typeDef.GetFullTypeName(definitionMetadata);
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			threading.Decompile(language, output, options, EnsureLazyChildren);
-		}
-	}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => threading.Decompile(language, output, options, EnsureLazyChildren);
+}

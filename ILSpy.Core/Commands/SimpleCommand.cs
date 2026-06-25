@@ -32,8 +32,5 @@ namespace ICSharpCode.ILSpy;
 
 		public abstract void Execute(object parameter);
 
-		public virtual bool CanExecute(object parameter)
-		{
-			return true;
-		}
-	}
+    public virtual bool CanExecute(object parameter) => true;
+}

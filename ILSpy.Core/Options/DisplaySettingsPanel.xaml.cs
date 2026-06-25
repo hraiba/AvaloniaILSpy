@@ -72,10 +72,7 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
         textEditor.Document = new TextDocument("AaBbCcXxYyZz".ToCharArray());
     }
 
-		public void Load(ILSpySettings settings)
-		{
-			DataContext = LoadDisplaySettings(settings);
-    }
+    public void Load(ILSpySettings settings) => DataContext = LoadDisplaySettings(settings);
 
     static DisplaySettings currentDisplaySettings;
 
@@ -95,13 +92,11 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
     //	return false;
     //}
 
-    static FontFamily[] FontLoader()
-		{
-			// TODO: filter SymbolFonts
-			return [.. FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x))];
-		}
+    static FontFamily[] FontLoader() =>
+            // TODO: filter SymbolFonts
+            [.. FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x))];
 
-		public static DisplaySettings LoadDisplaySettings(ILSpySettings settings)
+    public static DisplaySettings LoadDisplaySettings(ILSpySettings settings)
 		{
 			XElement e = settings["DisplaySettings"];
 			var s = new DisplaySettings();

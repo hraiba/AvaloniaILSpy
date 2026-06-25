@@ -111,36 +111,21 @@ namespace ICSharpCode.ILSpy;
 			return " @" + token.ToString("x8");
 		}
 
-		public static string ToSuffixString(this System.Reflection.Metadata.MethodDefinitionHandle handle)
-		{
-			return ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
-		}
+    public static string ToSuffixString(this System.Reflection.Metadata.MethodDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
 
-		public static string ToSuffixString(this System.Reflection.Metadata.PropertyDefinitionHandle handle)
-		{
-			return ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
-		}
+    public static string ToSuffixString(this System.Reflection.Metadata.PropertyDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
 
-		public static string ToSuffixString(this System.Reflection.Metadata.EventDefinitionHandle handle)
-		{
-			return ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
-		}
+    public static string ToSuffixString(this System.Reflection.Metadata.EventDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
 
-		public static string ToSuffixString(this System.Reflection.Metadata.FieldDefinitionHandle handle)
-		{
-			return ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
-		}
+    public static string ToSuffixString(this System.Reflection.Metadata.FieldDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
 
-		public static string ToSuffixString(this System.Reflection.Metadata.TypeDefinitionHandle handle)
-		{
-			return ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
-		}
+    public static string ToSuffixString(this System.Reflection.Metadata.TypeDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
 
-		/// <summary>
-		/// Takes at most <paramref name="length" /> first characters from string, and appends '...' if string is longer.
-		/// String can be null.
-		/// </summary>
-		public static string TakeStartEllipsis(this string s, int length)
+    /// <summary>
+    /// Takes at most <paramref name="length" /> first characters from string, and appends '...' if string is longer.
+    /// String can be null.
+    /// </summary>
+    public static string TakeStartEllipsis(this string s, int length)
 		{
 			if (string.IsNullOrEmpty(s) || length >= s.Length)
 				return s;

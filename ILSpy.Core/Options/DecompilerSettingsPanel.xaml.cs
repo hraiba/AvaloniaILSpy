@@ -39,10 +39,7 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
 			InitializeComponent();
 		}
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+    private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
     static Decompiler.DecompilerSettings currentDecompilerSettings;
 
@@ -63,10 +60,7 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
         return newSettings;
     }
 
-    public void Load(ILSpySettings settings)
-    {
-        DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
-    }
+    public void Load(ILSpySettings settings) => DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
 
     public void Save(XElement root)
     {
@@ -119,10 +113,7 @@ public class DecompilerSettings : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     public Decompiler.DecompilerSettings ToDecompilerSettings()
     {
@@ -167,10 +158,7 @@ public class CSharpDecompilerSetting : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     static string GetResourceString(string key)
     {

@@ -55,18 +55,18 @@ namespace ICSharpCode.ILSpy;
 		/// Returns null, if context menu is not assigned to a text view.
 		/// </summary>
 		public DecompilerTextView TextView { get; private set; }
-		
-		/// <summary>
-		/// Returns the list box the context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a list box.
-		/// </summary>
-		public ListBox ListBox { get; private set; }
-		
-		/// <summary>
-		/// Returns the reference the mouse cursor is currently hovering above.
-		/// Returns null, if there was no reference found.
-		/// </summary>
-		public ReferenceSegment Reference { get; private set; }
+
+    /// <summary>
+    /// Returns the list box the context menu is assigned to.
+    /// Returns null, if context menu is not assigned to a list box.
+    /// </summary>
+    public ListBox ListBox { get; }
+
+    /// <summary>
+    /// Returns the reference the mouse cursor is currently hovering above.
+    /// Returns null, if there was no reference found.
+    /// </summary>
+    public ReferenceSegment Reference { get; private set; }
 		
 		/// <summary>
 		/// Returns the position in TextView the mouse cursor is currently hovering above.

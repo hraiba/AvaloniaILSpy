@@ -210,9 +210,6 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			}
 		}
 
-		public bool Show(ISymbol symbol)
-		{
-			return symbol is ITypeDefinition type && type.GetNonInterfaceBaseTypes()
-				.Any(t => t.IsKnownType(KnownTypeCode.Attribute));
-		}
-	}
+    public bool Show(ISymbol symbol) => symbol is ITypeDefinition type && type.GetNonInterfaceBaseTypes()
+            .Any(t => t.IsKnownType(KnownTypeCode.Attribute));
+}

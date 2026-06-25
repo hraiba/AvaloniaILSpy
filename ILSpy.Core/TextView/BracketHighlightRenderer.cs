@@ -24,24 +24,21 @@ namespace ICSharpCode.ILSpy.TextView;
 	{
 		public static readonly DefaultBracketSearcher DefaultInstance = new DefaultBracketSearcher();
 
-		public BracketSearchResult SearchBracket(IDocument document, int offset)
-		{
-			return null;
-		}
-	}
+    public BracketSearchResult SearchBracket(IDocument document, int offset) => null;
+}
 
 	/// <summary>
 	/// Describes a pair of matching brackets found by <see cref="IBracketSearcher"/>.
 	/// </summary>
 	public class BracketSearchResult
 	{
-		public int OpeningBracketOffset { get; private set; }
+    public int OpeningBracketOffset { get; }
 
-		public int OpeningBracketLength { get; private set; }
+    public int OpeningBracketLength { get; private set; }
 
-		public int ClosingBracketOffset { get; private set; }
+    public int ClosingBracketOffset { get; }
 
-		public int ClosingBracketLength { get; private set; }
+    public int ClosingBracketLength { get; private set; }
 
 		public BracketSearchResult(int openingBracketOffset, int openingBracketLength,
 								   int closingBracketOffset, int closingBracketLength)

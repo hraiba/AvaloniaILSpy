@@ -39,12 +39,9 @@ namespace ICSharpCode.ILSpy;
 	{
 		public event EventHandler StepperUpdated;
 
-		protected virtual void OnStepperUpdated(EventArgs e = null)
-		{
-			StepperUpdated?.Invoke(this, e ?? new EventArgs());
-		}
+    protected virtual void OnStepperUpdated(EventArgs e = null) => StepperUpdated?.Invoke(this, e ?? new EventArgs());
 
-		public Stepper Stepper { get; set; } = new Stepper();
+    public Stepper Stepper { get; set; } = new Stepper();
 
 		readonly string name;
 		

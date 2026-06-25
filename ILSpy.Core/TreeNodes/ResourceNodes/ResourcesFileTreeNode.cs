@@ -43,11 +43,8 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return null;
 		}
 
-		public ILSpyTreeNode CreateNode(string key, object data)
-		{
-			return null;
-		}
-	}
+    public ILSpyTreeNode CreateNode(string key, object data) => null;
+}
 
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
@@ -186,8 +183,8 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				Value = value;
 			}
 
-			public string Key { get; private set; }
-			public string Type { get; private set; }
-			public string Value { get; private set; }
-		}
+        public string Key { get; }
+        public string Type { get; private set; }
+        public string Value { get; }
+    }
 	}

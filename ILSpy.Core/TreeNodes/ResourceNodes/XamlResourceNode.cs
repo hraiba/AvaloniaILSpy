@@ -31,12 +31,9 @@ namespace ICSharpCode.ILSpy.Xaml;
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class XamlResourceNodeFactory : IResourceNodeFactory
 	{
-		public ILSpyTreeNode CreateNode(Resource resource)
-		{
-			return null;
-		}
-		
-		public ILSpyTreeNode CreateNode(string key, object data)
+    public ILSpyTreeNode CreateNode(Resource resource) => null;
+
+    public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (key.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) && data is Stream)
 				return new XamlResourceEntryNode(key, (Stream)data);

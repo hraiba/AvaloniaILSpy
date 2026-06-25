@@ -48,12 +48,9 @@ namespace ICSharpCode.ILSpy;
 			allLanguages = languages.AsReadOnly();
 		}
 
-		/// <summary>
-		/// Gets a language using its name.
-		/// If the language is not found, C# is returned instead.
-		/// </summary>
-		public static Language GetLanguage(string name)
-		{
-			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
-		}
-	}
+    /// <summary>
+    /// Gets a language using its name.
+    /// If the language is not found, C# is returned instead.
+    /// </summary>
+    public static Language GetLanguage(string name) => AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
+}

@@ -66,33 +66,28 @@ namespace ICSharpCode.ILSpy;
 				}
 			}
 		}
-		
-		static XDocument LoadWithoutCheckingCharacters(string fileName)
-		{
-			return XDocument.Load(fileName, LoadOptions.None);
-		}
-		
-		/// <summary>
-		/// Saves a setting section.
-		/// </summary>
-		public static void SaveSettings(XElement section)
-		{
-			Update(
-				delegate (XElement root) {
-					XElement existingElement = root.Element(section.Name);
-					if (existingElement != null)
-						existingElement.ReplaceWith(section);
-					else
-						root.Add(section);
-				});
-		}
-		
-		/// <summary>
-		/// Updates the saved settings.
-		/// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
-		/// by another ILSpy instance.
-		/// </summary>
-		public static void Update(Action<XElement> action)
+
+    static XDocument LoadWithoutCheckingCharacters(string fileName) => XDocument.Load(fileName, LoadOptions.None);
+
+    /// <summary>
+    /// Saves a setting section.
+    /// </summary>
+    public static void SaveSettings(XElement section) => Update(
+            delegate (XElement root)
+            {
+                XElement existingElement = root.Element(section.Name);
+                if (existingElement != null)
+                    existingElement.ReplaceWith(section);
+                else
+                    root.Add(section);
+            });
+
+    /// <summary>
+    /// Updates the saved settings.
+    /// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
+    /// by another ILSpy instance.
+    /// </summary>
+    public static void Update(Action<XElement> action)
 		{
 			using (new MutexProtector(ConfigFileMutex)) {
 				string config = GetConfigFile();

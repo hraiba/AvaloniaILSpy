@@ -26,27 +26,21 @@ namespace ICSharpCode.TreeView;
 
     int Balance => Height(right) - Height(left);
 
-    static int Height(SharpTreeNode node)
-		{
-			return node != null ? node.height : 0;
-		}
-		
-		internal SharpTreeNode GetListRoot()
+    static int Height(SharpTreeNode node) => node != null ? node.height : 0;
+
+    internal SharpTreeNode GetListRoot()
 		{
 			SharpTreeNode node = this;
 			while (node.listParent != null)
 				node = node.listParent;
 			return node;
 		}
-		
-		#region Debugging
-		[Conditional("DEBUG")]
-		void CheckRootInvariants()
-		{
-			GetListRoot().CheckInvariants();
-		}
-		
-		[Conditional("DATACONSISTENCYCHECK")]
+
+    #region Debugging
+    [Conditional("DEBUG")]
+    void CheckRootInvariants() => GetListRoot().CheckInvariants();
+
+    [Conditional("DATACONSISTENCYCHECK")]
 		void CheckInvariants()
 		{
 			Debug.Assert(left == null || left.listParent == this);
@@ -57,14 +51,11 @@ namespace ICSharpCode.TreeView;
 			left?.CheckInvariants();
 			right?.CheckInvariants();
 		}
-		
-		[Conditional("DEBUG")]
-		static void DumpTree(SharpTreeNode node)
-		{
-			node.GetListRoot().DumpTree();
-		}
-		
-		[Conditional("DEBUG")]
+
+    [Conditional("DEBUG")]
+    static void DumpTree(SharpTreeNode node) => node.GetListRoot().DumpTree();
+
+    [Conditional("DEBUG")]
 		void DumpTree()
 		{
 			Debug.Indent();

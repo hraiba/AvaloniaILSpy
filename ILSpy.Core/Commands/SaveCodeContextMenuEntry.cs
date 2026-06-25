@@ -31,17 +31,11 @@ namespace ICSharpCode.ILSpy.TextView;
 [ExportContextMenuEntry(Header = nameof(Resources._SaveCode), Category = nameof(Resources.Save), Icon = "Images/SaveFile.png")]
 sealed class SaveCodeContextMenuEntry : IContextMenuEntry
 {
-    public void Execute(TextViewContext context)
-    {
-        _ = Execute(context.SelectedTreeNodes);
-    }
+    public void Execute(TextViewContext context) => _ = Execute(context.SelectedTreeNodes);
 
     public bool IsEnabled(TextViewContext context) => true;
 
-    public bool IsVisible(TextViewContext context)
-    {
-        return CanExecute(context.SelectedTreeNodes);
-    }
+    public bool IsVisible(TextViewContext context) => CanExecute(context.SelectedTreeNodes);
 
     public static bool CanExecute(IReadOnlyList<SharpTreeNode> selectedNodes)
     {

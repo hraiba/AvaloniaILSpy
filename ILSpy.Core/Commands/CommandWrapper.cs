@@ -45,13 +45,7 @@ namespace ICSharpCode.ILSpy;
 			remove { wrappedCommand.CanExecuteChanged -= value; }
 		}
 
-		public void Execute(object parameter)
-		{
-			wrappedCommand.Execute(parameter);
-		}
+    public void Execute(object parameter) => wrappedCommand.Execute(parameter);
 
-		public bool CanExecute(object parameter)
-		{
-			return wrappedCommand.CanExecute(parameter);
-		}
-	}
+    public bool CanExecute(object parameter) => wrappedCommand.CanExecute(parameter);
+}

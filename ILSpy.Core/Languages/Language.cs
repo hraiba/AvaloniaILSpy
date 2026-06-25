@@ -44,25 +44,13 @@ namespace ICSharpCode.ILSpy;
 			DisplayName = name ?? version;
 		}
 
-		public bool Equals(LanguageVersion other)
-		{
-			return other.Version == Version && other.DisplayName == DisplayName;
-		}
+    public bool Equals(LanguageVersion other) => other.Version == Version && other.DisplayName == DisplayName;
 
-		public override bool Equals(object obj)
-		{
-			return obj is LanguageVersion version && Equals(version);
-		}
+    public override bool Equals(object obj) => obj is LanguageVersion version && Equals(version);
 
-		public override int GetHashCode()
-		{
-			return unchecked(982451629 * Version.GetHashCode() + 982451653 * DisplayName.GetHashCode());
-		}
+    public override int GetHashCode() => unchecked(982451629 * Version.GetHashCode() + 982451653 * DisplayName.GetHashCode());
 
-    public override string ToString()
-    {
-        return DisplayName;
-    }
+    public override string ToString() => DisplayName;
 
     public static bool operator ==(LanguageVersion lhs, LanguageVersion rhs) => lhs.Equals(rhs);
 		public static bool operator !=(LanguageVersion lhs, LanguageVersion rhs) => !lhs.Equals(rhs);
@@ -99,37 +87,19 @@ namespace ICSharpCode.ILSpy;
 
     public virtual TextView.IBracketSearcher BracketSearcher => TextView.DefaultBracketSearcher.DefaultInstance;
 
-    public virtual void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, TypeToString(method.DeclaringTypeDefinition, includeNamespace: true) + "." + method.Name);
-		}
+    public virtual void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, TypeToString(method.DeclaringTypeDefinition, includeNamespace: true) + "." + method.Name);
 
-		public virtual void DecompileProperty(IProperty property, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, TypeToString(property.DeclaringTypeDefinition, includeNamespace: true) + "." + property.Name);
-		}
+    public virtual void DecompileProperty(IProperty property, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, TypeToString(property.DeclaringTypeDefinition, includeNamespace: true) + "." + property.Name);
 
-		public virtual void DecompileField(IField field, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, TypeToString(field.DeclaringTypeDefinition, includeNamespace: true) + "." + field.Name);
-		}
+    public virtual void DecompileField(IField field, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, TypeToString(field.DeclaringTypeDefinition, includeNamespace: true) + "." + field.Name);
 
-		public virtual void DecompileEvent(IEvent @event, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, TypeToString(@event.DeclaringTypeDefinition, includeNamespace: true) + "." + @event.Name);
-		}
+    public virtual void DecompileEvent(IEvent @event, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, TypeToString(@event.DeclaringTypeDefinition, includeNamespace: true) + "." + @event.Name);
 
-		public virtual void DecompileType(ITypeDefinition type, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, TypeToString(type, includeNamespace: true));
-		}
+    public virtual void DecompileType(ITypeDefinition type, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, TypeToString(type, includeNamespace: true));
 
-		public virtual void DecompileNamespace(string nameSpace, IEnumerable<ITypeDefinition> types, ITextOutput output, DecompilationOptions options)
-		{
-			WriteCommentLine(output, nameSpace);
-		}
+    public virtual void DecompileNamespace(string nameSpace, IEnumerable<ITypeDefinition> types, ITextOutput output, DecompilationOptions options) => WriteCommentLine(output, nameSpace);
 
-		public virtual ProjectId DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+    public virtual ProjectId DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, assembly.FileName);
 			var asm = assembly.GetPEFileOrNull();
@@ -148,16 +118,13 @@ namespace ICSharpCode.ILSpy;
 			return null;
 		}
 
-		public virtual void WriteCommentLine(ITextOutput output, string comment)
-		{
-			output.WriteLine("// " + comment);
-		}
+    public virtual void WriteCommentLine(ITextOutput output, string comment) => output.WriteLine("// " + comment);
 
-		#region TypeToString
-		/// <summary>
-		/// Converts a type definition, reference or specification into a string. This method is used by tree nodes and search results.
-		/// </summary>
-		public virtual string TypeToString(IType type, bool includeNamespace)
+    #region TypeToString
+    /// <summary>
+    /// Converts a type definition, reference or specification into a string. This method is used by tree nodes and search results.
+    /// </summary>
+    public virtual string TypeToString(IType type, bool includeNamespace)
 		{
 			var visitor = new TypeToStringVisitor(includeNamespace);
 			type.AcceptVisitor(visitor);
@@ -169,12 +136,9 @@ namespace ICSharpCode.ILSpy;
 			readonly bool includeNamespace;
 			readonly StringBuilder builder;
 
-			public override string ToString()
-			{
-				return builder.ToString();
-			}
+        public override string ToString() => builder.ToString();
 
-			public TypeToStringVisitor(bool includeNamespace)
+        public TypeToStringVisitor(bool includeNamespace)
 			{
 				this.includeNamespace = includeNamespace;
 				builder = new StringBuilder();
@@ -329,18 +293,15 @@ namespace ICSharpCode.ILSpy;
 				return type;
 			}
 		}
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// Converts a member signature to a string.
-		/// This is used for displaying the tooltip on a member reference.
-		/// </summary>
-		public virtual string GetTooltip(IEntity entity)
-		{
-			return GetDisplayName(entity, true, true, true);
-		}
+    /// <summary>
+    /// Converts a member signature to a string.
+    /// This is used for displaying the tooltip on a member reference.
+    /// </summary>
+    public virtual string GetTooltip(IEntity entity) => GetDisplayName(entity, true, true, true);
 
-		public virtual string FieldToString(IField field, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
+    public virtual string FieldToString(IField field, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
 		{
         ArgumentNullException.ThrowIfNull(field);
         return GetDisplayName(field, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName) + " : " + TypeToString(field.ReturnType, includeNamespace);
@@ -419,23 +380,17 @@ namespace ICSharpCode.ILSpy;
         }
 		}
 
-		/// <summary>
-		/// Used for WPF keyboard navigation.
-		/// </summary>
-		public override string ToString()
-		{
-			return Name;
-		}
+    /// <summary>
+    /// Used for WPF keyboard navigation.
+    /// </summary>
+    public override string ToString() => Name;
 
-		public virtual bool ShowMember(IEntity member)
-		{
-			return true;
-		}
+    public virtual bool ShowMember(IEntity member) => true;
 
-		/// <summary>
-		/// This should produce a string representation of the entity for search to match search strings against.
-		/// </summary>
-		public virtual string GetEntityName(MetadataFile module, EntityHandle handle, bool fullName, bool omitGenerics)
+    /// <summary>
+    /// This should produce a string representation of the entity for search to match search strings against.
+    /// </summary>
+    public virtual string GetEntityName(MetadataFile module, EntityHandle handle, bool fullName, bool omitGenerics)
 		{
 			MetadataReader metadata = module.Metadata;
 			switch (handle.Kind) {
@@ -517,10 +472,7 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 
-		public static string GetRuntimeDisplayName(PEFile module)
-		{
-			return module.Metadata.MetadataVersion;
-		}
+    public static string GetRuntimeDisplayName(PEFile module) => module.Metadata.MetadataVersion;
 
     /// <summary>
     /// Escape characters that cannot be displayed in the UI.
@@ -540,8 +492,5 @@ namespace ICSharpCode.ILSpy;
     /// <summary>
     /// Escape characters that cannot be displayed in the UI.
     /// </summary>
-    public static string EscapeName(string name)
-    {
-        return EscapeName(new StringBuilder(name.Length), name).ToString();
-    }
+    public static string EscapeName(string name) => EscapeName(new StringBuilder(name.Length), name).ToString();
 }

@@ -33,11 +33,8 @@ sealed class SortAssemblyListCommand : SimpleCommand, IComparer<LoadedAssembly>
 				MainWindow.Instance.CurrentAssemblyList.Sort(this);
 		}
 
-		int IComparer<LoadedAssembly>.Compare(LoadedAssembly x, LoadedAssembly y)
-		{
-			return string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCulture);
-		}
-	}
+    int IComparer<LoadedAssembly>.Compare(LoadedAssembly x, LoadedAssembly y) => string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCulture);
+}
 
 [ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources._CollapseTreeNodes), MenuIcon = "Images/CollapseAll.png", MenuCategory = nameof(Resources.View))]
 [ExportToolbarCommand(ToolTip = nameof(Resources.CollapseTreeNodes), ToolbarIcon = "Images/CollapseAll.png", ToolbarCategory = nameof(Resources.View))]

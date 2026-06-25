@@ -40,10 +40,7 @@ sealed class Pdb2XmlCommand : SimpleCommand
             && selectedNodes.All(n => n is AssemblyTreeNode asm && !asm.LoadedAssembly.HasLoadError);
     }
 
-    public override void Execute(object parameter)
-    {
-        Execute(MainWindow.Instance.SelectedNodes.OfType<AssemblyTreeNode>());
-    }
+    public override void Execute(object parameter) => Execute(MainWindow.Instance.SelectedNodes.OfType<AssemblyTreeNode>());
 
     internal static void Execute(IEnumerable<AssemblyTreeNode> nodes)
     {
@@ -68,10 +65,7 @@ sealed class Pdb2XmlCommand : SimpleCommand
 [ExportContextMenuEntry(Header = "DEBUG -- Dump PDB as XML")]
 class Pdb2XmlCommandContextMenuEntry : IContextMenuEntry
 {
-    public void Execute(TextViewContext context)
-    {
-        Pdb2XmlCommand.Execute(context.SelectedTreeNodes.OfType<AssemblyTreeNode>());
-    }
+    public void Execute(TextViewContext context) => Pdb2XmlCommand.Execute(context.SelectedTreeNodes.OfType<AssemblyTreeNode>());
 
     public bool IsEnabled(TextViewContext context) => true;
 

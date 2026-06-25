@@ -30,10 +30,7 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
 
     public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-    public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
-    {
-        CollectionChanged?.Invoke(this, e);
-    }
+    public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e) => CollectionChanged?.Invoke(this, e);
 
     public void NodesInserted(int index, IEnumerable<SharpTreeNode> nodes)
     {
@@ -102,30 +99,15 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
 
     object ICollection.SyncRoot => syncRoot;
 
-    void IList.Insert(int index, object item)
-    {
-        throw new NotSupportedException();
-    }
+    void IList.Insert(int index, object item) => throw new NotSupportedException();
 
-    void IList.RemoveAt(int index)
-    {
-        throw new NotSupportedException();
-    }
+    void IList.RemoveAt(int index) => throw new NotSupportedException();
 
-    int IList.Add(object item)
-    {
-        throw new NotSupportedException();
-    }
+    int IList.Add(object item) => throw new NotSupportedException();
 
-    void IList.Clear()
-    {
-        throw new NotSupportedException();
-    }
+    void IList.Clear() => throw new NotSupportedException();
 
-    public bool Contains(object item)
-    {
-        return IndexOf(item) >= 0;
-    }
+    public bool Contains(object item) => IndexOf(item) >= 0;
 
     public void CopyTo(Array array, int arrayIndex)
     {
@@ -133,10 +115,7 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
             array.SetValue(item, arrayIndex++);
     }
 
-    void IList.Remove(object item)
-    {
-        throw new NotSupportedException();
-    }
+    void IList.Remove(object item) => throw new NotSupportedException();
 
     public IEnumerator GetEnumerator()
     {

@@ -25,37 +25,25 @@ namespace ICSharpCode.ILSpy;
 			var image = file.Reader.GetEntireImage();
 			return Mono.Cecil.ModuleDefinition.ReadModule(new UnmanagedMemoryStream(image.Pointer, image.Length));
 		}
-		public static IAssemblyResolver GetAssemblyResolver(this MetadataFile file, bool loadOnDemand = true)
-		{
-			return GetLoadedAssembly(file).GetAssemblyResolver(loadOnDemand);
-		}
+    public static IAssemblyResolver GetAssemblyResolver(this MetadataFile file, bool loadOnDemand = true) => GetLoadedAssembly(file).GetAssemblyResolver(loadOnDemand);
 
-		// internal static IAssemblyResolver GetAssemblyResolver(
-		//           this MetadataFile file,
-		//           AssemblyListSnapshot snapshot,
-		//           bool loadOnDemand = true)
-		// {
-		// 	return GetLoadedAssembly(file).GetAssemblyResolver(snapshot, loadOnDemand);
-		// }
-		//
-		public static IDebugInfoProvider? GetDebugInfoOrNull(this MetadataFile file)
-		{
-			return GetLoadedAssembly(file).GetDebugInfoOrNull();
-		}
+    // internal static IAssemblyResolver GetAssemblyResolver(
+    //           this MetadataFile file,
+    //           AssemblyListSnapshot snapshot,
+    //           bool loadOnDemand = true)
+    // {
+    // 	return GetLoadedAssembly(file).GetAssemblyResolver(snapshot, loadOnDemand);
+    // }
+    //
+    public static IDebugInfoProvider? GetDebugInfoOrNull(this MetadataFile file) => GetLoadedAssembly(file).GetDebugInfoOrNull();
 
-		public static ICompilation? GetTypeSystemOrNull(this MetadataFile file)
-		{
-			return GetLoadedAssembly(file).GetTypeSystemOrNull();
-		}
+    public static ICompilation? GetTypeSystemOrNull(this MetadataFile file) => GetLoadedAssembly(file).GetTypeSystemOrNull();
 
-		public static ICompilation? GetTypeSystemWithDecompilerSettingsOrNull(
-		          this MetadataFile file,
-		          DecompilerSettings settings)
-		{
-			return GetLoadedAssembly(file).GetTypeSystemOrNull(DecompilerTypeSystem.GetOptions(settings));
-		}
+    public static ICompilation? GetTypeSystemWithDecompilerSettingsOrNull(
+              this MetadataFile file,
+              DecompilerSettings settings) => GetLoadedAssembly(file).GetTypeSystemOrNull(DecompilerTypeSystem.GetOptions(settings));
 
-		public static LoadedAssembly GetLoadedAssembly(this MetadataFile file)
+    public static LoadedAssembly GetLoadedAssembly(this MetadataFile file)
 		{
         ArgumentNullException.ThrowIfNull(file);
         LoadedAssembly? loadedAssembly;

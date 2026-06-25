@@ -43,17 +43,14 @@ namespace ICSharpCode.ILSpy;
 				LanguageVersion = language.LanguageVersions.LastOrDefault();
 		}
 
-		public XElement SaveAsXml()
-		{
-			return new XElement(
-				"FilterSettings",
-				new XElement("ShowAPILevel", (int)ShowApiLevel),
-				new XElement("Language", Language.Name),
-				new XElement("LanguageVersion", LanguageVersion.Version)
-			);
-		}
+    public XElement SaveAsXml() => new XElement(
+            "FilterSettings",
+            new XElement("ShowAPILevel", (int)ShowApiLevel),
+            new XElement("Language", Language.Name),
+            new XElement("LanguageVersion", LanguageVersion.Version)
+        );
 
-		string searchTerm;
+    string searchTerm;
 
 		/// <summary>
 		/// Gets/Sets the search term.
@@ -183,15 +180,9 @@ namespace ICSharpCode.ILSpy;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			if (PropertyChanged != null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-		public FilterSettings Clone()
+    public FilterSettings Clone()
 		{
 			FilterSettings f = (FilterSettings)MemberwiseClone();
 			f.PropertyChanged = null;

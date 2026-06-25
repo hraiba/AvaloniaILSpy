@@ -21,12 +21,9 @@ namespace ICSharpCode.ILSpy;
 			this.reader = reader;
 		}
 
-		public override int Peek()
-		{
-			return Peek(0);
-		}
+    public override int Peek() => Peek(0);
 
-		public override int Read()
+    public override int Read()
 		{
 			int c = Peek();
 			buffer.RemoveAt(0);
@@ -110,17 +107,11 @@ namespace ICSharpCode.ILSpy;
 			return val;
 		}
 
-		protected int ReaderPeek()
-		{
-			return reader.Peek();
-		}
+    protected int ReaderPeek() => reader.Peek();
 
-		protected int ReaderPeek(int step)
-		{
-			return reader.Peek(step);
-		}
+    protected int ReaderPeek(int step) => reader.Peek(step);
 
-		protected void ReaderSkip(int steps)
+    protected void ReaderSkip(int steps)
 		{
 			for (int i = 0; i < steps; i++) {
 				ReaderRead();
@@ -166,21 +157,18 @@ namespace ICSharpCode.ILSpy;
 			lastToken = curToken = peekToken = null;
 			sb = originalValue = null;
 		}
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// Must be called before a peek operation.
-		/// </summary>
-		public void StartPeek()
-		{
-			peekToken = curToken;
-		}
+    /// <summary>
+    /// Must be called before a peek operation.
+    /// </summary>
+    public void StartPeek() => peekToken = curToken;
 
-		/// <summary>
-		/// Gives back the next token. A second call to Peek() gives the next token after the last call for Peek() and so on.
-		/// </summary>
-		/// <returns>An <see cref="Token"/> object.</returns>
-		public Literal Peek()
+    /// <summary>
+    /// Gives back the next token. A second call to Peek() gives the next token after the last call for Peek() and so on.
+    /// </summary>
+    /// <returns>An <see cref="Token"/> object.</returns>
+    public Literal Peek()
 		{
 			//			Console.WriteLine("Call to Peek");
 			peekToken.next ??= Next();
@@ -218,12 +206,9 @@ namespace ICSharpCode.ILSpy;
 			return char.IsLetterOrDigit((char)ch); // accept unicode letters
 		}
 
-		protected static bool IsHex(char digit)
-		{
-			return Char.IsDigit(digit) || ('A' <= digit && digit <= 'F') || ('a' <= digit && digit <= 'f');
-		}
+    protected static bool IsHex(char digit) => Char.IsDigit(digit) || ('A' <= digit && digit <= 'F') || ('a' <= digit && digit <= 'f');
 
-		protected int GetHexNumber(char digit)
+    protected int GetHexNumber(char digit)
 		{
 			if (Char.IsDigit(digit)) {
 				return digit - '0';

@@ -27,17 +27,11 @@ namespace ICSharpCode.ILSpy.TextView;
 	[ExportContextMenuEntryAttribute(Header = nameof(Resources.ToggleFolding), Category = nameof(Resources.Folding))]
 	internal sealed class ToggleAllContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.TextView != null;
-		}
+    public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return context.TextView != null && context.TextView.FoldingManager != null;
-		}
+    public bool IsEnabled(TextViewContext context) => context.TextView != null && context.TextView.FoldingManager != null;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (null == context.TextView)
 				return;
@@ -60,17 +54,11 @@ namespace ICSharpCode.ILSpy.TextView;
 	[ExportContextMenuEntryAttribute(Header = nameof(Resources._ToggleFolding), Category = nameof(Resources.Folding))]
 	internal sealed class ToggleContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.TextView != null;
-		}
+    public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return context.TextView != null && context.TextView.FoldingManager != null;
-		}
+    public bool IsEnabled(TextViewContext context) => context.TextView != null && context.TextView.FoldingManager != null;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			var textView = context.TextView;
 			if (null == textView)

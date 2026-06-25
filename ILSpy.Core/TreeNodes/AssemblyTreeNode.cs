@@ -223,33 +223,18 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			else
 				return null;
 		}
-		
-		public override bool CanDrag(SharpTreeNode[] nodes)
-		{
-			return nodes.All(n => n is AssemblyTreeNode);
-		}
 
-		public override void StartDrag(PointerEventArgs e, AvaloniaObject dragSource, SharpTreeNode[] nodes)
-		{
-			DragDrop.DoDragDrop(e, Copy(nodes), DragDropEffects.Copy | DragDropEffects.Link | DragDropEffects.Move);
-		}
+    public override bool CanDrag(SharpTreeNode[] nodes) => nodes.All(n => n is AssemblyTreeNode);
 
-		public override bool CanDelete()
-		{
-			return true;
-		}
+    public override void StartDrag(PointerEventArgs e, AvaloniaObject dragSource, SharpTreeNode[] nodes) => DragDrop.DoDragDrop(e, Copy(nodes), DragDropEffects.Copy | DragDropEffects.Link | DragDropEffects.Move);
 
-		public override void Delete()
-		{
-			DeleteCore();
-		}
+    public override bool CanDelete() => true;
 
-		public override void DeleteCore()
-		{
-			LoadedAssembly.AssemblyList.Unload(LoadedAssembly);
-		}
+    public override void Delete() => DeleteCore();
 
-		internal const string DataFormat = "ILSpyAssemblies";
+    public override void DeleteCore() => LoadedAssembly.AssemblyList.Unload(LoadedAssembly);
+
+    internal const string DataFormat = "ILSpyAssemblies";
 
 		public override IDataObject Copy(SharpTreeNode[] nodes)
 		{
@@ -340,13 +325,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return true;
 		}
 
-		public override string ToString()
-		{
-			// ToString is used by FindNodeByPath/GetPathForNode
-			// Fixes #821 - Reload All Assemblies Should Point to the Correct Assembly
-			return LoadedAssembly.FileName;
-		}
-	}
+    public override string ToString() =>
+        // ToString is used by FindNodeByPath/GetPathForNode
+        // Fixes #821 - Reload All Assemblies Should Point to the Correct Assembly
+        LoadedAssembly.FileName;
+}
 
 	[ExportContextMenuEntry(Header = nameof(Resources._Remove), Icon = "Images/Delete.png")]
 	sealed class RemoveAssembly : IContextMenuEntry
@@ -358,12 +341,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
+    public bool IsEnabled(TextViewContext context) => true;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;
@@ -383,12 +363,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
+    public bool IsEnabled(TextViewContext context) => true;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;
@@ -415,12 +392,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
+    public bool IsEnabled(TextViewContext context) => true;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;

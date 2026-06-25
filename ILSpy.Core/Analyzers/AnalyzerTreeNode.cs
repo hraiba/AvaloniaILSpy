@@ -38,22 +38,13 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			}
 		}
 
-		public override bool CanDelete()
-		{
-			return Parent != null && Parent.IsRoot;
-		}
+    public override bool CanDelete() => Parent != null && Parent.IsRoot;
 
-		public override void DeleteCore()
-		{
-			Parent.Children.Remove(this);
-		}
+    public override void DeleteCore() => Parent.Children.Remove(this);
 
-		public override void Delete()
-		{
-			DeleteCore();
-		}
+    public override void Delete() => DeleteCore();
 
-		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+    protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())

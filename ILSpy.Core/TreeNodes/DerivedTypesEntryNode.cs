@@ -71,27 +71,18 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
+    protected override void LoadChildren() => threading.LoadChildren(this, FetchChildren);
 
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
+    IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.GetPEFileOrNull()).Where(asm => asm != null).ToArray();
 			return DerivedTypesTreeNode.FindDerivedTypes(list, type, assemblies, ct);
 		}
 
-		public override void ActivateItem(RoutedEventArgs e)
-		{
-			e.Handled = BaseTypesEntryNode.ActivateItem(this, type);
-		}
+    public override void ActivateItem(RoutedEventArgs e) => e.Handled = BaseTypesEntryNode.ActivateItem(this, type);
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
 
-		IEntity IMemberTreeNode.Member => type;
+    IEntity IMemberTreeNode.Member => type;
 	}

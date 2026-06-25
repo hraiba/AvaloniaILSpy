@@ -61,12 +61,9 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			this.showWrites = showWrites;
 		}
 
-		public bool Show(ISymbol symbol)
-		{
-			return symbol is IField field && (!showWrites || !field.IsConst);
-		}
+    public bool Show(ISymbol symbol) => symbol is IField field && (!showWrites || !field.IsConst);
 
-		public IEnumerable<ISymbol> Analyze(ISymbol analyzedSymbol, AnalyzerContext context)
+    public IEnumerable<ISymbol> Analyze(ISymbol analyzedSymbol, AnalyzerContext context)
 		{
 			Debug.Assert(analyzedSymbol is IField);
 			var scope = context.GetScopeOf((IEntity)analyzedSymbol);

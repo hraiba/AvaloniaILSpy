@@ -221,10 +221,7 @@ public class LoadedPackage
             }
         }
 
-        public override long? TryGetLength()
-        {
-            return entry.Size;
-        }
+        public override long? TryGetLength() => entry.Size;
     }
 }
 

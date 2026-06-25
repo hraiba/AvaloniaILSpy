@@ -89,15 +89,9 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
         set { SetValue(IsTextSearchCaseSensitiveProperty, value); }
     }
 
-    public static bool GetShowAlternation(AvaloniaObject obj)
-    {
-        return obj.GetValue(ShowAlternationProperty);
-    }
+    public static bool GetShowAlternation(AvaloniaObject obj) => obj.GetValue(ShowAlternationProperty);
 
-    public static void SetShowAlternation(AvaloniaObject obj, bool value)
-    {
-        obj.SetValue(ShowAlternationProperty, value);
-    }
+    public static void SetShowAlternation(AvaloniaObject obj, bool value) => obj.SetValue(ShowAlternationProperty, value);
 
     public static readonly StyledProperty<bool> ShowAlternationProperty =
         AvaloniaProperty.Register<SharpTreeView, bool>("ShowAlternation", defaultValue: false, inherits: true);
@@ -118,10 +112,7 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
     TreeFlattener flattener;
     bool updatesLocked;
 
-    public IDisposable LockUpdates()
-    {
-        return new UpdateLock(this);
-    }
+    public IDisposable LockUpdates() => new UpdateLock(this);
 
     class UpdateLock : IDisposable
     {
@@ -133,10 +124,7 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
             this.instance.updatesLocked = true;
         }
 
-        public void Dispose()
-        {
-            instance.updatesLocked = false;
-        }
+        public void Dispose() => instance.updatesLocked = false;
     }
 
     void Reload()
@@ -189,13 +177,10 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
         }
     }
 
-    protected override IItemContainerGenerator CreateItemContainerGenerator()
-    {
-        return new ItemContainerGenerator<SharpTreeViewItem>(
+    protected override IItemContainerGenerator CreateItemContainerGenerator() => new ItemContainerGenerator<SharpTreeViewItem>(
                 this,
                 ContentControl.ContentProperty,
                 ContentControl.ContentTemplateProperty);
-    }
 
     protected override void OnContainersMaterialized(ItemContainerEventArgs e)
     {
@@ -441,10 +426,7 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
 
     #region Drag and Drop
 
-    protected virtual void OnDragEnter(DragEventArgs e)
-    {
-        OnDragOver(e);
-    }
+    protected virtual void OnDragEnter(DragEventArgs e) => OnDragOver(e);
 
     protected virtual void OnDragOver(DragEventArgs e)
     {
@@ -468,10 +450,7 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
         }
     }
 
-    internal void HandleDragEnter(SharpTreeViewItem item, DragEventArgs e)
-    {
-        HandleDragOver(item, e);
-    }
+    internal void HandleDragEnter(SharpTreeViewItem item, DragEventArgs e) => HandleDragOver(item, e);
 
     internal void HandleDragOver(SharpTreeViewItem item, DragEventArgs e)
     {
@@ -743,30 +722,21 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
 
     }
 
-    static void HandleCanExecute_Cut(object sender, CanExecuteRoutedEventArgs e)
-    {
-        e.CanExecute = false;
-    }
+    static void HandleCanExecute_Cut(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = false;
 
     static void HandleExecuted_Copy(object sender, ExecutedRoutedEventArgs e)
     {
 
     }
 
-    static void HandleCanExecute_Copy(object sender, CanExecuteRoutedEventArgs e)
-    {
-        e.CanExecute = false;
-    }
+    static void HandleCanExecute_Copy(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = false;
 
     static void HandleExecuted_Paste(object sender, ExecutedRoutedEventArgs e)
     {
 
     }
 
-    static void HandleCanExecute_Paste(object sender, CanExecuteRoutedEventArgs e)
-    {
-        e.CanExecute = false;
-    }
+    static void HandleCanExecute_Paste(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = false;
 
     static void HandleExecuted_Delete(object sender, ExecutedRoutedEventArgs e)
     {

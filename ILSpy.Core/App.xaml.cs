@@ -152,15 +152,11 @@ namespace ICSharpCode.ILSpy;
 			// On .NET 4.0, an unobserved exception in a task terminates the process unless we mark it as observed
 			e.SetObserved();
 		}
-		
-		#region Exception Handling
-		static void Dispatcher_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-			UnhandledException(e.ExceptionObject as Exception);
-			//e.Handled = true;
-		}
-		
-		static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
+
+    #region Exception Handling
+    static void Dispatcher_UnhandledException(object sender, UnhandledExceptionEventArgs e) => UnhandledException(e.ExceptionObject as Exception);//e.Handled = true;
+
+    static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
 		{
 			Exception ex = e.ExceptionObject as Exception;
 			if (ex != null) {

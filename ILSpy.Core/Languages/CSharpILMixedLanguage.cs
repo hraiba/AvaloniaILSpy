@@ -43,17 +43,15 @@ namespace ICSharpCode.ILSpy;
 	{
 		public override string Name => "IL with C#";
 
-		protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
-		{
-			return new ReflectionDisassembler(output, 
-				new MixedMethodBodyDisassembler(output, options) {
-					DetectControlStructure = detectControlStructure,
-					ShowSequencePoints = options.DecompilerSettings.ShowDebugInfo
-				},
-				options.CancellationToken);
-		}
+    protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options) => new ReflectionDisassembler(output,
+            new MixedMethodBodyDisassembler(output, options)
+            {
+                DetectControlStructure = detectControlStructure,
+                ShowSequencePoints = options.DecompilerSettings.ShowDebugInfo
+            },
+            options.CancellationToken);
 
-		static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
+    static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
 		{
 			CSharpDecompiler decompiler = new CSharpDecompiler(module, module.GetAssemblyResolver(), options.DecompilerSettings);
 			decompiler.CancellationToken = options.CancellationToken;
@@ -155,9 +153,6 @@ namespace ICSharpCode.ILSpy;
 				output.WriteLine();
 			}
 
-			void WriteCommentLine(ITextOutput output, string text)
-			{
-				output.WriteLine("// " + text);
-			}
-		}
+        void WriteCommentLine(ITextOutput output, string text) => output.WriteLine("// " + text);
+    }
 	}

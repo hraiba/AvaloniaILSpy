@@ -41,12 +41,9 @@ namespace ICSharpCode.ILSpy;
 			TemplateApplied += (sender, e) => Application.Current.FocusManager.Focus(ListName);
 		}
 
-		private void TextBox_TextChanged(object sender, TextInputEventArgs e)
-		{
-			okButton.IsEnabled = !string.IsNullOrWhiteSpace(ListName.Text);
-		}
+    private void TextBox_TextChanged(object sender, TextInputEventArgs e) => okButton.IsEnabled = !string.IsNullOrWhiteSpace(ListName.Text);
 
-		private void OKButton_Click(object sender, RoutedEventArgs e)
+    private void OKButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrWhiteSpace(ListName.Text))
 			{
@@ -54,10 +51,7 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 
-		void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(false);
-		}
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
     public string NewListName => ListName.Text;
 

@@ -167,10 +167,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     #region Tooltip support
 
-    void TextViewMouseHoverStopped(object sender, PointerEventArgs e)
-    {
-        ToolTip.SetIsOpen(this, false);
-    }
+    void TextViewMouseHoverStopped(object sender, PointerEventArgs e) => ToolTip.SetIsOpen(this, false);
 
     void TextViewMouseHover(object sender, PointerEventArgs e)
     {
@@ -284,10 +281,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     /// of the task (including exceptions) are ignored.
     /// </summary>
     [Obsolete("RunWithCancellation(taskCreation).ContinueWith(taskCompleted) instead")]
-    public void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted)
-    {
-        RunWithCancellation(taskCreation).ContinueWith(taskCompleted, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, TaskScheduler.FromCurrentSynchronizationContext());
-    }
+    public void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted) => RunWithCancellation(taskCreation).ContinueWith(taskCompleted, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, TaskScheduler.FromCurrentSynchronizationContext());
 
     /// <summary>
     /// Switches the GUI into "waiting" mode, then calls <paramref name="taskCreation"/> to create
@@ -375,15 +369,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     #endregion
 
     #region ShowOutput
-    public void ShowText(AvaloniaEditTextOutput textOutput)
-    {
-        ShowNodes(textOutput, null);
-    }
+    public void ShowText(AvaloniaEditTextOutput textOutput) => ShowNodes(textOutput, null);
 
-    public void ShowNode(AvaloniaEditTextOutput textOutput, ILSpyTreeNode node, IHighlightingDefinition highlighting = null)
-    {
-        ShowNodes(textOutput, new[] { node }, highlighting);
-    }
+    public void ShowNode(AvaloniaEditTextOutput textOutput, ILSpyTreeNode node, IHighlightingDefinition highlighting = null) => ShowNodes(textOutput, new[] { node }, highlighting);
 
     /// <summary>
     /// Shows the given output in the text view.
@@ -479,10 +467,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     DecompilationContext nextDecompilationRun;
 
     [Obsolete("Use DecompileAsync() instead")]
-    public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
-    {
-        DecompileAsync(language, treeNodes, options).HandleExceptions();
-    }
+    public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options) => DecompileAsync(language, treeNodes, options).HandleExceptions();
 
     /// <summary>
     /// Starts the decompilation of the given nodes.
@@ -532,9 +517,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         }
     }
 
-    Task DoDecompile(DecompilationContext context, int outputLengthLimit)
-    {
-        return RunWithCancellation(
+    Task DoDecompile(DecompilationContext context, int outputLengthLimit) => RunWithCancellation(
             delegate (CancellationToken ct)
             { // creation of the background task
                 context.Options.CancellationToken = ct;
@@ -562,7 +545,6 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             ShowOutput(output);
             decompiledNodes = context.TreeNodes;
         });
-    }
 
     Task<AvaloniaEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)
     {
@@ -696,10 +678,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     Point? mouseDownPos;
 
-    void TextAreaMouseDown(object sender, PointerEventArgs e)
-    {
-        mouseDownPos = e.GetPosition(this);
-    }
+    void TextAreaMouseDown(object sender, PointerEventArgs e) => mouseDownPos = e.GetPosition(this);
 
     void TextAreaMouseUp(object sender, PointerEventArgs e)
     {
@@ -740,10 +719,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     /// <summary>
     /// Filters all ReferenceSegments that are no real links.
     /// </summary>
-    bool IsLink(ReferenceSegment referenceSegment)
-    {
-        return referenceSegment.IsLocal || !referenceSegment.IsDefinition;
-    }
+    bool IsLink(ReferenceSegment referenceSegment) => referenceSegment.IsLocal || !referenceSegment.IsDefinition;
     #endregion
 
     #region SaveToDisk
@@ -771,19 +747,14 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         }
     }
 
-    public void SaveToDisk(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options, string fileName)
-    {
-        SaveToDisk(new DecompilationContext(language, [.. treeNodes], options), fileName);
-    }
+    public void SaveToDisk(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options, string fileName) => SaveToDisk(new DecompilationContext(language, [.. treeNodes], options), fileName);
 
 
     /// <summary>
     /// Starts the decompilation of the given nodes.
     /// The result will be saved to the given file name.
     /// </summary>
-    void SaveToDisk(DecompilationContext context, string fileName)
-    {
-        RunWithCancellation(
+    void SaveToDisk(DecompilationContext context, string fileName) => RunWithCancellation(
             delegate (CancellationToken ct)
             {
                 context.Options.CancellationToken = ct;
@@ -800,7 +771,6 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                 output.WriteLine(ex.ToString());
                 ShowOutput(output);
             }).HandleExceptions();
-    }
 
     Task<AvaloniaEditTextOutput> SaveToDiskAsync(DecompilationContext context, string fileName)
     {
@@ -856,10 +826,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     /// <summary>
     /// Cleans up a node name for use as a file name.
     /// </summary>
-    internal static string CleanUpName(string text, string extension)
-    {
-        return WholeProjectDecompiler.CleanUpFileName(text, extension);
-    }
+    internal static string CleanUpName(string text, string extension) => WholeProjectDecompiler.CleanUpFileName(text, extension);
     #endregion
 
     internal ReferenceSegment GetReferenceSegmentAtMousePosition()
@@ -899,10 +866,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         return state;
     }
 
-    public void Dispose()
-    {
-        DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
-    }
+    public void Dispose() => DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
 
     #region Unfold
     public void UnfoldAndScroll(int lineNumber)

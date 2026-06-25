@@ -83,10 +83,7 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 			return variables;
 		}
 
-    public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
-    {
-        throw new NotImplementedException();
-    }
+    public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo) => throw new NotImplementedException();
 
     public bool TryGetName(MethodDefinitionHandle method, int index, out string name)
 		{

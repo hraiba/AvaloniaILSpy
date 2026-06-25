@@ -63,12 +63,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return result;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
 
-		public override async Task<bool> Save(DecompilerTextView textView)
+    public override async Task<bool> Save(DecompilerTextView textView)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";

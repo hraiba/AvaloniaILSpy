@@ -44,22 +44,17 @@ namespace ICSharpCode.ILSpy.Controls;
 				closeButton.Click += closeButton_Click;
 			}
 		}
-		
-		void closeButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (CloseButtonClicked != null)
-				CloseButtonClicked(this, e);
-		}
-		
-		public event EventHandler CloseButtonClicked;
+
+    void closeButton_Click(object sender, RoutedEventArgs e) => CloseButtonClicked?.Invoke(this, e);
+
+    public event EventHandler CloseButtonClicked;
 		
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
 			if (e.Key == Key.F4 && e.KeyModifiers == KeyModifiers.Control || e.Key == Key.Escape) {
-				if (CloseButtonClicked != null)
-					CloseButtonClicked(this, e);
-				e.Handled = true;
+            CloseButtonClicked?.Invoke(this, e);
+            e.Handled = true;
 			}
 		}
 	}

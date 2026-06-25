@@ -66,9 +66,6 @@ namespace ICSharpCode.ILSpy.Controls;
 			}
 			App.Current.Clipboard.SetTextAsync(sb.ToString());
 		}
-		
-		void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args)
-		{
-			args.CanExecute = true;
-		}
-	}
+
+    void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args) => args.CanExecute = true;
+}

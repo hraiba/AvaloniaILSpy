@@ -693,10 +693,7 @@ public class CSharpLanguage : Language
         return new CSharpAmbience() { ConversionFlags = flags }.ConvertSymbol(entity);
     }
 
-    public override CodeMappingInfo GetCodeMappingInfo(MetadataFile module, EntityHandle member)
-    {
-        return CSharpDecompiler.GetCodeMappingInfo(module, member);
-    }
+    public override CodeMappingInfo GetCodeMappingInfo(MetadataFile module, EntityHandle member) => CSharpDecompiler.GetCodeMappingInfo(module, member);
 
     CSharpBracketSearcher bracketSearcher = new CSharpBracketSearcher();
 

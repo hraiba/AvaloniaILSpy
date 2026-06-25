@@ -66,12 +66,9 @@ namespace ICSharpCode.ILSpy;
 			forward.Clear();
 		}
 
-		public void UpdateCurrent(T node)
-		{
-			current = node;
-		}
-		
-		public void Record(T node)
+    public void UpdateCurrent(T node) => current = node;
+
+    public void Record(T node)
 		{
 			var navigationTime = DateTime.Now;
 			var period = navigationTime - lastNavigationTime;

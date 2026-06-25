@@ -85,16 +85,11 @@ namespace ICSharpCode.ILSpy;
 			deleteButton.IsEnabled = listView.SelectedItem != null;
 		}
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
-			//this.DialogResult = true;
-			Close(true);
-		}
+    void OKButton_Click(object sender, RoutedEventArgs e) =>
+        //this.DialogResult = true;
+        Close(true);
 
-		void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(false);
-		}
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
     public string SelectedListName => listView.SelectedItem.ToString();
 

@@ -172,12 +172,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			return null;
 		}
 
-		public AssemblyTreeNode FindAssemblyNode(IModule module)
-		{
-			return FindAssemblyNode(module.MetadataFile);
-		}
+    public AssemblyTreeNode FindAssemblyNode(IModule module) => FindAssemblyNode(module.MetadataFile);
 
-		public AssemblyTreeNode FindAssemblyNode(MetadataFile module)
+    public AssemblyTreeNode FindAssemblyNode(MetadataFile module)
 		{
 			if (module == null)
 				return null;

@@ -32,13 +32,10 @@ namespace ICSharpCode.ILSpy.TextView;
 	public class XmlDocRenderer
 	{
 		readonly StringBuilder ret = new StringBuilder();
-		
-		public void AppendText(string text)
-		{
-			ret.Append(text);
-		}
-		
-		public void AddXmlDocumentation(string xmlDocumentation)
+
+    public void AppendText(string text) => ret.Append(text);
+
+    public void AddXmlDocumentation(string xmlDocumentation)
 		{
 			if (xmlDocumentation == null)
 				return;
@@ -128,9 +125,6 @@ namespace ICSharpCode.ILSpy.TextView;
 			}
 			return cref;
 		}
-		
-		public TextBlock CreateTextBlock()
-		{
-			return new TextBlock { Text = ret.ToString() };
-		}
-	}
+
+    public TextBlock CreateTextBlock() => new TextBlock { Text = ret.ToString() };
+}

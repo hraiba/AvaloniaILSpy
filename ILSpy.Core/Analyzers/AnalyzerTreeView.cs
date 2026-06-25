@@ -136,12 +136,9 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			}
 		}
 
-		void IPane.Closed()
-		{
-			Root.Children.Clear();
-		}
-		
-		sealed class AnalyzerRootNode : AnalyzerTreeNode
+    void IPane.Closed() => Root.Children.Clear();
+
+    sealed class AnalyzerRootNode : AnalyzerTreeNode
 		{
 			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 			{

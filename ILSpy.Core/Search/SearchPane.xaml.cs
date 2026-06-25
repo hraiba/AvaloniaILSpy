@@ -337,13 +337,10 @@ namespace ICSharpCode.ILSpy.Search;
             }).Select(arg => TrimMatchingQuotes(arg, '\"'))
             .Where(arg => !string.IsNullOrEmpty(arg))];
         }
-			
-			public void Cancel()
-			{
-				cts.Cancel();
-			}
-			
-			public async Task Run()
+
+        public void Cancel() => cts.Cancel();
+
+        public async Task Run()
 			{
 				try {
 					await Task.Factory.StartNew(() => {
@@ -435,19 +432,13 @@ namespace ICSharpCode.ILSpy.Search;
 		public object ToolTip { get; set; }
 		public IBitmap Image { get; set; }
 		public IBitmap LocationImage { get; set; }
-		
-		public override string ToString()
+
+    public override string ToString() => Name;
+
+    class SearchResultComparer : System.Collections.Generic.IComparer<SearchResult>
 		{
-			return Name;
-		}
-		
-		class SearchResultComparer : System.Collections.Generic.IComparer<SearchResult>
-		{
-			public int Compare(SearchResult x, SearchResult y)
-			{
-				return StringComparer.Ordinal.Compare(x?.Name ?? "", y?.Name ?? "");
-			}
-		}
+        public int Compare(SearchResult x, SearchResult y) => StringComparer.Ordinal.Compare(x?.Name ?? "", y?.Name ?? "");
+    }
 	}
 
 	[ExportMainMenuCommand(Menu = nameof(Properties.Resources._View), Header =nameof(Properties.Resources.Search), MenuIcon = "Images/Find.png", MenuCategory = nameof(Properties.Resources.View), MenuOrder = 100)]

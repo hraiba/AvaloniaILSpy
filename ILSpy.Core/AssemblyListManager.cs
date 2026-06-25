@@ -71,28 +71,27 @@ namespace ICSharpCode.ILSpy;
 		}
 		
 		public const string DefaultListName = "(Default)";
-		
-		/// <summary>
-		/// Saves the specifies assembly list into the config file.
-		/// </summary>
-		public static void SaveList(AssemblyList list)
-		{
-			ILSpySettings.Update(
-				delegate (XElement root) {
-					XElement doc = root.Element("AssemblyLists");
-					if (doc == null) {
-						doc = new XElement("AssemblyLists");
-						root.Add(doc);
-					}
-					XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
-					if (listElement != null)
-						listElement.ReplaceWith(list.SaveAsXml());
-					else
-						doc.Add(list.SaveAsXml());
-				});
-		}
 
-		public bool CreateList(AssemblyList list)
+    /// <summary>
+    /// Saves the specifies assembly list into the config file.
+    /// </summary>
+    public static void SaveList(AssemblyList list) => ILSpySettings.Update(
+            delegate (XElement root)
+            {
+                XElement doc = root.Element("AssemblyLists");
+                if (doc == null)
+                {
+                    doc = new XElement("AssemblyLists");
+                    root.Add(doc);
+                }
+                XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
+                if (listElement != null)
+                    listElement.ReplaceWith(list.SaveAsXml());
+                else
+                    doc.Add(list.SaveAsXml());
+            });
+
+    public bool CreateList(AssemblyList list)
 		{
 			if (!AssemblyLists.Contains(list.ListName))
 			{

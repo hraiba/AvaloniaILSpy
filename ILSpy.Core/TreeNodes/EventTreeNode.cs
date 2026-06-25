@@ -45,19 +45,13 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override object Text => GetText(EventDefinition, Language) + EventDefinition.MetadataToken.ToSuffixString();
 
-		public static object GetText(IEvent ev, Language language)
-		{
-			return language.EventToString(ev, false, false, false);
-		}
+    public static object GetText(IEvent ev, Language language) => language.EventToString(ev, false, false, false);
 
-		public override object Icon => GetIcon(EventDefinition);
+    public override object Icon => GetIcon(EventDefinition);
 
-		public static IBitmap GetIcon(IEvent @event)
-		{
-			return Images.GetIcon(MemberIcon.Event, MethodTreeNode.GetOverlayIcon(@event.Accessibility), @event.IsStatic);
-		}
+    public static IBitmap GetIcon(IEvent @event) => Images.GetIcon(MemberIcon.Event, MethodTreeNode.GetOverlayIcon(@event.Accessibility), @event.IsStatic);
 
-		public override FilterResult Filter(FilterSettings settings)
+    public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
             return FilterResult.Hidden;
@@ -66,13 +60,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			else
 				return FilterResult.Hidden;
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileEvent(EventDefinition, output, options);
-		}
-		
-		public override bool IsPublicAPI {
+
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileEvent(EventDefinition, output, options);
+
+    public override bool IsPublicAPI {
 			get {
 				switch (EventDefinition.Accessibility) {
 					case Accessibility.Public:

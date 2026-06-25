@@ -47,10 +47,7 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			return true;
 		}
 
-		bool IsValidReference(object reference)
-    {
-        return reference is IEntity && !(reference is IField f && f.IsConst);
-    }
+    bool IsValidReference(object reference) => reference is IEntity && !(reference is IField f && f.IsConst);
 
     public void Execute(TextViewContext context)
 		{
@@ -63,17 +60,14 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			}
 		}
 
-		public override bool CanExecute(object parameter)
-		{
-        //TODO: focus
-			//if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
-			//	return AnalyzerTreeView.Instance.SelectedItems.OfType<object>().All(n => n is IMemberTreeNode);
-			//} else {
-				return MainWindow.Instance.SelectedNodes.All(n => n is IMemberTreeNode);
-			//}
-		}
+    public override bool CanExecute(object parameter) =>
+            //TODO: focus
+            //if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
+            //	return AnalyzerTreeView.Instance.SelectedItems.OfType<object>().All(n => n is IMemberTreeNode);
+            //} else {
+            MainWindow.Instance.SelectedNodes.All(n => n is IMemberTreeNode);//}
 
-		public override void Execute(object parameter)
+    public override void Execute(object parameter)
 		{
 			//if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
 			//	foreach (IMemberTreeNode node in AnalyzerTreeView.Instance.SelectedItems.OfType<IMemberTreeNode>().ToArray()) {

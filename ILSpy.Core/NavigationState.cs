@@ -28,9 +28,9 @@ namespace ICSharpCode.ILSpy;
 		private readonly HashSet<SharpTreeNode> treeNodes;
 
     public IEnumerable<SharpTreeNode> TreeNodes => treeNodes;
-    public DecompilerTextViewState ViewState { get; private set; }
+    public DecompilerTextViewState ViewState { get; }
 
-		public NavigationState(DecompilerTextViewState viewState)
+    public NavigationState(DecompilerTextViewState viewState)
 		{
 			treeNodes = [with(viewState.DecompiledNodes)];
 			ViewState = viewState;
@@ -42,9 +42,7 @@ namespace ICSharpCode.ILSpy;
 		}
 
 
-		public bool Equals(NavigationState other)
-		{
-			// TODO: should this care about the view state as well?
-			return treeNodes.SetEquals(other.treeNodes);
-		}
-	}
+    public bool Equals(NavigationState other) =>
+        // TODO: should this care about the view state as well?
+        treeNodes.SetEquals(other.treeNodes);
+}

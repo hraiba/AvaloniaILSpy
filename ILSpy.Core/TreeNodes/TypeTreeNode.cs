@@ -101,19 +101,13 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override bool CanExpandRecursively => true;
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileType(TypeDefinition, output, options);
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileType(TypeDefinition, output, options);
 
-		public override object Icon => GetIcon(TypeDefinition);
+    public override object Icon => GetIcon(TypeDefinition);
 
-		public static IBitmap GetIcon(ITypeDefinition type)
-		{
-			return Images.GetIcon(GetTypeIcon(type), GetOverlayIcon(type));
-		}
+    public static IBitmap GetIcon(ITypeDefinition type) => Images.GetIcon(GetTypeIcon(type), GetOverlayIcon(type));
 
-		internal static TypeIcon GetTypeIcon(IType type)
+    internal static TypeIcon GetTypeIcon(IType type)
 		{
 			switch (type.Kind) {
 				case TypeKind.Interface:

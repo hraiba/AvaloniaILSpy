@@ -25,20 +25,16 @@ namespace ICSharpCode.ILSpy;
 [ExportMainMenuCommand(Menu = "_File", Header = "Dialog", MenuCategory = "Open", MenuOrder = 2.5)]
 sealed class DialogDebugCommand : SimpleCommand
 {
-    public override bool CanExecute(object parameter)
-    {
+    public override bool CanExecute(object parameter) =>
 #if DEBUG
-        return true;
+        true;
 #else
         return false;
 #endif
-    }
 
-    public override void Execute(object parameter)
-		{
-			MessageBox.Show(Environment.StackTrace, "warning", MessageBoxButton.YesNoCancel);
-		}
-			
-	}
+
+    public override void Execute(object parameter) => MessageBox.Show(Environment.StackTrace, "warning", MessageBoxButton.YesNoCancel);
+
+}
 
 #endif
