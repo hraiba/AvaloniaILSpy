@@ -45,7 +45,7 @@ public partial class MiscSettingsPanel : UserControl, IOptionPage
 
 		static MiscSettings currentMiscSettings;
 
-    public static MiscSettings CurrentMiscSettings => currentMiscSettings ?? (currentMiscSettings = LoadMiscSettings(ILSpySettings.Load()));
+    public static MiscSettings CurrentMiscSettings => currentMiscSettings ??= LoadMiscSettings(ILSpySettings.Load());
 
     public static MiscSettings LoadMiscSettings(ILSpySettings settings)
 		{

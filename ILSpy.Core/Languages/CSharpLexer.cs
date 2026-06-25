@@ -183,9 +183,7 @@ namespace ICSharpCode.ILSpy;
 		public Literal Peek()
 		{
 			//			Console.WriteLine("Call to Peek");
-			if (peekToken.next == null) {
-				peekToken.next = Next();
-			}
+			peekToken.next ??= Next();
 			peekToken = peekToken.next;
 			return peekToken;
 		}
@@ -204,9 +202,7 @@ namespace ICSharpCode.ILSpy;
 
 			lastToken = curToken;
 
-			if (curToken.next == null) {
-				curToken.next = Next();
-			}
+			curToken.next ??= Next();
 
 			curToken = curToken.next;
 			//Console.WriteLine(ICSharpCode.NRefactory.Parser.CSharp.Tokens.GetTokenString(curToken.kind) + " -- " + curToken.val + "(" + curToken.kind + ")");

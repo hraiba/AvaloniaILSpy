@@ -46,7 +46,7 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
 
     static Decompiler.DecompilerSettings currentDecompilerSettings;
 
-    public static Decompiler.DecompilerSettings CurrentDecompilerSettings => currentDecompilerSettings ?? (currentDecompilerSettings = LoadDecompilerSettings(ILSpySettings.Load()));
+    public static Decompiler.DecompilerSettings CurrentDecompilerSettings => currentDecompilerSettings ??= LoadDecompilerSettings(ILSpySettings.Load());
 
     public static Decompiler.DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
     {

@@ -92,9 +92,7 @@ public class CSharpLanguage : Language
     {
         get
         {
-            if (versions == null)
-            {
-                versions = new List<LanguageVersion>() {
+            versions ??= new List<LanguageVersion>() {
                     new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp1.ToString(), "C# 1.0 / VS .NET"),
                     new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp2.ToString(), "C# 2.0 / VS 2005"),
                     new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp3.ToString(), "C# 3.0 / VS 2008"),
@@ -110,7 +108,6 @@ public class CSharpLanguage : Language
                     new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp10_0.ToString(), "C# 10.0 / VS 2022"),
                     new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp11_0.ToString(), "C# 11.0 / VS 2022.4"),
                 };
-            }
             return versions;
         }
     }

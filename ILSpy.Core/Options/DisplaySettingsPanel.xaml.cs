@@ -79,7 +79,7 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
 
     static DisplaySettings currentDisplaySettings;
 
-    public static DisplaySettings CurrentDisplaySettings => currentDisplaySettings ?? (currentDisplaySettings = LoadDisplaySettings(ILSpySettings.Load()));
+    public static DisplaySettings CurrentDisplaySettings => currentDisplaySettings ??= LoadDisplaySettings(ILSpySettings.Load());
 
     //static bool IsSymbolFont(FontFamily fontFamily)
     //{
