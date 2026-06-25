@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using ICSharpCode.TreeView;
 using System.Linq;
 using ICSharpCode.ILSpy.Controls;
 

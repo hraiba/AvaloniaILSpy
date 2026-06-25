@@ -23,8 +23,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
-using System.Threading;
-using System.Windows;
 using Avalonia.Media;
 using AvaloniaEdit.Highlighting;
 using ICSharpCode.Decompiler;

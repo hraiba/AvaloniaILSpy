@@ -20,15 +20,10 @@ using System.Collections;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using AvaloniaEdit;
-using System;
 using Avalonia.Markup.Xaml;
 using Avalonia.Controls.Presenters;
 using System.Collections.Generic;
-using Avalonia.Layout;
-using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
 
 namespace ICSharpCode.ILSpy.Controls
 {

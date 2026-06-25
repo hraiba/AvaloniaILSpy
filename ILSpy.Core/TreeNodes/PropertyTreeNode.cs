@@ -17,14 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Reflection;
-using System.Reflection.Metadata;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
-using SRM = System.Reflection.Metadata;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

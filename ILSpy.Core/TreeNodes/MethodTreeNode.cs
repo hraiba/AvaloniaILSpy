@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;

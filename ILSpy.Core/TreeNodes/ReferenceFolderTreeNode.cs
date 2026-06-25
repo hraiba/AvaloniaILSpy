@@ -18,7 +18,6 @@
 
 using System;
 using System.Linq;
-using SRM = System.Reflection.Metadata;
 using Avalonia.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;

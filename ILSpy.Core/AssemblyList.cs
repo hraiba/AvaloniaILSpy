@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls.FileLoaders;

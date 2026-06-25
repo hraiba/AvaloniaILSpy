@@ -8,7 +8,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using System.ComponentModel;
 using System.Diagnostics;
-using Avalonia.VisualTree;
 using Avalonia.Data;
 using Avalonia.Controls.Presenters;
 using System.Collections.Generic;

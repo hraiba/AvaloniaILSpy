@@ -16,15 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.ComponentModel.Composition;
-using System.IO;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
-using ICSharpCode.ILSpy.TextView;
-using Mono.Cecil;
-using ICSharpCode.ILSpy.Properties;
-
 //TODO: support .ico bitmap frames
 namespace ICSharpCode.ILSpy.TreeNodes
 {

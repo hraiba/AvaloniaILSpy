@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using ICSharpCode.Decompiler.IL;
 using ICSharpCode.Decompiler.IL.Transforms;

@@ -18,7 +18,6 @@
 
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System;
 using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy.Options

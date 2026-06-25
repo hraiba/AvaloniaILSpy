@@ -4,7 +4,6 @@
 using System.Linq;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
-using Microsoft.Win32;
 
 namespace TestPlugin
 {

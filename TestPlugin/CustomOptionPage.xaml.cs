@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
-using System;
 using Avalonia.Markup.Xaml;
 
 namespace TestPlugin

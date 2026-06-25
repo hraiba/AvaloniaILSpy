@@ -25,7 +25,6 @@ using Avalonia.Animation;
 using Avalonia.Threading;
 using AvaloniaEdit.Editing;
 using Avalonia.Styling;
-using Avalonia.Controls.Shapes;
 
 namespace ICSharpCode.ILSpy.TextView
 {

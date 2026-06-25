@@ -1,9 +1,4 @@
-﻿using System;
-using System.Windows;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Metadata;
-using ICSharpCode.Decompiler.TypeSystem;
-using ICSharpCode.ILSpy.Properties;
+﻿using ICSharpCode.ILSpy.Properties;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

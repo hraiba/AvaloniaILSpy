@@ -23,12 +23,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using AvaloniaEdit.Highlighting;
-using AvaloniaEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

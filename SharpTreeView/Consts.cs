@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Media.Immutable;
-using Avalonia.Media.Imaging;
 
 namespace Avalonia
 {

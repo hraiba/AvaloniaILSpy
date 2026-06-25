@@ -18,11 +18,8 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Mono.Cecil;
-using Avalonia.Input;
 using System;
 using Avalonia.Interactivity;
-using ICSharpCode.TreeView;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
 

@@ -7,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 
 namespace ICSharpCode.TreeView
 {

@@ -1,15 +1,11 @@
 ﻿using System;
 using ICSharpCode.Decompiler.Util;
 using ICSharpCode.Decompiler.Disassembler;
-using SRM = System.Reflection.Metadata;
 using ILOpCode = System.Reflection.Metadata.ILOpCode;
 using ICSharpCode.Decompiler;
-
-using static System.Reflection.Metadata.PEReaderExtensions;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.Decompiler.Metadata;
 using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Collections.Concurrent;
 

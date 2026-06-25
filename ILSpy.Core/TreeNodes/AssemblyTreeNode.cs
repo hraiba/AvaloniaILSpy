@@ -28,7 +28,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
-using Microsoft.Win32;
 using ICSharpCode.Decompiler.TypeSystem;
 using TypeDefinitionHandle = System.Reflection.Metadata.TypeDefinitionHandle;
 using System.Text;

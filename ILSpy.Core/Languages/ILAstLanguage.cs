@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
@@ -30,7 +28,6 @@ using ICSharpCode.Decompiler.IL.Transforms;
 using ICSharpCode.Decompiler.TypeSystem;
 
 using SRM = System.Reflection.Metadata;
-using static System.Reflection.Metadata.PEReaderExtensions;
 
 namespace ICSharpCode.ILSpy
 {

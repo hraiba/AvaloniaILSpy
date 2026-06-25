@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using System;
 using System.IO;
-using System.Reflection;
 using Avalonia.Logging;
 using System.Collections.Generic;
 using Avalonia.Controls;
@@ -24,7 +23,6 @@ namespace ICSharpCode.ILSpy
 			{
 				Console.WriteLine("Sorry, we crashed");
 				Console.WriteLine(exception.ToString());
-				//MessageBox.Show(exception.ToString(), "Sorry, we crashed");
 			}
 		}
 

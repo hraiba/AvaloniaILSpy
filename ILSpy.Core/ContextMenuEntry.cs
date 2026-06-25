@@ -21,14 +21,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using Avalonia.Controls;
-using Avalonia.Input;
 using AvaloniaEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 using System.ComponentModel;
-using Avalonia;
 using ICSharpCode.ILSpy.Search;
-using Avalonia.Controls.Primitives;
 
 namespace ICSharpCode.ILSpy
 {

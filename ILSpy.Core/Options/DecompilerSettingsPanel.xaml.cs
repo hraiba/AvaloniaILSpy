@@ -21,12 +21,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
-using Avalonia.Markup;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Properties;
 using Avalonia.Collections;
 using Avalonia.Markup.Xaml;
-using System.Collections;
 
 namespace ICSharpCode.ILSpy.Options
 {

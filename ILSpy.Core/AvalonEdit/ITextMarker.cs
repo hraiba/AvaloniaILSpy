@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using Avalonia;
 using Avalonia.Media;
 
 namespace ICSharpCode.ILSpy.AvaloniaEdit

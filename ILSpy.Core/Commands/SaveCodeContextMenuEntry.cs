@@ -21,13 +21,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 using Avalonia.Controls;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
-using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.TextView
 {

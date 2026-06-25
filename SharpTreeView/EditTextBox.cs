@@ -3,9 +3,7 @@
 
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia;
 using Avalonia.Interactivity;
-using System;
 using Avalonia.Controls.Primitives;
 
 namespace ICSharpCode.TreeView

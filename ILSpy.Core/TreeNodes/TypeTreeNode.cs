@@ -18,12 +18,9 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
-using SRM = System.Reflection.Metadata;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

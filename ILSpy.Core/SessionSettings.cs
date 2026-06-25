@@ -25,7 +25,6 @@ using System.Text.RegularExpressions;
 using Avalonia;
 using System.Xml.Linq;
 using Avalonia.Controls;
-using AvaloniaEdit.Search;
 
 namespace ICSharpCode.ILSpy
 {

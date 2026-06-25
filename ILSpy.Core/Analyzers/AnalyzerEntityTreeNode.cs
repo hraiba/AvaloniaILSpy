@@ -18,7 +18,6 @@
 
 using System.Collections.Generic;
 using Avalonia.Interactivity;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;

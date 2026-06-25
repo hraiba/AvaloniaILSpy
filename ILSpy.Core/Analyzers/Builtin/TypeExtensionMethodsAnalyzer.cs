@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using ICSharpCode.Decompiler.TypeSystem;
 

@@ -3,8 +3,6 @@
 
 using Avalonia.Controls.Primitives;
 using Avalonia;
-using Avalonia.Media;
-using Avalonia.Controls;
 
 namespace ICSharpCode.TreeView
 {

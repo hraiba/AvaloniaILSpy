@@ -2,8 +2,6 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System.Reflection;
-using Avalonia;
-using Avalonia.Markup;
 using Avalonia.Metadata;
 
 // General Information about an assembly is controlled through the following 

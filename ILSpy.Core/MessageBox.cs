@@ -3,7 +3,6 @@
 using System;
 using Avalonia.Controls;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using ICSharpCode.ILSpy.Controls;
 using System.Collections.Generic;
 

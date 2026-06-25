@@ -5,7 +5,6 @@ using System.ComponentModel.Composition;
 using System.Reflection.Metadata;
 using Avalonia.Controls;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy;
 

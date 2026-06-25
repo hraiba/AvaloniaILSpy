@@ -19,7 +19,6 @@
 using System;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 {

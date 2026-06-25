@@ -5,7 +5,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
-using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {

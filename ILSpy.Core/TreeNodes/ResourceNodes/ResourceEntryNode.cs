@@ -22,7 +22,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using ICSharpCode.Decompiler.DebugInfo;
-using ICSharpCode.Decompiler.Metadata;
 
 namespace ICSharpCode.ILSpy.DebugInfo
 {
