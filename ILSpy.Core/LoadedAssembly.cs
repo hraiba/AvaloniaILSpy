@@ -425,8 +425,7 @@ public sealed class LoadedAssembly
 
     public LoadedAssembly LookupReferencedAssembly(Decompiler.Metadata.IAssemblyReference reference)
     {
-        if (reference == null)
-            throw new ArgumentNullException(nameof(reference));
+        ArgumentNullException.ThrowIfNull(reference);
         if (reference.IsWindowsRuntime)
         {
             return assemblyList.assemblyLookupCache.GetOrAdd((reference.Name, true), key => LookupReferencedAssemblyInternal(reference, true));
@@ -439,10 +438,8 @@ public sealed class LoadedAssembly
 
     public LoadedAssembly LookupReferencedModule(MetadataFile mainModule, string moduleName)
     {
-        if (mainModule == null)
-            throw new ArgumentNullException(nameof(mainModule));
-        if (moduleName == null)
-            throw new ArgumentNullException(nameof(moduleName));
+        ArgumentNullException.ThrowIfNull(mainModule);
+        ArgumentNullException.ThrowIfNull(moduleName);
         return assemblyList.moduleLookupCache.GetOrAdd(mainModule.FileName + ";" + moduleName, _ => LookupReferencedModuleInternal(mainModule, moduleName));
     }
 

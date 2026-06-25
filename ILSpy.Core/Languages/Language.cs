@@ -342,24 +342,21 @@ namespace ICSharpCode.ILSpy;
 
 		public virtual string FieldToString(IField field, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
 		{
-			if (field == null)
-				throw new ArgumentNullException(nameof(field));
-			return GetDisplayName(field, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName) + " : " + TypeToString(field.ReturnType, includeNamespace);
+        ArgumentNullException.ThrowIfNull(field);
+        return GetDisplayName(field, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName) + " : " + TypeToString(field.ReturnType, includeNamespace);
 		}
 
 		public virtual string PropertyToString(IProperty property, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
 		{
-			if (property == null)
-				throw new ArgumentNullException(nameof(property));
-			return GetDisplayName(property, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName) + " : " + TypeToString(property.ReturnType, includeNamespace);
+        ArgumentNullException.ThrowIfNull(property);
+        return GetDisplayName(property, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName) + " : " + TypeToString(property.ReturnType, includeNamespace);
 		}
 
 		public virtual string MethodToString(IMethod method, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
 		{
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
+        ArgumentNullException.ThrowIfNull(method);
 
-			int i = 0;
+        int i = 0;
         var buffer = new StringBuilder();
         buffer.Append(GetDisplayName(method, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName));
 			var typeParameters = method.TypeParameters;
@@ -395,8 +392,7 @@ namespace ICSharpCode.ILSpy;
 
 		public virtual string EventToString(IEvent @event, bool includeDeclaringTypeName, bool includeNamespace, bool includeNamespaceOfDeclaringTypeName)
 		{
-			if (@event == null)
-				throw new ArgumentNullException(nameof(@event));
+        ArgumentNullException.ThrowIfNull(@event);
         var buffer = new StringBuilder();
         buffer.Append(GetDisplayName(@event, includeDeclaringTypeName, includeNamespace, includeNamespaceOfDeclaringTypeName));
 			buffer.Append(" : ");

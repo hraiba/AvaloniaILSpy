@@ -1188,8 +1188,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     public void OpenFiles(string[] fileNames, bool focusNode = true)
     {
-        if (fileNames == null)
-            throw new ArgumentNullException(nameof(fileNames));
+        ArgumentNullException.ThrowIfNull(fileNames);
 
         if (focusNode)
             treeView.UnselectAll();

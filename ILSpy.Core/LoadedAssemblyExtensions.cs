@@ -57,9 +57,8 @@ namespace ICSharpCode.ILSpy;
 
 		public static LoadedAssembly GetLoadedAssembly(this MetadataFile file)
 		{
-			if (file == null)
-				throw new ArgumentNullException(nameof(file));
-			LoadedAssembly? loadedAssembly;
+        ArgumentNullException.ThrowIfNull(file);
+        LoadedAssembly? loadedAssembly;
 			lock (LoadedAssembly.loadedAssemblies)
 			{
 				if (!LoadedAssembly.loadedAssemblies.TryGetValue(file, out loadedAssembly))

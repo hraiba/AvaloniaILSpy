@@ -43,9 +43,8 @@ namespace ICSharpCode.ILSpy;
 
 		public static int BinarySearch<T>(this IList<T> list, T item, int start, int count, IComparer<T> comparer)
 		{
-			if (list == null)
-				throw new ArgumentNullException(nameof(list));
-			if (start < 0 || start >= list.Count)
+        ArgumentNullException.ThrowIfNull(list);
+        if (start < 0 || start >= list.Count)
 				throw new ArgumentOutOfRangeException(nameof(start), start, "Value must be between 0 and " + (list.Count - 1));
 			if (count < 0 || count > list.Count - start)
 				throw new ArgumentOutOfRangeException(nameof(count), count, "Value must be between 0 and " + (list.Count - start));
@@ -67,12 +66,10 @@ namespace ICSharpCode.ILSpy;
 		public static int BinarySearch<T, TKey>(this IList<T> instance, TKey itemKey, Func<T, TKey> keySelector)
 			where TKey : IComparable<TKey>, IComparable
 		{
-			if (instance == null)
-				throw new ArgumentNullException(nameof(instance));
-			if (keySelector == null)
-				throw new ArgumentNullException(nameof(keySelector));
+        ArgumentNullException.ThrowIfNull(instance);
+        ArgumentNullException.ThrowIfNull(keySelector);
 
-			int start = 0;
+        int start = 0;
 			int end = instance.Count - 1;
 
 			while (start <= end)

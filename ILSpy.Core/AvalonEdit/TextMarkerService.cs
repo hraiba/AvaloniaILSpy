@@ -38,9 +38,8 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		
 		public TextMarkerService(TextView textView)
 		{
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+        ArgumentNullException.ThrowIfNull(textView);
+        this.textView = textView;
 			textView.DocumentChanged += OnDocumentChanged;
 			OnDocumentChanged(null, null);
 		}
@@ -83,9 +82,8 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 
     public void RemoveAll(Predicate<ITextMarker> predicate)
 		{
-			if (predicate == null)
-				throw new ArgumentNullException(nameof(predicate));
-			if (markers != null) {
+        ArgumentNullException.ThrowIfNull(predicate);
+        if (markers != null) {
 				foreach (TextMarker m in markers.ToArray()) {
 					if (predicate(m))
 						Remove(m);
@@ -95,9 +93,8 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		
 		public void Remove(ITextMarker marker)
 		{
-			if (marker == null)
-				throw new ArgumentNullException(nameof(marker));
-			TextMarker m = marker as TextMarker;
+        ArgumentNullException.ThrowIfNull(marker);
+        TextMarker m = marker as TextMarker;
 			if (markers != null && markers.Remove(m)) {
 				Redraw(m);
 				m.OnDeleted();
@@ -158,11 +155,9 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 
     public void Draw(TextView textView, DrawingContext drawingContext)
 		{
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (drawingContext == null)
-				throw new ArgumentNullException(nameof(drawingContext));
-			if (markers == null || !textView.VisualLinesValid)
+        ArgumentNullException.ThrowIfNull(textView);
+        ArgumentNullException.ThrowIfNull(drawingContext);
+        if (markers == null || !textView.VisualLinesValid)
 				return;
 			var visualLines = textView.VisualLines;
 			if (visualLines.Count == 0)
@@ -240,9 +235,8 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		
 		public TextMarker(TextMarkerService service, int startOffset, int length)
 		{
-			if (service == null)
-				throw new ArgumentNullException(nameof(service));
-			this.service = service;
+        ArgumentNullException.ThrowIfNull(service);
+        this.service = service;
 			StartOffset = startOffset;
 			Length = length;
 			markerTypes = TextMarkerTypes.None;

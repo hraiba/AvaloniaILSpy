@@ -67,11 +67,9 @@ namespace ICSharpCode.ILSpy.Analyzers;
 
 		AnalyzerTreeNode SymbolTreeNodeFactory(ISymbol symbol)
 		{
-			if (symbol == null) {
-				throw new ArgumentNullException(nameof(symbol));
-			}
+        ArgumentNullException.ThrowIfNull(symbol);
 
-			switch (symbol) {
+        switch (symbol) {
 				case IModule module:
 					return new AnalyzedModuleTreeNode(module) {
 						Language = Language

@@ -70,10 +70,9 @@ namespace ICSharpCode.ILSpy.TextView;
 
 		public BracketHighlightRenderer(global::AvaloniaEdit.Rendering.TextView textView)
 		{
-			if (textView == null)
-				throw new ArgumentNullException("textView");
+        ArgumentNullException.ThrowIfNull(textView);
 
-			borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
+        borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
 
 			backgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0, 0, 255)).ToImmutable();
 
