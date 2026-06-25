@@ -5,11 +5,4 @@ using Avalonia.Controls.Primitives;
 
 namespace ICSharpCode.TreeView;
 
-	public class InsertMarker : TemplatedControl
-	{
-		static InsertMarker()
-		{
-			//DefaultStyleKeyProperty.OverrideMetadata(typeof(InsertMarker),
-			//	new FrameworkPropertyMetadata(typeof(InsertMarker)));
-		}
-	}
+	public class InsertMarker : TemplatedControl;

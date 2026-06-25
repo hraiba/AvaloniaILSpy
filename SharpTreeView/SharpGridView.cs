@@ -5,28 +5,4 @@ using Avalonia.Controls;
 
 namespace ICSharpCode.TreeView;
 
-	public class SharpGridView : ListBox
-	{
-		static SharpGridView()
-		{
-			//ItemContainerStyleKey =
-			//	new ComponentResourceKey(typeof(SharpTreeView), "GridViewItemContainerStyleKey");
-
-		}
-
-		public SharpGridView()
-		{
-			
-		}
-
-
-		//public static ResourceKey ItemContainerStyleKey { get; private set; }
-
-		//protected override object ItemContainerDefaultStyleKey
-		//{
-		//	get
-		//	{
-		//		return ItemContainerStyleKey;
-		//	}
-		//}
-	}
+public class SharpGridView : ListBox;

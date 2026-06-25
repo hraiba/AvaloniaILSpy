@@ -58,14 +58,6 @@ namespace ICSharpCode.TreeView;
 				}
 				Node.RaisePropertyChanged("Text");
 
-				//if (Node.SaveEditText(Text)) {
-				//    Node.IsEditing = false;
-				//    Node.RaisePropertyChanged("Text");
-				//}
-				//else {
-				//    Init();
-				//}
-
 				commiting = false;
 			}
 		}

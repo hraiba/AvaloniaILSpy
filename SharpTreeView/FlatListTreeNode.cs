@@ -56,8 +56,8 @@ namespace ICSharpCode.TreeView;
 			Debug.Assert(height == 1 + Math.Max(Height(left), Height(right)));
 			Debug.Assert(Math.Abs(Balance) <= 1);
 			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (isVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
-			if (left != null) left.CheckInvariants();
-			if (right != null) right.CheckInvariants();
+			left?.CheckInvariants();
+			right?.CheckInvariants();
 		}
 		
 		[Conditional("DEBUG")]
@@ -70,13 +70,11 @@ namespace ICSharpCode.TreeView;
 		void DumpTree()
 		{
 			Debug.Indent();
-			if (left != null)
-				left.DumpTree();
+			left?.DumpTree();
 			Debug.Unindent();
 			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, isVisible);
 			Debug.Indent();
-			if (right != null)
-				right.DumpTree();
+			right?.DumpTree();
 			Debug.Unindent();
 		}
 		#endregion
@@ -187,7 +185,7 @@ namespace ICSharpCode.TreeView;
 			SharpTreeNode b = right.left;
 			SharpTreeNode newTop = right;
 			
-			if (b != null) b.listParent = this;
+			b?.listParent = this;
 			right = b;
 			newTop.left = this;
 			newTop.listParent = listParent;
@@ -210,7 +208,7 @@ namespace ICSharpCode.TreeView;
 			SharpTreeNode b = left.right;
 			SharpTreeNode newTop = left;
 			
-			if (b != null) b.listParent = this;
+			b?.listParent = this;
 			left = b;
 			newTop.right = this;
 			newTop.listParent = listParent;
@@ -354,8 +352,8 @@ namespace ICSharpCode.TreeView;
 				// Now move node's children to tmp:
 				tmp.left = node.left; node.left = null;
 				tmp.right = node.right; node.right = null;
-				if (tmp.left != null) tmp.left.listParent = tmp;
-				if (tmp.right != null) tmp.right.listParent = tmp;
+				tmp.left?.listParent = tmp;
+				tmp.right?.listParent = tmp;
 				// Then replace node with tmp
 				node.ReplaceWith(tmp);
 				if (balancingNode == node)
@@ -379,8 +377,7 @@ namespace ICSharpCode.TreeView;
 					Debug.Assert(listParent.right == this);
 					listParent.right = node;
 				}
-				if (node != null)
-					node.listParent = listParent;
+				node?.listParent = listParent;
 				listParent = null;
 			} else {
 				// this was a root node

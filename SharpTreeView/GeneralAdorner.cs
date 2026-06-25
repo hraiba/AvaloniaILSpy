@@ -8,10 +8,6 @@ namespace ICSharpCode.TreeView;
 
 	public class GeneralAdorner : VisualLayerManager
 	{
-		public GeneralAdorner()
-		{
-		}
-
 		protected override Size MeasureOverride(Size constraint)
 		{
 			if (Child != null) {

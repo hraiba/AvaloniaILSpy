@@ -51,7 +51,7 @@ namespace ICSharpCode.TreeView;
 			AvaloniaProperty.Register<SharpTreeNodeView, Control>("CellEditor");
 		
 		public Control CellEditor {
-			get { return (Control)GetValue(CellEditorProperty); }
+			get { return GetValue(CellEditorProperty); }
 			set { SetValue(CellEditorProperty, value); }
 		}
 
@@ -128,11 +128,11 @@ namespace ICSharpCode.TreeView;
 			} else if (e.PropertyName == "IsLast") {
 				if (ParentTreeView.ShowLines) {
 					foreach (var child in Node.VisibleDescendantsAndSelf()) {
-						var container = ParentTreeView.ContainerFromItem(child) as SharpTreeViewItem;
-						if (container != null && container.NodeView != null) {
-							container.NodeView.LinesRenderer.InvalidateVisual();
-						}
-					}
+                    if (ParentTreeView.ContainerFromItem(child) is SharpTreeViewItem container && container.NodeView != null)
+                    {
+                        container.NodeView.LinesRenderer.InvalidateVisual();
+                    }
+                }
 				}
 			} else if (e.PropertyName == "IsExpanded") {
 				RaisePropertyChanged(IconProperty, null, Icon);
