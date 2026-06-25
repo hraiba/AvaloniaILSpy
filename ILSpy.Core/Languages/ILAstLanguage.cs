@@ -35,7 +35,7 @@ namespace ICSharpCode.ILSpy;
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
-	abstract class ILAstLanguage : Language
+	abstract class ILAstLanguage(string name) : Language
 	{
 		public event EventHandler StepperUpdated;
 
@@ -43,12 +43,7 @@ namespace ICSharpCode.ILSpy;
 
     public Stepper Stepper { get; set; } = new Stepper();
 
-		readonly string name;
-		
-		protected ILAstLanguage(string name)
-		{
-			this.name = name;
-		}
+		readonly string name = name;
 
     public override string Name => name;
 
@@ -90,16 +85,11 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 
-		class BlockIL : ILAstLanguage
+		class BlockIL(IReadOnlyList<IILTransform> transforms) : ILAstLanguage("ILAst")
 		{
-			readonly IReadOnlyList<IILTransform> transforms;
+			readonly IReadOnlyList<IILTransform> transforms = transforms;
 
-			public BlockIL(IReadOnlyList<IILTransform> transforms) : base("ILAst")
-			{
-				this.transforms = transforms;
-			}
-
-			public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+        public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 			{
 				base.DecompileMethod(method, output, options);
 				var module = method.ParentModule.MetadataFile;

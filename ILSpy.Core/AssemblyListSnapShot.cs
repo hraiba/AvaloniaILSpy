@@ -12,18 +12,13 @@ using ICSharpCode.ILSpy.Controls.FileLoaders;
 
 namespace ICSharpCode.ILSpy;
 
-class AssemblyListSnapshot
+class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
 {
-    readonly ImmutableArray<LoadedAssembly> assemblies;
+    readonly ImmutableArray<LoadedAssembly> assemblies = assemblies;
     Dictionary<string, MetadataFile>? asmLookupByFullName;
     Dictionary<string, MetadataFile>? asmLookupByShortName;
     Dictionary<string, List<(MetadataFile module, Version version)>>? asmLookupByShortNameGrouped;
     public ImmutableArray<LoadedAssembly> Assemblies => assemblies;
-
-    public AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
-    {
-        this.assemblies = assemblies;
-    }
 
     public async Task<MetadataFile?> TryGetModuleAsync(IAssemblyReference reference, string tfm)
     {

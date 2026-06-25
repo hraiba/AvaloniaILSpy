@@ -33,16 +33,10 @@ using SRM = System.Reflection.Metadata;
 
 namespace ICSharpCode.ILSpy;
 
-	public struct LanguageVersion : IEquatable<LanguageVersion>
+	public struct LanguageVersion(string version, string name = null) : IEquatable<LanguageVersion>
 	{
-		public string Version { get; }
-		public string DisplayName { get; }
-
-		public LanguageVersion(string version, string name = null)
-		{
-			Version = version ?? "";
-			DisplayName = name ?? version;
-		}
+    public string Version { get; } = version ?? "";
+    public string DisplayName { get; } = name ?? version;
 
     public bool Equals(LanguageVersion other) => other.Version == Version && other.DisplayName == DisplayName;
 
@@ -135,20 +129,14 @@ namespace ICSharpCode.ILSpy;
 			return visitor.ToString();
 		}
 
-		class TypeToStringVisitor : TypeVisitor
+		class TypeToStringVisitor(bool includeNamespace) : TypeVisitor
 		{
-			readonly bool includeNamespace;
-			readonly StringBuilder builder;
+			readonly bool includeNamespace = includeNamespace;
+			readonly StringBuilder builder = new StringBuilder();
 
         public override string ToString() => builder.ToString();
 
-        public TypeToStringVisitor(bool includeNamespace)
-			{
-				this.includeNamespace = includeNamespace;
-				builder = new StringBuilder();
-			}
-
-			public override IType VisitArrayType(ArrayType type)
+        public override IType VisitArrayType(ArrayType type)
 			{
 				base.VisitArrayType(type);
 				builder.Append('[');

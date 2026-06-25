@@ -44,20 +44,14 @@ namespace ICSharpCode.ILSpy.Controls;
 			targetObject.SetValue(property, markupExtension.ProvideValue(serviceProvider));
 		}
 		
-		sealed class SetValueToExtensionServiceProvider : IServiceProvider, IProvideValueTarget
+		sealed class SetValueToExtensionServiceProvider(AvaloniaObject targetObject, AvaloniaProperty property) : IServiceProvider, IProvideValueTarget
 		{
 			// This class was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
 			
-			readonly AvaloniaObject targetObject;
-			readonly AvaloniaProperty targetProperty;
-			
-			public SetValueToExtensionServiceProvider(AvaloniaObject targetObject, AvaloniaProperty property)
-			{
-				this.targetObject = targetObject;
-				targetProperty = property;
-			}
-			
-			public object GetService(Type serviceType)
+			readonly AvaloniaObject targetObject = targetObject;
+			readonly AvaloniaProperty targetProperty = property;
+
+        public object GetService(Type serviceType)
 			{
 				if (serviceType == typeof(IProvideValueTarget))
             {

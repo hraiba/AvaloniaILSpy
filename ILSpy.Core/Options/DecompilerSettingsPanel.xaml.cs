@@ -132,18 +132,11 @@ public class DecompilerSettings : INotifyPropertyChanged
     }
 }
 
-public class CSharpDecompilerSetting : INotifyPropertyChanged
+public class CSharpDecompilerSetting(PropertyInfo p) : INotifyPropertyChanged
 {
     bool isEnabled;
 
-    public CSharpDecompilerSetting(PropertyInfo p)
-    {
-        Property = p;
-        Category = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
-        Description = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
-    }
-
-    public PropertyInfo Property { get; }
+    public PropertyInfo Property { get; } = p;
 
     public bool IsEnabled
     {
@@ -158,9 +151,9 @@ public class CSharpDecompilerSetting : INotifyPropertyChanged
         }
     }
 
-    public string Description { get; set; }
+    public string Description { get; set; } = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
 
-    public string Category { get; set; }
+    public string Category { get; set; } = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
 
     public event PropertyChangedEventHandler PropertyChanged;
 

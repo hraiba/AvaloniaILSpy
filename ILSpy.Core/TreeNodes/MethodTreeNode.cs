@@ -26,16 +26,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
+	public sealed class MethodTreeNode(IMethod method) : ILSpyTreeNode, IMemberTreeNode
 	{
-		public IMethod MethodDefinition { get; }
+    public IMethod MethodDefinition { get; } = method ?? throw new ArgumentNullException(nameof(method));
 
-		public MethodTreeNode(IMethod method)
-		{
-			MethodDefinition = method ?? throw new ArgumentNullException(nameof(method));
-		}
-
-		public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();
+    public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();
 
     public static object GetText(IMethod method, Language language) => language.MethodToString(method, false, false, false);
 

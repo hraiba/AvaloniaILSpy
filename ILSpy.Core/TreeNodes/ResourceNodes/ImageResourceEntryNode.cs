@@ -60,13 +60,8 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		}
 	}
 
-	sealed class ImageResourceEntryNode : ResourceEntryNode
+	sealed class ImageResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
-		public ImageResourceEntryNode(string key, Stream data)
-			: base(key, data)
-		{
-		}
-
     public override object Icon => Images.ResourceImage;
 
     public override bool View(DecompilerTextView textView)

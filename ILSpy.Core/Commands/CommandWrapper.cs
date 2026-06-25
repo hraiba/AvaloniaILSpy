@@ -21,16 +21,11 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy;
 
-	class CommandWrapper : ICommand
+	class CommandWrapper(ICommand wrappedCommand) : ICommand
 	{
-		private readonly ICommand wrappedCommand;
+		private readonly ICommand wrappedCommand = wrappedCommand;
 
-		public CommandWrapper(ICommand wrappedCommand)
-		{
-			this.wrappedCommand = wrappedCommand;
-		}
-
-		public static ICommand Unwrap(ICommand command)
+    public static ICommand Unwrap(ICommand command)
 		{
         if (command is CommandWrapper w)
         {

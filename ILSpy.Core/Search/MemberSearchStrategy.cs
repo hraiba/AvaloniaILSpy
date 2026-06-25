@@ -5,19 +5,13 @@ using ICSharpCode.Decompiler.TypeSystem;
 
 namespace ICSharpCode.ILSpy.Search;
 
-class MemberSearchStrategy : AbstractSearchStrategy
+class MemberSearchStrategy(Language language, ApiVisibility apiVisibility, IProducerConsumerCollection<SearchResult> resultQueue, string[] terms, MemberSearchKind searchKind = MemberSearchKind.All) : AbstractSearchStrategy(language, apiVisibility, resultQueue, terms)
 {
-    readonly MemberSearchKind searchKind;
+    readonly MemberSearchKind searchKind = searchKind;
 
     public MemberSearchStrategy(Language language, ApiVisibility apiVisibility, string term, IProducerConsumerCollection<SearchResult> resultQueue, MemberSearchKind searchKind = MemberSearchKind.All)
         : this(language, apiVisibility, resultQueue, new[] { term }, searchKind)
     {
-    }
-
-    public MemberSearchStrategy(Language language, ApiVisibility apiVisibility, IProducerConsumerCollection<SearchResult> resultQueue, string[] terms, MemberSearchKind searchKind = MemberSearchKind.All)
-        : base(language, apiVisibility, resultQueue, terms)
-    {
-        this.searchKind = searchKind;
     }
 
     public override void Search(MetadataFile module, CancellationToken cancellationToken)

@@ -80,30 +80,24 @@ namespace ICSharpCode.ILSpy.TextView;
 
     internal void JumpToReference(ReferenceSegment referenceSegment) => referenceClicked(referenceSegment);
 }
-	
-	/// <summary>
-	/// VisualLineElement that represents a piece of text and is a clickable link.
-	/// </summary>
-	sealed class VisualLineReferenceText : VisualLineText
+
+/// <summary>
+/// VisualLineElement that represents a piece of text and is a clickable link.
+/// </summary>
+/// <remarks>
+/// Creates a visual line text element with the specified length.
+/// It uses the <see cref="ITextRunConstructionContext.VisualLine"/> and its
+/// <see cref="VisualLineElement.RelativeTextOffset"/> to find the actual text string.
+/// </remarks>
+sealed class VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : VisualLineText(parentVisualLine, length)
 	{
     private static readonly Cursor HandCursor = new Cursor(StandardCursorType.Hand);
 
-    readonly ReferenceElementGenerator parent;
-		readonly ReferenceSegment referenceSegment;
-		
-		/// <summary>
-		/// Creates a visual line text element with the specified length.
-		/// It uses the <see cref="ITextRunConstructionContext.VisualLine"/> and its
-		/// <see cref="VisualLineElement.RelativeTextOffset"/> to find the actual text string.
-		/// </summary>
-		public VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : base(parentVisualLine, length)
-		{
-			this.parent = parent;
-			this.referenceSegment = referenceSegment;
-		}
-		
-		/// <inheritdoc/>
-		protected override void OnQueryCursor(PointerEventArgs e)
+    readonly ReferenceElementGenerator parent = parent;
+		readonly ReferenceSegment referenceSegment = referenceSegment;
+
+    /// <inheritdoc/>
+    protected override void OnQueryCursor(PointerEventArgs e)
 		{
 			e.Handled = true;
 

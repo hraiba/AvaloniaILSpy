@@ -25,13 +25,13 @@ using System.Runtime.CompilerServices;
 
 namespace ICSharpCode.ILSpy;
 
-	public class LoadedNugetPackage : INotifyPropertyChanged
-	{
-		public List<Entry> Entries { get; } = [];
-		public List<Entry> SelectedEntries { get; } = [];
+public class LoadedNugetPackage : INotifyPropertyChanged
+{
+    public List<Entry> Entries { get; } = [];
+    public List<Entry> SelectedEntries { get; } = [];
 
-		public LoadedNugetPackage(string file)
-		{
+    public LoadedNugetPackage(string file)
+    {
         using var archive = ZipFile.OpenRead(file);
         foreach (var entry in archive.Entries)
         {
@@ -50,11 +50,12 @@ namespace ICSharpCode.ILSpy;
         }
     }
 
-		void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(Entry.IsSelected)) {
-				var entry = (Entry)sender;
-				if (entry.IsSelected)
+    void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Entry.IsSelected))
+        {
+            var entry = (Entry)sender;
+            if (entry.IsSelected)
             {
                 SelectedEntries.Add(entry);
             }
@@ -64,43 +65,40 @@ namespace ICSharpCode.ILSpy;
             }
 
             OnPropertyChanged(nameof(SelectedEntries));
-			}
-		}
+        }
+    }
 
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
     public event PropertyChangedEventHandler PropertyChanged;
-	}
+}
 
-	public class Entry : INotifyPropertyChanged
-	{
-		public string Name { get; }
+public class Entry(string name, Stream stream) : INotifyPropertyChanged
+{
+    public string Name { get; } = name;
 
-		public bool IsSelected {
-			get { return isSelected; }
-			set {
-				if (isSelected != value) {
-					isSelected = value;
-					OnPropertyChanged();
-				}
-			}
-		}
+    public bool IsSelected
+    {
+        get { return isSelected; }
+        set
+        {
+            if (isSelected != value)
+            {
+                isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-    public Stream Stream { get; }
+    public Stream Stream { get; } = stream;
 
-		bool isSelected;
+    bool isSelected;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public Entry(string name, Stream stream)
-		{
-			Name = name;
-			Stream = stream;
-		}
-	}
+    public event PropertyChangedEventHandler PropertyChanged;
+}

@@ -30,25 +30,17 @@ namespace ICSharpCode.ILSpy.TextView;
 	/// <summary>
 	/// Describes a pair of matching brackets found by <see cref="IBracketSearcher"/>.
 	/// </summary>
-	public class BracketSearchResult
-	{
-    public int OpeningBracketOffset { get; }
+	public class BracketSearchResult(int openingBracketOffset, int openingBracketLength,
+                                   int closingBracketOffset, int closingBracketLength)
+{
+    public int OpeningBracketOffset { get; } = openingBracketOffset;
 
-    public int OpeningBracketLength { get; private set; }
+    public int OpeningBracketLength { get; private set; } = openingBracketLength;
 
-    public int ClosingBracketOffset { get; }
+    public int ClosingBracketOffset { get; } = closingBracketOffset;
 
-    public int ClosingBracketLength { get; private set; }
-
-		public BracketSearchResult(int openingBracketOffset, int openingBracketLength,
-								   int closingBracketOffset, int closingBracketLength)
-		{
-			OpeningBracketOffset = openingBracketOffset;
-			OpeningBracketLength = openingBracketLength;
-			ClosingBracketOffset = closingBracketOffset;
-			ClosingBracketLength = closingBracketLength;
-		}
-	}
+    public int ClosingBracketLength { get; private set; } = closingBracketLength;
+}
 
 	public class BracketHighlightRenderer : IBackgroundRenderer
 	{

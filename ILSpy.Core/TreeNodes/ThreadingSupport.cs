@@ -125,16 +125,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 		
-		sealed class ErrorTreeNode : ILSpyTreeNode
+		sealed class ErrorTreeNode(string text) : ILSpyTreeNode
 		{
-			readonly string text;
+			readonly string text = text;
 
         public override object Text => text;
-
-        public ErrorTreeNode(string text)
-			{
-				this.text = text;
-			}
 
         public override FilterResult Filter(FilterSettings settings) => FilterResult.Match;
 

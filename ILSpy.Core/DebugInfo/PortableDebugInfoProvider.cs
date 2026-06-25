@@ -23,18 +23,12 @@ using ICSharpCode.Decompiler.DebugInfo;
 
 namespace ICSharpCode.ILSpy.DebugInfo;
 
-	class PortableDebugInfoProvider : IDebugInfoProvider
+	class PortableDebugInfoProvider(string pdbFileName, MetadataReaderProvider provider) : IDebugInfoProvider
 	{
-		string pdbFileName;
-		MetadataReaderProvider provider;
+		string pdbFileName = pdbFileName;
+		MetadataReaderProvider provider = provider;
 
-		public PortableDebugInfoProvider(string pdbFileName, MetadataReaderProvider provider)
-		{
-			this.pdbFileName = pdbFileName;
-			this.provider = provider;
-		}
-
-		public string Description => pdbFileName == null ? "Embedded in this assembly" : $"Loaded from portable PDB: {pdbFileName}";
+    public string Description => pdbFileName == null ? "Embedded in this assembly" : $"Loaded from portable PDB: {pdbFileName}";
 
 		public string SourceFileName => pdbFileName;
 

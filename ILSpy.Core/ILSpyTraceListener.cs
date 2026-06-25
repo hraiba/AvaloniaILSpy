@@ -110,7 +110,6 @@ namespace ICSharpCode.ILSpy;
 		}
 	}
 
-	class AssertionFailedException : Exception
+	class AssertionFailedException(string message) : Exception(message)
 	{
-		public AssertionFailedException(string message) : base(message) { }
-	}
+}

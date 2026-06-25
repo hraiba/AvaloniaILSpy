@@ -66,21 +66,15 @@ namespace ICSharpCode.ILSpy;
 			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(tokenWriter, settings.CSharpFormattingOptions));
 		}
 
-		class MixedMethodBodyDisassembler : MethodBodyDisassembler
+		class MixedMethodBodyDisassembler(ITextOutput output, DecompilationOptions options) : MethodBodyDisassembler(output, options.CancellationToken)
 		{
-			readonly DecompilationOptions options;
+			readonly DecompilationOptions options = options;
 			// list sorted by IL offset
 			IList<SequencePoint> sequencePoints;
 			// lines of raw c# source code
 			string[] codeLines;
 
-			public MixedMethodBodyDisassembler(ITextOutput output, DecompilationOptions options)
-				: base(output, options.CancellationToken)
-			{
-				this.options = options;
-			}
-
-			public override void Disassemble(MetadataFile module, MethodDefinitionHandle handle)
+        public override void Disassemble(MetadataFile module, MethodDefinitionHandle handle)
 			{
 				try {
 					var csharpOutput = new StringWriter();

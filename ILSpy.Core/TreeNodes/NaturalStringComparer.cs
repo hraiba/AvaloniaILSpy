@@ -22,29 +22,23 @@ using System.Globalization;
 
 namespace ICSharpCode.ILSpy.TreeNodes;
 
-	public sealed class NaturalStringComparer : IComparer<string>
+/// <summary>
+/// Create a sequence comparer, using the specified item comparer
+/// for T.
+/// </summary>
+public sealed class NaturalStringComparer(CultureInfo culture, CompareOptions options) : IComparer<string>
 	{
 		public static readonly NaturalStringComparer Instance = new NaturalStringComparer(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
 
-		/// <summary>
-		/// Create a sequence comparer, using the specified item comparer
-		/// for T.
-		/// </summary>
-		public NaturalStringComparer(CultureInfo culture, CompareOptions options)
-		{
-			this.culture = culture;
-			this.options = options;
-		}
-
-		/// <summary>
-		/// culture used for comparing each element.
-		/// </summary>
-		CultureInfo culture;
+    /// <summary>
+    /// culture used for comparing each element.
+    /// </summary>
+    CultureInfo culture = culture;
 
 		/// <summary>
 		/// options used for comparing each element.
 		/// </summary>
-		CompareOptions options;
+		CompareOptions options = options;
 
 		/// <summary>
 		/// Compare two sequences of T.

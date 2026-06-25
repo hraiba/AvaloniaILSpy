@@ -157,15 +157,10 @@ public class CSharpLanguage : Language
         }
     }
 
-    class SelectCtorTransform : IAstTransform
+    class SelectCtorTransform(IMethod ctor) : IAstTransform
     {
-        readonly IMethod ctor;
+        readonly IMethod ctor = ctor;
         readonly HashSet<ISymbol> removedSymbols = [];
-
-        public SelectCtorTransform(IMethod ctor)
-        {
-            this.ctor = ctor;
-        }
 
         public void Run(AstNode rootNode, TransformContext context)
         {
@@ -274,14 +269,9 @@ public class CSharpLanguage : Language
     /// <summary>
     /// Removes all top-level members except for the specified fields.
     /// </summary>
-    sealed class SelectFieldTransform : IAstTransform
+    sealed class SelectFieldTransform(IField field) : IAstTransform
     {
-        readonly IField field;
-
-        public SelectFieldTransform(IField field)
-        {
-            this.field = field;
-        }
+        readonly IField field = field;
 
         public void Run(AstNode rootNode, TransformContext context)
         {
@@ -500,23 +490,16 @@ public class CSharpLanguage : Language
         }
     }
 
-    class ILSpyWholeProjectDecompiler : WholeProjectDecompiler
-    {
-        readonly LoadedAssembly assembly;
-        readonly DecompilationOptions options;
-
-        public ILSpyWholeProjectDecompiler(LoadedAssembly assembly, DecompilationOptions options)
-        : base(
-            options.DecompilerSettings,
-            assembly.GetAssemblyResolver(),
-            null,
-            null,
-            assembly.GetDebugInfoOrNull()
+    class ILSpyWholeProjectDecompiler(LoadedAssembly assembly, DecompilationOptions options) : WholeProjectDecompiler(
+        options.DecompilerSettings,
+        assembly.GetAssemblyResolver(),
+        null,
+        null,
+        assembly.GetDebugInfoOrNull()
         )
-        {
-            this.assembly = assembly;
-            this.options = options;
-        }
+    {
+        readonly LoadedAssembly assembly = assembly;
+        readonly DecompilationOptions options = options;
 
         protected override IEnumerable<ProjectItemInfo> WriteResourceToFile(string fileName, string resourceName, Stream entryStream)
         {

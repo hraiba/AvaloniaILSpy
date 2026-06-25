@@ -50,16 +50,11 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 	/// <summary>
 	/// Finds methods where this field is read or written.
 	/// </summary>
-	class FieldAccessAnalyzer : IAnalyzer
+	class FieldAccessAnalyzer(bool showWrites) : IAnalyzer
 	{
 		const GetMemberOptions Options = GetMemberOptions.IgnoreInheritedMembers | GetMemberOptions.ReturnMemberDefinitions;
 
-		readonly bool showWrites; // true: show writes; false: show read access
-
-		public FieldAccessAnalyzer(bool showWrites)
-		{
-			this.showWrites = showWrites;
-		}
+		readonly bool showWrites = showWrites; // true: show writes; false: show read access
 
     public bool Show(ISymbol symbol) => symbol is IField field && (!showWrites || !field.IsConst);
 

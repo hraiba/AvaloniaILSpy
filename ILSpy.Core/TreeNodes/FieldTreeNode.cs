@@ -26,16 +26,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// <summary>
 	/// Represents a field in the TreeView.
 	/// </summary>
-	public sealed class FieldTreeNode : ILSpyTreeNode, IMemberTreeNode
+	public sealed class FieldTreeNode(IField field) : ILSpyTreeNode, IMemberTreeNode
 	{
-		public IField FieldDefinition { get; }
+    public IField FieldDefinition { get; } = field ?? throw new ArgumentNullException(nameof(field));
 
-		public FieldTreeNode(IField field)
-		{
-			FieldDefinition = field ?? throw new ArgumentNullException(nameof(field));
-		}
-
-		public override object Text => GetText(FieldDefinition, Language) + FieldDefinition.MetadataToken.ToSuffixString();
+    public override object Text => GetText(FieldDefinition, Language) + FieldDefinition.MetadataToken.ToSuffixString();
 
     public static object GetText(IField field, Language language) => language.FieldToString(field, includeDeclaringTypeName: false, includeNamespace: false, includeNamespaceOfDeclaringTypeName: false);
 

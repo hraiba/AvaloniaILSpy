@@ -46,15 +46,11 @@ namespace ICSharpCode.ILSpy.Xaml;
     }
 	}
 	
-	sealed class XamlResourceEntryNode : ResourceEntryNode
+	sealed class XamlResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
 		string xaml;
-		
-		public XamlResourceEntryNode(string key, Stream data) : base(key, data)
-		{
-		}
-		
-		public override bool View(DecompilerTextView textView)
+
+    public override bool View(DecompilerTextView textView)
 		{
 			AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
 			IHighlightingDefinition highlighting = null;

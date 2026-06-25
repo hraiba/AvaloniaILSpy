@@ -62,16 +62,11 @@ namespace ICSharpCode.ILSpy.Xaml;
 		}
 	}
 	
-	sealed class XmlResourceEntryNode : ResourceEntryNode
+	sealed class XmlResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
 		string xml;
-		
-		public XmlResourceEntryNode(string key, Stream data)
-			: base(key, data)
-		{
-		}
-		
-		public override object Icon
+
+    public override object Icon
 		{
 			get
 			{

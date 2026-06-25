@@ -10,16 +10,10 @@ using ICSharpCode.Decompiler.CSharp.Syntax;
 
 namespace ICSharpCode.ILSpy;
 
-	public class LATextReader : TextReader
+	public class LATextReader(TextReader reader) : TextReader
 	{
-		List<int> buffer;
-		TextReader reader;
-
-		public LATextReader(TextReader reader)
-		{
-			buffer = [];
-			this.reader = reader;
-		}
+		List<int> buffer = [];
+		TextReader reader = reader;
 
     public override int Peek() => Peek(0);
 
@@ -55,11 +49,11 @@ namespace ICSharpCode.ILSpy;
 		}
 	}
 
-	public class Literal
-	{
-		internal readonly LiteralFormat literalFormat;
-		internal readonly object literalValue;
-		internal readonly string val;
+	public class Literal(string val, object literalValue, LiteralFormat literalFormat)
+{
+		internal readonly LiteralFormat literalFormat = literalFormat;
+		internal readonly object literalValue = literalValue;
+		internal readonly string val = val;
 		internal Literal next;
 
     public LiteralFormat LiteralFormat => literalFormat;
@@ -67,18 +61,14 @@ namespace ICSharpCode.ILSpy;
     public object LiteralValue => literalValue;
 
     public string Value => val;
+}
 
-    public Literal(string val, object literalValue, LiteralFormat literalFormat)
-		{
-			this.val = val;
-			this.literalValue = literalValue;
-			this.literalFormat = literalFormat;
-		}
-	}
-
-	internal abstract class AbstractLexer
-	{
-		LATextReader reader;
+/// <summary>
+/// Constructor for the abstract lexer class.
+/// </summary>
+internal abstract class AbstractLexer(TextReader reader)
+{
+		LATextReader reader = new LATextReader(reader);
 		int col = 1;
 		int line = 1;
 
@@ -151,16 +141,8 @@ namespace ICSharpCode.ILSpy;
     /// </summary>
     public Literal LookAhead => curToken;
 
-    /// <summary>
-    /// Constructor for the abstract lexer class.
-    /// </summary>
-    protected AbstractLexer(TextReader reader)
-		{
-			this.reader = new LATextReader(reader);
-		}
-
-		#region System.IDisposable interface implementation
-		public virtual void Dispose()
+    #region System.IDisposable interface implementation
+    public virtual void Dispose()
 		{
 			reader.Close();
 			reader = null;
@@ -313,13 +295,9 @@ namespace ICSharpCode.ILSpy;
 		}
 	}
 
-	internal sealed class Lexer : AbstractLexer
+	internal sealed class Lexer(TextReader reader) : AbstractLexer(reader)
 	{
-		public Lexer(TextReader reader) : base(reader)
-		{
-		}
-
-		protected override Literal Next()
+    protected override Literal Next()
 		{
 			char ch;
 			while (true) {

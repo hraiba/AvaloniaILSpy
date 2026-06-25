@@ -9,17 +9,13 @@ namespace ICSharpCode.ILSpy;
 /// <summary>
 /// Navigation command. CanExecuteChanged will get called when focused is changed. 
 /// </summary>
-internal class NavigationCommand: RoutedCommand, ICommand
+internal class NavigationCommand(string name, KeyGesture keyGesture) : RoutedCommand(name, keyGesture), ICommand
 {
     static EventHandler interactiveEventHandler;
 
     static NavigationCommand()
     {
         InputElement.GotFocusEvent.AddClassHandler(typeof(InputElement), HandlePointerEvent);
-    }
-
-    public NavigationCommand(string name, KeyGesture keyGesture) : base(name, keyGesture)
-    {
     }
 
     private static void HandlePointerEvent(object sender, RoutedEventArgs args) => interactiveEventHandler?.Invoke(sender, args);

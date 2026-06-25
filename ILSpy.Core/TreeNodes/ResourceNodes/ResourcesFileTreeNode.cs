@@ -184,17 +184,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 
-		internal class SerializedObjectRepresentation
-		{
-			public SerializedObjectRepresentation(string key, string type, string value)
-			{
-				Key = key;
-				Type = type;
-				Value = value;
-			}
-
-        public string Key { get; }
-        public string Type { get; private set; }
-        public string Value { get; }
+		internal class SerializedObjectRepresentation(string key, string type, string value)
+    {
+        public string Key { get; } = key;
+        public string Type { get; private set; } = type;
+        public string Value { get; } = value;
     }
 	}

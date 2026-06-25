@@ -249,15 +249,10 @@ static class Images
 			}
 		}
 
-    private class WbFb : IFramebufferPlatformSurface
+    private class WbFb(WriteableBitmap bitmap) : IFramebufferPlatformSurface
     {
-        WriteableBitmap _bitmap;
+        WriteableBitmap _bitmap = bitmap;
         public ILockedFramebuffer Lock() => _bitmap.Lock();
-
-        public WbFb(WriteableBitmap bitmap)
-        {
-            _bitmap = bitmap;
-        }
     }
 
     private abstract class IconCache<T>

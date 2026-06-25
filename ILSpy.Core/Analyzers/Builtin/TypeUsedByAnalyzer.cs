@@ -223,21 +223,15 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 		public bool Show(ISymbol symbol) => symbol is ITypeDefinition entity;
 	}
 
-	class TypeDefinitionUsedVisitor : TypeVisitor
+	class TypeDefinitionUsedVisitor(ITypeDefinition definition, bool topLevelOnly) : TypeVisitor
 	{
-		public readonly ITypeDefinition TypeDefinition;
+		public readonly ITypeDefinition TypeDefinition = definition;
 
 		public bool Found { get; set; }
 
-		readonly bool topLevelOnly;
+		readonly bool topLevelOnly = topLevelOnly;
 
-		public TypeDefinitionUsedVisitor(ITypeDefinition definition, bool topLevelOnly)
-		{
-			TypeDefinition = definition;
-			this.topLevelOnly = topLevelOnly;
-		}
-
-		public override IType VisitTypeDefinition(ITypeDefinition type)
+    public override IType VisitTypeDefinition(ITypeDefinition type)
 		{
 			Found |= TypeDefinition.MetadataToken == type.MetadataToken
 				&& TypeDefinition.ParentModule.MetadataFile == type.ParentModule.MetadataFile;

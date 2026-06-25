@@ -12,18 +12,13 @@ namespace ICSharpCode.TreeView;
 	/// <summary>
 	/// Collection that validates that inserted nodes do not have another parent.
 	/// </summary>
-	public sealed class SharpTreeNodeCollection : IList<SharpTreeNode>, INotifyCollectionChanged
+	public sealed class SharpTreeNodeCollection(SharpTreeNode parent) : IList<SharpTreeNode>, INotifyCollectionChanged
 	{
-		readonly SharpTreeNode parent;
+		readonly SharpTreeNode parent = parent;
 		List<SharpTreeNode> list = [];
 		bool isRaisingEvent;
-		
-		public SharpTreeNodeCollection(SharpTreeNode parent)
-		{
-			this.parent = parent;
-		}
-		
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+    public event NotifyCollectionChangedEventHandler CollectionChanged;
 		
 		void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{

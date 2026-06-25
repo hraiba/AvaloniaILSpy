@@ -394,14 +394,9 @@ public sealed class LoadedAssembly
         }
     }
 
-    sealed class MyAssemblyResolver : IAssemblyResolver
+    sealed class MyAssemblyResolver(LoadedAssembly parent) : IAssemblyResolver
     {
-        readonly LoadedAssembly parent;
-
-        public MyAssemblyResolver(LoadedAssembly parent)
-        {
-            this.parent = parent;
-        }
+        readonly LoadedAssembly parent = parent;
 
         public MetadataFile? Resolve(IAssemblyReference reference) => parent.LookupReferencedAssembly(reference)?.GetPEFileOrNull();
 
@@ -449,12 +444,8 @@ public sealed class LoadedAssembly
         return assemblyList.moduleLookupCache.GetOrAdd(mainModule.FileName + ";" + moduleName, _ => LookupReferencedModuleInternal(mainModule, moduleName));
     }
 
-    class MyUniversalResolver : UniversalAssemblyResolver
+    class MyUniversalResolver(LoadedAssembly assembly) : UniversalAssemblyResolver(assembly.FileName, false, assembly.GetTargetFrameworkIdAsync().Result, runtimePack: null, PEStreamOptions.PrefetchEntireImage, DecompilerSettingsPanel.CurrentDecompilerSettings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None)
     {
-        public MyUniversalResolver(LoadedAssembly assembly)
-            : base(assembly.FileName, false, assembly.GetTargetFrameworkIdAsync().Result, runtimePack: null, PEStreamOptions.PrefetchEntireImage, DecompilerSettingsPanel.CurrentDecompilerSettings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None)
-        {
-        }
     }
 
     static Dictionary<string, LoadedAssembly> loadingAssemblies = [];

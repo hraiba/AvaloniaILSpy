@@ -522,19 +522,12 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         return task;
     }
 
-    sealed class DecompilationContext
+    sealed class DecompilationContext(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
     {
-        public readonly Language Language;
-        public readonly ILSpyTreeNode[] TreeNodes;
-        public readonly DecompilationOptions Options;
+        public readonly Language Language = language;
+        public readonly ILSpyTreeNode[] TreeNodes = treeNodes;
+        public readonly DecompilationOptions Options = options;
         public readonly TaskCompletionSource<object> TaskCompletionSource = new TaskCompletionSource<object>();
-
-        public DecompilationContext(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
-        {
-            Language = language;
-            TreeNodes = treeNodes;
-            Options = options;
-        }
     }
 
     Task DoDecompile(DecompilationContext context, int outputLengthLimit) => RunWithCancellation(

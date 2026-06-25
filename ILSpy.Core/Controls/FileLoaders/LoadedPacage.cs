@@ -130,17 +130,11 @@ public class LoadedPackage
     /// <summary>
     /// Entry inside a package folder. Effectively renames the entry.
     /// </summary>
-    sealed class FolderEntry : PackageEntry
+    sealed class FolderEntry(string name, PackageEntry originalEntry) : PackageEntry
     {
-        readonly PackageEntry originalEntry;
-        public override string Name { get; }
+        readonly PackageEntry originalEntry = originalEntry;
+        public override string Name { get; } = name;
         public override string FullName => originalEntry.Name;
-
-        public FolderEntry(string name, PackageEntry originalEntry)
-        {
-            Name = name;
-            this.originalEntry = originalEntry;
-        }
 
         public override ManifestResourceAttributes Attributes => originalEntry.Attributes;
         public override string PackageQualifiedFileName => originalEntry.PackageQualifiedFileName;
@@ -149,19 +143,13 @@ public class LoadedPackage
         public override long? TryGetLength() => originalEntry.TryGetLength();
     }
 
-    sealed class ZipFileEntry : PackageEntry
+    sealed class ZipFileEntry(string zipFile, ZipArchiveEntry entry) : PackageEntry
     {
-        readonly string zipFile;
-        public override string Name { get; }
+        readonly string zipFile = zipFile;
+        public override string Name { get; } = entry.FullName;
         public override string PackageQualifiedFileName => $"zip://{zipFile};{Name}";
 
         public override string FullName => Name;
-
-        public ZipFileEntry(string zipFile, ZipArchiveEntry entry)
-        {
-            this.zipFile = zipFile;
-            Name = entry.FullName;
-        }
 
         public override Stream? TryOpenStream()
         {
@@ -196,18 +184,11 @@ public class LoadedPackage
         }
     }
 
-    sealed class BundleEntry : PackageEntry
+    sealed class BundleEntry(string bundleFile, MemoryMappedViewAccessor view, SingleFileBundle.Entry entry) : PackageEntry
     {
-        readonly string bundleFile;
-        readonly MemoryMappedViewAccessor view;
-        readonly SingleFileBundle.Entry entry;
-
-        public BundleEntry(string bundleFile, MemoryMappedViewAccessor view, SingleFileBundle.Entry entry)
-        {
-            this.bundleFile = bundleFile;
-            this.view = view;
-            this.entry = entry;
-        }
+        readonly string bundleFile = bundleFile;
+        readonly MemoryMappedViewAccessor view = view;
+        readonly SingleFileBundle.Entry entry = entry;
 
         public override string Name => entry.RelativePath;
         public override string FullName => Name;
