@@ -82,13 +82,9 @@ namespace ICSharpCode.ILSpy.TextView;
 			this.textView.BackgroundRenderers.Add(this);
 		}
 
-		public KnownLayer Layer {
-			get {
-				return KnownLayer.Selection;
-			}
-		}
+    public KnownLayer Layer => KnownLayer.Selection;
 
-		public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
+    public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
 		{
 			if (result == null)
 				return;

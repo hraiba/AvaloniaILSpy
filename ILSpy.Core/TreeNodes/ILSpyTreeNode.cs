@@ -45,12 +45,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 
-		public Language Language
-		{
-			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
-		}
+    public Language Language => filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0];
 
-		public virtual FilterResult Filter(FilterSettings settings)
+    public virtual FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
 				return FilterResult.Match;
@@ -160,17 +157,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					ApplyFilterToChild(node);
 			}
 		}
-		
-		public virtual bool IsPublicAPI {
-			get { return true; }
-		}
 
-		public virtual bool IsAutoLoaded
-		{
-			get { return false; }
-		}
-		
-		public override Avalonia.Media.IBrush Foreground {
+    public virtual bool IsPublicAPI => true;
+
+    public virtual bool IsAutoLoaded => false;
+
+    public override Avalonia.Media.IBrush Foreground {
 			get {
 				if (IsPublicAPI)
 					if (IsAutoLoaded) {

@@ -16,21 +16,14 @@ namespace TestPlugin;
 	[Export(typeof(Language))]
 	public class CustomLanguage : Language
 	{
-		public override string Name {
-			get {
-				return "Custom";
-			}
-		}
-		
-		public override string FileExtension {
-			get {
-				// used in 'Save As' dialog
-				return ".txt";
-			}
-		}
+    public override string Name => "Custom";
 
-		// There are several methods available to override; in this sample, we deal with methods only
-		public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+    public override string FileExtension =>
+        // used in 'Save As' dialog
+        ".txt";
+
+    // There are several methods available to override; in this sample, we deal with methods only
+    public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 		{
 			var module = ((MetadataModule)method.ParentModule).MetadataFile;
 			var methodDef = module.Metadata.GetMethodDefinition((MethodDefinitionHandle)method.MetadataToken);

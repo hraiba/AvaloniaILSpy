@@ -105,14 +105,12 @@ namespace ICSharpCode.ILSpy.TextView;
 		{
 		}
 
-		/// <summary>
-		/// Gets the list of references (hyperlinks).
-		/// </summary>
-		internal TextSegmentCollection<ReferenceSegment> References {
-			get { return references; }
-		}
+    /// <summary>
+    /// Gets the list of references (hyperlinks).
+    /// </summary>
+    internal TextSegmentCollection<ReferenceSegment> References => references;
 
-		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
+    public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
 		{
 			elementGenerators.Add(elementGenerator);
 		}
@@ -124,18 +122,12 @@ namespace ICSharpCode.ILSpy.TextView;
 		/// </summary>
 		public int LengthLimit = int.MaxValue;
 
-		public int TextLength {
-			get { return b.Length; }
-		}
+    public int TextLength => b.Length;
 
-		public TextLocation Location {
-			get {
-				return new TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
-			}
-		}
+    public TextLocation Location => new TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 
-		#region Text Document
-		TextDocument textDocument;
+    #region Text Document
+    TextDocument textDocument;
 
 		/// <summary>
 		/// Prepares the TextDocument.

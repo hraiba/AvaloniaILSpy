@@ -40,15 +40,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public IAssemblyReference AssemblyNameReference => r;
 
-		public override object Text {
-			get { return r.Name + ((System.Reflection.Metadata.EntityHandle)r.Handle).ToSuffixString(); }
-		}
-		
-		public override object Icon {
-			get { return Images.Assembly; }
-		}
-		
-		public override bool ShowExpander {
+    public override object Text => r.Name + ((System.Reflection.Metadata.EntityHandle)r.Handle).ToSuffixString();
+
+    public override object Icon => Images.Assembly;
+
+    public override bool ShowExpander {
 			get {
 				if (r.Name == "mscorlib")
 					EnsureLazyChildren(); // likely doesn't have any children

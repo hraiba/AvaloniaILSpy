@@ -17,12 +17,9 @@ namespace ICSharpCode.TreeView;
 
 		static Pen pen;
 
-		SharpTreeNodeView NodeView
-		{
-			get { return TemplatedParent as SharpTreeNodeView; }
-		}
+    SharpTreeNodeView NodeView => TemplatedParent as SharpTreeNodeView;
 
-		public override void Render(DrawingContext dc)
+    public override void Render(DrawingContext dc)
 		{
 			if (NodeView.Node == null) {
 				// This seems to happen sometimes with DataContext==DisconnectedItem,

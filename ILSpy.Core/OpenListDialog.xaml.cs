@@ -96,15 +96,9 @@ namespace ICSharpCode.ILSpy;
 			Close(false);
 		}
 
-		public string SelectedListName
-		{
-			get
-			{
-				return listView.SelectedItem.ToString();
-			}
-		}
+    public string SelectedListName => listView.SelectedItem.ToString();
 
-		private void CreateDefaultAssemblyLists()
+    private void CreateDefaultAssemblyLists()
 		{
 			if (!manager.AssemblyLists.Contains(DotNetCoreList))
 			{

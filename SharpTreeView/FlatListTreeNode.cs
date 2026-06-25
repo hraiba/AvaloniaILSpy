@@ -23,12 +23,10 @@ namespace ICSharpCode.TreeView;
 		
 		/// <summary>Length in the flat list, including children (children within the flat list). -1 = invalidated</summary>
 		int totalListLength = -1;
-		
-		int Balance {
-			get { return Height(right) - Height(left); }
-		}
-		
-		static int Height(SharpTreeNode node)
+
+    int Balance => Height(right) - Height(left);
+
+    static int Height(SharpTreeNode node)
 		{
 			return node != null ? node.height : 0;
 		}

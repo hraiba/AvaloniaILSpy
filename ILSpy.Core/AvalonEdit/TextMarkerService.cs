@@ -78,12 +78,10 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 			else
 				return markers.FindSegmentsContaining(offset);
 		}
-		
-		public IEnumerable<ITextMarker> TextMarkers {
-			get { return markers ?? Enumerable.Empty<ITextMarker>(); }
-		}
-		
-		public void RemoveAll(Predicate<ITextMarker> predicate)
+
+    public IEnumerable<ITextMarker> TextMarkers => markers ?? Enumerable.Empty<ITextMarker>();
+
+    public void RemoveAll(Predicate<ITextMarker> predicate)
 		{
 			if (predicate == null)
 				throw new ArgumentNullException(nameof(predicate));
@@ -151,17 +149,14 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 				);
 			}
 		}
-		#endregion
-		
-		#region IBackgroundRenderer
-		public KnownLayer Layer {
-			get {
-				// draw behind selection
-				return KnownLayer.Selection;
-			}
-		}
-		
-		public void Draw(TextView textView, DrawingContext drawingContext)
+    #endregion
+
+    #region IBackgroundRenderer
+    public KnownLayer Layer =>
+        // draw behind selection
+        KnownLayer.Selection;
+
+    public void Draw(TextView textView, DrawingContext drawingContext)
 		{
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
@@ -254,12 +249,10 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		}
 		
 		public event EventHandler Deleted;
-		
-		public bool IsDeleted {
-			get { return !IsConnectedToCollection; }
-		}
-		
-		public void Delete()
+
+    public bool IsDeleted => !IsConnectedToCollection;
+
+    public void Delete()
 		{
 			service.Remove(this);
 		}

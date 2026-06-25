@@ -40,16 +40,12 @@ namespace ICSharpCode.ILSpy;
 	public class ILLanguage : Language
 	{
 		protected bool detectControlStructure = true;
-		
-		public override string Name {
-			get { return "IL"; }
-		}
-		
-		public override string FileExtension {
-			get { return ".il"; }
-		}
-		
-		protected virtual ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
+
+    public override string Name => "IL";
+
+    public override string FileExtension => ".il";
+
+    protected virtual ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
 		{
         output.IndentationString = options.DecompilerSettings.CSharpFormattingOptions.IndentationString;
         return new ReflectionDisassembler(output, options.CancellationToken) {

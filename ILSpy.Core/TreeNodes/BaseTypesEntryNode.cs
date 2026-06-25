@@ -103,9 +103,5 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
 		}
 
-		IEntity IMemberTreeNode.Member {
-			get {
-				return TryResolve(module, handle, type, false);
-			}
-		}
-	}
+    IEntity IMemberTreeNode.Member => TryResolve(module, handle, type, false);
+}

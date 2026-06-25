@@ -33,16 +33,12 @@ namespace ICSharpCode.ILSpy;
 		T current;
 		List<T> back = new List<T>();
 		List<T> forward = new List<T>();
-		
-		public bool CanNavigateBack {
-			get { return back.Count > 0; }
-		}
-		
-		public bool CanNavigateForward {
-			get { return forward.Count > 0; }
-		}
-		
-		public T GoBack()
+
+    public bool CanNavigateBack => back.Count > 0;
+
+    public bool CanNavigateForward => forward.Count > 0;
+
+    public T GoBack()
 		{
 			forward.Add(current);
 			current = back[back.Count - 1];

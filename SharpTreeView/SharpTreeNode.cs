@@ -89,40 +89,19 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     #region Main
     public SharpTreeNodeCollection Children => modelChildren ??= new SharpTreeNodeCollection(this);
 
-    public SharpTreeNode Parent
-    {
-        get { return modelParent; }
-    }
+    public SharpTreeNode Parent => modelParent;
 
-    public virtual object Text
-    {
-        get { return null; }
-    }
+    public virtual object Text => null;
 
-    public virtual IBrush Foreground
-    {
-        get { return SystemColors.WindowTextBrush; }
-    }
+    public virtual IBrush Foreground => SystemColors.WindowTextBrush;
 
-    public virtual object Icon
-    {
-        get { return null; }
-    }
+    public virtual object Icon => null;
 
-    public virtual object ToolTip
-    {
-        get { return null; }
-    }
+    public virtual object ToolTip => null;
 
-    public int Level
-    {
-        get { return Parent != null ? Parent.Level + 1 : 0; }
-    }
+    public int Level => Parent != null ? Parent.Level + 1 : 0;
 
-    public bool IsRoot
-    {
-        get { return Parent == null; }
-    }
+    public bool IsRoot => Parent == null;
 
     bool isHidden;
 
@@ -147,10 +126,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     /// <summary>
     /// Return true when this node is not hidden and when all parent nodes are expanded and not hidden.
     /// </summary>
-    public bool IsVisible
-    {
-        get { return isVisible; }
-    }
+    public bool IsVisible => isVisible;
 
     bool isSelected;
 
@@ -237,15 +213,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region Expanding / LazyLoading
 
-    public virtual object ExpandedIcon
-    {
-        get { return Icon; }
-    }
+    public virtual object ExpandedIcon => Icon;
 
-    public virtual bool ShowExpander
-    {
-        get { return LazyLoading || Children.Any(c => !c.isHidden); }
-    }
+    public virtual bool ShowExpander => LazyLoading || Children.Any(c => !c.isHidden);
 
     bool isExpanded;
 
@@ -303,15 +273,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     /// Gets whether this node can be expanded recursively.
     /// If not overridden, this property returns false if the node is using lazy-loading, and true otherwise.
     /// </summary>
-    public virtual bool CanExpandRecursively
-    {
-        get { return canExpandRecursively; }
-    }
+    public virtual bool CanExpandRecursively => canExpandRecursively;
 
-    public virtual bool ShowIcon
-    {
-        get { return Icon != null; }
-    }
+    public virtual bool ShowIcon => Icon != null;
 
     protected virtual void LoadChildren()
     {
@@ -386,10 +350,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region Editing
 
-    public virtual bool IsEditable
-    {
-        get { return false; }
-    }
+    public virtual bool IsEditable => false;
 
     bool isEditing;
 
@@ -420,10 +381,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region Checkboxes
 
-    public virtual bool IsCheckable
-    {
-        get { return false; }
-    }
+    public virtual bool IsCheckable => false;
 
     bool? isChecked;
 
@@ -482,7 +440,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region Cut / Copy / Paste / Delete
 
-    public bool IsCut { get { return false; } }
+    public bool IsCut => false;
     public virtual bool CanDelete()
     {
         return false;
@@ -547,14 +505,8 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     #region IsLast (for TreeView lines)
 
-    public bool IsLast
-    {
-        get
-        {
-            return Parent == null ||
+    public bool IsLast => Parent == null ||
                 Parent.Children[Parent.Children.Count - 1] == this;
-        }
-    }
 
     void RaiseIsLastChangedIfNeeded(NotifyCollectionChangedEventArgs e)
     {

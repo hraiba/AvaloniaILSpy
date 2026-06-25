@@ -59,12 +59,6 @@ namespace ICSharpCode.ILSpy;
 			Close(false);
 		}
 
-		public string NewListName
-		{
-			get
-			{
-				return ListName.Text;
-			}
-		}
+    public string NewListName => ListName.Text;
 
-	}
+}

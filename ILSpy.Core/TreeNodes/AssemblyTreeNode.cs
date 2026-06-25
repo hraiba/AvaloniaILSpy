@@ -53,19 +53,13 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			LazyLoading = true;
 		}
 
-		public AssemblyList AssemblyList {
-			get { return LoadedAssembly.AssemblyList; }
-		}
+    public AssemblyList AssemblyList => LoadedAssembly.AssemblyList;
 
-		public LoadedAssembly LoadedAssembly { get; }
+    public LoadedAssembly LoadedAssembly { get; }
 
-		public override bool IsAutoLoaded {
-			get {
-				return LoadedAssembly.IsAutoLoaded;
-			}
-		}
+    public override bool IsAutoLoaded => LoadedAssembly.IsAutoLoaded;
 
-		public override object Text => LoadedAssembly.Text;
+    public override object Text => LoadedAssembly.Text;
 
 		public override object Icon {
 			get {
@@ -148,11 +142,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 		}
 
-		public override bool ShowExpander {
-			get { return !LoadedAssembly.HasLoadError; }
-		}
+    public override bool ShowExpander => !LoadedAssembly.HasLoadError;
 
-		void OnAssemblyLoaded(Task<PEFile> moduleTask)
+    void OnAssemblyLoaded(Task<PEFile> moduleTask)
 		{
 			// change from "Loading" icon to final icon
 			RaisePropertyChanged("Icon");

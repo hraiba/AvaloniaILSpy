@@ -36,12 +36,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	{
 		Task<List<SharpTreeNode>> loadChildrenTask;
 		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-		
-		public bool IsRunning {
-			get { return loadChildrenTask != null && !loadChildrenTask.IsCompleted; }
-		}
-		
-		public void Cancel()
+
+    public bool IsRunning => loadChildrenTask != null && !loadChildrenTask.IsCompleted;
+
+    public void Cancel()
 		{
 			cancellationTokenSource.Cancel();
 			loadChildrenTask = null;
@@ -118,9 +116,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		
 		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
-			public override object Text {
-            get { return Resources.Loading; }
-        }
+        public override object Text => Resources.Loading;
 
         public override FilterResult Filter(FilterSettings settings)
 			{
@@ -135,12 +131,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		sealed class ErrorTreeNode : ILSpyTreeNode
 		{
 			readonly string text;
-			
-			public override object Text {
-				get { return text; }
-			}
-			
-			public ErrorTreeNode(string text)
+
+        public override object Text => text;
+
+        public ErrorTreeNode(string text)
 			{
 				this.text = text;
 			}

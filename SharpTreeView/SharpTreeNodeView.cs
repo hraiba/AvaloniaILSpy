@@ -34,18 +34,12 @@ namespace ICSharpCode.TreeView;
 				return expanded.Value ? owner.Node?.ExpandedIcon : owner.Node?.Icon;
 		});
 
-		public object Icon
-		{
-			get { return GetValue(IconProperty); }
-		}
+    public object Icon => GetValue(IconProperty);
 
 
-		public SharpTreeNode Node
-		{
-			get { return DataContext as SharpTreeNode; }
-		}
+    public SharpTreeNode Node => DataContext as SharpTreeNode;
 
-		public SharpTreeViewItem ParentItem { get; private set; }
+    public SharpTreeViewItem ParentItem { get; private set; }
 		
 		public static readonly StyledProperty<Control> CellEditorProperty =
 			AvaloniaProperty.Register<SharpTreeNodeView, Control>("CellEditor");
@@ -55,12 +49,9 @@ namespace ICSharpCode.TreeView;
 			set { SetValue(CellEditorProperty, value); }
 		}
 
-		public SharpTreeView ParentTreeView
-		{
-			get { return ParentItem.ParentTreeView; }
-		}
+    public SharpTreeView ParentTreeView => ParentItem.ParentTreeView;
 
-		internal LinesRenderer LinesRenderer;
+    internal LinesRenderer LinesRenderer;
 		internal Control spacer;
 		internal ToggleButton expander;
 		internal ContentPresenter icon;

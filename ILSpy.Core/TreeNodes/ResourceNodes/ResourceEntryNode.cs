@@ -33,23 +33,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		private readonly string key;
 		private readonly Stream data;
 
-		public override object Text
-		{
-			get { return key; }
-		}
+    public override object Text => key;
 
-		public override object Icon
-		{
-			get { return Images.Resource; }
-		}
+    public override object Icon => Images.Resource;
 
-		protected Stream Data
-		{
-			get { return data; }
-		}
+    protected Stream Data => data;
 
 
-		public ResourceEntryNode(string key, Stream data)
+    public ResourceEntryNode(string key, Stream data)
 		{
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));

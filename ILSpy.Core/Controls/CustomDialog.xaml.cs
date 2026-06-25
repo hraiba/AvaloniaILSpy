@@ -31,17 +31,12 @@ namespace ICSharpCode.ILSpy.Controls;
 		int acceptButton;
 		int cancelButton;
 
-		/// <summary>
-		/// Gets the index of the button pressed.
-		/// </summary>
-		public int Result
-		{
-			get {
-				return (int)DialogResult;
-			}
-		}
+    /// <summary>
+    /// Gets the index of the button pressed.
+    /// </summary>
+    public int Result => (int)DialogResult;
 
-		public CustomDialog(string caption, string message, int acceptButton = -1, int cancelButton = -1, params string[] buttonLabels)
+    public CustomDialog(string caption, string message, int acceptButton = -1, int cancelButton = -1, params string[] buttonLabels)
 		{
 			InitializeComponent();
 #if DEBUG

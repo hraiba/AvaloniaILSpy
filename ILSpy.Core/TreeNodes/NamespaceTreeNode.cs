@@ -28,27 +28,21 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	public sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
 		readonly string name;
-		
-		public string Name {
-			get { return name; }
-		}
-		
-		public NamespaceTreeNode(string name)
+
+    public string Name => name;
+
+    public NamespaceTreeNode(string name)
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 			this.name = name;
 		}
-		
-		public override object Text {
-			get { return name.Length == 0 ? "-" : name; }
-		}
-		
-		public override object Icon {
-			get { return Images.Namespace; }
-		}
-		
-		public override FilterResult Filter(FilterSettings settings)
+
+    public override object Text => name.Length == 0 ? "-" : name;
+
+    public override object Icon => Images.Namespace;
+
+    public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(name))
 				return FilterResult.MatchAndRecurse;

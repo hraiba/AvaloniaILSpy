@@ -86,35 +86,20 @@ namespace ICSharpCode.ILSpy;
 		/// </summary>
 		public abstract string FileExtension { get; }
 
-		public virtual string ProjectFileExtension
-		{
-			get { return null; }
-		}
+    public virtual string ProjectFileExtension => null;
 
-		public virtual IReadOnlyList<LanguageVersion> LanguageVersions {
-			get { return EmptyList<LanguageVersion>.Instance; }
-		}
+    public virtual IReadOnlyList<LanguageVersion> LanguageVersions => EmptyList<LanguageVersion>.Instance;
 
-		public bool HasLanguageVersions => LanguageVersions.Count > 0;
+    public bool HasLanguageVersions => LanguageVersions.Count > 0;
 
-		/// <summary>
-		/// Gets the syntax highlighting used for this language.
-		/// </summary>
-		public virtual IHighlightingDefinition SyntaxHighlighting
-		{
-			get
-			{
-				return HighlightingManager.Instance.GetDefinitionByExtension(FileExtension);
-			}
-		}
+    /// <summary>
+    /// Gets the syntax highlighting used for this language.
+    /// </summary>
+    public virtual IHighlightingDefinition SyntaxHighlighting => HighlightingManager.Instance.GetDefinitionByExtension(FileExtension);
 
-		public virtual TextView.IBracketSearcher BracketSearcher {
-			get {
-				return TextView.DefaultBracketSearcher.DefaultInstance;
-			}
-		}
+    public virtual TextView.IBracketSearcher BracketSearcher => TextView.DefaultBracketSearcher.DefaultInstance;
 
-		public virtual void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+    public virtual void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 		{
 			WriteCommentLine(output, TypeToString(method.DeclaringTypeDefinition, includeNamespace: true) + "." + method.Name);
 		}

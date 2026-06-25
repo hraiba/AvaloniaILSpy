@@ -66,16 +66,12 @@ namespace ICSharpCode.TreeView;
 				OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldItem, index));
 			}
 		}
-		
-		public int Count {
-			get { return list.Count; }
-		}
-		
-		bool ICollection<SharpTreeNode>.IsReadOnly {
-			get { return false; }
-		}
-		
-		public int IndexOf(SharpTreeNode node)
+
+    public int Count => list.Count;
+
+    bool ICollection<SharpTreeNode>.IsReadOnly => false;
+
+    public int IndexOf(SharpTreeNode node)
 		{
 			if (node == null || node.modelParent != parent)
 				return -1;

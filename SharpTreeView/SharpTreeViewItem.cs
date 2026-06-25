@@ -20,10 +20,7 @@ public class SharpTreeViewItem : ListBoxItem
         DragDrop.DropEvent.AddClassHandler<SharpTreeViewItem>((x, e) => x.OnDrop(e));
     }
 
-    public SharpTreeNode Node
-    {
-        get { return DataContext as SharpTreeNode; }
-    }
+    public SharpTreeNode Node => DataContext as SharpTreeNode;
 
     public SharpTreeNodeView NodeView { get; internal set; }
     public SharpTreeView ParentTreeView { get; internal set; }

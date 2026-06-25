@@ -93,15 +93,13 @@ namespace ICSharpCode.ILSpy;
 				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
-		
-		/// <summary>
-		/// Gets the name of this list.
-		/// </summary>
-		public string ListName {
-			get { return listName; }
-		}
-		
-		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+
+    /// <summary>
+    /// Gets the name of this list.
+    /// </summary>
+    public string ListName => listName;
+
+    void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			ClearCache();
 			// Whenever the assembly list is modified, mark it as dirty

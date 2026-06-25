@@ -96,15 +96,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     internal ContentPresenter mainPane;
     internal DockedPane bottomPane;
 
-    public static MainWindow Instance
-    {
-        get { return instance; }
-    }
+    public static MainWindow Instance => instance;
 
-    public SessionSettings SessionSettings
-    {
-        get { return sessionSettings; }
-    }
+    public SessionSettings SessionSettings => sessionSettings;
 
     public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
 
@@ -510,10 +504,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     }
     #endregion
 
-    public AssemblyList CurrentAssemblyList
-    {
-        get { return assemblyList; }
-    }
+    public AssemblyList CurrentAssemblyList => assemblyList;
 
     public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
 
@@ -950,10 +941,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
     }
 
-    internal AssemblyListTreeNode AssemblyListTreeNode
-    {
-        get { return assemblyListTreeNode; }
-    }
+    internal AssemblyListTreeNode AssemblyListTreeNode => assemblyListTreeNode;
 
     #region Node Selection
 
@@ -1366,23 +1354,14 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     }
 
-    public DecompilerTextView TextView
-    {
-        get { return decompilerTextView; }
-    }
+    public DecompilerTextView TextView => decompilerTextView;
 
     public Language CurrentLanguage => sessionSettings.FilterSettings.Language;
     public LanguageVersion CurrentLanguageVersion => sessionSettings.FilterSettings.LanguageVersion;
 
     public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
-    public IEnumerable<ILSpyTreeNode> SelectedNodes
-    {
-        get
-        {
-            return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
-        }
-    }
+    public IEnumerable<ILSpyTreeNode> SelectedNodes => treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
     #endregion
 
     #region Back/Forward navigation

@@ -38,23 +38,17 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	{
 		readonly AssemblyList assemblyList;
 
-		public AssemblyList AssemblyList
-		{
-			get { return assemblyList; }
-		}
+    public AssemblyList AssemblyList => assemblyList;
 
-		public AssemblyListTreeNode(AssemblyList assemblyList)
+    public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
 			this.assemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
 			BindToObservableCollection(assemblyList.assemblies);
 		}
 
-		public override object Text
-		{
-			get { return assemblyList.ListName; }
-		}
+    public override object Text => assemblyList.ListName;
 
-		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
+    void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
 		{
 			Children.Clear();
 			Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));

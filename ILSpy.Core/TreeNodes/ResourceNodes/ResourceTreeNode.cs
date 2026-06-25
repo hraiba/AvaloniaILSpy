@@ -44,20 +44,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				throw new ArgumentNullException(nameof(r));
 			this.r = r;
 		}
-		
-		public Resource Resource {
-			get { return r; }
-		}
-		
-		public override object Text {
-			get { return r.Name; }
-		}
-		
-		public override object Icon {
-			get { return Images.Resource; }
-		}
-		
-		public override FilterResult Filter(FilterSettings settings)
+
+    public Resource Resource => r;
+
+    public override object Text => r.Name;
+
+    public override object Icon => Images.Resource;
+
+    public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (r.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
             return FilterResult.Hidden;

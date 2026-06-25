@@ -928,13 +928,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         textEditor.ScrollTo(lineNumber, 0);
     }
 
-    public FoldingManager FoldingManager
-    {
-        get
-        {
-            return foldingManager;
-        }
-    }
+    public FoldingManager FoldingManager => foldingManager;
     #endregion
 }
 

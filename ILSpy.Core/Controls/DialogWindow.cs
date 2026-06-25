@@ -10,7 +10,7 @@ public class DialogWindow: PlatformDependentWindow, IStyleable
 	{
     static readonly Func<Window, object> _dialogResultField;
 
-    public object DialogResult { get { return _dialogResultField(this); } }
+    public object DialogResult => _dialogResultField(this);
 
     static DialogWindow()
     {

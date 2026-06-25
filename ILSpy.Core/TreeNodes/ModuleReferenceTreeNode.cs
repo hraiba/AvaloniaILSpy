@@ -57,12 +57,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				}
 			}
 		}
-		
-		public override object Text {
-			get { return moduleName + ((EntityHandle)handle).ToSuffixString(); }
-		}
 
-		public override object Icon => Images.Library;
+    public override object Text => moduleName + ((EntityHandle)handle).ToSuffixString();
+
+    public override object Icon => Images.Library;
 
 		public override void ActivateItem(RoutedEventArgs e)
 		{

@@ -60,11 +60,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			LazyLoading = true;
 		}
 
-		public override object Icon {
-			get { return Images.ResourceResourcesFile; }
-		}
+    public override object Icon => Images.ResourceResourcesFile;
 
-		protected override void LoadChildren()
+    protected override void LoadChildren()
 		{
 			Stream s = Resource.TryOpenStream();
 			if (s == null) return;

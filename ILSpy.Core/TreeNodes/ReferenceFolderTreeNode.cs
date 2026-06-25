@@ -39,20 +39,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			this.parentAssembly = parentAssembly;
 			LazyLoading = true;
 		}
-		
-		public override object Text {
-			get { return Resources.References; }
-		}
-		
-		public override object Icon {
-			get { return Images.ReferenceFolderClosed; }
-		}
-		
-		public override object ExpandedIcon {
-			get { return Images.ReferenceFolderOpen; }
-		}
-		
-		protected override void LoadChildren()
+
+    public override object Text => Resources.References;
+
+    public override object Icon => Images.ReferenceFolderClosed;
+
+    public override object ExpandedIcon => Images.ReferenceFolderOpen;
+
+    protected override void LoadChildren()
 		{
 			var metadata = module.Metadata;
 			foreach (var r in module.AssemblyReferences.OrderBy(r => r.Name))

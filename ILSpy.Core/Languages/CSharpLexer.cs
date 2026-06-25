@@ -60,19 +60,13 @@ namespace ICSharpCode.ILSpy;
 		internal readonly string val;
 		internal Literal next;
 
-		public LiteralFormat LiteralFormat {
-			get { return literalFormat; }
-		}
+    public LiteralFormat LiteralFormat => literalFormat;
 
-		public object LiteralValue {
-			get { return literalValue; }
-		}
+    public object LiteralValue => literalValue;
 
-		public string Value {
-			get { return val; }
-		}
+    public string Value => val;
 
-		public Literal(string val, object literalValue, LiteralFormat literalFormat)
+    public Literal(string val, object literalValue, LiteralFormat literalFormat)
 		{
 			this.val = val;
 			this.literalValue = literalValue;
@@ -94,19 +88,11 @@ namespace ICSharpCode.ILSpy;
 
 		// used for the original value of strings (with escape sequences).
 		protected StringBuilder originalValue = new StringBuilder();
-		
-		protected int Line {
-			get {
-				return line;
-			}
-		}
-		protected int Col {
-			get {
-				return col;
-			}
-		}
 
-		protected bool recordRead = false;
+    protected int Line => line;
+    protected int Col => col;
+
+    protected bool recordRead = false;
 		protected StringBuilder recordedText = new StringBuilder();
 
 		protected int ReaderRead()
@@ -154,28 +140,20 @@ namespace ICSharpCode.ILSpy;
 			return builder.ToString();
 		}
 
-		/// <summary>
-		/// The current Token. <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
-		/// </summary>
-		public Literal Token {
-			get {
-				return lastToken;
-			}
-		}
+    /// <summary>
+    /// The current Token. <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
+    /// </summary>
+    public Literal Token => lastToken;
 
-		/// <summary>
-		/// The next Token (The <see cref="Token"/> after <see cref="NextToken"/> call) . <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
-		/// </summary>
-		public Literal LookAhead {
-			get {
-				return curToken;
-			}
-		}
+    /// <summary>
+    /// The next Token (The <see cref="Token"/> after <see cref="NextToken"/> call) . <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
+    /// </summary>
+    public Literal LookAhead => curToken;
 
-		/// <summary>
-		/// Constructor for the abstract lexer class.
-		/// </summary>
-		protected AbstractLexer(TextReader reader)
+    /// <summary>
+    /// Constructor for the abstract lexer class.
+    /// </summary>
+    protected AbstractLexer(TextReader reader)
 		{
 			this.reader = new LATextReader(reader);
 		}

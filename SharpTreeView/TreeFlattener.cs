@@ -73,13 +73,7 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
         }
     }
 
-    public int Count
-    {
-        get
-        {
-            return includeRoot ? root.GetTotalListLength() : root.GetTotalListLength() - 1;
-        }
-    }
+    public int Count => includeRoot ? root.GetTotalListLength() : root.GetTotalListLength() - 1;
 
     public int IndexOf(object item)
     {
@@ -100,28 +94,13 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
         }
     }
 
-    bool IList.IsReadOnly
-    {
-        get { return true; }
-    }
+    bool IList.IsReadOnly => true;
 
-    bool IList.IsFixedSize
-    {
-        get { return false; }
-    }
+    bool IList.IsFixedSize => false;
 
-    bool ICollection.IsSynchronized
-    {
-        get { return false; }
-    }
+    bool ICollection.IsSynchronized => false;
 
-    object ICollection.SyncRoot
-    {
-        get
-        {
-            return syncRoot;
-        }
-    }
+    object ICollection.SyncRoot => syncRoot;
 
     void IList.Insert(int index, object item)
     {

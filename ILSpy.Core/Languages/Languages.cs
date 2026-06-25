@@ -32,15 +32,12 @@ namespace ICSharpCode.ILSpy;
 		private static ReadOnlyCollection<Language> allLanguages = new ReadOnlyCollection<Language>(
 			new Language[] { new ILLanguage() });
 
-		/// <summary>
-		/// A list of all languages.
-		/// </summary>
-		public static ReadOnlyCollection<Language> AllLanguages
-		{
-			get { return allLanguages; }
-		}
+    /// <summary>
+    /// A list of all languages.
+    /// </summary>
+    public static ReadOnlyCollection<Language> AllLanguages => allLanguages;
 
-		internal static void Initialize(ExportProvider ep)
+    internal static void Initialize(ExportProvider ep)
 		{
 			List<Language> languages = new List<Language>();
 			languages.AddRange(ep.GetExportedValues<Language>());

@@ -52,22 +52,18 @@ namespace ICSharpCode.ILSpy;
 		{
 			this.name = name;
 		}
-		
-		public override string Name { get { return name; } }
 
-		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
+    public override string Name => name;
+
+    internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
 			yield return new TypedIL();
 			yield return new BlockIL(CSharpDecompiler.GetILTransforms());
 		}
-		
-		public override string FileExtension {
-			get {
-				return ".il";
-			}
-		}
 
-		public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+    public override string FileExtension => ".il";
+
+    public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 		{
 			base.DecompileMethod(method, output, options);
 			new ReflectionDisassembler(output, options.CancellationToken)

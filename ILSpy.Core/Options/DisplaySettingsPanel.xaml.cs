@@ -78,28 +78,24 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
     }
 
     static DisplaySettings currentDisplaySettings;
-		
-		public static DisplaySettings CurrentDisplaySettings {
-			get {
-				return currentDisplaySettings ?? (currentDisplaySettings = LoadDisplaySettings(ILSpySettings.Load()));
-			}
-		}
-		
-		//static bool IsSymbolFont(FontFamily fontFamily)
-		//{
-		//	foreach (var tf in fontFamily.GetTypefaces()) {
-		//		GlyphTypeface glyph;
-		//		try {
-		//			if (tf.TryGetGlyphTypeface(out glyph))
-		//				return glyph.Symbol;
-		//		} catch (Exception) {
-		//			return true;
-		//		}
-		//	}
-		//	return false;
-		//}
-		
-		static FontFamily[] FontLoader()
+
+    public static DisplaySettings CurrentDisplaySettings => currentDisplaySettings ?? (currentDisplaySettings = LoadDisplaySettings(ILSpySettings.Load()));
+
+    //static bool IsSymbolFont(FontFamily fontFamily)
+    //{
+    //	foreach (var tf in fontFamily.GetTypefaces()) {
+    //		GlyphTypeface glyph;
+    //		try {
+    //			if (tf.TryGetGlyphTypeface(out glyph))
+    //				return glyph.Symbol;
+    //		} catch (Exception) {
+    //			return true;
+    //		}
+    //	}
+    //	return false;
+    //}
+
+    static FontFamily[] FontLoader()
 		{
 			// TODO: filter SymbolFonts
 			return FontManager.Current.GetInstalledFontFamilyNames().Select(x => new FontFamily(x)).ToArray();

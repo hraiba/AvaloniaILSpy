@@ -80,20 +80,11 @@ public class CSharpLanguage : Language
     }
 #endif
 
-    public override string Name
-    {
-        get { return name; }
-    }
+    public override string Name => name;
 
-    public override string FileExtension
-    {
-        get { return ".cs"; }
-    }
+    public override string FileExtension => ".cs";
 
-    public override string ProjectFileExtension
-    {
-        get { return ".csproj"; }
-    }
+    public override string ProjectFileExtension => ".csproj";
 
     IReadOnlyList<LanguageVersion> versions;
 

@@ -27,8 +27,8 @@ namespace ICSharpCode.ILSpy;
 	{
 		private readonly HashSet<SharpTreeNode> treeNodes;
 
-		public IEnumerable<SharpTreeNode> TreeNodes { get { return treeNodes; } }
-		public DecompilerTextViewState ViewState { get; private set; }
+    public IEnumerable<SharpTreeNode> TreeNodes => treeNodes;
+    public DecompilerTextViewState ViewState { get; private set; }
 
 		public NavigationState(DecompilerTextViewState viewState)
 		{
