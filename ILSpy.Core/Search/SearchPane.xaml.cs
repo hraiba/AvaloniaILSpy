@@ -45,20 +45,19 @@ namespace ICSharpCode.ILSpy.Search;
 	{
 		const int MAX_RESULTS = 1000;
 		const int MAX_REFRESH_TIME_MS = 10; // More means quicker forward of data, less means better responsibility
-		static SearchPane instance;
-		RunningSearch currentSearch;
+    RunningSearch currentSearch;
 		bool runSearchOnNextShow;
-    DispatcherTimer updateResultTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(2D) };
+    DispatcherTimer updateResultTimer = new() { Interval = TimeSpan.FromMilliseconds(2D) };
 
     public ObservableCollection<SearchResult> Results { get; } = [];
 
 		public static SearchPane Instance {
 			get {
-				if (instance == null) {
+				if (field == null) {
 					Dispatcher.UIThread.VerifyAccess();
-					instance = new SearchPane();
+					field = new SearchPane();
 				}
-				return instance;
+				return field;
 			}
 		}
 		
@@ -285,7 +284,7 @@ namespace ICSharpCode.ILSpy.Search;
 		
 		sealed class RunningSearch
 		{
-			readonly CancellationTokenSource cts = new CancellationTokenSource();
+			readonly CancellationTokenSource cts = new();
 			readonly LoadedAssembly[] assemblies;
 			readonly string[] searchTerm;
 			readonly SearchMode searchMode;

@@ -15,15 +15,15 @@ namespace ICSharpCode.ILSpy;
 	/// </summary>
 	public partial class DebugSteps : UserControl, IPane
 	{
-		static readonly ILAstWritingOptions writingOptions = new ILAstWritingOptions {
-			UseFieldSugar = true,
-			UseLogicOperationSugar = true
-		};
 
-		public static ILAstWritingOptions Options => writingOptions;
+    public static ILAstWritingOptions Options { get; } = new()
+        {
+            UseFieldSugar = true,
+            UseLogicOperationSugar = true
+        };
 
 #if DEBUG
-		ILAstLanguage language;
+    ILAstLanguage language;
 #endif
 
 		internal Avalonia.Controls.TreeView tree;
@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy;
 #if DEBUG
 			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged += FilterSettings_PropertyChanged;
 			MainWindow.Instance.SelectionChanged += SelectionChanged;
-			writingOptions.PropertyChanged += WritingOptions_PropertyChanged;
+        Options.PropertyChanged += WritingOptions_PropertyChanged;
 
 			if (MainWindow.Instance.CurrentLanguage is ILAstLanguage l) {
 				l.StepperUpdated += ILAstStepperUpdated;
@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy;
 #if DEBUG
 			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged -= FilterSettings_PropertyChanged;
 			MainWindow.Instance.SelectionChanged -= SelectionChanged;
-			writingOptions.PropertyChanged -= WritingOptions_PropertyChanged;
+        Options.PropertyChanged -= WritingOptions_PropertyChanged;
 			if (language != null) {
 				language.StepperUpdated -= ILAstStepperUpdated;
 			}

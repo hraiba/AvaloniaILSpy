@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy;
 			// Now we got a StreamReader with the correct encoding
 			// Check for XML now
 			try {
-				XmlTextReader xmlReader = new XmlTextReader(reader);
+				XmlTextReader xmlReader = new(reader);
 				xmlReader.XmlResolver = null;
 				xmlReader.MoveToContent();
 				return FileType.Xml;

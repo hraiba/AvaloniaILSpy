@@ -47,7 +47,7 @@ sealed class Pdb2XmlCommand : SimpleCommand
         var highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
         var options = PdbToXmlOptions.IncludeEmbeddedSources | PdbToXmlOptions.IncludeMethodSpans | PdbToXmlOptions.IncludeTokens;
         MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
-            AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+            AvaloniaEditTextOutput output = new();
             var writer = new TextOutputWriter(output);
             foreach (var node in nodes)
             {

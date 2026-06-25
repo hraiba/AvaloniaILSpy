@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 /// </summary>
 public sealed class NaturalStringComparer(CultureInfo culture, CompareOptions options) : IComparer<string>
 	{
-		public static readonly NaturalStringComparer Instance = new NaturalStringComparer(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
+		public static readonly NaturalStringComparer Instance = new(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
 
     /// <summary>
     /// culture used for comparing each element.

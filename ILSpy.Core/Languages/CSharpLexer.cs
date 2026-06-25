@@ -68,24 +68,21 @@ namespace ICSharpCode.ILSpy;
 /// </summary>
 internal abstract class AbstractLexer(TextReader reader)
 {
-		LATextReader reader = new LATextReader(reader);
-		int col = 1;
-		int line = 1;
-
-		protected Literal lastToken = null;
+		LATextReader reader = new(reader);
+    protected Literal lastToken = null;
 		protected Literal curToken = null;
 		protected Literal peekToken = null;
 
-		protected StringBuilder sb = new StringBuilder();
+		protected StringBuilder sb = new();
 
 		// used for the original value of strings (with escape sequences).
-		protected StringBuilder originalValue = new StringBuilder();
+		protected StringBuilder originalValue = new();
 
-    protected int Line => line;
-    protected int Col => col;
+    protected int Line { get; private set; } = 1;
+    protected int Col { get; private set; } = 1;
 
     protected bool recordRead = false;
-		protected StringBuilder recordedText = new StringBuilder();
+		protected StringBuilder recordedText = new();
 
 		protected int ReaderRead()
 		{
@@ -96,11 +93,11 @@ internal abstract class AbstractLexer(TextReader reader)
         }
 
         if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
-				++line;
-				col = 1;
+				++Line;
+				Col = 1;
 				LineBreak();
 			} else if (val >= 0) {
-				col++;
+				Col++;
 			}
 			return val;
 		}
@@ -118,7 +115,7 @@ internal abstract class AbstractLexer(TextReader reader)
 
 		protected string ReaderPeekString(int length)
 		{
-			StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new();
 
 			for (int i = 0; i < length; i++) {
 				int peek = ReaderPeek(i);
@@ -256,8 +253,8 @@ internal abstract class AbstractLexer(TextReader reader)
                 nextChar = '\n';
 				}
 				if (nextChar == '\n') {
-					++line;
-					col = 1;
+					++Line;
+					Col = 1;
 					break;
 				}
 			}
@@ -280,8 +277,8 @@ internal abstract class AbstractLexer(TextReader reader)
 				}
 				// Return read string, if EOL is reached
 				if (nextChar == '\n') {
-					++line;
-					col = 1;
+					++Line;
+					Col = 1;
 					return sb.ToString();
 				}
 
@@ -290,7 +287,7 @@ internal abstract class AbstractLexer(TextReader reader)
 
 			// Got EOF before EOL
 			string retStr = sb.ToString();
-			col += retStr.Length;
+			Col += retStr.Length;
 			return retStr;
 		}
 	}

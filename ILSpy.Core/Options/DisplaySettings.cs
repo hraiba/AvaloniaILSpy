@@ -39,247 +39,218 @@ public class DisplaySettings : INotifyPropertyChanged
     protected void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
     #endregion
 
-    FontFamily selectedFont;
 
     public FontFamily SelectedFont
     {
-        get { return selectedFont; }
+        get;
         set
         {
-            if (selectedFont != value)
+            if (field != value)
             {
-                selectedFont = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    double selectedFontSize;
 
     public double SelectedFontSize
     {
-        get { return selectedFontSize; }
+        get;
         set
         {
-            if (selectedFontSize != value)
+            if (field != value)
             {
-                selectedFontSize = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool showLineNumbers;
 
     public bool ShowLineNumbers
     {
-        get { return showLineNumbers; }
+        get;
         set
         {
-            if (showLineNumbers != value)
+            if (field != value)
             {
-                showLineNumbers = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool showMetadataTokens;
 
     public bool ShowMetadataTokens
     {
-        get { return showMetadataTokens; }
+        get;
         set
         {
-            if (showMetadataTokens != value)
+            if (field != value)
             {
-                showMetadataTokens = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool showMetadataTokensInBase10;
 
     public bool ShowMetadataTokensInBase10
     {
-        get { return showMetadataTokensInBase10; }
+        get;
         set
         {
-            if (showMetadataTokensInBase10 != value)
+            if (field != value)
             {
-                showMetadataTokensInBase10 = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool enableWordWrap;
 
     public bool EnableWordWrap
     {
-        get { return enableWordWrap; }
+        get;
         set
         {
-            if (enableWordWrap != value)
+            if (field != value)
             {
-                enableWordWrap = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool sortResults = true;
 
     public bool SortResults
     {
-        get { return sortResults; }
+        get;
         set
         {
-            if (sortResults != value)
+            if (field != value)
             {
-                sortResults = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    bool foldBraces = false;
+    } = true;
 
     public bool FoldBraces
     {
-        get { return foldBraces; }
+        get;
         set
         {
-            if (foldBraces != value)
+            if (field != value)
             {
-                foldBraces = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    bool expandMemberDefinitions = false;
+    } = false;
 
     public bool ExpandMemberDefinitions
     {
-        get { return expandMemberDefinitions; }
+        get;
         set
         {
-            if (expandMemberDefinitions != value)
+            if (field != value)
             {
-                expandMemberDefinitions = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    bool expandUsingDeclarations = false;
+    } = false;
 
     public bool ExpandUsingDeclarations
     {
-        get { return expandUsingDeclarations; }
+        get;
         set
         {
-            if (expandUsingDeclarations != value)
+            if (field != value)
             {
-                expandUsingDeclarations = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    bool showDebugInfo;
+    } = false;
 
     public bool ShowDebugInfo
     {
-        get { return showDebugInfo; }
+        get;
         set
         {
-            if (showDebugInfo != value)
+            if (field != value)
             {
-                showDebugInfo = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
     }
-
-    bool indentationUseTabs = true;
 
     public bool IndentationUseTabs
     {
-        get { return indentationUseTabs; }
+        get;
         set
         {
-            if (indentationUseTabs != value)
+            if (field != value)
             {
-                indentationUseTabs = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    int indentationTabSize = 4;
+    } = true;
 
     public int IndentationTabSize
     {
-        get { return indentationTabSize; }
+        get;
         set
         {
-            if (indentationTabSize != value)
+            if (field != value)
             {
-                indentationTabSize = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    int indentationSize = 4;
+    } = 4;
 
     public int IndentationSize
     {
-        get { return indentationSize; }
+        get;
         set
         {
-            if (indentationSize != value)
+            if (field != value)
             {
-                indentationSize = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
-
-    bool highlightMatchingBraces = true;
+    } = 4;
 
     public bool HighlightMatchingBraces
     {
-        get { return highlightMatchingBraces; }
+        get;
         set
         {
-            if (highlightMatchingBraces != value)
+            if (field != value)
             {
-                highlightMatchingBraces = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
-    }
+    } = true;
 
     public void CopyValues(DisplaySettings s)
     {
-        SelectedFont = s.selectedFont;
-        SelectedFontSize = s.selectedFontSize;
-        ShowLineNumbers = s.showLineNumbers;
-        ShowMetadataTokens = s.showMetadataTokens;
-        ShowMetadataTokensInBase10 = s.showMetadataTokensInBase10;
-        ShowDebugInfo = s.showDebugInfo;
-        EnableWordWrap = s.enableWordWrap;
-        SortResults = s.sortResults;
-        FoldBraces = s.foldBraces;
-        ExpandMemberDefinitions = s.expandMemberDefinitions;
-        ExpandUsingDeclarations = s.expandUsingDeclarations;
-        IndentationUseTabs = s.indentationUseTabs;
-        IndentationTabSize = s.indentationTabSize;
-        IndentationSize = s.indentationSize;
-        HighlightMatchingBraces = s.highlightMatchingBraces;
+        SelectedFont = s.SelectedFont;
+        SelectedFontSize = s.SelectedFontSize;
+        ShowLineNumbers = s.ShowLineNumbers;
+        ShowMetadataTokens = s.ShowMetadataTokens;
+        ShowMetadataTokensInBase10 = s.ShowMetadataTokensInBase10;
+        ShowDebugInfo = s.ShowDebugInfo;
+        EnableWordWrap = s.EnableWordWrap;
+        SortResults = s.SortResults;
+        FoldBraces = s.FoldBraces;
+        ExpandMemberDefinitions = s.ExpandMemberDefinitions;
+        ExpandUsingDeclarations = s.ExpandUsingDeclarations;
+        IndentationUseTabs = s.IndentationUseTabs;
+        IndentationTabSize = s.IndentationTabSize;
+        IndentationSize = s.IndentationSize;
+        HighlightMatchingBraces = s.HighlightMatchingBraces;
     }
 }

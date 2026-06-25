@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy;
     public static void AddButton(this ISmartTextOutput output, IBitmap icon, string text, EventHandler<RoutedEventArgs> click) => output.AddUIElement(
             delegate
             {
-                Button button = new Button();
+                Button button = new();
                 button.Cursor = Cursor.Default;
                 button.Margin = new Thickness(2);
                 button.Padding = new Thickness(9, 1, 9, 1);

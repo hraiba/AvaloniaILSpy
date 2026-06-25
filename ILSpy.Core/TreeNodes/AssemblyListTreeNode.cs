@@ -36,17 +36,16 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// </summary>
 	sealed class AssemblyListTreeNode : ILSpyTreeNode
 	{
-		readonly AssemblyList assemblyList;
 
-    public AssemblyList AssemblyList => assemblyList;
+    public AssemblyList AssemblyList { get; }
 
     public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
-			this.assemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
+			this.AssemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
 			BindToObservableCollection(assemblyList.assemblies);
 		}
 
-    public override object Text => assemblyList.ListName;
+    public override object Text => AssemblyList.ListName;
 
     void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
 		{
@@ -95,25 +94,25 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			string[] files = e.Data.Get(AssemblyTreeNode.DataFormat) as string[];
 			files ??= e.Data.Get(DataFormats.FileNames) as string[];
 			if (files != null) {
-				lock (assemblyList.assemblies) {
+				lock (AssemblyList.assemblies) {
 					var assemblies = files
 						.Where(file => file != null)
-						.SelectMany(file => OpenAssembly(assemblyList, file))
+						.SelectMany(file => OpenAssembly(AssemblyList, file))
 						.Where(asm => asm != null)
 						.Distinct()
 						.ToArray();
 					foreach (LoadedAssembly asm in assemblies) {
-						int nodeIndex = assemblyList.assemblies.IndexOf(asm);
+						int nodeIndex = AssemblyList.assemblies.IndexOf(asm);
 						if (nodeIndex < index)
                     {
                         index--;
                     }
 
-                    assemblyList.assemblies.RemoveAt(nodeIndex);
+                    AssemblyList.assemblies.RemoveAt(nodeIndex);
 					}
 					Array.Reverse(assemblies);
 					foreach (LoadedAssembly asm in assemblies) {
-						assemblyList.assemblies.Insert(index, asm);
+                    AssemblyList.assemblies.Insert(index, asm);
 					}
 				}
 			}
@@ -122,7 +121,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		private IEnumerable<LoadedAssembly> OpenAssembly(AssemblyList assemblyList, string file)
 		{
 			if (file.EndsWith(".nupkg")) {
-				LoadedNugetPackage package = new LoadedNugetPackage(file);
+				LoadedNugetPackage package = new(file);
 				// TODO: show dialog
 				//var selectionDialog = new NugetPackageBrowserDialog(package);
 				//selectionDialog.Owner = Application.Current.MainWindow;
@@ -144,7 +143,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
+			language.WriteCommentLine(output, "List: " + AssemblyList.ListName);
 			output.WriteLine();
 			foreach (AssemblyTreeNode asm in Children) {
 				language.WriteCommentLine(output, new string('-', 60));

@@ -65,7 +65,6 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     List<VisualLineElementGenerator> activeCustomElementGenerators = [];
     RichTextColorizer activeRichTextColorizer;
     BracketHighlightRenderer bracketHighlightRenderer;
-    FoldingManager foldingManager;
     ILSpyTreeNode[] decompiledNodes;
 
     DefinitionLookup definitionLookup;
@@ -96,8 +95,8 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         textEditor.TextArea.AddHandler(PointerPressedEvent, TextAreaMouseDown, RoutingStrategies.Tunnel);
         textEditor.TextArea.AddHandler(PointerReleasedEvent, TextAreaMouseUp, RoutingStrategies.Tunnel);
         textEditor.TextArea.Caret.PositionChanged += HighlightBrackets;
-        textEditor.Bind(TextEditor.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = "SelectedFont" });
-        textEditor.Bind(TextEditor.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = "SelectedFontSize" });
+        textEditor.Bind(FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = "SelectedFont" });
+        textEditor.Bind(FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = "SelectedFontSize" });
         textEditor.Bind(TextEditor.WordWrapProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = "EnableWordWrap" });
 
         // disable Tab editing command (useless for read-only editor); allow using tab for focus navigation instead
@@ -210,7 +209,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                 string documentation = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.EncodedName);
                 if (documentation != null)
                 {
-                    XmlDocRenderer renderer = new XmlDocRenderer();
+                    XmlDocRenderer renderer = new();
                     renderer.AppendText($"{code.Name} (0x{code.Code:x}) - ");
                     renderer.AddXmlDocumentation(documentation);
                     return renderer.CreateTextBlock();
@@ -245,7 +244,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     static TextBlock CreateTextBlockForEntity(IEntity resolved)
     {
-        XmlDocRenderer renderer = new XmlDocRenderer();
+        XmlDocRenderer renderer = new();
         renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(resolved));
         try
         {
@@ -354,7 +353,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                     //}
                     if (task.IsCanceled)
                     {
-                        AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+                        AvaloniaEditTextOutput output = new();
                         output.WriteLine("The operation was canceled.");
                         ShowOutput(output);
                     }
@@ -417,10 +416,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
         ClearLocalReferenceMarks();
         textEditor.ScrollToHome();
-        if (foldingManager != null)
+        if (FoldingManager != null)
         {
-            FoldingManager.Uninstall(foldingManager);
-            foldingManager = null;
+            FoldingManager.Uninstall(FoldingManager);
+            FoldingManager = null;
         }
         textEditor.Document = null; // clear old document while we're changing the highlighting
         uiElementGenerator.UIElements = textOutput.UIElements;
@@ -465,8 +464,8 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                 textEditor.ScrollToVerticalOffset(state.VerticalOffset);
                 textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
             }
-            foldingManager = FoldingManager.Install(textEditor.TextArea);
-            foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
+            FoldingManager = FoldingManager.Install(textEditor.TextArea);
+            FoldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
             Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
         }
     }
@@ -527,7 +526,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         public readonly Language Language = language;
         public readonly ILSpyTreeNode[] TreeNodes = treeNodes;
         public readonly DecompilationOptions Options = options;
-        public readonly TaskCompletionSource<object> TaskCompletionSource = new TaskCompletionSource<object>();
+        public readonly TaskCompletionSource<object> TaskCompletionSource = new();
     }
 
     Task DoDecompile(DecompilationContext context, int outputLengthLimit) => RunWithCancellation(
@@ -546,7 +545,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         {
             textEditor.SyntaxHighlighting = null;
             Debug.WriteLine("Decompiler crashed: " + exception);
-            AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+            AvaloniaEditTextOutput output = new();
             if (exception is OutputLengthExceededException)
             {
                 WriteOutputLengthExceededMessage(output, context, outputLengthLimit == DefaultOutputLengthLimit);
@@ -563,7 +562,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     {
         Debug.WriteLine("Start decompilation of {0} tree nodes", context.TreeNodes.Length);
 
-        TaskCompletionSource<AvaloniaEditTextOutput> tcs = new TaskCompletionSource<AvaloniaEditTextOutput>();
+        TaskCompletionSource<AvaloniaEditTextOutput> tcs = new();
         if (context.TreeNodes.Length == 0)
         {
             // If there's nothing to be decompiled, don't bother starting up a thread.
@@ -577,7 +576,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             {
                 try
                 {
-                    AvaloniaEditTextOutput textOutput = new AvaloniaEditTextOutput();
+                    AvaloniaEditTextOutput textOutput = new();
                     textOutput.LengthLimit = outputLengthLimit;
                     DecompileNodes(context, textOutput);
                     textOutput.PrepareDocument();
@@ -751,7 +750,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             return;
         }
 
-        SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new();
         dlg.Title = "Save file";
         dlg.DefaultExtension = language.FileExtension;
         dlg.Filters =
@@ -760,7 +759,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             new FileDialogFilter(){ Name = Properties.Resources.AllFiles, Extensions = { "*" } }
         ];
         dlg.InitialFileName = CleanUpName(treeNodes.First().ToString(), language.FileExtension) + language.FileExtension;
-        var fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
+        var fileName = await dlg.ShowAsync(Application.Current.GetMainWindow());
         if (fileName != null)
         {
             SaveToDisk(new DecompilationContext(language, [.. treeNodes], options), fileName);
@@ -787,22 +786,22 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                 Debug.WriteLine("Decompiler crashed: " + ex);
                 // Unpack aggregate exceptions as long as there's only a single exception:
                 // (assembly load errors might produce nested aggregate exceptions)
-                AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+                AvaloniaEditTextOutput output = new();
                 output.WriteLine(ex.ToString());
                 ShowOutput(output);
             }).HandleExceptions();
 
     Task<AvaloniaEditTextOutput> SaveToDiskAsync(DecompilationContext context, string fileName)
     {
-        TaskCompletionSource<AvaloniaEditTextOutput> tcs = new TaskCompletionSource<AvaloniaEditTextOutput>();
-        Thread thread = new Thread(new ThreadStart(
+        TaskCompletionSource<AvaloniaEditTextOutput> tcs = new();
+        Thread thread = new(new ThreadStart(
             delegate
             {
                 try
                 {
-                    Stopwatch stopwatch = new Stopwatch();
+                    Stopwatch stopwatch = new();
                     stopwatch.Start();
-                    using (StreamWriter w = new StreamWriter(fileName))
+                    using (StreamWriter w = new(fileName))
                     {
                         try
                         {
@@ -816,7 +815,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                         }
                     }
                     stopwatch.Stop();
-                    AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+                    AvaloniaEditTextOutput output = new();
                     output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
                     output.WriteLine();
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -892,9 +891,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         }
 
         var state = new DecompilerTextViewState();
-        if (foldingManager != null)
+        if (FoldingManager != null)
         {
-            state.SaveFoldingsState(foldingManager.AllFoldings);
+            state.SaveFoldingsState(FoldingManager.AllFoldings);
         }
 
         state.VerticalOffset = textEditor.VerticalOffset;
@@ -916,7 +915,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         var line = textEditor.Document.GetLineByNumber(lineNumber);
 
         // unfold
-        var foldings = foldingManager.GetFoldingsContaining(line.Offset);
+        var foldings = FoldingManager.GetFoldingsContaining(line.Offset);
         if (foldings != null)
         {
             foreach (var folding in foldings)
@@ -931,7 +930,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         textEditor.ScrollTo(lineNumber, 0);
     }
 
-    public FoldingManager FoldingManager => foldingManager;
+    public FoldingManager FoldingManager { get; private set; }
     #endregion
 }
 

@@ -239,7 +239,7 @@ namespace ICSharpCode.ILSpy;
 							items.Add(new Separator());
 							needSeparatorForCategory = false;
 						}
-						MenuItem menuItem = new MenuItem();
+						MenuItem menuItem = new();
 						menuItem.Header = MainWindow.GetResourceString(entryPair.Metadata.Header);
 						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
 							menuItem.Icon = new Image {

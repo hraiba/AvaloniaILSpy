@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.TextView;
 /// </remarks>
 sealed class VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : VisualLineText(parentVisualLine, length)
 	{
-    private static readonly Cursor HandCursor = new Cursor(StandardCursorType.Hand);
+    private static readonly Cursor HandCursor = new(StandardCursorType.Hand);
 
     readonly ReferenceElementGenerator parent = parent;
 		readonly ReferenceSegment referenceSegment = referenceSegment;

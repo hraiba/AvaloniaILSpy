@@ -90,7 +90,7 @@ sealed class SaveCodeContextMenuEntry : IContextMenuEntry
     /// <returns>The full path of the selected target file, or <c>null</c> if the user canceled.</returns>
     static async Task<string> SelectSolutionFile()
     {
-        SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
         dlg.InitialFileName = "Solution.sln";
         dlg.Filters =

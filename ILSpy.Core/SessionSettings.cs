@@ -75,7 +75,7 @@ public sealed partial class SessionSettings : INotifyPropertyChanged
 
     public WindowState WindowState = WindowState.Normal;
     public Rect WindowBounds;
-    internal static Rect DefaultWindowBounds = new Rect(10, 10, 750, 550);
+    internal static Rect DefaultWindowBounds = new(10, 10, 750, 550);
     /// <summary>
     /// position of the left/right splitter
     /// </summary>

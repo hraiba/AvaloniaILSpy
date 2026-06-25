@@ -30,22 +30,21 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// </summary>
 	public abstract class ILSpyTreeNode : SharpTreeNode
 	{
-		FilterSettings filterSettings;
-		bool childrenNeedFiltering;
+    bool childrenNeedFiltering;
 
 		public FilterSettings FilterSettings
 		{
-			get { return filterSettings; }
-			set
+			get;
+        set
 			{
-				if (filterSettings != value) {
-					filterSettings = value;
+				if (field != value) {
+					field = value;
 					OnFilterSettingsChanged();
 				}
 			}
 		}
 
-    public Language Language => filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0];
+    public Language Language => FilterSettings != null ? FilterSettings.Language : Languages.AllLanguages[0];
 
     public virtual FilterResult Filter(FilterSettings settings)
 		{

@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.Xaml;
 
     public override bool View(DecompilerTextView textView)
 		{
-			AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+			AvaloniaEditTextOutput output = new();
 			IHighlightingDefinition highlighting = null;
 			
 			textView.RunWithCancellation(

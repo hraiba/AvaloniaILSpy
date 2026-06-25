@@ -26,16 +26,14 @@ namespace ICSharpCode.ILSpy;
 
 	public static class Languages
 	{
-		// Start with a dummy list with an IL entry so that crashes
-		// in Initialize() (e.g. due to invalid plugins) don't lead to
-		// confusing follow-up errors in GetLanguage().
-		private static ReadOnlyCollection<Language> allLanguages = new ReadOnlyCollection<Language>(
-			new Language[] { new ILLanguage() });
-
+    // Start with a dummy list with an IL entry so that crashes
+    // in Initialize() (e.g. due to invalid plugins) don't lead to
+    // confusing follow-up errors in GetLanguage().
     /// <summary>
     /// A list of all languages.
     /// </summary>
-    public static ReadOnlyCollection<Language> AllLanguages => allLanguages;
+    public static ReadOnlyCollection<Language> AllLanguages { get; private set; } = new(
+            new Language[] { new ILLanguage() });
 
     internal static void Initialize(ExportProvider ep)
 		{
@@ -45,7 +43,7 @@ namespace ICSharpCode.ILSpy;
 			languages.AddRange(ILAstLanguage.GetDebugLanguages());
 			languages.AddRange(CSharpLanguage.GetDebugLanguages());
 			#endif
-			allLanguages = languages.AsReadOnly();
+			AllLanguages = languages.AsReadOnly();
 		}
 
     /// <summary>

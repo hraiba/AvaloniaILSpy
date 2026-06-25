@@ -116,7 +116,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
             return false;
         }
 
-        SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
         dlg.Filters =
@@ -124,7 +124,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
             new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
             new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
         ];
-        var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+        var filename = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
         if (!string.IsNullOrEmpty(filename)) {
             s.Position = 0;
             if (filename.Contains("resources")) {

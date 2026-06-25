@@ -172,7 +172,7 @@ class CSharpBracketSearcher : IBracketSearcher
 
         // I don't see any possibility to parse a C# document backwards...
         // We have to do it forwards and push all bracket positions on a stack.
-        Stack<int> bracketStack = new Stack<int>();
+        Stack<int> bracketStack = new();
         bool blockComment = false;
         bool lineComment = false;
         bool inChar = false;

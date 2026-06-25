@@ -475,7 +475,7 @@ namespace ICSharpCode.ILSpy;
 			return symbol;
 		}
 
-		Stack<AstNode> nodeStack = new Stack<AstNode>();
+		Stack<AstNode> nodeStack = new();
 
 		public override void StartNode(AstNode node)
 		{

@@ -81,12 +81,12 @@ public class Entry(string name, Stream stream) : INotifyPropertyChanged
 
     public bool IsSelected
     {
-        get { return isSelected; }
+        get;
         set
         {
-            if (isSelected != value)
+            if (field != value)
             {
-                isSelected = value;
+                field = value;
                 OnPropertyChanged();
             }
         }
@@ -97,8 +97,6 @@ public class Entry(string name, Stream stream) : INotifyPropertyChanged
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
     public Stream Stream { get; } = stream;
-
-    bool isSelected;
 
     public event PropertyChangedEventHandler PropertyChanged;
 }

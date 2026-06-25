@@ -27,23 +27,22 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// </summary>
 	public sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
-		readonly string name;
 
-    public string Name => name;
+    public string Name { get; }
 
     public NamespaceTreeNode(string name)
 		{
         ArgumentNullException.ThrowIfNull(name);
-        this.name = name;
+        this.Name = name;
 		}
 
-    public override object Text => name.Length == 0 ? "-" : name;
+    public override object Text => Name.Length == 0 ? "-" : Name;
 
     public override object Icon => Images.Namespace;
 
     public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(name))
+			if (settings.SearchTermMatches(Name))
         {
             return FilterResult.MatchAndRecurse;
         }
@@ -53,5 +52,5 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         }
     }
 
-    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileNamespace(name, Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileNamespace(Name, Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
 }

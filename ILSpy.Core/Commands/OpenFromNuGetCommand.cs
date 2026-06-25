@@ -29,7 +29,7 @@ sealed class OpenFromNuGetCommand : SimpleCommand
 	{
 		public override async void Execute(object parameter)
 		{
-        OpenFileDialog dlg = new OpenFileDialog();
+        OpenFileDialog dlg = new();
 			dlg.Title = "Open file";
         dlg.Directory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome);
         dlg.Filters =

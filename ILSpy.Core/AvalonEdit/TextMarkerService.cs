@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
             throw new ArgumentOutOfRangeException(nameof(length), length, "length must not be negative and startOffset+length must not be after the end of the document");
         }
 
-        TextMarker m = new TextMarker(this, startOffset, length);
+        TextMarker m = new(this, startOffset, length);
 			markers.Add(m);
 			// no need to mark segment for redraw: the text marker is invisible until a property is set
 			return m;
@@ -191,14 +191,14 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
 				if (marker.BackgroundColor != null) {
-					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
+					BackgroundGeometryBuilder geoBuilder = new();
 					geoBuilder.AlignToWholePixels = true;
 					geoBuilder.CornerRadius = 3;
 					geoBuilder.AddSegment(textView, marker);
 					Geometry geometry = geoBuilder.CreateGeometry();
 					if (geometry != null) {
 						Color color = marker.BackgroundColor.Value;
-						SolidColorBrush brush = new SolidColorBrush(color);
+						SolidColorBrush brush = new(color);
 						//brush.Freeze();
 						drawingContext.DrawGeometry(brush, null, geometry);
 					}
@@ -216,7 +216,7 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 							
 							int count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
 							
-							StreamGeometry geometry = new StreamGeometry();
+							StreamGeometry geometry = new();
 							
 							using (StreamGeometryContext ctx = geometry.Open()) {
 								ctx.BeginFigure(startPoint, false);
@@ -227,17 +227,17 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 							
 							//geometry.Freeze();
 							
-							Pen usedPen = new Pen(usedBrush, 1);
+							Pen usedPen = new(usedBrush, 1);
 							//usedPen.Freeze();
 							drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
 						}
 						if ((marker.MarkerTypes & TextMarkerTypes.NormalUnderline) != 0) {
-							Pen usedPen = new Pen(usedBrush, 1);
+							Pen usedPen = new(usedBrush, 1);
 							//usedPen.Freeze();
 							drawingContext.DrawLine(usedPen, startPoint, endPoint);
 						}
 						if ((marker.MarkerTypes & TextMarkerTypes.DottedUnderline) != 0) {
-							Pen usedPen = new Pen(usedBrush, 1, DashStyle.Dot);
+							Pen usedPen = new(usedBrush, 1, DashStyle.Dot);
 							//usedPen.Freeze();
 							drawingContext.DrawLine(usedPen, startPoint, endPoint);
 						}
@@ -279,49 +279,41 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 
     void Redraw() => service.Redraw(this);
 
-    Color? backgroundColor;
-		
-		public Color? BackgroundColor {
-			get { return backgroundColor; }
-			set {
-				if (backgroundColor.GetValueOrDefault().ToUint32() != value.GetValueOrDefault().ToUint32()) {
-					backgroundColor = value;
+    public Color? BackgroundColor {
+			get;
+        set {
+				if (field.GetValueOrDefault().ToUint32() != value.GetValueOrDefault().ToUint32()) {
+					field = value;
 					Redraw();
 				}
 			}
 		}
-		
-		Color? foregroundColor;
-		
-		public Color? ForegroundColor {
-			get { return foregroundColor; }
-			set {
-				if (foregroundColor.GetValueOrDefault().ToUint32() != value.GetValueOrDefault().ToUint32()) {
-					foregroundColor = value;
+
+    public Color? ForegroundColor {
+			get;
+        set {
+				if (field.GetValueOrDefault().ToUint32() != value.GetValueOrDefault().ToUint32()) {
+					field = value;
 					Redraw();
 				}
 			}
 		}
-		
-		FontWeight? fontWeight;
-		
-		public FontWeight? FontWeight {
-			get { return fontWeight; }
-			set {
-				if (fontWeight != value) {
-					fontWeight = value;
+
+    public FontWeight? FontWeight {
+			get;
+        set {
+				if (field != value) {
+					field = value;
 					Redraw();
 				}
 			}
 		}
-		
-		FontStyle? fontStyle;
-		
-		public FontStyle? FontStyle {
-			get { return fontStyle; }
-			set {
-				if (fontStyle != value) {
-					fontStyle = value;
+
+    public FontStyle? FontStyle {
+			get;
+        set {
+				if (field != value) {
+					field = value;
 					Redraw();
 				}
 			}
@@ -340,14 +332,12 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 				}
 			}
 		}
-		
-		Color markerColor;
-		
-		public Color MarkerColor {
-			get { return markerColor; }
-			set {
-				if (markerColor.ToUint32() != value.ToUint32()) {
-					markerColor = value;
+
+    public Color MarkerColor {
+			get;
+        set {
+				if (field.ToUint32() != value.ToUint32()) {
+					field = value;
 					Redraw();
 				}
 			}

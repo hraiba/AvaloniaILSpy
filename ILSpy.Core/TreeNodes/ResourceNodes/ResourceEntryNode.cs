@@ -31,13 +31,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	public class ResourceEntryNode : ILSpyTreeNode
 	{
 		private readonly string key;
-		private readonly Stream data;
 
     public override object Text => key;
 
     public override object Icon => Images.Resource;
 
-    protected Stream Data => data;
+    protected Stream Data { get; }
 
 
     public ResourceEntryNode(string key, Stream data)
@@ -45,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(data);
         this.key = key;
-			this.data = data;
+			this.Data = data;
 		}
 
 		public static ILSpyTreeNode Create(string key, object data)
@@ -66,18 +65,18 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         return result;
 		}
 
-    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, string.Format("{0} = {1}", key, Data));
 
     public override async Task<bool> Save(DecompilerTextView textView)
 		{
-			SaveFileDialog dlg = new SaveFileDialog();
+			SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
 			dlg.InitialFileName = Path.GetFileName(DecompilerTextView.CleanUpName(key, Language.FileExtension));
-			var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+			var filename = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
 			if (!string.IsNullOrEmpty(filename)) {
-				data.Position = 0;
+            Data.Position = 0;
             using var fs = File.OpenWrite(filename);
-            data.CopyTo(fs);
+            Data.CopyTo(fs);
         }
 			return true;
 		}

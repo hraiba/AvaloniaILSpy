@@ -34,13 +34,12 @@ namespace ICSharpCode.ILSpy;
 	/// </summary>
 	public sealed class AssemblyList
 	{
-		readonly string listName;
     public AssemblyListManager Manager {get;}
     
 		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
 		bool dirty;
-		internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly>();
-		internal readonly ConcurrentDictionary<string, LoadedAssembly> moduleLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
+		internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new();
+		internal readonly ConcurrentDictionary<string, LoadedAssembly> moduleLookupCache = new();
 
 		/// <summary>
 		/// The assemblies in this list.
@@ -55,7 +54,7 @@ namespace ICSharpCode.ILSpy;
 		
 		public AssemblyList(AssemblyListManager manager, string listName)
 		{
-			this.listName = listName;
+			this.ListName = listName;
         Manager = manager ?? throw new ArgumentNullException(nameof(manager));
 			assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
@@ -85,7 +84,7 @@ namespace ICSharpCode.ILSpy;
     /// <summary>
     /// Saves this assembly list to XML.
     /// </summary>
-    internal XElement SaveAsXml() => new XElement(
+    internal XElement SaveAsXml() => new(
             "List",
             new XAttribute("name", ListName),
             assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
@@ -94,7 +93,7 @@ namespace ICSharpCode.ILSpy;
     /// <summary>
     /// Gets the name of this list.
     /// </summary>
-    public string ListName => listName;
+    public string ListName { get; }
 
     void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
@@ -141,7 +140,7 @@ namespace ICSharpCode.ILSpy;
 				if (separator > -1) {
 					componentName = fileName.Substring(separator + 1);
 					fileName = fileName.Substring(0, separator);
-					LoadedNugetPackage package = new LoadedNugetPackage(fileName);
+					LoadedNugetPackage package = new(fileName);
 					var entry = package.Entries.FirstOrDefault(e => e.Name == componentName);
 					if (entry != null) {
 						return OpenAssembly(assemblyUri, entry.Stream, true);

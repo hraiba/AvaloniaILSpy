@@ -14,11 +14,10 @@ namespace ICSharpCode.ILSpy;
 
 class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
 {
-    readonly ImmutableArray<LoadedAssembly> assemblies = assemblies;
     Dictionary<string, MetadataFile>? asmLookupByFullName;
     Dictionary<string, MetadataFile>? asmLookupByShortName;
     Dictionary<string, List<(MetadataFile module, Version version)>>? asmLookupByShortNameGrouped;
-    public ImmutableArray<LoadedAssembly> Assemblies => assemblies;
+    public ImmutableArray<LoadedAssembly> Assemblies { get; } = assemblies;
 
     public async Task<MetadataFile?> TryGetModuleAsync(IAssemblyReference reference, string tfm)
     {
@@ -62,7 +61,7 @@ class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
     private async Task<Dictionary<string, MetadataFile>> CreateLoadedAssemblyLookupAsync(bool shortNames)
     {
         var result = new Dictionary<string, MetadataFile>(StringComparer.OrdinalIgnoreCase);
-        foreach (LoadedAssembly loaded in assemblies)
+        foreach (LoadedAssembly loaded in Assemblies)
         {
             try
             {
@@ -102,7 +101,7 @@ class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
     {
         var result = new Dictionary<string, List<(MetadataFile module, Version version)>>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (LoadedAssembly loaded in assemblies)
+        foreach (LoadedAssembly loaded in Assemblies)
         {
             try
             {
@@ -144,9 +143,9 @@ class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
     /// </summary>
     public async Task<IList<LoadedAssembly>> GetAllAssembliesAsync()
     {
-        var results = new List<LoadedAssembly>(assemblies.Length);
+        var results = new List<LoadedAssembly>(Assemblies.Length);
 
-        foreach (var asm in assemblies)
+        foreach (var asm in Assemblies)
         {
             LoadResult result;
             try

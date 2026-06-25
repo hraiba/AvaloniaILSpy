@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override bool View(DecompilerTextView textView)
 		{
 			try {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				Data.Position = 0;
             IBitmap image = new Bitmap(Data);
             output.AddUIElement(() => new Image { Source = image });

@@ -50,7 +50,7 @@ namespace Avalonia;
     //     return Array.ConvertAll(typeof(SystemColors).GetProperties(), p => string.Format("{0} \{get;\} = {1}", p.Name, ToString(p.GetValue(null))));
     // }
 
-    public static Color ToAvaloniaColor(this System.Drawing.Color color) => new Color(color.A, color.R, color.G, color.B);
+    public static Color ToAvaloniaColor(this System.Drawing.Color color) => new(color.A, color.R, color.G, color.B);
 
     //public static IBrush ToAvaloniaBrush(this System.Drawing.Brush brush)
     //{

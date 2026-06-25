@@ -58,31 +58,27 @@ partial class CustomOptionPage : UserControl, IOptionPage
 
 class Options : INotifyPropertyChanged
 {
-    bool uselessOption1;
-
     public bool UselessOption1
     {
-        get { return uselessOption1; }
+        get;
         set
         {
-            if (uselessOption1 != value)
+            if (field != value)
             {
-                uselessOption1 = value;
+                field = value;
                 OnPropertyChanged(nameof(UselessOption1));
             }
         }
     }
 
-    double uselessOption2;
-
     public double UselessOption2
     {
-        get { return uselessOption2; }
+        get;
         set
         {
-            if (uselessOption2 != value)
+            if (field != value)
             {
-                uselessOption2 = value;
+                field = value;
                 OnPropertyChanged(nameof(UselessOption2));
             }
         }

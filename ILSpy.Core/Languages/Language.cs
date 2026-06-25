@@ -132,7 +132,7 @@ namespace ICSharpCode.ILSpy;
 		class TypeToStringVisitor(bool includeNamespace) : TypeVisitor
 		{
 			readonly bool includeNamespace = includeNamespace;
-			readonly StringBuilder builder = new StringBuilder();
+			readonly StringBuilder builder = new();
 
         public override string ToString() => builder.ToString();
 
@@ -465,7 +465,7 @@ namespace ICSharpCode.ILSpy;
 
 			var declaringType = member.GetDeclaringType(module.Metadata);
 
-			if (declaringType.IsNil && member.Kind == SRM.HandleKind.TypeDefinition) {
+			if (declaringType.IsNil && member.Kind == HandleKind.TypeDefinition) {
 				declaringType = (TypeDefinitionHandle)member;
 			}
 

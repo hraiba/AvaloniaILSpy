@@ -26,7 +26,7 @@ sealed class OpenListCommand : SimpleCommand
 	{
 		public override async void Execute(object parameter)
 		{
-			OpenListDialog dlg = new OpenListDialog();
+			OpenListDialog dlg = new();
 			dlg.Title = "Open List";
         if (await dlg.ShowDialog<bool>(MainWindow.Instance))
         {

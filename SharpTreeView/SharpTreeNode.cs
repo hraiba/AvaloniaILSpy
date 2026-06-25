@@ -18,14 +18,13 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 {
     SharpTreeNodeCollection modelChildren;
     internal SharpTreeNode modelParent;
-    bool isVisible = true;
 
     void UpdateIsVisible(bool parentIsVisible, bool updateFlattener)
     {
-        bool newIsVisible = parentIsVisible && !isHidden;
-        if (isVisible != newIsVisible)
+        bool newIsVisible = parentIsVisible && !IsHidden;
+        if (IsVisible != newIsVisible)
         {
-            isVisible = newIsVisible;
+            IsVisible = newIsVisible;
 
             // invalidate the augmented data
             SharpTreeNode node = this;
@@ -84,7 +83,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     {
         if (modelChildren?.Count > 0)
         {
-            bool showChildren = isVisible && isExpanded;
+            bool showChildren = IsVisible && IsExpanded;
             foreach (SharpTreeNode child in modelChildren)
             {
                 child.UpdateIsVisible(showChildren, updateFlattener);
@@ -109,19 +108,17 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     public bool IsRoot => Parent == null;
 
-    bool isHidden;
-
     public bool IsHidden
     {
-        get { return isHidden; }
+        get;
         set
         {
-            if (isHidden != value)
+            if (field != value)
             {
-                isHidden = value;
+                field = value;
                 if (modelParent != null)
                 {
-                    UpdateIsVisible(modelParent.isVisible && modelParent.isExpanded, true);
+                    UpdateIsVisible(modelParent.IsVisible && modelParent.IsExpanded, true);
                 }
                 RaisePropertyChanged("IsHidden");
                 Parent?.RaisePropertyChanged("ShowExpander");
@@ -132,22 +129,16 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     /// <summary>
     /// Return true when this node is not hidden and when all parent nodes are expanded and not hidden.
     /// </summary>
-    public bool IsVisible => isVisible;
+    public bool IsVisible { get; private set; } = true;
 
-    bool isSelected;
-
-    public bool IsSelected
-    {
-        get { return isSelected; }
-        set
+    public bool IsSelected { get; set
         {
-            if (isSelected != value)
+            if (field != value)
             {
-                isSelected = value;
+                field = value;
                 RaisePropertyChanged("IsSelected");
             }
-        }
-    }
+        } }
 
     #endregion
 
@@ -169,7 +160,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
                 List<SharpTreeNode> removedNodes = null;
                 int visibleIndexOfRemoval = 0;
-                if (node.isVisible)
+                if (node.IsVisible)
                 {
                     visibleIndexOfRemoval = GetVisibleIndexForNode(node);
                     removedNodes = [.. node.VisibleDescendantsAndSelf()];
@@ -200,7 +191,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
             {
                 Debug.Assert(node.modelParent == null);
                 node.modelParent = this;
-                node.UpdateIsVisible(isVisible && isExpanded, false);
+                node.UpdateIsVisible(IsVisible && IsExpanded, false);
                 //Debug.WriteLine("Inserting {0} after {1}", node, insertionPos);
 
                 while (insertionPos != null && insertionPos.modelChildren?.Count > 0)
@@ -210,7 +201,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 InsertNodeAfter(insertionPos ?? this, node);
 
                 insertionPos = node;
-                if (node.isVisible)
+                if (node.IsVisible)
                 {
                     var flattener = GetListRoot().treeFlattener;
                     flattener?.NodesInserted(GetVisibleIndexForNode(node), node.VisibleDescendantsAndSelf());
@@ -227,19 +218,14 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     public virtual object ExpandedIcon => Icon;
 
-    public virtual bool ShowExpander => LazyLoading || Children.Any(c => !c.isHidden);
+    public virtual bool ShowExpander => LazyLoading || Children.Any(c => !c.IsHidden);
 
-    bool isExpanded;
-
-    public bool IsExpanded
-    {
-        get { return isExpanded; }
-        set
+    public bool IsExpanded { get; set
         {
-            if (isExpanded != value)
+            if (field != value)
             {
-                isExpanded = value;
-                if (isExpanded)
+                field = value;
+                if (field)
                 {
                     EnsureLazyChildren();
                     OnExpanding();
@@ -251,21 +237,15 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 UpdateChildIsVisible(true);
                 RaisePropertyChanged("IsExpanded");
             }
-        }
-    }
+        } }
 
     protected virtual void OnExpanding() { }
     protected virtual void OnCollapsing() { }
 
-    bool lazyLoading;
-
-    public bool LazyLoading
-    {
-        get { return lazyLoading; }
-        set
+    public bool LazyLoading { get; set
         {
-            lazyLoading = value;
-            if (lazyLoading)
+            field = value;
+            if (field)
             {
                 IsExpanded = false;
                 if (canExpandRecursively)
@@ -276,8 +256,7 @@ public partial class SharpTreeNode : INotifyPropertyChanged
             }
             RaisePropertyChanged("LazyLoading");
             RaisePropertyChanged("ShowExpander");
-        }
-    }
+        } }
 
     bool canExpandRecursively = true;
 
@@ -320,9 +299,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     public IEnumerable<SharpTreeNode> DescendantsAndSelf() => TreeTraversal.PreOrder(this, n => n.Children);
 
-    internal IEnumerable<SharpTreeNode> VisibleDescendants() => TreeTraversal.PreOrder(Children.Where(c => c.isVisible), n => n.Children.Where(c => c.isVisible));
+    internal IEnumerable<SharpTreeNode> VisibleDescendants() => TreeTraversal.PreOrder(Children.Where(c => c.IsVisible), n => n.Children.Where(c => c.IsVisible));
 
-    internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf() => TreeTraversal.PreOrder(this, n => n.Children.Where(c => c.isVisible));
+    internal IEnumerable<SharpTreeNode> VisibleDescendantsAndSelf() => TreeTraversal.PreOrder(this, n => n.Children.Where(c => c.IsVisible));
 
     public IEnumerable<SharpTreeNode> Ancestors()
     {
@@ -349,20 +328,14 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
     public virtual bool IsEditable => false;
 
-    bool isEditing;
-
-    public bool IsEditing
-    {
-        get { return isEditing; }
-        set
+    public bool IsEditing { get; set
         {
-            if (isEditing != value)
+            if (field != value)
             {
-                isEditing = value;
+                field = value;
                 RaisePropertyChanged("IsEditing");
             }
-        }
-    }
+        } }
 
     public virtual string LoadEditText() => null;
 

@@ -24,7 +24,7 @@ namespace ICSharpCode.ILSpy;
 
 	static class ILSpyCommands
 	{
-		public static readonly AnalyzeCommand Analyze = new AnalyzeCommand();
+		public static readonly AnalyzeCommand Analyze = new();
 	}
 
 public static class NavigationCommands

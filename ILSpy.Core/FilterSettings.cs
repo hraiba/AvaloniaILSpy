@@ -41,31 +41,29 @@ namespace ICSharpCode.ILSpy;
 			LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
 			if (LanguageVersion == default(LanguageVersion))
         {
-            LanguageVersion = language.LanguageVersions.LastOrDefault();
+            LanguageVersion = Language.LanguageVersions.LastOrDefault();
         }
     }
 
-    public XElement SaveAsXml() => new XElement(
+    public XElement SaveAsXml() => new(
             "FilterSettings",
             new XElement("ShowAPILevel", (int)ShowApiLevel),
             new XElement("Language", Language.Name),
             new XElement("LanguageVersion", LanguageVersion.Version)
         );
 
-    string searchTerm;
-
-		/// <summary>
-		/// Gets/Sets the search term.
-		/// Only tree nodes containing the search term will be shown.
-		/// </summary>
-		public string SearchTerm
+    /// <summary>
+    /// Gets/Sets the search term.
+    /// Only tree nodes containing the search term will be shown.
+    /// </summary>
+    public string SearchTerm
 		{
-			get { return searchTerm; }
-			set
+			get;
+        set
 			{
-				if (searchTerm != value)
+				if (field != value)
 				{
-					searchTerm = value;
+					field = value;
 					OnPropertyChanged(nameof(SearchTerm));
 				}
 			}
@@ -76,27 +74,25 @@ namespace ICSharpCode.ILSpy;
 		/// </summary>
 		public bool SearchTermMatches(string text)
 		{
-			if (string.IsNullOrEmpty(searchTerm))
+			if (string.IsNullOrEmpty(SearchTerm))
         {
             return true;
         }
 
-        return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
+        return text.IndexOf(SearchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
-		ApiVisibility showApiLevel;
-
-		/// <summary>
-		/// Gets/Sets whether public, internal or all API members should be shown.
-		/// </summary>
-		public ApiVisibility ShowApiLevel
+    /// <summary>
+    /// Gets/Sets whether public, internal or all API members should be shown.
+    /// </summary>
+    public ApiVisibility ShowApiLevel
 		{
-			get { return showApiLevel; }
-			set
+			get;
+        set
 			{
-				if (showApiLevel != value)
+				if (field != value)
 				{
-					showApiLevel = value;
+					field = value;
 					OnPropertyChanged(nameof(ShowApiLevel));
 				}
 			}
@@ -138,46 +134,42 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 
-		Language language;
-
-		/// <summary>
-		/// Gets/Sets the current language.
-		/// </summary>
-		/// <remarks>
-		/// While this isn't related to filtering, having it as part of the FilterSettings
-		/// makes it easy to pass it down into all tree nodes.
-		/// </remarks>
-		public Language Language
+    /// <summary>
+    /// Gets/Sets the current language.
+    /// </summary>
+    /// <remarks>
+    /// While this isn't related to filtering, having it as part of the FilterSettings
+    /// makes it easy to pass it down into all tree nodes.
+    /// </remarks>
+    public Language Language
 		{
-			get { return language; }
-			set
+			get;
+        set
 			{
-				if (language != value)
+				if (field != value)
 				{
-					language = value;
-					LanguageVersion = language.LanguageVersions.LastOrDefault();
+					field = value;
+					LanguageVersion = field.LanguageVersions.LastOrDefault();
 					OnPropertyChanged();
 				}
 			}
 		}
 
-		LanguageVersion languageVersion;
-
-		/// <summary>
-		/// Gets/Sets the current language version.
-		/// </summary>
-		/// <remarks>
-		/// While this isn't related to filtering, having it as part of the FilterSettings
-		/// makes it easy to pass it down into all tree nodes.
-		/// </remarks>
-		public LanguageVersion LanguageVersion
+    /// <summary>
+    /// Gets/Sets the current language version.
+    /// </summary>
+    /// <remarks>
+    /// While this isn't related to filtering, having it as part of the FilterSettings
+    /// makes it easy to pass it down into all tree nodes.
+    /// </remarks>
+    public LanguageVersion LanguageVersion
 		{
-			get { return languageVersion; }
-			set
+			get;
+        set
 			{
-				if (languageVersion != value)
+				if (field != value)
 				{
-					languageVersion = value;
+					field = value;
 					OnPropertyChanged();
 				}
 			}

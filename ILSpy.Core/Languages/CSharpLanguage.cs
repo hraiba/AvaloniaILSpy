@@ -93,20 +93,20 @@ public class CSharpLanguage : Language
         get
         {
             versions ??= new List<LanguageVersion>() {
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp1.ToString(), "C# 1.0 / VS .NET"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp2.ToString(), "C# 2.0 / VS 2005"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp3.ToString(), "C# 3.0 / VS 2008"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp4.ToString(), "C# 4.0 / VS 2010"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp5.ToString(), "C# 5.0 / VS 2012"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp6.ToString(), "C# 6.0 / VS 2015"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp7.ToString(), "C# 7.0 / VS 2017"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp7_1.ToString(), "C# 7.1 / VS 2017.3"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp7_2.ToString(), "C# 7.2 / VS 2017.4"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp7_3.ToString(), "C# 7.3 / VS 2017.7"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp8_0.ToString(), "C# 8.0 / VS 2019"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp9_0.ToString(), "C# 9.0 / VS 2019.8"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp10_0.ToString(), "C# 10.0 / VS 2022"),
-                    new LanguageVersion(Decompiler.CSharp.LanguageVersion.CSharp11_0.ToString(), "C# 11.0 / VS 2022.4"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp1.ToString(), "C# 1.0 / VS .NET"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp2.ToString(), "C# 2.0 / VS 2005"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp3.ToString(), "C# 3.0 / VS 2008"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp4.ToString(), "C# 4.0 / VS 2010"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp5.ToString(), "C# 5.0 / VS 2012"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp6.ToString(), "C# 6.0 / VS 2015"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp7.ToString(), "C# 7.0 / VS 2017"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp7_1.ToString(), "C# 7.1 / VS 2017.3"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp7_2.ToString(), "C# 7.2 / VS 2017.4"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp7_3.ToString(), "C# 7.3 / VS 2017.7"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp8_0.ToString(), "C# 8.0 / VS 2019"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp9_0.ToString(), "C# 9.0 / VS 2019.8"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp10_0.ToString(), "C# 10.0 / VS 2022"),
+                    new(Decompiler.CSharp.LanguageVersion.CSharp11_0.ToString(), "C# 11.0 / VS 2022.4"),
                 };
             return versions;
         }
@@ -114,7 +114,7 @@ public class CSharpLanguage : Language
 
     CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
     {
-        CSharpDecompiler decompiler = new CSharpDecompiler(module, module.GetAssemblyResolver(), options.DecompilerSettings);
+        CSharpDecompiler decompiler = new(module, module.GetAssemblyResolver(), options.DecompilerSettings);
         decompiler.CancellationToken = options.CancellationToken;
         decompiler.DebugInfoProvider = module.GetDebugInfoOrNull();
         while (decompiler.AstTransforms.Count > transformCount)
@@ -473,7 +473,7 @@ public class CSharpLanguage : Language
                 }
                 output.WriteLine();
 
-                CSharpDecompiler decompiler = new CSharpDecompiler(typeSystem, options.DecompilerSettings);
+                CSharpDecompiler decompiler = new(typeSystem, options.DecompilerSettings);
                 decompiler.CancellationToken = options.CancellationToken;
                 SyntaxTree st;
                 if (options.FullDecompilation)
@@ -518,7 +518,7 @@ public class CSharpLanguage : Language
 
     static CSharpAmbience CreateAmbience()
     {
-        CSharpAmbience ambience = new CSharpAmbience();
+        CSharpAmbience ambience = new();
         // Do not forget to update CSharpAmbienceTests.ILSpyMainTreeViewTypeFlags, if this ever changes.
         ambience.ConversionFlags = ConversionFlags.ShowTypeParameterList | ConversionFlags.PlaceReturnTypeAfterParameterList;
         return ambience;
@@ -599,7 +599,7 @@ public class CSharpLanguage : Language
 
     string ToCSharpString(MetadataReader metadata, TypeDefinitionHandle handle, bool fullName, bool omitGenerics)
     {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new();
         var currentTypeDefHandle = handle;
         var typeDef = metadata.GetTypeDefinition(currentTypeDefHandle);
 
@@ -746,7 +746,7 @@ public class CSharpLanguage : Language
 
     public override CodeMappingInfo GetCodeMappingInfo(MetadataFile module, EntityHandle member) => CSharpDecompiler.GetCodeMappingInfo(module, member);
 
-    CSharpBracketSearcher bracketSearcher = new CSharpBracketSearcher();
+    CSharpBracketSearcher bracketSearcher = new();
 
     public override IBracketSearcher BracketSearcher => bracketSearcher;
 

@@ -73,7 +73,7 @@ namespace ICSharpCode.ILSpy.TextView;
 	{
 		int lastLineStart = 0;
 		int lineNumber = 1;
-		readonly StringBuilder b = new StringBuilder();
+		readonly StringBuilder b = new();
 
 		/// <summary>Current indentation level</summary>
 		int indent;
@@ -84,16 +84,13 @@ namespace ICSharpCode.ILSpy.TextView;
 
 		internal readonly List<VisualLineElementGenerator> elementGenerators = [];
 
-		/// <summary>List of all references that were written to the output</summary>
-		TextSegmentCollection<ReferenceSegment> references = [];
-
-		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
-		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
+    /// <summary>Stack of the fold markers that are open but not closed yet</summary>
+    Stack<NewFolding> openFoldings = new();
 
 		/// <summary>List of all foldings that were written to the output</summary>
 		internal readonly List<NewFolding> Foldings = [];
 
-		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		internal readonly DefinitionLookup DefinitionLookup = new();
 
     internal bool EnableHyperlinks { get; set; }
 
@@ -109,7 +106,7 @@ namespace ICSharpCode.ILSpy.TextView;
     /// <summary>
     /// Gets the list of references (hyperlinks).
     /// </summary>
-    internal TextSegmentCollection<ReferenceSegment> References => references;
+    internal TextSegmentCollection<ReferenceSegment> References { get; } = [];
 
     public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) => elementGenerators.Add(elementGenerator);
 
@@ -122,7 +119,7 @@ namespace ICSharpCode.ILSpy.TextView;
 
     public int TextLength => b.Length;
 
-    public TextLocation Location => new TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
+    public TextLocation Location => new(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 
     #region Text Document
     TextDocument textDocument;
@@ -224,7 +221,7 @@ bool isDefinition = false)
             b.Append(opCode.Name);
         }
         int end = TextLength - 1;
-        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
 		}
 
 		public void WriteReference(PEFile module, Handle handle, string text, string protocol = "decompile", bool isDefinition = false)
@@ -236,7 +233,7 @@ bool isDefinition = false)
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition((module, handle), TextLength);
         }
-        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
     }
 
 		public void WriteReference(IType type, string text, bool isDefinition = false)
@@ -248,7 +245,7 @@ bool isDefinition = false)
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(type, TextLength);
 			}
-        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
     }
 
     public void WriteReference(IMember member, string text, bool isDefinition = false)
@@ -260,7 +257,7 @@ bool isDefinition = false)
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(member, TextLength);
         }
-        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
     }
 
     public void WriteLocalReference(string text, object reference, bool isDefinition = false)
@@ -272,7 +269,7 @@ bool isDefinition = false)
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(reference, TextLength);
         }
-        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
     }
 
     public void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false, bool isDefintion = false)
@@ -305,8 +302,8 @@ bool isDefinition = false)
 			}
 		}
 
-		readonly Stack<HighlightingColor> colorStack = new Stack<HighlightingColor>();
-		HighlightingColor currentColor = new HighlightingColor();
+		readonly Stack<HighlightingColor> colorStack = new();
+		HighlightingColor currentColor = new();
 		int currentColorBegin = -1;
 
 		public void BeginSpan(HighlightingColor highlightingColor)

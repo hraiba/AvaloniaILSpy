@@ -41,9 +41,7 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
 
     private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    static Decompiler.DecompilerSettings currentDecompilerSettings;
-
-    public static Decompiler.DecompilerSettings CurrentDecompilerSettings => currentDecompilerSettings ??= LoadDecompilerSettings(ILSpySettings.Load());
+    public static Decompiler.DecompilerSettings CurrentDecompilerSettings { get => field ??= LoadDecompilerSettings(ILSpySettings.Load()); private set; }
 
     public static Decompiler.DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
     {
@@ -66,7 +64,7 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
 
     public void Save(XElement root)
     {
-        XElement section = new XElement("DecompilerSettings");
+        XElement section = new("DecompilerSettings");
         var newSettings = ((DecompilerSettings)DataContext).ToDecompilerSettings();
         var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
             .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
@@ -84,27 +82,25 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
             root.Add(section);
         }
 
-        currentDecompilerSettings = newSettings;
+        CurrentDecompilerSettings = newSettings;
     }
 
 }
 
 public class DecompilerSettings : INotifyPropertyChanged
 {
-    private DataGridCollectionView viewSource;
-
     public CSharpDecompilerSetting[] Settings { get; set; }
 
     public DataGridCollectionView AsCollectionView
     {
         get
         {
-            if (viewSource == null)
+            if (field == null)
             {
-                viewSource = new DataGridCollectionView(Settings);
-                viewSource.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(CSharpDecompilerSetting.Category)));
+                field = new DataGridCollectionView(Settings);
+                field.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(CSharpDecompilerSetting.Category)));
             }
-            return viewSource;
+            return field;
         }
     }
 
@@ -134,18 +130,16 @@ public class DecompilerSettings : INotifyPropertyChanged
 
 public class CSharpDecompilerSetting(PropertyInfo p) : INotifyPropertyChanged
 {
-    bool isEnabled;
-
     public PropertyInfo Property { get; } = p;
 
     public bool IsEnabled
     {
-        get => isEnabled;
+        get;
         set
         {
-            if (value != isEnabled)
+            if (value != field)
             {
-                isEnabled = value;
+                field = value;
                 OnPropertyChanged();
             }
         }

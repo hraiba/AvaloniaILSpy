@@ -59,22 +59,22 @@ namespace ICSharpCode.ILSpy;
 				await MessageBox.Show($"Cannot create PDB file for {Path.GetFileName(assembly.FileName)}, because it does not contain a PE Debug Directory Entry of type 'CodeView'.");
 				return;
 			}
-			SaveFileDialog dlg = new SaveFileDialog();
+			SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
 			dlg.InitialFileName = DecompilerTextView.CleanUpName(assembly.ShortName, ".pdb") + ".pdb";
 			dlg.Filters = [new FileDialogFilter { Name = "Portable PDB", Extensions = { "pdb" } }, new FileDialogFilter { Name = "All files", Extensions = { "*" } }];
         dlg.Directory = Path.GetDirectoryName(assembly.FileName);
-        string fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
+        string fileName = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
         if (string.IsNullOrEmpty(fileName))
         {
             return;
         }
 
-        DecompilationOptions options = new DecompilationOptions();
+        DecompilationOptions options = new();
 			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				Stopwatch stopwatch = Stopwatch.StartNew();
-				using (FileStream stream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write)) {
+				using (FileStream stream = new(fileName, FileMode.OpenOrCreate, FileAccess.Write)) {
 					try {
 						var decompiler = new CSharpDecompiler(file, assembly.GetAssemblyResolver(), options.DecompilerSettings);
 						PortablePdbWriter.WritePdb(file, decompiler, options.DecompilerSettings, stream);

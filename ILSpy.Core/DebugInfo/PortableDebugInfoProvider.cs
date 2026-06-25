@@ -25,14 +25,13 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 
 	class PortableDebugInfoProvider(string pdbFileName, MetadataReaderProvider provider) : IDebugInfoProvider
 	{
-		string pdbFileName = pdbFileName;
-		MetadataReaderProvider provider = provider;
+    MetadataReaderProvider provider = provider;
 
-    public string Description => pdbFileName == null ? "Embedded in this assembly" : $"Loaded from portable PDB: {pdbFileName}";
+    public string Description => SourceFileName == null ? "Embedded in this assembly" : $"Loaded from portable PDB: {SourceFileName}";
 
-		public string SourceFileName => pdbFileName;
+    public string SourceFileName { get; } = pdbFileName;
 
-		public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle method)
+    public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle method)
 		{
 			var metadata = provider.GetMetadataReader();
 			var debugInfo = metadata.GetMethodDebugInformation(method);

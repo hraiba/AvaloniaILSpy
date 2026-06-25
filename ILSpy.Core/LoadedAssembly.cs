@@ -50,20 +50,17 @@ public sealed class LoadedAssembly
 
     readonly Task<PEFile> assemblyTask;
 
-		readonly Task<LoadResult> loadingTask;
-    readonly AssemblyList assemblyList;
-    readonly string fileName;
-    readonly string shortName;
+    readonly Task<LoadResult> loadingTask;
 
     public LoadedAssembly(AssemblyList assemblyList, string fileName, Stream stream = null)
     {
-        this.assemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
-        this.fileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
+        AssemblyList = assemblyList ?? throw new ArgumentNullException(nameof(assemblyList));
+        FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
 
         assemblyTask = stream != null || File.Exists(fileName) ?
                             Task.Factory.StartNew(LoadAssembly, stream) : // requires that this.fileName is set
                             Task.FromException<PEFile>(new FileNotFoundException("Assembly file not found", fileName));
-        shortName = Path.GetFileNameWithoutExtension(fileName);
+        ShortName = Path.GetFileNameWithoutExtension(fileName);
     }
 
     /// <summary>
@@ -102,7 +99,7 @@ public sealed class LoadedAssembly
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Trace.TraceError(ex.ToString());
+            Trace.TraceError(ex.ToString());
             return null;
         }
     }
@@ -134,44 +131,44 @@ public sealed class LoadedAssembly
             MinimalCorlib.Instance);
     }
 
-		/// <summary>
-		/// Gets the <see cref="MetadataFile"/>.
-		/// Returns null in case of load errors.
-		/// </summary>
-		public async Task<MetadataFile?> GetMetadataFileOrNullAsync()
-		{
-			try
-			{
-				var loadResult = await loadingTask.ConfigureAwait(false);
-				return loadResult.MetadataFile;
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Trace.TraceError(ex.ToString());
-				return null;
-			}
-		}
+    /// <summary>
+    /// Gets the <see cref="MetadataFile"/>.
+    /// Returns null in case of load errors.
+    /// </summary>
+    public async Task<MetadataFile?> GetMetadataFileOrNullAsync()
+    {
+        try
+        {
+            var loadResult = await loadingTask.ConfigureAwait(false);
+            return loadResult.MetadataFile;
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError(ex.ToString());
+            return null;
+        }
+    }
 
-		/// <summary>
-		/// Gets the <see cref="PEFile"/>.
-		/// Returns null in case of load errors.
-		/// </summary>
-		public MetadataFile? GetMetadataFileOrNull()
-		{
-			try
-			{
-				var loadResult = loadingTask.GetAwaiter().GetResult();
-				return loadResult.MetadataFile;
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Trace.TraceError(ex.ToString());
-				return null;
-			}
-		}
-		readonly object typeSystemWithOptionsLockObj = new object();
-		ICompilation? typeSystemWithOptions;
-		TypeSystemOptions? currentTypeSystemOptions;
+    /// <summary>
+    /// Gets the <see cref="PEFile"/>.
+    /// Returns null in case of load errors.
+    /// </summary>
+    public MetadataFile? GetMetadataFileOrNull()
+    {
+        try
+        {
+            var loadResult = loadingTask.GetAwaiter().GetResult();
+            return loadResult.MetadataFile;
+        }
+        catch (Exception ex)
+        {
+            Trace.TraceError(ex.ToString());
+            return null;
+        }
+    }
+    readonly Lock typeSystemWithOptionsLockObj = new();
+    ICompilation? typeSystemWithOptions;
+    TypeSystemOptions? currentTypeSystemOptions;
 
     public ICompilation? GetTypeSystemOrNull(TypeSystemOptions options)
     {
@@ -196,11 +193,11 @@ public sealed class LoadedAssembly
     }
     public Task<LoadResult> GetLoadResultAsync() => loadingTask;
 
-    public AssemblyList AssemblyList => assemblyList;
+    public AssemblyList AssemblyList { get; }
 
-    public string FileName => fileName;
+    public string FileName { get; }
 
-    public string ShortName => shortName;
+    public string ShortName { get; }
 
     public string Text
     {
@@ -253,13 +250,13 @@ public sealed class LoadedAssembly
         if (state is Stream stream)
         {
             // Read the module from a precrafted stream
-            module = new PEFile(fileName, stream, metadataOptions: DecompilerSettingsPanel.CurrentDecompilerSettings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None);
+            module = new PEFile(FileName, stream, metadataOptions: DecompilerSettingsPanel.CurrentDecompilerSettings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None);
         }
         else
         {
             // Read the module from disk (by default)
-            stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            module = new PEFile(fileName, stream, PEStreamOptions.PrefetchEntireImage,
+            stream = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+            module = new PEFile(FileName, stream, PEStreamOptions.PrefetchEntireImage,
                 metadataOptions: options);
         }
 
@@ -300,8 +297,8 @@ public sealed class LoadedAssembly
             else
             {
                 // search for pdb in same directory as dll
-                string pdbDirectory = Path.GetDirectoryName(fileName);
-                pdbFileName = Path.Combine(pdbDirectory, Path.GetFileNameWithoutExtension(fileName) + ".pdb");
+                string pdbDirectory = Path.GetDirectoryName(FileName);
+                pdbFileName = Path.Combine(pdbDirectory, Path.GetFileNameWithoutExtension(FileName) + ".pdb");
                 if (File.Exists(pdbFileName))
                 {
                     debugInfoProvider = new MonoCecilDebugInfoProvider(module, pdbFileName);
@@ -329,12 +326,12 @@ public sealed class LoadedAssembly
         {
             if (entry.IsPortableCodeView)
             {
-                return reader.TryOpenAssociatedPortablePdb(fileName, OpenStream, out provider, out pdbFileName);
+                return reader.TryOpenAssociatedPortablePdb(FileName, OpenStream, out provider, out pdbFileName);
             }
             if (entry.Type == DebugDirectoryEntryType.CodeView)
             {
-                string pdbDirectory = Path.GetDirectoryName(fileName);
-                pdbFileName = Path.Combine(pdbDirectory, Path.GetFileNameWithoutExtension(fileName) + ".pdb");
+                string pdbDirectory = Path.GetDirectoryName(FileName);
+                pdbFileName = Path.Combine(pdbDirectory, Path.GetFileNameWithoutExtension(FileName) + ".pdb");
                 if (File.Exists(pdbFileName))
                 {
                     Stream stream = OpenStream(pdbFileName);
@@ -429,11 +426,11 @@ public sealed class LoadedAssembly
         ArgumentNullException.ThrowIfNull(reference);
         if (reference.IsWindowsRuntime)
         {
-            return assemblyList.assemblyLookupCache.GetOrAdd((reference.Name, true), key => LookupReferencedAssemblyInternal(reference, true));
+            return AssemblyList.assemblyLookupCache.GetOrAdd((reference.Name, true), key => LookupReferencedAssemblyInternal(reference, true));
         }
         else
         {
-            return assemblyList.assemblyLookupCache.GetOrAdd((reference.FullName, false), key => LookupReferencedAssemblyInternal(reference, false));
+            return AssemblyList.assemblyLookupCache.GetOrAdd((reference.FullName, false), key => LookupReferencedAssemblyInternal(reference, false));
         }
     }
 
@@ -441,7 +438,7 @@ public sealed class LoadedAssembly
     {
         ArgumentNullException.ThrowIfNull(mainModule);
         ArgumentNullException.ThrowIfNull(moduleName);
-        return assemblyList.moduleLookupCache.GetOrAdd(mainModule.FileName + ";" + moduleName, _ => LookupReferencedModuleInternal(mainModule, moduleName));
+        return AssemblyList.moduleLookupCache.GetOrAdd(mainModule.FileName + ";" + moduleName, _ => LookupReferencedModuleInternal(mainModule, moduleName));
     }
 
     class MyUniversalResolver(LoadedAssembly assembly) : UniversalAssemblyResolver(assembly.FileName, false, assembly.GetTargetFrameworkIdAsync().Result, runtimePack: null, PEStreamOptions.PrefetchEntireImage, DecompilerSettingsPanel.CurrentDecompilerSettings.ApplyWindowsRuntimeProjections ? MetadataReaderOptions.ApplyWindowsRuntimeProjections : MetadataReaderOptions.None)
@@ -458,7 +455,7 @@ public sealed class LoadedAssembly
         LoadedAssembly asm;
         lock (loadingAssemblies)
         {
-            foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
+            foreach (LoadedAssembly loaded in AssemblyList.GetAssemblies())
             {
                 var reader = loaded.GetPEFileOrNull()?.Metadata;
                 if (reader?.IsAssembly != true)
@@ -478,7 +475,7 @@ public sealed class LoadedAssembly
             var resolver = new MyUniversalResolver(this);
             file = resolver.FindAssemblyFile(fullName);
 
-            foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
+            foreach (LoadedAssembly loaded in AssemblyList.GetAssemblies())
             {
                 if (loaded.FileName.Equals(file, StringComparison.OrdinalIgnoreCase))
                 {
@@ -499,7 +496,7 @@ public sealed class LoadedAssembly
             if (file != null)
             {
                 LoadedAssemblyReferencesInfo.AddMessage(fullName.ToString(), MessageKind.Info, "Success - Loading from: " + file);
-                asm = new LoadedAssembly(assemblyList, file) { IsAutoLoaded = true };
+                asm = new LoadedAssembly(AssemblyList, file) { IsAutoLoaded = true };
             }
             else
             {
@@ -510,9 +507,9 @@ public sealed class LoadedAssembly
         }
         Dispatcher.UIThread.InvokeAsync((Action)delegate ()
         {
-            lock (assemblyList.assemblies)
+            lock (AssemblyList.assemblies)
             {
-                assemblyList.assemblies.Add(asm);
+                AssemblyList.assemblies.Add(asm);
             }
             lock (loadingAssemblies)
             {
@@ -528,7 +525,7 @@ public sealed class LoadedAssembly
         LoadedAssembly asm;
         lock (loadingAssemblies)
         {
-            foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
+            foreach (LoadedAssembly loaded in AssemblyList.GetAssemblies())
             {
                 var reader = loaded.GetPEFileOrNull()?.Metadata;
                 if (reader?.IsAssembly != false)
@@ -550,7 +547,7 @@ public sealed class LoadedAssembly
                 return null;
             }
 
-            foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
+            foreach (LoadedAssembly loaded in AssemblyList.GetAssemblies())
             {
                 if (loaded.FileName.Equals(file, StringComparison.OrdinalIgnoreCase))
                 {
@@ -571,7 +568,7 @@ public sealed class LoadedAssembly
             if (file != null)
             {
                 LoadedAssemblyReferencesInfo.AddMessage(moduleName, MessageKind.Info, "Success - Loading from: " + file);
-                asm = new LoadedAssembly(assemblyList, file) { IsAutoLoaded = true };
+                asm = new LoadedAssembly(AssemblyList, file) { IsAutoLoaded = true };
             }
             else
             {
@@ -582,9 +579,9 @@ public sealed class LoadedAssembly
         }
         Dispatcher.UIThread.InvokeAsync((Action)delegate ()
         {
-            lock (assemblyList.assemblies)
+            lock (AssemblyList.assemblies)
             {
-                assemblyList.assemblies.Add(asm);
+                AssemblyList.assemblies.Add(asm);
             }
             lock (loadingAssemblies)
             {

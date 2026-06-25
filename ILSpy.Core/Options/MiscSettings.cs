@@ -23,18 +23,15 @@ namespace ICSharpCode.ILSpy.Options;
 
 	public class MiscSettings : INotifyPropertyChanged
 	{
-		bool allowMultipleInstances;
-    bool loadPreviousAssemblies;
-
     /// <summary>
     /// Allow multiple instances.
     /// </summary>
     public bool AllowMultipleInstances
 		{
-			get { return allowMultipleInstances; }
-			set {
-				if (allowMultipleInstances != value) {
-					allowMultipleInstances = value;
+			get;
+        set {
+				if (field != value) {
+					field = value;
 					OnPropertyChanged();
 				}
 			}
@@ -45,12 +42,12 @@ namespace ICSharpCode.ILSpy.Options;
     /// </summary>
     public bool LoadPreviousAssemblies
     {
-        get { return loadPreviousAssemblies; }
+        get;
         set
         {
-            if (loadPreviousAssemblies != value)
+            if (field != value)
             {
-                loadPreviousAssemblies = value;
+                field = value;
                 OnPropertyChanged();
             }
         }

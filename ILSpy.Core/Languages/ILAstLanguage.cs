@@ -43,9 +43,7 @@ namespace ICSharpCode.ILSpy;
 
     public Stepper Stepper { get; set; } = new Stepper();
 
-		readonly string name = name;
-
-    public override string Name => name;
+    public override string Name { get; } = name;
 
     internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
@@ -79,7 +77,7 @@ namespace ICSharpCode.ILSpy;
             }
 
             var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
-				ILReader reader = new ILReader(typeSystem.MainModule);
+				ILReader reader = new(typeSystem.MainModule);
 				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				reader.WriteTypedIL((SRM.MethodDefinitionHandle)method.MetadataToken, methodBody, output, cancellationToken: options.CancellationToken);
 			}

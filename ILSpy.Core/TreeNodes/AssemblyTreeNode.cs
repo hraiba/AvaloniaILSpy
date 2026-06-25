@@ -187,7 +187,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
                 ns = new NamespaceTreeNode(escapedNamespace);
                 namespaces.Add(type.Namespace, ns);
             }
-            TypeTreeNode node = new TypeTreeNode(type, this);
+            TypeTreeNode node = new(type, this);
 				typeDict[(TypeDefinitionHandle)type.MetadataToken] = node;
 				ns.Children.Add(node);
 			}
@@ -259,7 +259,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override IDataObject Copy(SharpTreeNode[] nodes)
 		{
-			DataObject dataObject = new DataObject();
+			DataObject dataObject = new();
 			dataObject.Set(DataFormat, nodes.OfType<AssemblyTreeNode>().Select(n => n.LoadedAssembly.FileName).ToArray());
 			return dataObject;
 		}
@@ -320,7 +320,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
             return false;
         }
 
-        SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(LoadedAssembly.ShortName, language.FileExtension);
 			dlg.Filters =
@@ -330,9 +330,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				new FileDialogFilter() { Name = "All files", Extensions = { "*" }}
 			];
 
-			var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+			var filename = await dlg.ShowAsync(Application.Current.GetMainWindow());
 			if (!string.IsNullOrEmpty(filename)) {
-				DecompilationOptions options = new DecompilationOptions();
+				DecompilationOptions options = new();
 				options.FullDecompilation = true;
 				if (filename.Contains(language.ProjectFileExtension)) {
 					options.SaveAsProjectDirectory = Path.GetDirectoryName(filename);

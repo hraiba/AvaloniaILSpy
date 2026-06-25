@@ -33,7 +33,7 @@ sealed class DisassembleAllCommand : SimpleCommand
 
     public override void Execute(object parameter) => MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() =>
     {
-        AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+        AvaloniaEditTextOutput output = new();
         Parallel.ForEach(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct }, delegate (LoadedAssembly asm)
         {
             if (!asm.HasLoadError)

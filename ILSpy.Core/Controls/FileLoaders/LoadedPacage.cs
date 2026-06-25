@@ -248,16 +248,15 @@ public sealed class PackageFolder : IAssemblyResolver
     public string Name { get; }
 
     readonly LoadedPackage package;
-    readonly PackageFolder? parent;
 
     internal PackageFolder(LoadedPackage package, PackageFolder? parent, string name)
     {
         this.package = package;
-        this.parent = parent;
+        this.Parent = parent;
         Name = name;
     }
 
-    public PackageFolder? Parent => parent;
+    public PackageFolder? Parent { get; }
     public List<PackageFolder> Folders { get; } = [];
     public List<PackageEntry> Entries { get; } = [];
 
@@ -268,7 +267,7 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNull();
         }
-        return parent?.Resolve(reference);
+        return Parent?.Resolve(reference);
     }
 
     public Task<MetadataFile?> ResolveAsync(IAssemblyReference reference)
@@ -278,9 +277,9 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNullAsync();
         }
-        if (parent != null)
+        if (Parent != null)
         {
-            return parent.ResolveAsync(reference);
+            return Parent.ResolveAsync(reference);
         }
         return Task.FromResult<MetadataFile?>(null);
     }
@@ -292,7 +291,7 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNull();
         }
-        return parent?.ResolveModule(mainModule, moduleName);
+        return Parent?.ResolveModule(mainModule, moduleName);
     }
 
     public Task<MetadataFile?> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
@@ -302,9 +301,9 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNullAsync();
         }
-        if (parent != null)
+        if (Parent != null)
         {
-            return parent.ResolveModuleAsync(mainModule, moduleName);
+            return Parent.ResolveModuleAsync(mainModule, moduleName);
         }
         return Task.FromResult<MetadataFile?>(null);
     }

@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy.TextView;
 	/// </summary>
 	public class XmlDocRenderer
 	{
-		readonly StringBuilder ret = new StringBuilder();
+		readonly StringBuilder ret = new();
 
     public void AppendText(string text) => ret.Append(text);
 
@@ -44,14 +44,14 @@ namespace ICSharpCode.ILSpy.TextView;
 
         Debug.WriteLine(xmlDocumentation);
 			try {
-				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
+				XmlTextReader r = new(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
 				AddXmlDocumentation(r);
 			} catch (XmlException) {
 			}
 		}
 		
-		static readonly Regex whitespace = new Regex(@"\s+");
+		static readonly Regex whitespace = new(@"\s+");
 		
 		public void AddXmlDocumentation(XmlReader xml)
 		{
@@ -129,5 +129,5 @@ namespace ICSharpCode.ILSpy.TextView;
 			return cref;
 		}
 
-    public TextBlock CreateTextBlock() => new TextBlock { Text = ret.ToString() };
+    public TextBlock CreateTextBlock() => new() { Text = ret.ToString() };
 }

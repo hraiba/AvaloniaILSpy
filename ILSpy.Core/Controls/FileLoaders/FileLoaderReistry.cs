@@ -149,7 +149,7 @@ public sealed class PEFileLoader : IFileLoader
             ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
             : MetadataReaderOptions.None;
         stream.Position = 0;
-        PEFile module = new PEFile(fileName, stream, PEStreamOptions.PrefetchEntireImage | PEStreamOptions.LeaveOpen, metadataOptions: options);
+        PEFile module = new(fileName, stream, PEStreamOptions.PrefetchEntireImage | PEStreamOptions.LeaveOpen, metadataOptions: options);
         return Task.FromResult(new LoadResult { MetadataFile = module });
     }
 }

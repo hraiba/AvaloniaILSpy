@@ -37,9 +37,7 @@ public partial class MiscSettingsPanel : UserControl, IOptionPage
 
     public void Load(ILSpySettings settings) => DataContext = LoadMiscSettings(settings);
 
-    static MiscSettings currentMiscSettings;
-
-    public static MiscSettings CurrentMiscSettings => currentMiscSettings ??= LoadMiscSettings(ILSpySettings.Load());
+    public static MiscSettings CurrentMiscSettings { get => field ??= LoadMiscSettings(ILSpySettings.Load()); private set; }
 
     public static MiscSettings LoadMiscSettings(ILSpySettings settings)
 		{
@@ -69,6 +67,6 @@ public partial class MiscSettingsPanel : UserControl, IOptionPage
             root.Add(section);
         }
 
-        currentMiscSettings = null; // invalidate cached settings
+        CurrentMiscSettings = null; // invalidate cached settings
 		}
 	}

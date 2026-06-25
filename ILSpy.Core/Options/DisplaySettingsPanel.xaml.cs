@@ -43,7 +43,7 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
 		{
 			InitializeComponent();
 
-        Task<FontFamily[]> task = new Task<FontFamily[]>(FontLoader);
+        Task<FontFamily[]> task = new(FontLoader);
 			task.Start();
 			task.ContinueWith(
 				delegate(Task continuation) {
@@ -165,7 +165,7 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
 
 public class FontSizeConverter : IValueConverter
 	{
-		public static readonly FontSizeConverter Instance = new FontSizeConverter();
+		public static readonly FontSizeConverter Instance = new();
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {

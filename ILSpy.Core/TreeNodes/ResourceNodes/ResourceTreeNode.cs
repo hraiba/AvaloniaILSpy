@@ -36,28 +36,27 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// </summary>
 	public class ResourceTreeNode : ILSpyTreeNode
 	{
-		readonly Resource r;
 		
 		public ResourceTreeNode(Resource r)
 		{
         ArgumentNullException.ThrowIfNull(r);
-        this.r = r;
+        this.Resource = r;
 		}
 
-    public Resource Resource => r;
+    public Resource Resource { get; }
 
-    public override object Text => r.Name;
+    public override object Text => Resource.Name;
 
     public override object Icon => Images.Resource;
 
     public override FilterResult Filter(FilterSettings settings)
     {
-        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (r.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (Resource.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
         {
             return FilterResult.Hidden;
         }
 
-        if (settings.SearchTermMatches(r.Name))
+        if (settings.SearchTermMatches(Resource.Name))
         {
             return FilterResult.Match;
         }
@@ -69,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, string.Format("{0} ({1}, {2})", r.Name, r.ResourceType, r.Attributes));
+			language.WriteCommentLine(output, string.Format("{0} ({1}, {2})", Resource.Name, Resource.ResourceType, Resource.Attributes));
 
         if (output is ISmartTextOutput smartOutput)
         {
@@ -86,7 +85,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				FileType type = GuessFileType.DetectFileType(s);
 				if (type != FileType.Binary) {
 					s.Position = 0;
-					AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+					AvaloniaEditTextOutput output = new();
                 output.Write(new StreamReader(s, Encoding.UTF8).ReadToEnd());
 					string ext;
 					if (type == FileType.Xml)
@@ -113,10 +112,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
             return false;
         }
 
-        SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
-        var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+        var filename = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
         if (!string.IsNullOrEmpty(filename))
         {
             s.Position = 0;

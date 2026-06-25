@@ -35,7 +35,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	class ThreadingSupport
 	{
 		Task<List<SharpTreeNode>> loadChildrenTask;
-		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+		CancellationTokenSource cancellationTokenSource = new();
 
     public bool IsRunning => loadChildrenTask?.IsCompleted == false;
 
@@ -155,13 +155,13 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
         public void Execute(TextViewContext context)
 			{
-				StringBuilder builder = new StringBuilder();
+				StringBuilder builder = new();
 				if (context.SelectedTreeNodes != null) {
 					foreach (var node in context.SelectedTreeNodes.OfType<ErrorTreeNode>()) {
 						builder.AppendLine(node.Text.ToString());
 					}
 				}
-				App.Current.Clipboard.SetTextAsync(builder.ToString());
+            Avalonia.Application.Current.Clipboard.SetTextAsync(builder.ToString());
 			}
 		}
 	}

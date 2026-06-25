@@ -33,17 +33,15 @@ namespace ICSharpCode.ILSpy.Analyzers;
 	/// </summary>
 	public class AnalyzerTreeView : SharpTreeView, IPane
 	{
-		static AnalyzerTreeView instance;
-
-		public static AnalyzerTreeView Instance
+    public static AnalyzerTreeView Instance
 		{
 			get
 			{
-				if (instance == null) {
+				if (field == null) {
 					Dispatcher.UIThread.VerifyAccess();
-					instance = new AnalyzerTreeView();
+					field = new AnalyzerTreeView();
 				}
-				return instance;
+				return field;
 			}
 		}
 

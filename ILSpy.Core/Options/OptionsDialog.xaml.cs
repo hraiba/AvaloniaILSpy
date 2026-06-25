@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy.Options;
 			ILSpySettings settings = ILSpySettings.Load();
 			var tabItems = new List<TabItem>();
 			foreach (var optionPage in optionPages.OrderBy(p => p.Metadata.Order)) {
-				TabItem tabItem = new TabItem();
+				TabItem tabItem = new();
             tabItem.Header = MainWindow.GetResourceString(optionPage.Metadata.Title);
 				tabItem.Content = optionPage.Value;
 				tabItems.Add(tabItem);
@@ -122,7 +122,7 @@ sealed class ShowOptionsCommand : SimpleCommand
 	{
 		public override async void Execute(object parameter)
 		{
-			OptionsDialog dlg = new OptionsDialog();
+			OptionsDialog dlg = new();
 			dlg.Title = "Options";
 			if (await dlg.ShowDialog<bool>(MainWindow.Instance)) {
 				new RefreshCommand().Execute(parameter);

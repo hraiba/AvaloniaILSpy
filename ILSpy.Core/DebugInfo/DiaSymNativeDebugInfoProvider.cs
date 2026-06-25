@@ -32,25 +32,24 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 	class DiaSymNativeDebugInfoProvider : IDebugInfoProvider, ISymReaderMetadataProvider
 	{
 		PEFile module;
-		string pdbFileName;
-		Stream stream;
+    Stream stream;
 		MetadataReader metadata;
 		ISymUnmanagedReader5 reader;
 
 		public DiaSymNativeDebugInfoProvider(PEFile module, string pdbFileName, Stream stream)
 		{
 			this.module = module;
-			this.pdbFileName = pdbFileName;
+        SourceFileName = pdbFileName;
 			this.stream = stream;
 			metadata = module.Metadata;
 			reader = SymUnmanagedReaderFactory.CreateReader<ISymUnmanagedReader5>(stream, this);
 		}
 
-		public string Description => $"Loaded from PDB file: {pdbFileName}";
+		public string Description => $"Loaded from PDB file: {SourceFileName}";
 
-		public string SourceFileName => pdbFileName;
+    public string SourceFileName { get; }
 
-		public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle handle)
+    public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle handle)
 		{
 			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
 			if (method == null || method.GetSequencePointCount(out int count) != 0)

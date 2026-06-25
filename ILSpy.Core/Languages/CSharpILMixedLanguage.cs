@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy;
 	{
 		public override string Name => "IL with C#";
 
-    protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options) => new ReflectionDisassembler(output,
+    protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options) => new(output,
             new MixedMethodBodyDisassembler(output, options)
             {
                 DetectControlStructure = detectControlStructure,
@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy;
 
     static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
 		{
-			CSharpDecompiler decompiler = new CSharpDecompiler(module, module.GetAssemblyResolver(), options.DecompilerSettings);
+			CSharpDecompiler decompiler = new(module, module.GetAssemblyResolver(), options.DecompilerSettings);
 			decompiler.CancellationToken = options.CancellationToken;
 			return decompiler;
 		}
@@ -129,7 +129,7 @@ namespace ICSharpCode.ILSpy;
 				base.WriteInstruction(output, metadata, methodDefinition, ref blob, methodRva);
 			}
 
-			HighlightingColor gray = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.DarkGray) };
+			HighlightingColor gray = new() { Foreground = new SimpleHighlightingBrush(Colors.DarkGray) };
 
 			void WriteHighlightedCommentLine(ISmartTextOutput output, string text, int startColumn, int endColumn, bool isSingleLine)
 			{

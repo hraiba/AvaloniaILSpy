@@ -25,13 +25,11 @@ namespace ICSharpCode.ILSpy.Analyzers;
 
 	public abstract class AnalyzerTreeNode : SharpTreeNode
 	{
-		private Language language;
-
-		public Language Language {
-			get { return language; }
-			set {
-				if (language != value) {
-					language = value;
+    public Language Language {
+			get;
+        set {
+				if (field != value) {
+					field = value;
 					foreach (var child in Children.OfType<AnalyzerTreeNode>())
                 {
                     child.Language = value;

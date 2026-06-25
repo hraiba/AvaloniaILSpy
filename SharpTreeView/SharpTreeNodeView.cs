@@ -155,12 +155,12 @@ namespace ICSharpCode.TreeView;
 		{
 			if(Node != null)
 			{
-				bindings.Add(expander.Bind(ToggleButton.IsVisibleProperty, new Binding("ShowExpander") { Source = Node }));
+				bindings.Add(expander.Bind(IsVisibleProperty, new Binding("ShowExpander") { Source = Node }));
 				bindings.Add(expander.Bind(ToggleButton.IsCheckedProperty, new Binding("IsExpanded") { Source = Node }));
-				bindings.Add(icon.Bind(ContentPresenter.IsVisibleProperty, new Binding("ShowIcon") { Source = Node }));
-				bindings.Add(checkBoxContainer.Bind(Border.IsVisibleProperty, new Binding("IsCheckable") { Source = Node }));
-				bindings.Add(checkBox.Bind(CheckBox.IsCheckedProperty, new Binding("IsChecked") { Source = Node }));
-				bindings.Add(textContainer.Bind(Border.IsVisibleProperty, new Binding("IsEditing") { Source = Node, Converter = BoolConverters.Inverse }));
+				bindings.Add(icon.Bind(IsVisibleProperty, new Binding("ShowIcon") { Source = Node }));
+				bindings.Add(checkBoxContainer.Bind(IsVisibleProperty, new Binding("IsCheckable") { Source = Node }));
+				bindings.Add(checkBox.Bind(ToggleButton.IsCheckedProperty, new Binding("IsChecked") { Source = Node }));
+				bindings.Add(textContainer.Bind(IsVisibleProperty, new Binding("IsEditing") { Source = Node, Converter = BoolConverters.Inverse }));
 				bindings.Add(textContent.Bind(ContentPresenter.ContentProperty, new Binding("Text") { Source = Node }));
 				RaisePropertyChanged(IconProperty, null, Icon);
 			}

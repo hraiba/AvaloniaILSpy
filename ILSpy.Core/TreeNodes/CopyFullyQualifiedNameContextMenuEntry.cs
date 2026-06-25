@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
             return;
         }
 
-        App.Current.Clipboard.SetTextAsync(member.ReflectionName);
+        Avalonia.Application.Current.Clipboard.SetTextAsync(member.ReflectionName);
 		}
 
     private IMemberTreeNode GetMemberNodeFromContext(TextViewContext context) => context.SelectedTreeNodes?.Length == 1 ? context.SelectedTreeNodes[0] as IMemberTreeNode : null;

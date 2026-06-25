@@ -89,13 +89,13 @@ namespace ICSharpCode.ILSpy.TextView;
     public static void DisplayCaretHighlightAnimation(TextArea textArea)
 		{
 			AdornerLayer layer = AdornerLayer.GetAdornerLayer(textArea.TextView);
-        CaretHighlightAdorner adorner = new CaretHighlightAdorner(textArea)
+        CaretHighlightAdorner adorner = new(textArea)
         {
             [AdornerLayer.AdornedElementProperty] = textArea
         };
         layer.Children.Add(adorner);
 
-			DispatcherTimer timer = new DispatcherTimer();
+			DispatcherTimer timer = new();
 			timer.Interval = TimeSpan.FromSeconds(1);
 			timer.Tick += delegate {
 				timer.Stop();

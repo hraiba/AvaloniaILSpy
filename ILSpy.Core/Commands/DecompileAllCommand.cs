@@ -35,7 +35,7 @@ sealed class DecompileAllCommand : SimpleCommand
 
     public override void Execute(object parameter) => MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() =>
     {
-        AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+        AvaloniaEditTextOutput output = new();
         Parallel.ForEach(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct }, delegate (LoadedAssembly asm)
         {
             if (!asm.HasLoadError)
@@ -88,7 +88,7 @@ sealed class Decompile100TimesCommand : SimpleCommand
 					}
 				}
 				w.Stop();
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				double msPerRun = w.Elapsed.TotalMilliseconds / numRuns;
 				output.Write($"Average time: {msPerRun.ToString("f1")}ms\n");
 				return output;

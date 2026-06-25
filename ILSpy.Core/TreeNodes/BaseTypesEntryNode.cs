@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		ITypeDefinition TryResolve(MetadataFile module, EntityHandle handle, IType type, bool mayRetry = true)
 		{
-			DecompilerTypeSystem typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver(),
+			DecompilerTypeSystem typeSystem = new(module, module.GetAssemblyResolver(),
 				TypeSystemOptions.Default | TypeSystemOptions.Uncached);
 			var t = typeSystem.MainModule.ResolveEntity(handle) as ITypeDefinition;
 			if (t != null) {

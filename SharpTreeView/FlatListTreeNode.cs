@@ -50,7 +50,7 @@ namespace ICSharpCode.TreeView;
 			Debug.Assert(right == null || right.listParent == this);
 			Debug.Assert(height == 1 + Math.Max(Height(left), Height(right)));
 			Debug.Assert(Math.Abs(Balance) <= 1);
-			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (isVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
+			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (IsVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
 			left?.CheckInvariants();
 			right?.CheckInvariants();
 		}
@@ -64,7 +64,7 @@ namespace ICSharpCode.TreeView;
 			Debug.Indent();
 			left?.DumpTree();
 			Debug.Unindent();
-			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, isVisible);
+			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, IsVisible);
 			Debug.Indent();
 			right?.DumpTree();
 			Debug.Unindent();
@@ -85,7 +85,7 @@ namespace ICSharpCode.TreeView;
 					if (node.left != null) {
 						index -= node.left.totalListLength;
 					}
-					if (node.isVisible) {
+					if (node.IsVisible) {
 						if (index == 0)
                     {
                         return node;
@@ -108,7 +108,7 @@ namespace ICSharpCode.TreeView;
                     index += node.listParent.left.GetTotalListLength();
                 }
 
-                if (node.listParent.isVisible)
+                if (node.listParent.IsVisible)
                 {
                     index++;
                 }
@@ -165,7 +165,7 @@ namespace ICSharpCode.TreeView;
             return totalListLength;
         }
 
-        int length = (isVisible ? 1 : 0);
+        int length = (IsVisible ? 1 : 0);
 			if (left != null) {
 				length += left.GetTotalListLength();
 			}

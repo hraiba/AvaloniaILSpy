@@ -68,10 +68,6 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     internal SessionSettings sessionSettings;
 
     internal AssemblyListManager assemblyListManager;
-    AssemblyList assemblyList;
-    AssemblyListTreeNode assemblyListTreeNode;
-    static MainWindow instance;
-
     internal Menu mainMenu;
     internal ItemsControl toolBar;
     internal ComboBox languageComboBox;
@@ -93,7 +89,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     internal ContentPresenter mainPane;
     internal DockedPane bottomPane;
 
-    public static MainWindow Instance => instance;
+    public static MainWindow Instance { get; private set; }
 
     public SessionSettings SessionSettings => sessionSettings;
 
@@ -106,7 +102,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     public MainWindow()
     {
-        instance = this;
+        Instance = this;
         var spySettings = ILSpySettings.Load();
         spySettingsForMainWindow_Loaded = spySettings;
         sessionSettings = new SessionSettings(spySettings);
@@ -256,7 +252,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 delegate
                 {
                     using Stream s = File.OpenRead($"Themes/{ilmode}");
-                    using XmlTextReader reader = new XmlTextReader(s);
+                    using XmlTextReader reader = new(s);
                     return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
@@ -385,7 +381,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 }
                 foreach (var entry in category)
                 {
-                    MenuItem menuItem = new MenuItem();
+                    MenuItem menuItem = new();
                     menuItem.Command = CommandWrapper.Unwrap(entry.Value);
                     if (!string.IsNullOrEmpty(GetResourceString(entry.Metadata.Header)))
                     {
@@ -435,7 +431,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 }
                 foreach (var entry in category)
                 {
-                    NativeMenuItem menuItem = new NativeMenuItem();
+                    NativeMenuItem menuItem = new();
                     menuItem.Command = CommandWrapper.Unwrap(entry.Value);
                     if (!string.IsNullOrEmpty(GetResourceString(entry.Metadata.Header)))
                     {
@@ -464,16 +460,16 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     static void OnShow(AvaloniaPropertyChangedEventArgs args)
     {
-        if (args.Sender == instance && (bool)args.NewValue)
+        if (args.Sender == Instance && (bool)args.NewValue)
         {
             // Validate and Set Window Bounds
-            if (instance.sessionSettings.WindowState == WindowState.Normal)
+            if (Instance.sessionSettings.WindowState == WindowState.Normal)
             {
-                var boundsRect = instance.sessionSettings.WindowBounds;
+                var boundsRect = Instance.sessionSettings.WindowBounds;
                 bool boundsOK = false;
-                foreach (var screen in instance.Screens.All)
+                foreach (var screen in Instance.Screens.All)
                 {
-                    var intersection = boundsRect.Intersect(screen.WorkingArea.ToRect(instance.PlatformImpl.DesktopScaling));
+                    var intersection = boundsRect.Intersect(screen.WorkingArea.ToRect(Instance.PlatformImpl.DesktopScaling));
                     if (intersection.Width > 10 && intersection.Height > 10)
                     {
                         boundsOK = true;
@@ -481,22 +477,22 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 }
                 if (boundsOK)
                 {
-                    instance.SetWindowBounds(instance.sessionSettings.WindowBounds);
+                    Instance.SetWindowBounds(Instance.sessionSettings.WindowBounds);
                 }
                 else
                 {
-                    instance.SetWindowBounds(SessionSettings.DefaultWindowBounds);
+                    Instance.SetWindowBounds(SessionSettings.DefaultWindowBounds);
                 }
             }
             else
             {
-                instance.WindowState = instance.sessionSettings.WindowState;
+                Instance.WindowState = Instance.sessionSettings.WindowState;
             }
         }
     }
     #endregion
 
-    public AssemblyList CurrentAssemblyList => assemblyList;
+    public AssemblyList CurrentAssemblyList { get; private set; }
 
     public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
 
@@ -565,7 +561,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 string namespaceName = navigateTo.Substring(2);
                 foreach (LoadedAssembly asm in relevantAssemblies)
                 {
-                    AssemblyTreeNode asmNode = assemblyListTreeNode.FindAssemblyNode(asm);
+                    AssemblyTreeNode asmNode = AssemblyListTreeNode.FindAssemblyNode(asm);
                     if (asmNode != null)
                     {
                         // FindNamespaceNode() blocks the UI if the assembly is not yet loaded,
@@ -605,7 +601,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             }
             if (!found && treeView.SelectedItem == initialSelection)
             {
-                AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+                AvaloniaEditTextOutput output = new();
                 output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", navigateTo));
                 TextView.ShowText(output);
             }
@@ -614,7 +610,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         {
             // NavigateTo == null and an assembly was given on the command-line:
             // Select the newly loaded assembly
-            AssemblyTreeNode asmNode = assemblyListTreeNode.FindAssemblyNode(relevantAssemblies[0]);
+            AssemblyTreeNode asmNode = AssemblyListTreeNode.FindAssemblyNode(relevantAssemblies[0]);
             if (asmNode != null && treeView.SelectedItem == initialSelection)
             {
                 SelectNode(asmNode);
@@ -625,7 +621,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             SharpTreeNode node = null;
             if (activeTreeViewPath?.Length > 0)
             {
-                foreach (var asm in assemblyList.GetAssemblies())
+                foreach (var asm in CurrentAssemblyList.GetAssemblies())
                 {
                     if (asm.FileName == activeTreeViewPath[0])
                     {
@@ -728,28 +724,28 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         {
             // Load AssemblyList only in Loaded event so that WPF is initialized before we start the CPU-heavy stuff.
             // This makes the UI come up a bit faster.
-            assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
+            CurrentAssemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
         }
         else
         {
-            assemblyList = new AssemblyList(assemblyListManager, AssemblyListManager.DefaultListName);
+            CurrentAssemblyList = new AssemblyList(assemblyListManager, AssemblyListManager.DefaultListName);
             assemblyListManager.ClearAll();
         }
 
         HandleCommandLineArguments(App.CommandLineArguments);
 
-        if (assemblyList.GetAssemblies().Length == 0
-            && assemblyList.ListName == AssemblyListManager.DefaultListName
+        if (CurrentAssemblyList.GetAssemblies().Length == 0
+            && CurrentAssemblyList.ListName == AssemblyListManager.DefaultListName
             && loadPreviousAssemblies)
         {
             LoadInitialAssemblies();
         }
 
-        ShowAssemblyList(assemblyList);
+        ShowAssemblyList(CurrentAssemblyList);
 
         if (sessionSettings.ActiveAutoLoadedAssembly != null)
         {
-            assemblyList.Open(sessionSettings.ActiveAutoLoadedAssembly, true);
+            CurrentAssemblyList.Open(sessionSettings.ActiveAutoLoadedAssembly, true);
         }
 
         Dispatcher.UIThread.InvokeAsync(new Action(() => OpenAssemblies(spySettings)), DispatcherPriority.Loaded);
@@ -759,7 +755,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     {
         HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments, spySettings);
 
-        AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+        AvaloniaEditTextOutput output = new();
         if (FormatExceptions([.. App.StartupExceptions], output))
         {
             TextView.ShowText(output);
@@ -879,14 +875,14 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     void ShowAssemblyList(AssemblyList assemblyList)
     {
         history.Clear();
-        this.assemblyList = assemblyList;
+        CurrentAssemblyList = assemblyList;
 
         assemblyList.assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 
-        assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
-        assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
-        assemblyListTreeNode.Select = SelectNode;
-        treeView.Root = assemblyListTreeNode;
+        AssemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+        AssemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+        AssemblyListTreeNode.Select = SelectNode;
+        treeView.Root = AssemblyListTreeNode;
 
         if (assemblyList.ListName == AssemblyListManager.DefaultListName)
 #if DEBUG
@@ -930,7 +926,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         };
         foreach (System.Reflection.Assembly asm in initialAssemblies)
         {
-            assemblyList.OpenAssembly(asm.Location);
+            CurrentAssemblyList.OpenAssembly(asm.Location);
         }
     }
 
@@ -948,13 +944,13 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         // filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
         // Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
         // mutable instance changes.
-        if (assemblyListTreeNode != null)
+        if (AssemblyListTreeNode != null)
         {
-            assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+            AssemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
         }
     }
 
-    internal AssemblyListTreeNode AssemblyListTreeNode => assemblyListTreeNode;
+    internal AssemblyListTreeNode AssemblyListTreeNode { get; private set; }
 
     #region Node Selection
 
@@ -1047,13 +1043,13 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     public ILSpyTreeNode FindTreeNode(object reference) =>
         reference switch
         {
-            PEFile asm => assemblyListTreeNode.FindAssemblyNode(asm),
-            Resource res => assemblyListTreeNode.FindResourceNode(res),
-            ITypeDefinition type => assemblyListTreeNode.FindTypeNode(type),
-            IField fd => assemblyListTreeNode.FindFieldNode(fd),
-            IMethod md => assemblyListTreeNode.FindMethodNode(md),
-            IProperty pd => assemblyListTreeNode.FindPropertyNode(pd),
-            IEvent ed => assemblyListTreeNode.FindEventNode(ed),
+            PEFile asm => AssemblyListTreeNode.FindAssemblyNode(asm),
+            Resource res => AssemblyListTreeNode.FindResourceNode(res),
+            ITypeDefinition type => AssemblyListTreeNode.FindTypeNode(type),
+            IField fd => AssemblyListTreeNode.FindFieldNode(fd),
+            IMethod md => AssemblyListTreeNode.FindMethodNode(md),
+            IProperty pd => AssemblyListTreeNode.FindPropertyNode(pd),
+            IEvent ed => AssemblyListTreeNode.FindEventNode(ed),
             _ => null,
         };
 
@@ -1235,7 +1231,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
                         foreach (var entry in selectionDialog.SelectedItems)
                         {
-                            var nugetAsm = assemblyList.OpenAssembly("nupkg://" + file + ";" + entry.Name, entry.Stream, true);
+                            var nugetAsm = CurrentAssemblyList.OpenAssembly("nupkg://" + file + ";" + entry.Name, entry.Stream, true);
                             if (nugetAsm != null)
                             {
                                 if (loadedAssemblies != null)
@@ -1244,7 +1240,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                                 }
                                 else
                                 {
-                                    var node = assemblyListTreeNode.FindAssemblyNode(nugetAsm);
+                                    var node = AssemblyListTreeNode.FindAssemblyNode(nugetAsm);
                                     if (node != null && focusNode)
                                     {
                                         treeView.SelectedItems.Add(node);
@@ -1261,7 +1257,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
                     break;
                 default:
-                    var asm = assemblyList.OpenAssembly(file);
+                    var asm = CurrentAssemblyList.OpenAssembly(file);
                     if (asm != null)
                     {
                         if (loadedAssemblies != null)
@@ -1270,7 +1266,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                         }
                         else
                         {
-                            var node = assemblyListTreeNode.FindAssemblyNode(asm);
+                            var node = AssemblyListTreeNode.FindAssemblyNode(asm);
                             if (node != null && focusNode)
                             {
                                 lastNode = node;
@@ -1300,7 +1296,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         {
             refreshInProgress = true;
             var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-            ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+            ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), CurrentAssemblyList.ListName));
             SelectNode(FindNodeByPath(path, true));
         }
         finally
@@ -1464,7 +1460,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     protected override bool HandleClosing()
     {
-        sessionSettings.ActiveAssemblyList = assemblyList.ListName;
+        sessionSettings.ActiveAssemblyList = CurrentAssemblyList.ListName;
         sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
         sessionSettings.ActiveAutoLoadedAssembly = GetAutoLoadedAssemblyNode(treeView.SelectedItem as SharpTreeNode);
         sessionSettings.WindowBounds = new Rect(Position.ToPoint(PlatformImpl.DesktopScaling), ClientSize);

@@ -44,15 +44,11 @@ namespace ICSharpCode.ILSpy;
 
 		internal static CommandLineArguments CommandLineArguments;
 
-		static ExportProvider exportProvider;
-		
-		public static ExportProvider ExportProvider => exportProvider;
+    public static ExportProvider ExportProvider { get; private set; }
 
-		static IExportProviderFactory exportProviderFactory;
-		
-		public static IExportProviderFactory ExportProviderFactory => exportProviderFactory;
-		
-		internal static readonly IList<ExceptionData> StartupExceptions = [];
+    public static IExportProviderFactory ExportProviderFactory { get; private set; }
+
+    internal static readonly IList<ExceptionData> StartupExceptions = [];
 		
 		internal class ExceptionData
 		{
@@ -64,11 +60,11 @@ namespace ICSharpCode.ILSpy;
 		{
 			AvaloniaXamlLoader.Load(this);
 			var cmdArgs = Environment.GetCommandLineArgs().Skip(1);
-			App.CommandLineArguments = new CommandLineArguments(cmdArgs);
-			if ((App.CommandLineArguments.SingleInstance ?? true) && !MiscSettingsPanel.CurrentMiscSettings.AllowMultipleInstances) {
+        CommandLineArguments = new CommandLineArguments(cmdArgs);
+			if ((CommandLineArguments.SingleInstance ?? true) && !MiscSettingsPanel.CurrentMiscSettings.AllowMultipleInstances) {
 				cmdArgs = cmdArgs.Select(FullyQualifyPath);
 				string message = string.Join(Environment.NewLine, cmdArgs);
-				if (!App.CommandLineArguments.NoActivate) {
+				if (!CommandLineArguments.NoActivate) {
 					//TODO: singleton mode
 					Debug.WriteLine("NoActivate argument not supported");
 					//Environment.Exit(0);
@@ -114,15 +110,15 @@ namespace ICSharpCode.ILSpy;
 				// If/When any part needs to import ICompositionService, this will be needed:
 				//   catalog.WithCompositionService();
 				var config = CompositionConfiguration.Create(catalog);
-				exportProviderFactory = config.CreateExportProviderFactory();
-				exportProvider = exportProviderFactory.CreateExportProvider();
+				ExportProviderFactory = config.CreateExportProviderFactory();
+				ExportProvider = ExportProviderFactory.CreateExportProvider();
 				// This throws exceptions for composition failures. Alternatively, the configuration's CompositionErrors property
 				// could be used to log the errors directly. Used at the end so that it does not prevent the export provider setup.
 				config.ThrowOnErrors();
 			} catch (Exception ex) {
 				StartupExceptions.Add(new ExceptionData { Exception = ex });
 			}
-			Languages.Initialize(exportProvider);
+			Languages.Initialize(ExportProvider);
 
 			VisualLineLinkText.OpenUriEvent.AddClassHandler<Window>((win, e) => Window_RequestNavigate(e));
 
@@ -199,10 +195,10 @@ namespace ICSharpCode.ILSpy;
 		{
 			if (e.Uri.Scheme == "resource")
 			{
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath))
 				{
-                using StreamReader r = new StreamReader(s);
+                using StreamReader r = new(s);
                 string line;
                 while ((line = r.ReadLine()) != null)
                 {
@@ -210,11 +206,11 @@ namespace ICSharpCode.ILSpy;
                     output.WriteLine();
                 }
             }
-				ILSpy.MainWindow.Instance.TextView.ShowText(output);
+            MainWindow.Instance.TextView.ShowText(output);
 			}
 			else
 			{
-				ILSpy.MainWindow.OpenLink(e.Uri.ToString());
+            MainWindow.OpenLink(e.Uri.ToString());
 			}
 			e.Handled = true;
 		}

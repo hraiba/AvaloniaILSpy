@@ -22,7 +22,7 @@ namespace ICSharpCode.ILSpy.TextView;
 
 	public class DefaultBracketSearcher : IBracketSearcher
 	{
-		public static readonly DefaultBracketSearcher DefaultInstance = new DefaultBracketSearcher();
+		public static readonly DefaultBracketSearcher DefaultInstance = new();
 
     public BracketSearchResult SearchBracket(IDocument document, int offset) => null;
 }
@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy.TextView;
             return;
         }
 
-        BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
+        BackgroundGeometryBuilder builder = new();
 
 			builder.CornerRadius = 1;
 
