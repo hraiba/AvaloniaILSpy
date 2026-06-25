@@ -23,8 +23,8 @@ using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.CSharp.Syntax;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	class CSharpHighlightingTokenWriter : DecoratingTokenWriter
 	{
 		ISmartTextOutput textOutput;
@@ -270,10 +270,10 @@ namespace ICSharpCode.ILSpy
 			HighlightingColor color = null;
 			switch (type) {
 				case "new":
-                case "notnull":
-                    // Not sure if reference type or value type
-                    color = referenceTypeKeywordsColor;
-                    break;
+            case "notnull":
+                // Not sure if reference type or value type
+                color = referenceTypeKeywordsColor;
+                break;
 				case "bool":
 				case "byte":
 				case "char":
@@ -289,10 +289,10 @@ namespace ICSharpCode.ILSpy
 				case "uint":
 				case "ushort":
 				case "ulong":
-                case "unmanaged":
-                    color = valueTypeKeywordsColor;
+            case "unmanaged":
+                color = valueTypeKeywordsColor;
 					break;
-                case "class":
+            case "class":
 				case "object":
 				case "string":
 				case "void":
@@ -404,8 +404,8 @@ namespace ICSharpCode.ILSpy
 			var node = nodeStack.Peek();
 			if (node is Identifier)
 				node = node.Parent;
-            if (Decompiler.TextTokenWriter.IsDefinition(ref node))
-                return node.GetSymbol();
+        if (Decompiler.TextTokenWriter.IsDefinition(ref node))
+            return node.GetSymbol();
 
 			return null;
 		}
@@ -442,4 +442,3 @@ namespace ICSharpCode.ILSpy
 			nodeStack.Pop();
 		}
 	}
-}

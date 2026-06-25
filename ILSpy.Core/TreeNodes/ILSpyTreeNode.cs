@@ -23,8 +23,8 @@ using System.Threading.Tasks;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// </summary>
 		public virtual Task<bool> Save(TextView.DecompilerTextView textView)
 		{
-            return Task.FromResult(false);
+        return Task.FromResult(false);
 		}
 
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
@@ -185,4 +185,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

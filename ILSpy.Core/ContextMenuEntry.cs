@@ -27,8 +27,8 @@ using ICSharpCode.TreeView;
 using System.ComponentModel;
 using ICSharpCode.ILSpy.Search;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public interface IContextMenuEntry
 	{
 		bool IsVisible(TextViewContext context);
@@ -241,4 +241,3 @@ namespace ICSharpCode.ILSpy
 			return items.Count > 0;
 		}
 	}
-}

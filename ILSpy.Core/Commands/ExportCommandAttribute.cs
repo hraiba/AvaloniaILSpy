@@ -20,8 +20,8 @@ using System;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	#region Toolbar
 	public interface IToolbarCommandMetadata
 	{
@@ -84,4 +84,3 @@ namespace ICSharpCode.ILSpy
 		public double MenuOrder { get; set; }
 	}
 	#endregion
-}

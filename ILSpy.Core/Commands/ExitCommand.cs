@@ -19,14 +19,13 @@
 
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.E_xit), MenuOrder = 99999, MenuCategory = nameof(Resources.Exit))]
-    sealed class ExitCommand : SimpleCommand
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.E_xit), MenuOrder = 99999, MenuCategory = nameof(Resources.Exit))]
+sealed class ExitCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
 			MainWindow.Instance.Close();
 		}
 	}
-}

@@ -30,8 +30,8 @@ using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	[ExportContextMenuEntry(Header = "Generate portable PDB")]
 	class GeneratePdbContextMenuEntry : IContextMenuEntry
 	{
@@ -62,9 +62,9 @@ namespace ICSharpCode.ILSpy
 			dlg.Title = "Save file";
 			dlg.InitialFileName = DecompilerTextView.CleanUpName(assembly.ShortName, ".pdb") + ".pdb";
 			dlg.Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Portable PDB", Extensions = { "pdb" } }, new FileDialogFilter { Name = "All files", Extensions = { "*" } } };
-            dlg.Directory = Path.GetDirectoryName(assembly.FileName);
-            string fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
-            if (string.IsNullOrEmpty(fileName)) return;
+        dlg.Directory = Path.GetDirectoryName(assembly.FileName);
+        string fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
+        if (string.IsNullOrEmpty(fileName)) return;
 			DecompilationOptions options = new DecompilationOptions();
 			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
 				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
@@ -89,8 +89,8 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.GeneratePortable), MenuCategory = "Save")]
-    class GeneratePdbMainMenuEntry : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.GeneratePortable), MenuCategory = "Save")]
+class GeneratePdbMainMenuEntry : SimpleCommand
 	{
 		public override bool CanExecute(object parameter)
 		{
@@ -106,4 +106,3 @@ namespace ICSharpCode.ILSpy
 			GeneratePdbContextMenuEntry.GeneratePdbForAssembly(assembly);
 		}
 	}
-}

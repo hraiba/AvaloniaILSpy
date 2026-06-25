@@ -21,8 +21,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows events that override an event.
 	/// </summary>
@@ -41,18 +41,18 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		IEnumerable<IEntity> AnalyzeType(IEvent analyzedEntity, ITypeDefinition type)
 		{
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+            yield break;
 
 			foreach (var @event in type.Events) {
 				if (!@event.IsOverride) continue;
-                var baseMembers = InheritanceHelper.GetBaseMembers(@event, false);
-                if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
-                    yield return @event;
+            var baseMembers = InheritanceHelper.GetBaseMembers(@event, false);
+            if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
+                yield return @event;
 				}
 			}
 		}
@@ -62,4 +62,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return symbol is IEvent entity && entity.IsOverridable && entity.DeclaringType.Kind != TypeKind.Interface;
 		}
 	}
-}

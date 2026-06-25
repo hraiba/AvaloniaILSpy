@@ -26,14 +26,14 @@ using ICSharpCode.ILSpy.Properties;
 using Avalonia.Collections;
 using Avalonia.Markup.Xaml;
 
-namespace ICSharpCode.ILSpy.Options
+namespace ICSharpCode.ILSpy.Options;
+
+/// <summary>
+/// Interaction logic for DecompilerSettingsPanel.xaml
+/// </summary>
+[ExportOptionPage(Title = nameof(Properties.Resources.Decompiler), Order = 10)]
+internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
 {
-    /// <summary>
-    /// Interaction logic for DecompilerSettingsPanel.xaml
-    /// </summary>
-    [ExportOptionPage(Title = nameof(Properties.Resources.Decompiler), Order = 10)]
-    internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
-    {
 		public DecompilerSettingsPanel()
 		{
 			InitializeComponent();
@@ -44,145 +44,144 @@ namespace ICSharpCode.ILSpy.Options
 			AvaloniaXamlLoader.Load(this);
 		}
 
-        static Decompiler.DecompilerSettings currentDecompilerSettings;
+    static Decompiler.DecompilerSettings currentDecompilerSettings;
 
-        public static Decompiler.DecompilerSettings CurrentDecompilerSettings
-        {
-            get
-            {
-                return currentDecompilerSettings ?? (currentDecompilerSettings = LoadDecompilerSettings(ILSpySettings.Load()));
-            }
-        }
-
-        public static Decompiler.DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
-        {
-            XElement e = settings["DecompilerSettings"];
-            var newSettings = new Decompiler.DecompilerSettings();
-            var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
-                .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
-            foreach (var p in properties)
-            {
-                var value = (bool?)e.Attribute(p.Name);
-                if (value.HasValue)
-                    p.SetValue(newSettings, value.Value);
-            }
-            return newSettings;
-        }
-
-        public void Load(ILSpySettings settings)
-        {
-            DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
-        }
-
-        public void Save(XElement root)
-        {
-            XElement section = new XElement("DecompilerSettings");
-            var newSettings = ((DecompilerSettings)DataContext).ToDecompilerSettings();
-            var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
-                .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
-            foreach (var p in properties)
-            {
-                section.SetAttributeValue(p.Name, p.GetValue(newSettings));
-            }
-            XElement existingElement = root.Element("DecompilerSettings");
-            if (existingElement != null)
-                existingElement.ReplaceWith(section);
-            else
-                root.Add(section);
-
-            currentDecompilerSettings = newSettings;
-        }
-
-    }
-
-    public class DecompilerSettings : INotifyPropertyChanged
+    public static Decompiler.DecompilerSettings CurrentDecompilerSettings
     {
-        private DataGridCollectionView viewSource;
-
-        public CSharpDecompilerSetting[] Settings { get; set; }
-
-        public DataGridCollectionView AsCollectionView
+        get
         {
-            get
-            {
-                if (viewSource == null)
-                {
-                    viewSource = new DataGridCollectionView(Settings);
-                    viewSource.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(CSharpDecompilerSetting.Category)));
-                }
-                return viewSource;
-            }
-        }
-
-        public DecompilerSettings(Decompiler.DecompilerSettings settings)
-        {
-            Settings = typeof(Decompiler.DecompilerSettings).GetProperties()
-                .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false)
-                .Select(p => new CSharpDecompilerSetting(p) { IsEnabled = (bool)p.GetValue(settings) })
-                .OrderBy(item => item.Category)
-                .ThenBy(item => item.Description)
-                .ToArray();
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public Decompiler.DecompilerSettings ToDecompilerSettings()
-        {
-            var settings = new Decompiler.DecompilerSettings();
-            foreach (var item in Settings)
-            {
-                item.Property.SetValue(settings, item.IsEnabled);
-            }
-            return settings;
+            return currentDecompilerSettings ?? (currentDecompilerSettings = LoadDecompilerSettings(ILSpySettings.Load()));
         }
     }
 
-    public class CSharpDecompilerSetting : INotifyPropertyChanged
+    public static Decompiler.DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
     {
-        bool isEnabled;
-
-        public CSharpDecompilerSetting(PropertyInfo p)
+        XElement e = settings["DecompilerSettings"];
+        var newSettings = new Decompiler.DecompilerSettings();
+        var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
+            .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
+        foreach (var p in properties)
         {
-            Property = p;
-            Category = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
-            Description = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
+            var value = (bool?)e.Attribute(p.Name);
+            if (value.HasValue)
+                p.SetValue(newSettings, value.Value);
         }
+        return newSettings;
+    }
 
-        public PropertyInfo Property { get; }
+    public void Load(ILSpySettings settings)
+    {
+        DataContext = new DecompilerSettings(LoadDecompilerSettings(settings));
+    }
 
-        public bool IsEnabled
+    public void Save(XElement root)
+    {
+        XElement section = new XElement("DecompilerSettings");
+        var newSettings = ((DecompilerSettings)DataContext).ToDecompilerSettings();
+        var properties = typeof(Decompiler.DecompilerSettings).GetProperties()
+            .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false);
+        foreach (var p in properties)
         {
-            get => isEnabled;
-            set
+            section.SetAttributeValue(p.Name, p.GetValue(newSettings));
+        }
+        XElement existingElement = root.Element("DecompilerSettings");
+        if (existingElement != null)
+            existingElement.ReplaceWith(section);
+        else
+            root.Add(section);
+
+        currentDecompilerSettings = newSettings;
+    }
+
+}
+
+public class DecompilerSettings : INotifyPropertyChanged
+{
+    private DataGridCollectionView viewSource;
+
+    public CSharpDecompilerSetting[] Settings { get; set; }
+
+    public DataGridCollectionView AsCollectionView
+    {
+        get
+        {
+            if (viewSource == null)
             {
-                if (value != isEnabled)
-                {
-                    isEnabled = value;
-                    OnPropertyChanged();
-                }
+                viewSource = new DataGridCollectionView(Settings);
+                viewSource.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(CSharpDecompilerSetting.Category)));
+            }
+            return viewSource;
+        }
+    }
+
+    public DecompilerSettings(Decompiler.DecompilerSettings settings)
+    {
+        Settings = typeof(Decompiler.DecompilerSettings).GetProperties()
+            .Where(p => p.GetCustomAttribute<BrowsableAttribute>()?.Browsable != false)
+            .Select(p => new CSharpDecompilerSetting(p) { IsEnabled = (bool)p.GetValue(settings) })
+            .OrderBy(item => item.Category)
+            .ThenBy(item => item.Description)
+            .ToArray();
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public Decompiler.DecompilerSettings ToDecompilerSettings()
+    {
+        var settings = new Decompiler.DecompilerSettings();
+        foreach (var item in Settings)
+        {
+            item.Property.SetValue(settings, item.IsEnabled);
+        }
+        return settings;
+    }
+}
+
+public class CSharpDecompilerSetting : INotifyPropertyChanged
+{
+    bool isEnabled;
+
+    public CSharpDecompilerSetting(PropertyInfo p)
+    {
+        Property = p;
+        Category = GetResourceString(p.GetCustomAttribute<CategoryAttribute>()?.Category ?? Resources.Other);
+        Description = GetResourceString(p.GetCustomAttribute<DescriptionAttribute>()?.Description ?? p.Name);
+    }
+
+    public PropertyInfo Property { get; }
+
+    public bool IsEnabled
+    {
+        get => isEnabled;
+        set
+        {
+            if (value != isEnabled)
+            {
+                isEnabled = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public string Description { get; set; }
+    public string Description { get; set; }
 
-        public string Category { get; set; }
+    public string Category { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 
-        static string GetResourceString(string key)
-        {
-            var str = !string.IsNullOrEmpty(key) ? Resources.ResourceManager.GetString(key) : null;
-            return string.IsNullOrEmpty(key) || string.IsNullOrEmpty(str) ? key : str;
-        }
+    static string GetResourceString(string key)
+    {
+        var str = !string.IsNullOrEmpty(key) ? Resources.ResourceManager.GetString(key) : null;
+        return string.IsNullOrEmpty(key) || string.IsNullOrEmpty(str) ? key : str;
     }
 }

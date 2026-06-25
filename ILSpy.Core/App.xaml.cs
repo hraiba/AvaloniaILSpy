@@ -33,8 +33,8 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Controls;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
@@ -222,4 +222,3 @@ namespace ICSharpCode.ILSpy
 			e.Handled = true;
 		}
 	}
-}

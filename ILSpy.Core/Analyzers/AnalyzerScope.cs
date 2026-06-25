@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.Decompiler.Util;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	public class AnalyzerScope
 	{
 		readonly ITypeDefinition typeScope;
@@ -86,19 +86,19 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			if (IsLocal) {
 				var typeSystem = new DecompilerTypeSystem(
-                    TypeScope.ParentModule.MetadataFile,
-                    TypeScope.ParentModule.MetadataFile.GetAssemblyResolver());
-                ITypeDefinition scope = typeScope;
-                if (memberAccessibility != Accessibility.Private && typeScope.DeclaringTypeDefinition != null)
-                {
-                    scope = typeScope.DeclaringTypeDefinition;
-                }
-                foreach (var type in TreeTraversal.PreOrder(scope, t => t.NestedTypes))
-                {
-                    yield return type;
-                }
+                TypeScope.ParentModule.MetadataFile,
+                TypeScope.ParentModule.MetadataFile.GetAssemblyResolver());
+            ITypeDefinition scope = typeScope;
+            if (memberAccessibility != Accessibility.Private && typeScope.DeclaringTypeDefinition != null)
+            {
+                scope = typeScope.DeclaringTypeDefinition;
             }
-            else {
+            foreach (var type in TreeTraversal.PreOrder(scope, t => t.NestedTypes))
+            {
+                yield return type;
+            }
+        }
+        else {
 				foreach (var module in GetModulesInScope(ct)) {
 					var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
 					foreach (var type in typeSystem.MainModule.TypeDefinitions) {
@@ -132,11 +132,11 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			yield return self;
 
-            string reflectionTypeScopeName = typeScope.Name;
-            if (typeScope.TypeParameterCount > 0)
-                reflectionTypeScopeName += "`" + typeScope.TypeParameterCount;
+        string reflectionTypeScopeName = typeScope.Name;
+        if (typeScope.TypeParameterCount > 0)
+            reflectionTypeScopeName += "`" + typeScope.TypeParameterCount;
 
-            foreach (var assembly in AssemblyList.GetAssemblies()) {
+        foreach (var assembly in AssemblyList.GetAssemblies()) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
 				var module = assembly.GetPEFileOrNull();
@@ -202,4 +202,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		}
 		#endregion
 	}
-}

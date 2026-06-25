@@ -23,8 +23,8 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Interaction logic for NugetPackageBrowserDialog.xaml
 	/// </summary>
@@ -99,4 +99,3 @@ namespace ICSharpCode.ILSpy
 			get { return SelectedItems.Length > 0; }
 		}
 	}
-}

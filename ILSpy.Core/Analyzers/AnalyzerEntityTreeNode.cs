@@ -22,8 +22,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Base class for entity nodes.
 	/// </summary>
@@ -51,4 +51,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			return true;
 		}
 	}
-}

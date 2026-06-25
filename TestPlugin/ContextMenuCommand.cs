@@ -5,8 +5,8 @@ using System.Linq;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace TestPlugin
-{
+namespace TestPlugin;
+
 	[ExportContextMenuEntryAttribute(Header = "_Save Assembly")]
 	public class SaveAssembly : IContextMenuEntry
 	{
@@ -37,4 +37,3 @@ namespace TestPlugin
 			}
 		}
 	}
-}

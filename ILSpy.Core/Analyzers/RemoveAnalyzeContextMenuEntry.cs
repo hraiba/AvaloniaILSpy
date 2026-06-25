@@ -18,8 +18,8 @@
 
 using System.Linq;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	[ExportContextMenuEntry(Header = "Remove", Icon = "Images/Delete.png", Category = "Analyze", Order = 200)]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
 	{
@@ -44,4 +44,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			}
 		}
 	}
-}

@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Xaml
-{
+namespace ICSharpCode.ILSpy.Xaml;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class XmlResourceNodeFactory : IResourceNodeFactory
 	{
@@ -106,4 +106,3 @@ namespace ICSharpCode.ILSpy.Xaml
 			return true;
 		}
 	}
-}

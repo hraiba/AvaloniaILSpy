@@ -29,8 +29,8 @@ using ICSharpCode.Decompiler.Solution;
 using ICSharpCode.Decompiler.Util;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// An utility class that creates a Visual Studio solution containing projects for the
 	/// decompiled assemblies.
@@ -179,4 +179,3 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 	}
-}

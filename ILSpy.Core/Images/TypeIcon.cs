@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	internal enum TypeIcon
 	{
 		Class,
@@ -28,4 +28,3 @@ namespace ICSharpCode.ILSpy
 		Delegate,
 		StaticClass
 	}
-}

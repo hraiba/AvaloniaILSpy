@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows methods that instantiate a type.
 	/// </summary>
@@ -127,4 +127,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		public bool Show(ISymbol symbol) => symbol is ITypeDefinition entity && !entity.IsAbstract && !entity.IsStatic;
 	}
-}

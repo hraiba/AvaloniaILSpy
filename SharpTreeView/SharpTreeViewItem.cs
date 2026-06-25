@@ -8,8 +8,8 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class SharpTreeViewItem : ListBoxItem
 	{
 		static SharpTreeViewItem()
@@ -129,4 +129,3 @@ namespace ICSharpCode.TreeView
 
 		#endregion
 	}
-}

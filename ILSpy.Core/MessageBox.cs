@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using ICSharpCode.ILSpy.Controls;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public static class MessageBox
 	{
 		static readonly Dictionary<MessageBoxButton, string[]> Buttons = new Dictionary<MessageBoxButton, string[]>()
@@ -121,4 +121,3 @@ namespace ICSharpCode.ILSpy
 		YesNoCancel = 3,
 		YesNo = 4
 	}
-}

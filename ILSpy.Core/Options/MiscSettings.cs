@@ -19,17 +19,17 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.ILSpy.Options
-{
+namespace ICSharpCode.ILSpy.Options;
+
 	public class MiscSettings : INotifyPropertyChanged
 	{
 		bool allowMultipleInstances;
-        bool loadPreviousAssemblies;
+    bool loadPreviousAssemblies;
 
-        /// <summary>
-        /// Allow multiple instances.
-        /// </summary>
-        public bool AllowMultipleInstances
+    /// <summary>
+    /// Allow multiple instances.
+    /// </summary>
+    public bool AllowMultipleInstances
 		{
 			get { return allowMultipleInstances; }
 			set {
@@ -40,25 +40,25 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
-        /// <summary>
-        /// Load assemblies that were loaded in the previous instance
-        /// </summary>
-        public bool LoadPreviousAssemblies
+    /// <summary>
+    /// Load assemblies that were loaded in the previous instance
+    /// </summary>
+    public bool LoadPreviousAssemblies
+    {
+        get { return loadPreviousAssemblies; }
+        set
         {
-            get { return loadPreviousAssemblies; }
-            set
+            if (loadPreviousAssemblies != value)
             {
-                if (loadPreviousAssemblies != value)
-                {
-                    loadPreviousAssemblies = value;
-                    OnPropertyChanged();
-                }
+                loadPreviousAssemblies = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        #region INotifyPropertyChanged Implementation
+    #region INotifyPropertyChanged Implementation
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
 		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
 		{
@@ -72,4 +72,3 @@ namespace ICSharpCode.ILSpy.Options
 
 		#endregion
 	}
-}

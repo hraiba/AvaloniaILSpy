@@ -28,61 +28,59 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using Microsoft.DiaSymReader.Tools;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = "_File", Header = "DEBUG -- Dump PDB as XML", MenuCategory = "Open", MenuOrder = 2.6)]
+sealed class Pdb2XmlCommand : SimpleCommand
 {
-    [ExportMainMenuCommand(Menu = "_File", Header = "DEBUG -- Dump PDB as XML", MenuCategory = "Open", MenuOrder = 2.6)]
-    sealed class Pdb2XmlCommand : SimpleCommand
+    public override bool CanExecute(object parameter)
     {
-        public override bool CanExecute(object parameter)
-        {
-            var selectedNodes = MainWindow.Instance.SelectedNodes;
-            return selectedNodes?.Any() == true
-                && selectedNodes.All(n => n is AssemblyTreeNode asm && !asm.LoadedAssembly.HasLoadError);
-        }
-
-        public override void Execute(object parameter)
-        {
-            Execute(MainWindow.Instance.SelectedNodes.OfType<AssemblyTreeNode>());
-        }
-
-        internal static void Execute(IEnumerable<AssemblyTreeNode> nodes)
-        {
-            var highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
-            var options = PdbToXmlOptions.IncludeEmbeddedSources | PdbToXmlOptions.IncludeMethodSpans | PdbToXmlOptions.IncludeTokens;
-            MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
-                AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
-                var writer = new TextOutputWriter(output);
-                foreach (var node in nodes)
-                {
-                    string pdbFileName = Path.ChangeExtension(node.LoadedAssembly.FileName, ".pdb");
-                    if (!File.Exists(pdbFileName)) continue;
-                    using (var pdbStream = File.OpenRead(pdbFileName))
-                    using (var peStream = File.OpenRead(node.LoadedAssembly.FileName))
-                        PdbToXmlConverter.ToXml(writer, pdbStream, peStream, options);
-                }
-                return output;
-            }, ct)).Then(output => MainWindow.Instance.TextView.ShowNodes(output, null, highlighting)).HandleExceptions();
-        }
+        var selectedNodes = MainWindow.Instance.SelectedNodes;
+        return selectedNodes?.Any() == true
+            && selectedNodes.All(n => n is AssemblyTreeNode asm && !asm.LoadedAssembly.HasLoadError);
     }
 
-    [ExportContextMenuEntry(Header = "DEBUG -- Dump PDB as XML")]
-    class Pdb2XmlCommandContextMenuEntry : IContextMenuEntry
+    public override void Execute(object parameter)
     {
-        public void Execute(TextViewContext context)
-        {
-            Pdb2XmlCommand.Execute(context.SelectedTreeNodes.OfType<AssemblyTreeNode>());
-        }
-
-        public bool IsEnabled(TextViewContext context) => true;
-
-        public bool IsVisible(TextViewContext context)
-        {
-            var selectedNodes = context.SelectedTreeNodes;
-            return selectedNodes?.Any() == true
-                && selectedNodes.All(n => n is AssemblyTreeNode asm && !asm.LoadedAssembly.HasLoadError);
-        }
+        Execute(MainWindow.Instance.SelectedNodes.OfType<AssemblyTreeNode>());
     }
 
+    internal static void Execute(IEnumerable<AssemblyTreeNode> nodes)
+    {
+        var highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
+        var options = PdbToXmlOptions.IncludeEmbeddedSources | PdbToXmlOptions.IncludeMethodSpans | PdbToXmlOptions.IncludeTokens;
+        MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
+            AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+            var writer = new TextOutputWriter(output);
+            foreach (var node in nodes)
+            {
+                string pdbFileName = Path.ChangeExtension(node.LoadedAssembly.FileName, ".pdb");
+                if (!File.Exists(pdbFileName)) continue;
+                using (var pdbStream = File.OpenRead(pdbFileName))
+                using (var peStream = File.OpenRead(node.LoadedAssembly.FileName))
+                    PdbToXmlConverter.ToXml(writer, pdbStream, peStream, options);
+            }
+            return output;
+        }, ct)).Then(output => MainWindow.Instance.TextView.ShowNodes(output, null, highlighting)).HandleExceptions();
+    }
+}
+
+[ExportContextMenuEntry(Header = "DEBUG -- Dump PDB as XML")]
+class Pdb2XmlCommandContextMenuEntry : IContextMenuEntry
+{
+    public void Execute(TextViewContext context)
+    {
+        Pdb2XmlCommand.Execute(context.SelectedTreeNodes.OfType<AssemblyTreeNode>());
+    }
+
+    public bool IsEnabled(TextViewContext context) => true;
+
+    public bool IsVisible(TextViewContext context)
+    {
+        var selectedNodes = context.SelectedTreeNodes;
+        return selectedNodes?.Any() == true
+            && selectedNodes.All(n => n is AssemblyTreeNode asm && !asm.LoadedAssembly.HasLoadError);
+    }
 }
 
 #endif

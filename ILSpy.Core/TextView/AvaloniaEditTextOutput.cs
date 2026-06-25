@@ -31,8 +31,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using TextLocation = ICSharpCode.Decompiler.CSharp.Syntax.TextLocation;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>
@@ -94,10 +94,10 @@ namespace ICSharpCode.ILSpy.TextView
 
 		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 
-        internal bool EnableHyperlinks { get; set; }
+    internal bool EnableHyperlinks { get; set; }
 
-        /// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
-        internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = new List<KeyValuePair<int, Lazy<IControl>>>();
+    /// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
+    internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = new List<KeyValuePair<int, Lazy<IControl>>>();
 
 		public RichTextModel HighlightingModel { get; } = new RichTextModel();
 
@@ -215,32 +215,32 @@ namespace ICSharpCode.ILSpy.TextView
 //'ITextOutput.WriteReference(MetadataFile, Handle, string, string, bool)'
 //
 public void WriteReference(
-    MetadataFile metadata,
-    Handle handle,
-    string text,
-    string protocol = "decompile",
-    bool isDefinition = false)
+MetadataFile metadata,
+Handle handle,
+string text,
+string protocol = "decompile",
+bool isDefinition = false)
 {
 
 }
-        public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
-        {
-            WriteIndent();
+    public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
+    {
+        WriteIndent();
 			int start = TextLength;
-            if (omitSuffix)
+        if (omitSuffix)
+        {
+            int lastDot = opCode.Name.LastIndexOf('.');
+            if (lastDot > 0)
             {
-                int lastDot = opCode.Name.LastIndexOf('.');
-                if (lastDot > 0)
-                {
-                    b.Append(opCode.Name.Remove(lastDot + 1));
-                }
+                b.Append(opCode.Name.Remove(lastDot + 1));
             }
-            else
-            {
-                b.Append(opCode.Name);
-            }
-            int end = TextLength - 1;
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
+        }
+        else
+        {
+            b.Append(opCode.Name);
+        }
+        int end = TextLength - 1;
+        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
 		}
 
 		public void WriteReference(PEFile module, Handle handle, string text, string protocol = "decompile", bool isDefinition = false)
@@ -251,9 +251,9 @@ public void WriteReference(
 			int end = TextLength;
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition((module, handle), TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
         }
+        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
+    }
 
 		public void WriteReference(IType type, string text, bool isDefinition = false)
 		{
@@ -264,10 +264,10 @@ public void WriteReference(
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(type, TextLength);
 			}
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
-        }
+        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
+    }
 
-        public void WriteReference(IMember member, string text, bool isDefinition = false)
+    public void WriteReference(IMember member, string text, bool isDefinition = false)
 		{
 			WriteIndent();
 			int start = TextLength;
@@ -275,11 +275,11 @@ public void WriteReference(
 			int end = TextLength;
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(member, TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
         }
+        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
+    }
 
-        public void WriteLocalReference(string text, object reference, bool isDefinition = false)
+    public void WriteLocalReference(string text, object reference, bool isDefinition = false)
 		{
 			WriteIndent();
 			int start = TextLength;
@@ -287,11 +287,11 @@ public void WriteReference(
 			int end = TextLength;
 			if (isDefinition) {
 				DefinitionLookup.AddDefinition(reference, TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
         }
+        references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
+    }
 
-        public void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false, bool isDefintion = false)
+    public void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false, bool isDefintion = false)
 		{
 			WriteIndent();
 			openFoldings.Push(
@@ -341,4 +341,3 @@ public void WriteReference(
 			currentColorBegin = b.Length;
 		}
 	}
-}

@@ -12,8 +12,8 @@ using Avalonia.Data;
 using Avalonia.Controls.Presenters;
 using System.Collections.Generic;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class SharpTreeNodeView : TemplatedControl
 	{
 		public static readonly StyledProperty<IBrush> TextBackgroundProperty =
@@ -198,4 +198,3 @@ namespace ICSharpCode.TreeView
 			return result;
 		}
 	}
-}

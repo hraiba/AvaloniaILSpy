@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler;
 using Avalonia.Media.Imaging;
 using Avalonia.Interactivity;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Adds additional WPF-specific output features to <see cref="ITextOutput"/>.
 	/// </summary>
@@ -72,4 +72,3 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 	}
-}

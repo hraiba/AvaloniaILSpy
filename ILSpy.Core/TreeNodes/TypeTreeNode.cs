@@ -22,8 +22,8 @@ using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	public sealed class TypeTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		public TypeTreeNode(ITypeDefinition typeDefinition, AssemblyTreeNode parentAssemblyNode)
@@ -54,13 +54,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
-        {
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
-                return FilterResult.Hidden;
+    {
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+            return FilterResult.Hidden;
 			if (settings.SearchTermMatches(TypeDefinition.Name))
-            {
-                if (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(TypeDefinition))
-                    return FilterResult.Match;
+        {
+            if (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(TypeDefinition))
+                return FilterResult.Match;
 				else
 					return FilterResult.Hidden;
 			} else {
@@ -77,15 +77,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var nestedType in TypeDefinition.NestedTypes.OrderBy(t => t.Name, NaturalStringComparer.Instance)) {
 				Children.Add(new TypeTreeNode(nestedType, ParentAssemblyNode));
 			}
-            if (TypeDefinition.Kind == TypeKind.Enum) {
-                // if the type is an enum, it's better to not sort by field name.
-                foreach (var field in TypeDefinition.Fields) {
-                    Children.Add(new FieldTreeNode(field));
-                }
-            } else {
-    			foreach (var field in TypeDefinition.Fields.OrderBy(f => f.Name, NaturalStringComparer.Instance)) {
-    				Children.Add(new FieldTreeNode(field));
-    			}
+        if (TypeDefinition.Kind == TypeKind.Enum) {
+            // if the type is an enum, it's better to not sort by field name.
+            foreach (var field in TypeDefinition.Fields) {
+                Children.Add(new FieldTreeNode(field));
+            }
+        } else {
+			foreach (var field in TypeDefinition.Fields.OrderBy(f => f.Name, NaturalStringComparer.Instance)) {
+				Children.Add(new FieldTreeNode(field));
+			}
 			}
 			foreach (var property in TypeDefinition.Properties.OrderBy(p => p.Name, NaturalStringComparer.Instance)) {
 				Children.Add(new PropertyTreeNode(property));
@@ -152,4 +152,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		IEntity IMemberTreeNode.Member => TypeDefinition;
 	}
-}

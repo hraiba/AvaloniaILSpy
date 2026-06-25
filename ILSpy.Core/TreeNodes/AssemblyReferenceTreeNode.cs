@@ -21,8 +21,8 @@ using Avalonia.Interactivity;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
@@ -101,4 +101,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

@@ -22,8 +22,8 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Manages IL Spy settings.
 	/// </summary>
@@ -150,4 +150,3 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 	}
-}

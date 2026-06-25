@@ -30,8 +30,8 @@ using Mono.Cecil;
 using Mono.Cecil.Pdb;
 using SRM = System.Reflection.Metadata;
 
-namespace ICSharpCode.Decompiler.PdbProvider.Cecil
-{
+namespace ICSharpCode.Decompiler.PdbProvider.Cecil;
+
 	public class MonoCecilDebugInfoProvider : IDebugInfoProvider
 	{
 		readonly Dictionary<SRM.MethodDefinitionHandle, (IList<SequencePoint> SequencePoints, IList<Variable> Variables)> debugInfo;
@@ -51,52 +51,52 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil
 
 			var image = module.Reader.GetEntireImage();
 			debugInfo = [];
-            using var stream = new UnmanagedMemoryStream(image.Pointer, image.Length);
-            using var moduleDef = ModuleDefinition.ReadModule(stream);
-            moduleDef.ReadSymbols(new PdbReaderProvider().GetSymbolReader(moduleDef, pdbFileName));
+        using var stream = new UnmanagedMemoryStream(image.Pointer, image.Length);
+        using var moduleDef = ModuleDefinition.ReadModule(stream);
+        moduleDef.ReadSymbols(new PdbReaderProvider().GetSymbolReader(moduleDef, pdbFileName));
 
-            foreach (var method in module.Metadata.MethodDefinitions)
+        foreach (var method in module.Metadata.MethodDefinitions)
+        {
+            var cecilMethod = moduleDef.LookupToken(MetadataTokens.GetToken(method)) as MethodDefinition;
+            var debugInfo = cecilMethod?.DebugInformation;
+            if (debugInfo == null)
+                continue;
+            IList<SequencePoint> sequencePoints = EmptyList<SequencePoint>.Instance;
+            if (debugInfo.HasSequencePoints)
             {
-                var cecilMethod = moduleDef.LookupToken(MetadataTokens.GetToken(method)) as MethodDefinition;
-                var debugInfo = cecilMethod?.DebugInformation;
-                if (debugInfo == null)
-                    continue;
-                IList<SequencePoint> sequencePoints = EmptyList<SequencePoint>.Instance;
-                if (debugInfo.HasSequencePoints)
+                sequencePoints = new List<SequencePoint>(debugInfo.SequencePoints.Count);
+                foreach (var point in debugInfo.SequencePoints)
                 {
-                    sequencePoints = new List<SequencePoint>(debugInfo.SequencePoints.Count);
-                    foreach (var point in debugInfo.SequencePoints)
+                    sequencePoints.Add(new SequencePoint
                     {
-                        sequencePoints.Add(new SequencePoint
-                        {
-                            Offset = point.Offset,
-                            StartLine = point.StartLine,
-                            StartColumn = point.StartColumn,
-                            EndLine = point.EndLine,
-                            EndColumn = point.EndColumn,
-                            DocumentUrl = point.Document.Url
-                        });
-                    }
+                        Offset = point.Offset,
+                        StartLine = point.StartLine,
+                        StartColumn = point.StartColumn,
+                        EndLine = point.EndLine,
+                        EndColumn = point.EndColumn,
+                        DocumentUrl = point.Document.Url
+                    });
                 }
-                var variables = new List<Variable>();
-                foreach (var scope in debugInfo.GetScopes())
-                {
-                    if (!scope.HasVariables)
-                        continue;
-                    foreach (var v in scope.Variables)
-                    {
-                        variables.Add(new Variable(v.Index, v.Name));
-                    }
-                }
-                this.debugInfo.Add(method, (sequencePoints, variables));
             }
+            var variables = new List<Variable>();
+            foreach (var scope in debugInfo.GetScopes())
+            {
+                if (!scope.HasVariables)
+                    continue;
+                foreach (var v in scope.Variables)
+                {
+                    variables.Add(new Variable(v.Index, v.Name));
+                }
+            }
+            this.debugInfo.Add(method, (sequencePoints, variables));
         }
+    }
 
 		public string Description { get; }
 
-        public string SourceFileName { get; }
+    public string SourceFileName { get; }
 
-        public IList<SequencePoint> GetSequencePoints(SRM.MethodDefinitionHandle handle)
+    public IList<SequencePoint> GetSequencePoints(SRM.MethodDefinitionHandle handle)
 		{
 			if (!debugInfo.TryGetValue(handle, out var info)) {
 				return EmptyList<SequencePoint>.Instance;
@@ -114,12 +114,12 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil
 			return info.Variables;
 		}
 
-        public bool TryGetExtraTypeInfo(SRM.MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
-        {
-            throw new NotImplementedException();
-        }
+    public bool TryGetExtraTypeInfo(SRM.MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool TryGetName(SRM.MethodDefinitionHandle handle, int index, out string name)
+    public bool TryGetName(SRM.MethodDefinitionHandle handle, int index, out string name)
 		{
 			name = null;
 			if (!debugInfo.TryGetValue(handle, out var info)) {
@@ -131,4 +131,3 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil
 			return name != null;
 		}
 	}
-}

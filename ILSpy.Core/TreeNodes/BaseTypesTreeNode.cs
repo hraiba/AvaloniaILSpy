@@ -23,8 +23,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>
@@ -75,4 +75,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

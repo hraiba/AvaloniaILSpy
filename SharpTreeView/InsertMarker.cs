@@ -3,8 +3,8 @@
 
 using Avalonia.Controls.Primitives;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class InsertMarker : TemplatedControl
 	{
 		static InsertMarker()
@@ -13,4 +13,3 @@ namespace ICSharpCode.TreeView
 			//	new FrameworkPropertyMetadata(typeof(InsertMarker)));
 		}
 	}
-}

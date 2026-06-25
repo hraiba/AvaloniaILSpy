@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Threading;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	/// <summary>
 	/// Custom TextSearch-implementation.
 	/// Fixes #67 - Moving to class member in tree view by typing in first character of member name selects parent assembly
@@ -142,4 +142,3 @@ namespace ICSharpCode.TreeView
 			timer.Start();
 		}
 	}
-}

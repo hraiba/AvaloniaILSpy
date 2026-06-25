@@ -21,8 +21,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows methods that override a method.
 	/// </summary>
@@ -43,18 +43,18 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		IEnumerable<IEntity> AnalyzeType(IMethod analyzedEntity, ITypeDefinition type)
 		{
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+            yield break;
 
 			foreach (var method in type.Methods) {
 				if (!method.IsOverride) continue;
-                var baseMembers = InheritanceHelper.GetBaseMembers(method, false);
-                if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
-                    yield return method;
+            var baseMembers = InheritanceHelper.GetBaseMembers(method, false);
+            if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
+                yield return method;
 				}
 			}
 		}
@@ -64,4 +64,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return entity is IMethod method && method.IsOverridable && method.DeclaringType.Kind != TypeKind.Interface;
 		}
 	}
-}

@@ -22,11 +22,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	public sealed class CustomDialog : DialogWindow
 	{
-        TextBlock label;
+    TextBlock label;
 		ListBox buttons;
 		int acceptButton;
 		int cancelButton;
@@ -75,10 +75,9 @@ namespace ICSharpCode.ILSpy.Controls
 
 		void ButtonClick(object sender, RoutedEventArgs e)
 		{
-            Button button = sender as Button;
-            int index = buttons.ItemContainerGenerator.IndexFromContainer(button.Parent);
-            Close(index);
+        Button button = sender as Button;
+        int index = buttons.ItemContainerGenerator.IndexFromContainer(button.Parent);
+        Close(index);
 			e.Handled = true;
 		}
 	}
-}

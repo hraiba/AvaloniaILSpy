@@ -22,8 +22,8 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public static class TaskHelper
 	{
 		public static readonly Task CompletedTask = FromResult<object>(null);
@@ -201,4 +201,3 @@ namespace ICSharpCode.ILSpy
 			}))).IgnoreExceptions();
 		}
 	}
-}

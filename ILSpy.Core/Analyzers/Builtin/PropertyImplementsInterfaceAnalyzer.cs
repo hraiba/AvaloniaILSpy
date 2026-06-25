@@ -21,8 +21,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows properties that implement an interface property.
 	/// </summary>
@@ -41,17 +41,17 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		IEnumerable<IEntity> AnalyzeType(IProperty analyzedEntity, ITypeDefinition type)
 		{
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+            yield break;
 
-            foreach (var property in type.Properties) {
-                var baseMembers = InheritanceHelper.GetBaseMembers(property, true);
-                if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
-                    yield return property;
+        foreach (var property in type.Properties) {
+            var baseMembers = InheritanceHelper.GetBaseMembers(property, true);
+            if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
+                yield return property;
 			}
 		}
 
@@ -60,4 +60,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return symbol is IProperty entity && entity.DeclaringType.Kind == TypeKind.Interface;
 		}
 	}
-}

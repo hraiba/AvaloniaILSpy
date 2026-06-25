@@ -29,8 +29,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 
 using SRM = System.Reflection.Metadata;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 #if DEBUG
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
@@ -145,4 +145,3 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 	#endif
-}

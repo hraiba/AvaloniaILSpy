@@ -23,8 +23,8 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Interaction logic for OpenListDialog.xaml
 	/// </summary>
@@ -174,4 +174,3 @@ namespace ICSharpCode.ILSpy
 		}
 
 	}
-}

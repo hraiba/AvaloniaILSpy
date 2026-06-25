@@ -22,8 +22,8 @@ using AvaloniaEdit;
 using AvaloniaEdit.Folding;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	[ExportContextMenuEntryAttribute(Header = nameof(Resources.ToggleFolding), Category = nameof(Resources.Folding))]
 	internal sealed class ToggleAllContextMenuEntry : IContextMenuEntry
 	{
@@ -95,5 +95,3 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 	}
-
-}

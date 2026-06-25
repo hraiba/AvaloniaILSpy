@@ -19,8 +19,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Stores the navigation history.
 	/// </summary>
@@ -96,4 +96,3 @@ namespace ICSharpCode.ILSpy
 			lastNavigationTime = navigationTime;
 		}
 	}
-}

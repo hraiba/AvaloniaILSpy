@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Finds all extension methods defined for a type.
 	/// </summary>
@@ -41,4 +41,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			}
 		}
 	}
-}

@@ -19,14 +19,13 @@
 
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._Help), Header = nameof(Resources._CheckUpdates), MenuOrder = 5000)]
-    sealed class CheckForUpdatesCommand : SimpleCommand
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._Help), Header = nameof(Resources._CheckUpdates), MenuOrder = 5000)]
+sealed class CheckForUpdatesCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
 			MainWindow.Instance.ShowMessageIfUpdatesAvailableAsync(ILSpySettings.Load(), forceCheck: true);
 		}
 	}
-}

@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Finds all entities that expose a type.
 	/// </summary>
@@ -131,4 +131,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return visitor.Found;
 		}
 	}
-}

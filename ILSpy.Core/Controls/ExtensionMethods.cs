@@ -20,8 +20,8 @@ using System;
 using Avalonia;
 using Avalonia.Markup.Xaml;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	/// <summary>
 	/// ExtensionMethods used in ILSpy.
 	/// </summary>
@@ -77,4 +77,3 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 	}
-}

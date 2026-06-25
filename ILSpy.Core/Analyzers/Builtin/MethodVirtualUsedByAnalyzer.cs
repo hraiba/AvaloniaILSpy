@@ -24,8 +24,8 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows entities that are used by a method.
 	/// </summary>
@@ -120,4 +120,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return false;
 		}
 	}
-}

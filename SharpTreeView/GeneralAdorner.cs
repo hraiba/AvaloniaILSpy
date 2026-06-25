@@ -4,8 +4,8 @@
 using Avalonia.Controls.Primitives;
 using Avalonia;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class GeneralAdorner : VisualLayerManager
 	{
 		public GeneralAdorner()
@@ -30,4 +30,3 @@ namespace ICSharpCode.TreeView
 			return new Size();
 		}
 	}
-}

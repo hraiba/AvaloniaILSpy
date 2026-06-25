@@ -23,8 +23,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Analyzers.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	class AnalyzerSearchTreeNode : AnalyzerTreeNode
 	{
 		private readonly ThreadingSupport threading = new ThreadingSupport();
@@ -127,4 +127,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			return true;
 		}
 	}
-}

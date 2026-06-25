@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	internal enum AccessOverlayIcon
 	{
 		Public,
@@ -29,4 +29,3 @@ namespace ICSharpCode.ILSpy
 		PrivateProtected,
 		CompilerControlled
 	}
-}

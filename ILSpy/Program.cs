@@ -7,8 +7,8 @@ using Avalonia.Controls;
 using Avalonia.Dialogs;
 using System.Runtime.InteropServices;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	static class Program
 	{
 		static void Main(string[] args)
@@ -59,9 +59,9 @@ namespace ICSharpCode.ILSpy
 		{
 			private readonly ILogSink sink = sink;
 
-            public static bool IsEnabled(LogEventLevel level) => true;
+        public static bool IsEnabled(LogEventLevel level) => true;
 
-            public bool IsEnabled(LogEventLevel level, string area) => true;
+        public bool IsEnabled(LogEventLevel level, string area) => true;
 
 			public void Log(LogEventLevel level, string area, object source, string messageTemplate) =>
 				Log(level, area, source, messageTemplate, Array.Empty<object>());
@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy
 				sink.Log(level, area, source, messageTemplate, propertyValues);
 			}
 
-            static object GetHierachy(object source)
+        static object GetHierachy(object source)
 			{
 				if (source is IControl visual)
 				{
@@ -99,4 +99,3 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 	}
-}

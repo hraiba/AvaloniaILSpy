@@ -26,10 +26,10 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile), MenuCategory = nameof(Resources.Open), MenuOrder = 2.5)]
-    sealed class DecompileAllCommand : SimpleCommand
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile), MenuCategory = nameof(Resources.Open), MenuOrder = 2.5)]
+sealed class DecompileAllCommand : SimpleCommand
 	{
 		public override bool CanExecute(object parameter)
 		{
@@ -46,9 +46,9 @@ namespace ICSharpCode.ILSpy
 						Exception exception = null;
 						using (var writer = new System.IO.StreamWriter("c:\\temp\\decompiled\\" + asm.ShortName + ".cs")) {
 							try {
-                                new CSharpLanguage().DecompileAssembly(asm, new Decompiler.PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
-                            }
-                            catch (Exception ex) {
+                            new CSharpLanguage().DecompileAssembly(asm, new Decompiler.PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
+                        }
+                        catch (Exception ex) {
 								writer.WriteLine(ex.ToString());
 								exception = ex;
 							}
@@ -68,8 +68,8 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile100x), MenuCategory = nameof(Resources.Open), MenuOrder = 2.6)]
-    sealed class Decompile100TimesCommand : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile100x), MenuCategory = nameof(Resources.Open), MenuOrder = 2.6)]
+sealed class Decompile100TimesCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -93,6 +93,5 @@ namespace ICSharpCode.ILSpy
 			}, ct)).Then(output => MainWindow.Instance.TextView.ShowText(output)).HandleExceptions();
 		}
 	}
-}
 
 #endif

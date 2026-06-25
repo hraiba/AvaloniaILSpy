@@ -12,8 +12,8 @@ using Avalonia.Media;
 using Avalonia.Interactivity;
 using Avalonia.Input;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public partial class SharpTreeNode : INotifyPropertyChanged
 	{
 		SharpTreeNodeCollection modelChildren;
@@ -686,4 +686,3 @@ namespace ICSharpCode.TreeView
 			return text != null ? text.ToString() : string.Empty;
 		}
 	}
-}

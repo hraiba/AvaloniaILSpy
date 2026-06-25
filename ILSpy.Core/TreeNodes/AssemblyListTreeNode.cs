@@ -28,8 +28,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Represents a list of assemblies.
 	/// This is used as (invisible) root node of the tree view.
@@ -188,8 +188,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (module == null)
 				return null;
-            Dispatcher.UIThread.VerifyAccess();
-            foreach (AssemblyTreeNode node in Children) {
+        Dispatcher.UIThread.VerifyAccess();
+        foreach (AssemblyTreeNode node in Children) {
 				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.GetPEFileOrNull() == module)
 					return node;
 			}
@@ -312,4 +312,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		#endregion
 	}
-}

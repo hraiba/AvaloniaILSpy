@@ -27,16 +27,16 @@ using Avalonia.Threading;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls.FileLoaders;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// A list of assemblies.
 	/// </summary>
 	public sealed class AssemblyList
 	{
 		readonly string listName;
-        public AssemblyListManager Manager {get;}
-        
+    public AssemblyListManager Manager {get;}
+    
 		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
 		bool dirty;
 		internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly>();
@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy
 		public AssemblyList(AssemblyListManager manager, string listName)
 		{
 			this.listName = listName;
-            Manager = manager ?? throw new ArgumentNullException(nameof(manager));
+        Manager = manager ?? throw new ArgumentNullException(nameof(manager));
 			assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		
@@ -289,4 +289,3 @@ namespace ICSharpCode.ILSpy
 		public bool UseDebugSymbols { get; set; }
 		public FileLoaderRegistry LoaderRegistry => Manager.LoaderRegistry;
 	}
-}

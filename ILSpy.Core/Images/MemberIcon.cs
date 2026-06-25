@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	internal enum MemberIcon
 	{
 		Literal,
@@ -35,4 +35,3 @@ namespace ICSharpCode.ILSpy
 		PInvokeMethod,
 		Event
 	}
-}

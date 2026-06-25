@@ -27,8 +27,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Adds threading support to nodes
 	/// </summary>
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			thisTask.ContinueWith(
 				delegate (Task continuation) {
 					Dispatcher.UIThread.InvokeAsync(new Action(
-                        delegate {
+                    delegate {
 							if (loadChildrenTask == thisTask) {
 								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
 								node.RaisePropertyChanged(nameof(node.Text));
@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 								}
 							}
 						}), DispatcherPriority.Normal);
-        });
+    });
 			
 			// Give the task a bit time to complete before we return to WPF - this keeps "Loading..."
 			// from showing up for very short waits.
@@ -119,10 +119,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
 			public override object Text {
-                get { return Resources.Loading; }
-            }
+            get { return Resources.Loading; }
+        }
 
-            public override FilterResult Filter(FilterSettings settings)
+        public override FilterResult Filter(FilterSettings settings)
 			{
 				return FilterResult.Match;
 			}
@@ -155,8 +155,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-        [ExportContextMenuEntry(Header = nameof(Resources.CopyErrorMessage))]
-        sealed class CopyErrorMessageContextMenu : IContextMenuEntry
+    [ExportContextMenuEntry(Header = nameof(Resources.CopyErrorMessage))]
+    sealed class CopyErrorMessageContextMenu : IContextMenuEntry
 		{
 			public bool IsVisible(TextViewContext context)
 			{
@@ -182,4 +182,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

@@ -6,8 +6,8 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Primitives;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	class EditTextBox : TextBox
 	{
 		public SharpTreeViewItem Item { get; set; }
@@ -70,4 +70,3 @@ namespace ICSharpCode.TreeView
 			}
 		}
 	}
-}

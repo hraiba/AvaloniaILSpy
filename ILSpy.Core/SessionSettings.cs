@@ -26,8 +26,8 @@ using Avalonia;
 using System.Xml.Linq;
 using Avalonia.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Per-session setting:
 	/// Loaded at startup; saved at exit.
@@ -155,4 +155,3 @@ namespace ICSharpCode.ILSpy
 			return c.ConvertToInvariantString(obj);
 		}
 	}
-}

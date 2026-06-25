@@ -21,8 +21,8 @@ using System.Linq;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls.FileLoaders;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Manages the available assembly lists.
 	/// 
@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
-        public FileLoaderRegistry LoaderRegistry {get;} = new();
+    public FileLoaderRegistry LoaderRegistry {get;} = new();
 		
 		/// <summary>
 		/// Loads an assembly list from the ILSpySettings.
@@ -139,4 +139,3 @@ namespace ICSharpCode.ILSpy
 				});
 		}
 	}
-}

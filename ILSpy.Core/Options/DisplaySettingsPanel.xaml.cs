@@ -29,13 +29,13 @@ using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 
-namespace ICSharpCode.ILSpy.Options
-{
-    /// <summary>
-    /// Interaction logic for DisplaySettingsPanel.xaml
-    /// </summary>
+namespace ICSharpCode.ILSpy.Options;
+
+/// <summary>
+/// Interaction logic for DisplaySettingsPanel.xaml
+/// </summary>
 	[ExportOptionPage(Title = nameof(Properties.Resources.Display), Order = 20)]
-    public partial class DisplaySettingsPanel : UserControl, IOptionPage
+public partial class DisplaySettingsPanel : UserControl, IOptionPage
 	{
 		internal ComboBox fontSelector;
 
@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			InitializeComponent();
 
-            Task<FontFamily[]> task = new Task<FontFamily[]>(FontLoader);
+        Task<FontFamily[]> task = new Task<FontFamily[]>(FontLoader);
 			task.Start();
 			task.ContinueWith(
 				delegate(Task continuation) {
@@ -67,17 +67,17 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			AvaloniaXamlLoader.Load(this);
 			fontSelector = this.FindControl<ComboBox>("fontSelector");
-            var textEditor = this.FindControl<TextEditor>("textEditor");
+        var textEditor = this.FindControl<TextEditor>("textEditor");
 
-            textEditor.Document = new TextDocument("AaBbCcXxYyZz".ToCharArray());
-        }
+        textEditor.Document = new TextDocument("AaBbCcXxYyZz".ToCharArray());
+    }
 
 		public void Load(ILSpySettings settings)
 		{
 			DataContext = LoadDisplaySettings(settings);
-        }
+    }
 
-        static DisplaySettings currentDisplaySettings;
+    static DisplaySettings currentDisplaySettings;
 		
 		public static DisplaySettings CurrentDisplaySettings {
 			get {
@@ -112,20 +112,20 @@ namespace ICSharpCode.ILSpy.Options
 			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? FontManager.Current.DefaultFontFamilyName);
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? false;
-            s.ShowDebugInfo = (bool?)e.Attribute("ShowDebugInfo") ?? false;
-            s.ShowMetadataTokens = (bool?) e.Attribute("ShowMetadataTokens") ?? false;
-            s.ShowMetadataTokensInBase10 = (bool?)e.Attribute("ShowMetadataTokensInBase10") ?? false;
-            s.EnableWordWrap = (bool?)e.Attribute("EnableWordWrap") ?? false;
+        s.ShowDebugInfo = (bool?)e.Attribute("ShowDebugInfo") ?? false;
+        s.ShowMetadataTokens = (bool?) e.Attribute("ShowMetadataTokens") ?? false;
+        s.ShowMetadataTokensInBase10 = (bool?)e.Attribute("ShowMetadataTokensInBase10") ?? false;
+        s.EnableWordWrap = (bool?)e.Attribute("EnableWordWrap") ?? false;
 			s.SortResults = (bool?)e.Attribute("SortResults") ?? true;
-            s.FoldBraces = (bool?)e.Attribute("FoldBraces") ?? false;
-            s.ExpandMemberDefinitions = (bool?)e.Attribute("ExpandMemberDefinitions") ?? false;
-            s.ExpandUsingDeclarations = (bool?)e.Attribute("ExpandUsingDeclarations") ?? false;
-            s.IndentationUseTabs = (bool?)e.Attribute("IndentationUseTabs") ?? true;
-            s.IndentationSize = (int?)e.Attribute("IndentationSize") ?? 4;
-            s.IndentationTabSize = (int?)e.Attribute("IndentationTabSize") ?? 4;
-            s.HighlightMatchingBraces = (bool?)e.Attribute("HighlightMatchingBraces") ?? true;
+        s.FoldBraces = (bool?)e.Attribute("FoldBraces") ?? false;
+        s.ExpandMemberDefinitions = (bool?)e.Attribute("ExpandMemberDefinitions") ?? false;
+        s.ExpandUsingDeclarations = (bool?)e.Attribute("ExpandUsingDeclarations") ?? false;
+        s.IndentationUseTabs = (bool?)e.Attribute("IndentationUseTabs") ?? true;
+        s.IndentationSize = (int?)e.Attribute("IndentationSize") ?? 4;
+        s.IndentationTabSize = (int?)e.Attribute("IndentationTabSize") ?? 4;
+        s.HighlightMatchingBraces = (bool?)e.Attribute("HighlightMatchingBraces") ?? true;
 
-            return s;
+        return s;
 		}
 		
 		public void Save(XElement root)
@@ -136,20 +136,20 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("Font", s.SelectedFont.Name);
 			section.SetAttributeValue("FontSize", s.SelectedFontSize);
 			section.SetAttributeValue("ShowLineNumbers", s.ShowLineNumbers);
-            section.SetAttributeValue("ShowDebugInfo", s.ShowDebugInfo);
-            section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
-            section.SetAttributeValue("ShowMetadataTokensInBase10", s.ShowMetadataTokensInBase10);
-            section.SetAttributeValue("EnableWordWrap", s.EnableWordWrap);
+        section.SetAttributeValue("ShowDebugInfo", s.ShowDebugInfo);
+        section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
+        section.SetAttributeValue("ShowMetadataTokensInBase10", s.ShowMetadataTokensInBase10);
+        section.SetAttributeValue("EnableWordWrap", s.EnableWordWrap);
 			section.SetAttributeValue("SortResults", s.SortResults);
-            section.SetAttributeValue("FoldBraces", s.FoldBraces);
-            section.SetAttributeValue("ExpandMemberDefinitions", s.ExpandMemberDefinitions);
-            section.SetAttributeValue("ExpandUsingDeclarations", s.ExpandUsingDeclarations);
-            section.SetAttributeValue("IndentationUseTabs", s.IndentationUseTabs);
-            section.SetAttributeValue("IndentationSize", s.IndentationSize);
-            section.SetAttributeValue("IndentationTabSize", s.IndentationTabSize);
-            section.SetAttributeValue("HighlightMatchingBraces", s.HighlightMatchingBraces);
+        section.SetAttributeValue("FoldBraces", s.FoldBraces);
+        section.SetAttributeValue("ExpandMemberDefinitions", s.ExpandMemberDefinitions);
+        section.SetAttributeValue("ExpandUsingDeclarations", s.ExpandUsingDeclarations);
+        section.SetAttributeValue("IndentationUseTabs", s.IndentationUseTabs);
+        section.SetAttributeValue("IndentationSize", s.IndentationSize);
+        section.SetAttributeValue("IndentationTabSize", s.IndentationTabSize);
+        section.SetAttributeValue("HighlightMatchingBraces", s.HighlightMatchingBraces);
 
-            XElement existingElement = root.Element("DisplaySettings");
+        XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
 			else
@@ -159,25 +159,25 @@ namespace ICSharpCode.ILSpy.Options
 				currentDisplaySettings.CopyValues(s);
 		}
 
-        private void TextBox_PreviewTextInput(object sender, TextInputEventArgs e)
-        {
-            if (!e.Text.All(char.IsDigit))
-                e.Handled = true;
-        }
+    private void TextBox_PreviewTextInput(object sender, TextInputEventArgs e)
+    {
+        if (!e.Text.All(char.IsDigit))
+            e.Handled = true;
     }
+}
 
 
-    public class FontSizeConverter : IValueConverter
+public class FontSizeConverter : IValueConverter
 	{
 		public static readonly FontSizeConverter Instance = new FontSizeConverter();
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null) {
-                return 11.0;
-            }
+    {
+        if (value == null) {
+            return 11.0;
+        }
 
-            if (value is double d) {
+        if (value is double d) {
 				return Math.Round(d / 4 * 3);
 			}
 			
@@ -185,22 +185,21 @@ namespace ICSharpCode.ILSpy.Options
 		}
 		
 		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null) {
-                return 11.0 * 4 / 3;
-            }
-
-            if (value is double dd) {
-                return dd * 4 / 3;
-            }
-
-            if (value is string s) {
-                if (double.TryParse(s, out double d))
-                    return d * 4 / 3;
-                return 11.0 * 4 / 3;
-            }
-
-            throw new NotImplementedException();
+    {
+        if (value == null) {
+            return 11.0 * 4 / 3;
         }
+
+        if (value is double dd) {
+            return dd * 4 / 3;
+        }
+
+        if (value is string s) {
+            if (double.TryParse(s, out double d))
+                return d * 4 / 3;
+            return 11.0 * 4 / 3;
+        }
+
+        throw new NotImplementedException();
+    }
 	}
-}

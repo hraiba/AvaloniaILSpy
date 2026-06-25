@@ -6,8 +6,8 @@ using Avalonia.VisualTree;
 using System.Collections;
 using System;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	static class ExtensionMethods
 	{
 		public static T FindAncestor<T>(this IVisual d) where T : class
@@ -31,4 +31,3 @@ namespace ICSharpCode.TreeView
 			return result;
 		}
 	}
-}

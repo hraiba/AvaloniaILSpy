@@ -19,8 +19,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	sealed class CommandLineArguments
 	{
 		// see /doc/Command Line.txt for details
@@ -59,4 +59,3 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 	}
-}

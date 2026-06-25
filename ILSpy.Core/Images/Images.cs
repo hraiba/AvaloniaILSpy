@@ -23,9 +23,9 @@ using System.Collections.Generic;
 using Avalonia.Controls.Platform.Surfaces;
 using Avalonia.Platform;
 
-namespace ICSharpCode.ILSpy
-{
-    static class Images
+namespace ICSharpCode.ILSpy;
+
+static class Images
 	{
 		static IBitmap LoadBitmap(string name)
 		{
@@ -103,15 +103,15 @@ namespace ICSharpCode.ILSpy
 
 		public static IBitmap LoadImage(object part, string icon)
 		{
-            IBitmap image;
-            var assembly = part.GetType().Assembly;
+        IBitmap image;
+        var assembly = part.GetType().Assembly;
 			if (assembly == typeof(Images).Assembly) {
 				image = new Bitmap(icon);
 			} else {
 				var name = assembly.GetName();
-                var embededResourceStream = assembly.GetManifestResourceStream(icon);
-                image = new Bitmap(embededResourceStream);
-            }
+            var embededResourceStream = assembly.GetManifestResourceStream(icon);
+            image = new Bitmap(embededResourceStream);
+        }
 			return image;
 		}
 
@@ -168,8 +168,8 @@ namespace ICSharpCode.ILSpy
 						baseImage = Images.StaticClass;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(icon), $"TypeIcon.{icon} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(icon), $"TypeIcon.{icon} is not supported!");
+            }
 
 				return baseImage;
 			}
@@ -238,25 +238,25 @@ namespace ICSharpCode.ILSpy
 						baseImage = Images.Event;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(icon), $"MemberIcon.{icon} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(icon), $"MemberIcon.{icon} is not supported!");
+            }
 
 				return baseImage;
 			}
 		}
 
-        private class WbFb : IFramebufferPlatformSurface
+    private class WbFb : IFramebufferPlatformSurface
+    {
+        WriteableBitmap _bitmap;
+        public ILockedFramebuffer Lock() => _bitmap.Lock();
+
+        public WbFb(WriteableBitmap bitmap)
         {
-            WriteableBitmap _bitmap;
-            public ILockedFramebuffer Lock() => _bitmap.Lock();
-
-            public WbFb(WriteableBitmap bitmap)
-            {
-                _bitmap = bitmap;
-            }
+            _bitmap = bitmap;
         }
+    }
 
-        private abstract class IconCache<T>
+    private abstract class IconCache<T>
 		{
 			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap>();
 
@@ -314,40 +314,39 @@ namespace ICSharpCode.ILSpy
 						overlayImage = Images.OverlayCompilerControlled;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(overlay), $"AccessOverlayIcon.{overlay} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(overlay), $"AccessOverlayIcon.{overlay} is not supported!");
+            }
 				return overlayImage;
 			}
 
 			private static readonly Rect iconRect = new Rect(0, 0, 16, 16);
 
-            private static IBitmap CreateOverlayImage(IBitmap baseImage, IBitmap overlay, bool isStatic)
+        private static IBitmap CreateOverlayImage(IBitmap baseImage, IBitmap overlay, bool isStatic)
 			{
-                var image = new WriteableBitmap(new PixelSize(16, 16), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Unpremul);
+            var image = new WriteableBitmap(new PixelSize(16, 16), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Unpremul);
 
-                using (var rt = AvaloniaLocator.Current.GetService<IPlatformRenderInterface>().CreateRenderTarget(new[] { new WbFb(image)})) {
+            using (var rt = AvaloniaLocator.Current.GetService<IPlatformRenderInterface>().CreateRenderTarget(new[] { new WbFb(image)})) {
 
-                    using (var ctx = rt.CreateDrawingContext(null)) {
+                using (var ctx = rt.CreateDrawingContext(null)) {
 
-                        ctx.DrawBitmap(baseImage.PlatformImpl, 1.0, iconRect, iconRect);
+                    ctx.DrawBitmap(baseImage.PlatformImpl, 1.0, iconRect, iconRect);
 
-                        if (overlay != null) {
-                            ctx.DrawBitmap(overlay.PlatformImpl, 1.0, iconRect, iconRect);
-                        }
+                    if (overlay != null) {
+                        ctx.DrawBitmap(overlay.PlatformImpl, 1.0, iconRect, iconRect);
+                    }
 
-                        if (isStatic) {
-                            ctx.DrawBitmap(Images.OverlayStatic.PlatformImpl, 1.0, iconRect, iconRect);
-                        }
-
+                    if (isStatic) {
+                        ctx.DrawBitmap(Images.OverlayStatic.PlatformImpl, 1.0, iconRect, iconRect);
                     }
 
                 }
 
-                // TODO: image.Freeze()
-                return image;
             }
+
+            // TODO: image.Freeze()
+            return image;
         }
+    }
 
 		#endregion
 	}
-}

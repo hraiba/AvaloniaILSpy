@@ -20,8 +20,8 @@ using System;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	internal class AnalyzedModuleTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly IModule analyzedModule;
@@ -49,4 +49,3 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 
 		public override IEntity Member => null;
 	}
-}

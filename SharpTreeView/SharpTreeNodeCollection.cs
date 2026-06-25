@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Specialized;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	/// <summary>
 	/// Collection that validates that inserted nodes do not have another parent.
 	/// </summary>
@@ -205,4 +205,3 @@ namespace ICSharpCode.TreeView
 			}
 		}
 	}
-}

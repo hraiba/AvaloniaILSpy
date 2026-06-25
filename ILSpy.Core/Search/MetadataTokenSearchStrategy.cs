@@ -6,69 +6,68 @@ using System.Threading;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Search
+namespace ICSharpCode.ILSpy.Search;
+
+class MetadataTokenSearchStrategy : AbstractSearchStrategy
 {
-    class MetadataTokenSearchStrategy : AbstractSearchStrategy
+    readonly EntityHandle searchTermToken;
+
+    public MetadataTokenSearchStrategy(Language language, ApiVisibility apiVisibility, IProducerConsumerCollection<SearchResult> resultQueue, params string[] terms)
+        : base(language, apiVisibility, resultQueue, terms)
     {
-        readonly EntityHandle searchTermToken;
-
-        public MetadataTokenSearchStrategy(Language language, ApiVisibility apiVisibility, IProducerConsumerCollection<SearchResult> resultQueue, params string[] terms)
-            : base(language, apiVisibility, resultQueue, terms)
+        if (terms.Length == 1)
         {
-            if (terms.Length == 1)
-            {
-                int.TryParse(terms[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var token);
-                searchTermToken = MetadataTokenHelpers.EntityHandleOrNil(token);
-            }
+            int.TryParse(terms[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var token);
+            searchTermToken = MetadataTokenHelpers.EntityHandleOrNil(token);
         }
+    }
 
-        public override void Search(MetadataFile module, CancellationToken cancellationToken)
+    public override void Search(MetadataFile module, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (searchTermToken.IsNil) return;
+        var typeSystem = module.GetTypeSystemOrNull();
+        if (typeSystem == null) return;
+        var metadataModule = (MetadataModule)typeSystem.MainModule;
+        int row = module.Metadata.GetRowNumber(searchTermToken);
+
+        switch (searchTermToken.Kind)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (searchTermToken.IsNil) return;
-            var typeSystem = module.GetTypeSystemOrNull();
-            if (typeSystem == null) return;
-            var metadataModule = (MetadataModule)typeSystem.MainModule;
-            int row = module.Metadata.GetRowNumber(searchTermToken);
-
-            switch (searchTermToken.Kind)
-            {
-                case HandleKind.TypeDefinition:
-                    if (row < 1 || row > module.Metadata.TypeDefinitions.Count)
-                        break;
-                    var type = metadataModule.GetDefinition((TypeDefinitionHandle)searchTermToken);
-                    if (!CheckVisibility(type)) break;
-                    OnFoundResult(type);
+            case HandleKind.TypeDefinition:
+                if (row < 1 || row > module.Metadata.TypeDefinitions.Count)
                     break;
-                case HandleKind.MethodDefinition:
-                    if (row < 1 || row > module.Metadata.MethodDefinitions.Count)
-                        break;
-                    var method = metadataModule.GetDefinition((MethodDefinitionHandle)searchTermToken);
-                    if (!CheckVisibility(method)) break;
-                    OnFoundResult(method);
+                var type = metadataModule.GetDefinition((TypeDefinitionHandle)searchTermToken);
+                if (!CheckVisibility(type)) break;
+                OnFoundResult(type);
+                break;
+            case HandleKind.MethodDefinition:
+                if (row < 1 || row > module.Metadata.MethodDefinitions.Count)
                     break;
-                case HandleKind.FieldDefinition:
-                    if (row < 1 || row > module.Metadata.FieldDefinitions.Count)
-                        break;
-                    var field = metadataModule.GetDefinition((FieldDefinitionHandle)searchTermToken);
-                    if (!CheckVisibility(field)) break;
-                    OnFoundResult(field);
+                var method = metadataModule.GetDefinition((MethodDefinitionHandle)searchTermToken);
+                if (!CheckVisibility(method)) break;
+                OnFoundResult(method);
+                break;
+            case HandleKind.FieldDefinition:
+                if (row < 1 || row > module.Metadata.FieldDefinitions.Count)
                     break;
-                case HandleKind.PropertyDefinition:
-                    if (row < 1 || row > module.Metadata.PropertyDefinitions.Count)
-                        break;
-                    var property = metadataModule.GetDefinition((PropertyDefinitionHandle)searchTermToken);
-                    if (!CheckVisibility(property)) break;
-                    OnFoundResult(property);
+                var field = metadataModule.GetDefinition((FieldDefinitionHandle)searchTermToken);
+                if (!CheckVisibility(field)) break;
+                OnFoundResult(field);
+                break;
+            case HandleKind.PropertyDefinition:
+                if (row < 1 || row > module.Metadata.PropertyDefinitions.Count)
                     break;
-                case HandleKind.EventDefinition:
-                    if (row < 1 || row > module.Metadata.EventDefinitions.Count)
-                        break;
-                    var @event = metadataModule.GetDefinition((EventDefinitionHandle)searchTermToken);
-                    if (!CheckVisibility(@event)) break;
-                    OnFoundResult(@event);
+                var property = metadataModule.GetDefinition((PropertyDefinitionHandle)searchTermToken);
+                if (!CheckVisibility(property)) break;
+                OnFoundResult(property);
+                break;
+            case HandleKind.EventDefinition:
+                if (row < 1 || row > module.Metadata.EventDefinitions.Count)
                     break;
-            }
+                var @event = metadataModule.GetDefinition((EventDefinitionHandle)searchTermToken);
+                if (!CheckVisibility(@event)) break;
+                OnFoundResult(@event);
+                break;
         }
     }
 }

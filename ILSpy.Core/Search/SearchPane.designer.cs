@@ -20,28 +20,27 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy.Search
-{
-    /// <summary>
-    /// Search pane
-    /// </summary>
-    public partial class SearchPane
+namespace ICSharpCode.ILSpy.Search;
+
+/// <summary>
+/// Search pane
+/// </summary>
+public partial class SearchPane
 	{
-        internal SearchBox searchBox;
-        internal ComboBox searchModeComboBox;
-        internal DataGrid listBox;
-        internal ProgressBar searchProgressBar;
+    internal SearchBox searchBox;
+    internal ComboBox searchModeComboBox;
+    internal DataGrid listBox;
+    internal ProgressBar searchProgressBar;
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            searchBox = this.FindControl<SearchBox>("searchBox");
-            searchModeComboBox = this.FindControl<ComboBox>("searchModeComboBox");
-            listBox = this.FindControl<DataGrid>("listBox");
-            searchProgressBar = this.FindControl<ProgressBar>("searchProgressBar");
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        searchBox = this.FindControl<SearchBox>("searchBox");
+        searchModeComboBox = this.FindControl<ComboBox>("searchModeComboBox");
+        listBox = this.FindControl<DataGrid>("listBox");
+        searchProgressBar = this.FindControl<ProgressBar>("searchProgressBar");
 
-            searchBox.KeyDown += SearchBox_PreviewKeyDown;
-            searchModeComboBox.SelectionChanged += SearchModeComboBox_SelectionChanged;
-        }
+        searchBox.KeyDown += SearchBox_PreviewKeyDown;
+        searchModeComboBox.SelectionChanged += SearchModeComboBox_SelectionChanged;
+    }
 	}
-}

@@ -21,8 +21,8 @@ using System.Reflection.Metadata;
 using Avalonia.Interactivity;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
@@ -79,4 +79,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			language.WriteCommentLine(output, containsMetadata ? "contains metadata" : "contains no metadata");
 		}
 	}
-}

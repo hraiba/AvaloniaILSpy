@@ -3,8 +3,8 @@
 
 using Avalonia.Controls;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class SharpGridView : ListBox
 	{
 		static SharpGridView()
@@ -30,4 +30,3 @@ namespace ICSharpCode.TreeView
 		//	}
 		//}
 	}
-}

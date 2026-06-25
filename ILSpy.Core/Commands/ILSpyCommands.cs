@@ -20,24 +20,23 @@ using Avalonia.Input;
 using AvaloniaEdit;
 using ICSharpCode.ILSpy.Analyzers;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	static class ILSpyCommands
 	{
 		public static readonly AnalyzeCommand Analyze = new AnalyzeCommand();
 	}
 
-    public static class NavigationCommands
-    {
-        public static RoutedCommand BrowseBack { get; } = new NavigationCommand(nameof(BrowseBack), new KeyGesture(Key.BrowserBack, KeyModifiers.Control));
-        public static RoutedCommand BrowseForward { get; } = new NavigationCommand(nameof(BrowseForward), new KeyGesture(Key.BrowserForward, KeyModifiers.Control));
-        public static RoutedCommand Search { get; } = new RoutedCommand(nameof(Search), new KeyGesture(Key.F, KeyModifiers.Control | KeyModifiers.Shift));
-    }
+public static class NavigationCommands
+{
+    public static RoutedCommand BrowseBack { get; } = new NavigationCommand(nameof(BrowseBack), new KeyGesture(Key.BrowserBack, KeyModifiers.Control));
+    public static RoutedCommand BrowseForward { get; } = new NavigationCommand(nameof(BrowseForward), new KeyGesture(Key.BrowserForward, KeyModifiers.Control));
+    public static RoutedCommand Search { get; } = new RoutedCommand(nameof(Search), new KeyGesture(Key.F, KeyModifiers.Control | KeyModifiers.Shift));
+}
 
-    public static class ApplicationCommands
-    {
-        public static RoutedCommand Open { get; } = new RoutedCommand(nameof(Open), new KeyGesture(Key.O, KeyModifiers.Control));
-        public static RoutedCommand Save { get; } = new RoutedCommand(nameof(Save), new KeyGesture(Key.S, KeyModifiers.Control));
-        public static RoutedCommand Refresh { get; } = new RoutedCommand(nameof(Refresh), new KeyGesture(Key.R, KeyModifiers.Control));
-    }
+public static class ApplicationCommands
+{
+    public static RoutedCommand Open { get; } = new RoutedCommand(nameof(Open), new KeyGesture(Key.O, KeyModifiers.Control));
+    public static RoutedCommand Save { get; } = new RoutedCommand(nameof(Save), new KeyGesture(Key.S, KeyModifiers.Control));
+    public static RoutedCommand Refresh { get; } = new RoutedCommand(nameof(Refresh), new KeyGesture(Key.R, KeyModifiers.Control));
 }

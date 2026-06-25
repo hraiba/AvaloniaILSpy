@@ -23,8 +23,8 @@ using Avalonia.Interactivity;
 using Avalonia.Input;
 using Avalonia.Controls.Primitives;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	public class DockedPane : ContentControl
 	{
 		public static readonly StyledProperty<string> TitleProperty =
@@ -63,4 +63,3 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 	}
-}

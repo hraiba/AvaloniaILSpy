@@ -21,8 +21,8 @@ using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	//[MarkupExtensionReturnType(typeof(Color))]
 	public class ControlColor : MarkupExtension
 	{
@@ -77,4 +77,3 @@ namespace ICSharpCode.ILSpy.Controls
 			return new Color((byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A));
 		}
 	}
-}

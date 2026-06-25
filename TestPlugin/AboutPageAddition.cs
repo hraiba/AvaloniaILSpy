@@ -7,8 +7,8 @@ using Avalonia.Media;
 using AvaloniaEdit.Highlighting;
 using ICSharpCode.ILSpy;
 
-namespace TestPlugin
-{
+namespace TestPlugin;
+
 	[Export(typeof(IAboutPageAddition))]
 	public class AboutPageAddition : IAboutPageAddition
 	{
@@ -31,4 +31,3 @@ namespace TestPlugin
 			textOutput.WriteLine();
 		}
 	}
-}

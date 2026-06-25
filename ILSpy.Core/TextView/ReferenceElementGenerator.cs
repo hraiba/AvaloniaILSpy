@@ -21,8 +21,8 @@ using Avalonia.Input;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Creates hyperlinks in the text view.
 	/// </summary>
@@ -84,9 +84,9 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class VisualLineReferenceText : VisualLineText
 	{
-        private static readonly Cursor HandCursor = new Cursor(StandardCursorType.Hand);
+    private static readonly Cursor HandCursor = new Cursor(StandardCursorType.Hand);
 
-        readonly ReferenceElementGenerator parent;
+    readonly ReferenceElementGenerator parent;
 		readonly ReferenceSegment referenceSegment;
 		
 		/// <summary>
@@ -105,11 +105,11 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			e.Handled = true;
 
-            if (e.Source is InputElement inputElement)
-            {
-                inputElement.Cursor = referenceSegment.IsLocal ? Cursor.Default : HandCursor;
-            }
+        if (e.Source is InputElement inputElement)
+        {
+            inputElement.Cursor = referenceSegment.IsLocal ? Cursor.Default : HandCursor;
         }
+    }
 		
 		/// <inheritdoc/>
 		protected override VisualLineText CreateInstance(int length)
@@ -117,4 +117,3 @@ namespace ICSharpCode.ILSpy.TextView
 			return new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
 		}
 	}
-}

@@ -8,8 +8,8 @@ using System.IO;
 using System.Text;
 using ICSharpCode.Decompiler.CSharp.Syntax;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public class LATextReader : TextReader
 	{
 		List<int> buffer;
@@ -895,4 +895,3 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 	}
-}

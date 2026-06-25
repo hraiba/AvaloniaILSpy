@@ -21,8 +21,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows properties that override a property.
 	/// </summary>
@@ -41,18 +41,18 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 
 		IEnumerable<IEntity> AnalyzeType(IProperty analyzedEntity, ITypeDefinition type)
 		{
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+            yield break;
 
 			foreach (var property in type.Properties) {
 				if (!property.IsOverride) continue;
-                var baseMembers = InheritanceHelper.GetBaseMembers(property, false);
-                if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
-                    yield return property;
+            var baseMembers = InheritanceHelper.GetBaseMembers(property, false);
+            if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
+                yield return property;
 				}
 			}
 		}
@@ -62,4 +62,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return entity is IProperty property && property.IsOverridable && property.DeclaringType.Kind != TypeKind.Interface;
 		}
 	}
-}

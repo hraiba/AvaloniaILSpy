@@ -28,8 +28,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// This is the default resource entry tree node, which is used if no specific
 	/// <see cref="IResourceNodeFactory"/> exists for the given resource type. 
@@ -58,9 +58,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
-        {
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (r.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
-                return FilterResult.Hidden;
+    {
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (r.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
+            return FilterResult.Hidden;
 			if (settings.SearchTermMatches(r.Name))
 				return FilterResult.Match;
 			else
@@ -73,7 +73,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			
 			ISmartTextOutput smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
-                smartOutput.AddButton(Images.Save, Resources.Save, delegate { Save(MainWindow.Instance.TextView); });
+            smartOutput.AddButton(Images.Save, Resources.Save, delegate { Save(MainWindow.Instance.TextView); });
 				output.WriteLine();
 			}
 		}
@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (type != FileType.Binary) {
 					s.Position = 0;
 					AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
-                    output.Write(new StreamReader(s, Encoding.UTF8).ReadToEnd());
+                output.Write(new StreamReader(s, Encoding.UTF8).ReadToEnd());
 					string ext;
 					if (type == FileType.Xml)
 						ext = ".xml";
@@ -105,17 +105,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			Stream s = Resource.TryOpenStream();
 			if (s == null)
 				return false;
-            SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
-            dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
-            var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
-            if (!string.IsNullOrEmpty(filename))
+        dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
+        var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+        if (!string.IsNullOrEmpty(filename))
+        {
+            s.Position = 0;
+            using (var fs = File.OpenWrite(filename))
             {
-                s.Position = 0;
-                using (var fs = File.OpenWrite(filename))
-                {
-                    s.CopyTo(fs);
-                }
+                s.CopyTo(fs);
+            }
 			}
 			return true;
 		}
@@ -131,4 +131,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return result ?? new ResourceTreeNode(resource);
 		}
 	}
-}

@@ -25,39 +25,39 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Controls.Presenters;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	/// <summary>
 	/// Interaction logic for ResourceStringTable.xaml
 	/// </summary>
 	public partial class ResourceStringTable : UserControl, IRoutedCommandBindable
-    {
+{
 		internal DataGrid resourceListView;
 
-        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+    public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
 
-        public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
+    public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
 		{
-            InitializeComponent();
-            resourceListView.Items = strings;
-        }
+        InitializeComponent();
+        resourceListView.Items = strings;
+    }
 
 		private void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);
 			resourceListView = this.FindControl<DataGrid>("resourceListView");
-            CommandBindings.Add(new RoutedCommandBinding(global::AvaloniaEdit.ApplicationCommands.Copy, ExecuteCopy, CanExecuteCopy));
+        CommandBindings.Add(new RoutedCommandBinding(global::AvaloniaEdit.ApplicationCommands.Copy, ExecuteCopy, CanExecuteCopy));
 		}
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToVisualTree(e);
-            var size = e.Parent.Bounds;
-            Width = size.Width - 45;
-            MaxHeight = size.Height;
-        }
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        var size = e.Parent.Bounds;
+        Width = size.Width - 45;
+        MaxHeight = size.Height;
+    }
 
-        void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
+    void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (var item in resourceListView.SelectedItems)
@@ -72,4 +72,3 @@ namespace ICSharpCode.ILSpy.Controls
 			args.CanExecute = true;
 		}
 	}
-}

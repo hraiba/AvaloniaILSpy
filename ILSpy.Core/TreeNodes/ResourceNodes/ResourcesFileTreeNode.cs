@@ -30,8 +30,8 @@ using ICSharpCode.ILSpy.Controls;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ResourcesFileTreeNodeFactory : IResourceNodeFactory
 	{
@@ -70,17 +70,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (s == null) return;
 			s.Position = 0;
 			try {
-                foreach (var entry in new ResourcesFile(s).OrderBy(e => e.Key, NaturalStringComparer.Instance)) {
+            foreach (var entry in new ResourcesFile(s).OrderBy(e => e.Key, NaturalStringComparer.Instance)) {
 					ProcessResourceEntry(entry);
 				}
 			} catch (BadImageFormatException) {
-                // ignore errors
-            }
-            catch (EndOfStreamException)
-            {
-                // ignore errors
-            }
+            // ignore errors
         }
+        catch (EndOfStreamException)
+        {
+            // ignore errors
+        }
+    }
 
 		private void ProcessResourceEntry(KeyValuePair<string, object> entry)
 		{
@@ -113,47 +113,47 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			Stream s = Resource.TryOpenStream();
 			if (s == null) return false;
-            SaveFileDialog dlg = new SaveFileDialog();
+        SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
-            dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
-            dlg.Filters = new List<FileDialogFilter>()
-            {
-                new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
-                new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
-            };
-            var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
-            if (!string.IsNullOrEmpty(filename)) {
-                s.Position = 0;
-                if (filename.Contains("resources")) {
-                    using (var fs = File.OpenWrite(filename)) {
-                        s.CopyTo(fs);
-                    }
-                } else {
-                    try
+        dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
+        dlg.Filters = new List<FileDialogFilter>()
+        {
+            new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
+            new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
+        };
+        var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+        if (!string.IsNullOrEmpty(filename)) {
+            s.Position = 0;
+            if (filename.Contains("resources")) {
+                using (var fs = File.OpenWrite(filename)) {
+                    s.CopyTo(fs);
+                }
+            } else {
+                try
+                {
+                    using (var writer = new ResXResourceWriter(File.OpenWrite(filename)))
                     {
-                        using (var writer = new ResXResourceWriter(File.OpenWrite(filename)))
+                        foreach (var entry in new ResourcesFile(s))
                         {
-                            foreach (var entry in new ResourcesFile(s))
-                            {
-                                writer.AddResource(entry.Key, entry.Value);
-                            }
+                            writer.AddResource(entry.Key, entry.Value);
                         }
                     }
-                    catch (BadImageFormatException)
-                    {
-                        // ignore errors
-                    }
-                    catch (EndOfStreamException)
-                    {
-                        // ignore errors
-                    }
+                }
+                catch (BadImageFormatException)
+                {
+                    // ignore errors
+                }
+                catch (EndOfStreamException)
+                {
+                    // ignore errors
                 }
             }
-            return true;
         }
+        return true;
+    }
 
 
-        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
 			base.Decompile(language, output, options);
@@ -196,4 +196,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			public string Value { get; private set; }
 		}
 	}
-}

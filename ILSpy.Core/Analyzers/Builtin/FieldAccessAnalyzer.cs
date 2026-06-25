@@ -27,8 +27,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ILOpCode = System.Reflection.Metadata.ILOpCode;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Finds methods where this field is read.
 	/// </summary>
@@ -183,4 +183,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			}
 		}
 	}
-}

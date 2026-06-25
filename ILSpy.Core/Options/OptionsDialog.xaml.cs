@@ -28,8 +28,8 @@ using System.Collections.Generic;
 using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.Options
-{
+namespace ICSharpCode.ILSpy.Options;
+
 	/// <summary>
 	/// Interaction logic for OptionsDialog.xaml
 	/// </summary>
@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.Options
 			var tabItems = new List<TabItem>();
 			foreach (var optionPage in optionPages.OrderBy(p => p.Metadata.Order)) {
 				TabItem tabItem = new TabItem();
-                tabItem.Header = MainWindow.GetResourceString(optionPage.Metadata.Title);
+            tabItem.Header = MainWindow.GetResourceString(optionPage.Metadata.Title);
 				tabItem.Content = optionPage.Value;
 				tabItems.Add(tabItem);
 				
@@ -74,10 +74,10 @@ namespace ICSharpCode.ILSpy.Options
 			this.FindControl<Button>("cancelButton").Click += CancelButton_Click;;
 		}
 
-        void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close(false);
-        }
+    void CancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        Close(false);
+    }
 
 		void OKButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -118,8 +118,8 @@ namespace ICSharpCode.ILSpy.Options
 		public int Order { get; set; }
 	}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources._Options), MenuCategory = nameof(Resources.Options), MenuOrder = 999)]
-    sealed class ShowOptionsCommand : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources._Options), MenuCategory = nameof(Resources.Options), MenuOrder = 999)]
+sealed class ShowOptionsCommand : SimpleCommand
 	{
 		public override async void Execute(object parameter)
 		{
@@ -130,4 +130,3 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 	}
-}

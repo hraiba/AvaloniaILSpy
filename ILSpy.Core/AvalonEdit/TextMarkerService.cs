@@ -25,8 +25,8 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.AvaloniaEdit
-{
+namespace ICSharpCode.ILSpy.AvaloniaEdit;
+
 	using TextView = global::AvaloniaEdit.Rendering.TextView;
 	/// <summary>
 	/// Handles the text markers for a code editor.
@@ -351,4 +351,3 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit
 		
 		public object ToolTip { get; set; }
 	}
-}

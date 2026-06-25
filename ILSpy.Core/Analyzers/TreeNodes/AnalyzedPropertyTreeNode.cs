@@ -21,8 +21,8 @@ using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	sealed class AnalyzedPropertyTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly IProperty analyzedProperty;
@@ -60,4 +60,3 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 
 		public override IEntity Member => analyzedProperty;
 	}
-}

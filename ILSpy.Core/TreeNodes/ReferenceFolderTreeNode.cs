@@ -23,8 +23,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// References folder.
 	/// </summary>
@@ -71,23 +71,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var node in Children.OfType<ILSpyTreeNode>())
 				node.Decompile(language, output, options);
 
-            output.WriteLine();
-            output.WriteLine();
-            // Show full assembly load log:
-            language.WriteCommentLine(output, "Assembly load log including transitive references:");
-            var info = parentAssembly.LoadedAssembly.LoadedAssemblyReferencesInfo;
-            foreach (var asm in info.Entries)
+        output.WriteLine();
+        output.WriteLine();
+        // Show full assembly load log:
+        language.WriteCommentLine(output, "Assembly load log including transitive references:");
+        var info = parentAssembly.LoadedAssembly.LoadedAssemblyReferencesInfo;
+        foreach (var asm in info.Entries)
+        {
+            language.WriteCommentLine(output, asm.FullName);
+            output.Indent();
+            foreach (var item in asm.Messages)
             {
-                language.WriteCommentLine(output, asm.FullName);
-                output.Indent();
-                foreach (var item in asm.Messages)
-                {
-                    language.WriteCommentLine(output, $"{item.Item1}: {item.Item2}");
-                }
-                output.Unindent();
-                output.WriteLine();
+                language.WriteCommentLine(output, $"{item.Item1}: {item.Item2}");
             }
-
+            output.Unindent();
+            output.WriteLine();
         }
+
     }
 }

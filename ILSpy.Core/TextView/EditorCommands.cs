@@ -18,8 +18,8 @@
 
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	[ExportContextMenuEntry(Header = nameof(Resources.Copy), Category = nameof(Resources.Editor))]
 	sealed class CopyContextMenuEntry : IContextMenuEntry
 	{
@@ -57,4 +57,3 @@ namespace ICSharpCode.ILSpy.TextView
 			context.TextView.textEditor.SelectAll();
 		}
 	}
-}

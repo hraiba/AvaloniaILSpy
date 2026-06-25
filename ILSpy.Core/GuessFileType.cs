@@ -21,8 +21,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Static methods for determining the type of a file.
 	/// </summary>
@@ -140,4 +140,3 @@ namespace ICSharpCode.ILSpy
 		Text,
 		Xml
 	}
-}

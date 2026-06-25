@@ -21,8 +21,8 @@ using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Represents an event in the TreeView.
 	/// </summary>
@@ -58,11 +58,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override FilterResult Filter(FilterSettings settings)
-        {
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
-                return FilterResult.Hidden;
-            if (settings.SearchTermMatches(EventDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(EventDefinition)))
-                return FilterResult.Match;
+    {
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+            return FilterResult.Hidden;
+        if (settings.SearchTermMatches(EventDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(EventDefinition)))
+            return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
 		}
@@ -87,4 +87,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		IEntity IMemberTreeNode.Member => EventDefinition;
 	}
-}

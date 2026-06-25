@@ -20,8 +20,8 @@ using System;
 using System.Threading;
 using ICSharpCode.ILSpy.Options;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Options passed to the decompiler.
 	/// </summary>
@@ -101,4 +101,3 @@ namespace ICSharpCode.ILSpy
 
 		}
 	}
-}

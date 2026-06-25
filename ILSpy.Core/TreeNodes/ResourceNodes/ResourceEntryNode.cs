@@ -23,8 +23,8 @@ using Avalonia.Controls;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Entry in a .resources file
 	/// </summary>
@@ -94,4 +94,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 	}
-}

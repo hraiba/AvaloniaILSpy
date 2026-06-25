@@ -22,30 +22,30 @@ using Avalonia.Controls;
 using ICSharpCode.ILSpy.Properties;
 using NuGet.Common;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.OpenFrom_GAC), MenuIcon = "Images/AssemblyListGAC.png", MenuCategory = nameof(Resources.Open), MenuOrder = 1)]
-    sealed class OpenFromNuGetCommand : SimpleCommand
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.OpenFrom_GAC), MenuIcon = "Images/AssemblyListGAC.png", MenuCategory = nameof(Resources.Open), MenuOrder = 1)]
+sealed class OpenFromNuGetCommand : SimpleCommand
 	{
 		public override async void Execute(object parameter)
 		{
-            OpenFileDialog dlg = new OpenFileDialog();
+        OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Title = "Open file";
-            dlg.Directory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome);
-            dlg.Filters = new List<FileDialogFilter>()
-            {
-                new FileDialogFilter() { Name = "Nuget Packages (*.nupkg)", Extensions = { "nupkg" }},
-                new FileDialogFilter() { Name = ".NET assemblies", Extensions = {"dll","exe", "winmd" }},
-                new FileDialogFilter() { Name = "All files", Extensions = { "*" }},
-            };
-            dlg.AllowMultiple = true;
-            var filenames = await dlg.ShowAsync(MainWindow.Instance);
-            if (filenames != null && filenames.Length > 0)
-            {
-                MainWindow.Instance.OpenFiles(filenames);
-            }
+        dlg.Directory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome);
+        dlg.Filters = new List<FileDialogFilter>()
+        {
+            new FileDialogFilter() { Name = "Nuget Packages (*.nupkg)", Extensions = { "nupkg" }},
+            new FileDialogFilter() { Name = ".NET assemblies", Extensions = {"dll","exe", "winmd" }},
+            new FileDialogFilter() { Name = "All files", Extensions = { "*" }},
+        };
+        dlg.AllowMultiple = true;
+        var filenames = await dlg.ShowAsync(MainWindow.Instance);
+        if (filenames != null && filenames.Length > 0)
+        {
+            MainWindow.Instance.OpenFiles(filenames);
+        }
 
-   //         var dlg = new OpenFromNuGetDialog();
+//         var dlg = new OpenFromNuGetDialog();
 			//dlg.Owner = MainWindow.Instance;
 			//if (await dlg.ShowDialog<bool>() == true)
 				//OpenFiles(dlg.SelectedFileNames);
@@ -53,4 +53,3 @@ namespace ICSharpCode.ILSpy
 
 
 	}
-}

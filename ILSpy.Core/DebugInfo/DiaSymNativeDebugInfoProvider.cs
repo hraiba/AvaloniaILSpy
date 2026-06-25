@@ -27,8 +27,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.Util;
 using Microsoft.DiaSymReader;
 
-namespace ICSharpCode.ILSpy.DebugInfo
-{
+namespace ICSharpCode.ILSpy.DebugInfo;
+
 	class DiaSymNativeDebugInfoProvider : IDebugInfoProvider, ISymReaderMetadataProvider
 	{
 		PEFile module;
@@ -100,12 +100,12 @@ namespace ICSharpCode.ILSpy.DebugInfo
 			return variables;
 		}
 
-        public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
-        {
-            throw new NotImplementedException();
-        }
+    public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
+    {
+        throw new NotImplementedException();
+    }
 
-        public bool TryGetName(MethodDefinitionHandle handle, int index, out string name)
+    public bool TryGetName(MethodDefinitionHandle handle, int index, out string name)
 		{
 			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
 			var scopes = new Queue<ISymUnmanagedScope>(new[] { method.GetRootScope() });
@@ -177,4 +177,3 @@ namespace ICSharpCode.ILSpy.DebugInfo
 			return true;
 		}
 	}
-}

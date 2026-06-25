@@ -5,8 +5,8 @@ using ICSharpCode.Decompiler.DebugInfo;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public static class LoadedAssemblyExtensions
 	{
 		/// <summary>
@@ -68,5 +68,3 @@ namespace ICSharpCode.ILSpy
 			return loadedAssembly;
 		}
 	}
-
-}

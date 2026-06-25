@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly MetadataFile module;
@@ -109,4 +109,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

@@ -1,8 +1,8 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Immutable;
 
-namespace Avalonia
-{
+namespace Avalonia;
+
 	public static class SystemParameters
 	{
 		public const double MinimumHorizontalDragDistance = 2.0;
@@ -74,4 +74,3 @@ namespace Avalonia
 		//	}
 		//}
 	}
-}

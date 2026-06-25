@@ -8,8 +8,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy;
 
-namespace TestPlugin
-{
+namespace TestPlugin;
+
 	/// <summary>
 	/// Adds a new language to the decompiler.
 	/// </summary>
@@ -59,4 +59,3 @@ namespace TestPlugin
 			}
 		}
 	}
-}

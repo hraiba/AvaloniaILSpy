@@ -7,8 +7,8 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.Markup.Xaml;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 
 	/// <summary>
 	/// Interaktionslogik für DebugSteps.xaml
@@ -162,4 +162,3 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 	}
-}

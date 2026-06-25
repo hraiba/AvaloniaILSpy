@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ImageResourceNodeFactory : IResourceNodeFactory
 	{
@@ -69,12 +69,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			try {
 				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
 				Data.Position = 0;
-                IBitmap image = new Bitmap(Data);
-                output.AddUIElement(() => new Image { Source = image });
+            IBitmap image = new Bitmap(Data);
+            output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
-                output.AddButton(Images.Save, Resources.Save, async delegate {
-                    await Save(null);
-                });
+            output.AddButton(Images.Save, Resources.Save, async delegate {
+                await Save(null);
+            });
 				textView.ShowNode(output, this);
 				return true;
 			}
@@ -83,4 +83,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

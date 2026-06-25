@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.ILSpy.Options;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// ExtensionMethods used in ILSpy.
 	/// </summary>
@@ -165,4 +165,3 @@ namespace ICSharpCode.ILSpy
 			return result;
 		}
 	}
-}

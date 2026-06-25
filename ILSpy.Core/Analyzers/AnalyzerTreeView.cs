@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Analyzers.TreeNodes;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
@@ -110,19 +110,19 @@ namespace ICSharpCode.ILSpy.Analyzers
 				throw new ArgumentNullException(nameof(entity));
 			}
 
-            if (entity.MetadataToken.IsNil)
-            {
-                MessageBox.Show(Properties.Resources.CannotAnalyzeMissingRef, "ILSpy");
-                return;
-            }
+        if (entity.MetadataToken.IsNil)
+        {
+            MessageBox.Show(Properties.Resources.CannotAnalyzeMissingRef, "ILSpy");
+            return;
+        }
 
-            switch (entity) {
+        switch (entity) {
 				case ITypeDefinition td:
 					ShowOrFocus(new AnalyzedTypeTreeNode(td));
 					break;
 				case IField fd:
-                    if (!fd.IsConst)
-                        ShowOrFocus(new AnalyzedFieldTreeNode(fd));
+                if (!fd.IsConst)
+                    ShowOrFocus(new AnalyzedFieldTreeNode(fd));
 					break;
 				case IMethod md:
 					ShowOrFocus(new AnalyzedMethodTreeNode(md));
@@ -156,4 +156,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			}
 		}
 	}
-}

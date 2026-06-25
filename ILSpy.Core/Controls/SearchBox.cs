@@ -27,30 +27,30 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Data.Converters;
 using Avalonia.Controls.Metadata;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-    [PseudoClasses(":hastext")]
+namespace ICSharpCode.ILSpy.Controls;
+
+[PseudoClasses(":hastext")]
 	public class SearchBox : TextBox
 	{
 		#region Dependency properties
 
-        public static StyledProperty<IBitmap> SearchIconProperty = AvaloniaProperty.Register<SearchBox, IBitmap>(nameof(SearchIcon));
+    public static StyledProperty<IBitmap> SearchIconProperty = AvaloniaProperty.Register<SearchBox, IBitmap>(nameof(SearchIcon));
 
-        public static StyledProperty<IBitmap> ClearSearchIconProperty = AvaloniaProperty.Register<SearchBox, IBitmap>(nameof(ClearSearchIcon));
+    public static StyledProperty<IBitmap> ClearSearchIconProperty = AvaloniaProperty.Register<SearchBox, IBitmap>(nameof(ClearSearchIcon));
 
-        public static StyledProperty<IBrush> WatermarkColorProperty = AvaloniaProperty.Register<SearchBox, IBrush>(nameof(WatermarkColor));
+    public static StyledProperty<IBrush> WatermarkColorProperty = AvaloniaProperty.Register<SearchBox, IBrush>(nameof(WatermarkColor));
 
-        public static readonly IValueConverter GridLengthConvert = new FuncValueConverter<double, GridLength>(n => new GridLength(n));
+    public static readonly IValueConverter GridLengthConvert = new FuncValueConverter<double, GridLength>(n => new GridLength(n));
 
-        public static readonly StyledProperty<TimeSpan> UpdateDelayProperty =
+    public static readonly StyledProperty<TimeSpan> UpdateDelayProperty =
 			AvaloniaProperty.Register<SearchBox, TimeSpan>(nameof(UpdateDelay), TimeSpan.FromMilliseconds(200));
 
-        #endregion
+    #endregion
 
-        public SearchBox()
-        {
-            UpdatePseudoclasses();
-        }
+    public SearchBox()
+    {
+        UpdatePseudoclasses();
+    }
 		
 		#region Public Properties
 
@@ -59,62 +59,62 @@ namespace ICSharpCode.ILSpy.Controls
 			set { SetValue(WatermarkColorProperty, value); }
 		}
 
-        public TimeSpan UpdateDelay
-        {
-            get { return (TimeSpan)GetValue(UpdateDelayProperty); }
-            set { SetValue(UpdateDelayProperty, value); }
-        }
-        
-        public IBitmap SearchIcon
-        {
-            get { return GetValue(SearchIconProperty); }
-            set { SetValue(SearchIconProperty, value); }
-        }
+    public TimeSpan UpdateDelay
+    {
+        get { return (TimeSpan)GetValue(UpdateDelayProperty); }
+        set { SetValue(UpdateDelayProperty, value); }
+    }
+    
+    public IBitmap SearchIcon
+    {
+        get { return GetValue(SearchIconProperty); }
+        set { SetValue(SearchIconProperty, value); }
+    }
 
-        public IBitmap ClearSearchIcon
-        {
-            get { return GetValue(ClearSearchIconProperty); }
-            set { SetValue(ClearSearchIconProperty, value); }
-        }
+    public IBitmap ClearSearchIcon
+    {
+        get { return GetValue(ClearSearchIconProperty); }
+        set { SetValue(ClearSearchIconProperty, value); }
+    }
 
-        #endregion
+    #endregion
 
-        #region Handlers
+    #region Handlers
 
 		private void IconBorder_MouseLeftButtonUp(object obj, PointerReleasedEventArgs e) {
-            Text = string.Empty;
+        Text = string.Empty;
 		}
 
-        #endregion
+    #endregion
 
-        #region Overrides
+    #region Overrides
 
-        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        Border iconBorder = e.NameScope.Find<Border>("PART_IconBorder");
+        if (iconBorder != null)
         {
-            base.OnApplyTemplate(e);
-            Border iconBorder = e.NameScope.Find<Border>("PART_IconBorder");
-            if (iconBorder != null)
-            {
-                iconBorder.AddHandler(Border.PointerReleasedEvent, IconBorder_MouseLeftButtonUp, RoutingStrategies.Tunnel);
-            }
+            iconBorder.AddHandler(Border.PointerReleasedEvent, IconBorder_MouseLeftButtonUp, RoutingStrategies.Tunnel);
         }
+    }
 
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == TextProperty)
         {
-            base.OnPropertyChanged(change);
-
-            if (change.Property == TextProperty)
-            {
-                UpdatePseudoclasses();
-            }
+            UpdatePseudoclasses();
         }
+    }
 
-        private void UpdatePseudoclasses()
-        {
-            PseudoClasses.Set(":hastext", !string.IsNullOrWhiteSpace(Text));
-        }
+    private void UpdatePseudoclasses()
+    {
+        PseudoClasses.Set(":hastext", !string.IsNullOrWhiteSpace(Text));
+    }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+    protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (e.Key == Key.Escape && Text.Length > 0) {
 				Text = string.Empty;
@@ -123,6 +123,5 @@ namespace ICSharpCode.ILSpy.Controls
 				base.OnKeyDown(e);
 			}
 		}
-        #endregion
-    }
+    #endregion
 }

@@ -22,8 +22,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// Represents the filters applied to the tree view.
 	/// </summary>
@@ -205,4 +205,3 @@ namespace ICSharpCode.ILSpy
 		PublicAndInternal,
 		All
 	}
-}

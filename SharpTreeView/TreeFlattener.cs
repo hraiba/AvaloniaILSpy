@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	sealed class TreeFlattener : IList, INotifyCollectionChanged
 	{
 		/// <summary>
@@ -149,4 +149,3 @@ namespace ICSharpCode.TreeView
 			}
 		}
 	}
-}

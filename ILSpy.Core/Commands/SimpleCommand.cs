@@ -19,8 +19,8 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public abstract class SimpleCommand : ICommand
 	{
 		//TODO:
@@ -37,4 +37,3 @@ namespace ICSharpCode.ILSpy
 			return true;
 		}
 	}
-}

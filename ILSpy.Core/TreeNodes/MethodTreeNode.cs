@@ -21,8 +21,8 @@ using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
@@ -89,10 +89,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
-                return FilterResult.Hidden;
-            if (settings.SearchTermMatches(MethodDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(MethodDefinition)))
-                return FilterResult.Match;
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+            return FilterResult.Hidden;
+        if (settings.SearchTermMatches(MethodDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(MethodDefinition)))
+            return FilterResult.Match;
 			else
 				return FilterResult.Hidden;
 		}
@@ -112,4 +112,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		IEntity IMemberTreeNode.Member => MethodDefinition;
 	}
-}

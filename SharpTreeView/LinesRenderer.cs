@@ -6,8 +6,8 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using System.Diagnostics;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	class LinesRenderer : Control
 	{
 		static LinesRenderer()
@@ -58,4 +58,3 @@ namespace ICSharpCode.TreeView
 			}
 		}
 	}
-}

@@ -24,8 +24,8 @@ using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using System.Xml;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Renders XML documentation into a WPF <see cref="TextBlock"/>.
 	/// </summary>
@@ -134,4 +134,3 @@ namespace ICSharpCode.ILSpy.TextView
 			return new TextBlock { Text = ret.ToString() };
 		}
 	}
-}

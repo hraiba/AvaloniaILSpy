@@ -1,7 +1,7 @@
 ﻿using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[ExportContextMenuEntry(Header = nameof(Resources.CopyName), Icon = "Images/Copy.png", Order = 9999)]
 	public class CopyFullyQualifiedNameContextMenuEntry : IContextMenuEntry
 	{
@@ -24,4 +24,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return context.SelectedTreeNodes?.Length == 1 ? context.SelectedTreeNodes[0] as IMemberTreeNode : null;
 		}
 	}
-}

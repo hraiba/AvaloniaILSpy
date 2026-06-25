@@ -16,8 +16,8 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using AvaloniaEdit;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
 	{
 		static SharpTreeView()
@@ -755,4 +755,3 @@ namespace ICSharpCode.TreeView
 			}
 		}
 	}
-}

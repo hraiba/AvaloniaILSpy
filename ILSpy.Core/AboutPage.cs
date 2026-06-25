@@ -36,8 +36,8 @@ using ICSharpCode.ILSpy.TextView;
 using Avalonia.Layout;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	[ExportMainMenuCommand(Menu = nameof(Resources._Help), Header = nameof(Resources._About), MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{
@@ -343,4 +343,3 @@ namespace ICSharpCode.ILSpy
 	{
 		void Write(ISmartTextOutput textOutput);
 	}
-}

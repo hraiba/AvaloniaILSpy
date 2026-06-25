@@ -17,10 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public interface IPane
 	{
 		void Closed();
 	}
-}

@@ -23,8 +23,8 @@ using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public class LoadedNugetPackage : INotifyPropertyChanged
 	{
 		public List<Entry> Entries { get; } = new List<Entry>();
@@ -110,4 +110,3 @@ namespace ICSharpCode.ILSpy
 			Stream = stream;
 		}
 	}
-}

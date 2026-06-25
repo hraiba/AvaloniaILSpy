@@ -23,8 +23,8 @@ using System.Threading;
 using System.Linq;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	class ILSpyTraceListener : DefaultTraceListener
 	{
 		[Conditional("DEBUG")]
@@ -111,4 +111,3 @@ namespace ICSharpCode.ILSpy
 	{
 		public AssertionFailedException(string message) : base(message) { }
 	}
-}

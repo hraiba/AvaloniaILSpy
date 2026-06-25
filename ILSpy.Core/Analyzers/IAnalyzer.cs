@@ -23,8 +23,8 @@ using System.Reflection.Metadata;
 using System.Threading;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Base interface for all analyzers. You can register an analyzer for any <see cref="ISymbol"/> by implementing
 	/// this interface and adding an <see cref="ExportAnalyzerAttribute"/>.
@@ -95,4 +95,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		string Header { get; }
 		int Order { get; }
 	}
-}

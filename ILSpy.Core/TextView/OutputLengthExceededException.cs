@@ -19,8 +19,8 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// This exception gets used when the text output is longer than the specified limit.
 	/// </summary>
@@ -43,4 +43,3 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 		}
 	}
-}

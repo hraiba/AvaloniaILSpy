@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public class NavigationState : IEquatable<NavigationState>
 	{
 		private readonly HashSet<SharpTreeNode> treeNodes;
@@ -48,4 +48,3 @@ namespace ICSharpCode.ILSpy
 			return treeNodes.SetEquals(other.treeNodes);
 		}
 	}
-}

@@ -17,8 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 // TODO: Support image list
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	
 	//[Export(typeof(IResourceNodeFactory))]
 	//sealed class ImageListResourceEntryNodeFactory : IResourceNodeFactory
@@ -80,4 +80,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	//		EnsureLazyChildren();
 	//	}
 	//}
-}

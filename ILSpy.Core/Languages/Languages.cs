@@ -22,8 +22,8 @@ using System.Linq;
 
 using Microsoft.VisualStudio.Composition;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public static class Languages
 	{
 		// Start with a dummy list with an IL entry so that crashes
@@ -61,4 +61,3 @@ namespace ICSharpCode.ILSpy
 			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
 		}
 	}
-}

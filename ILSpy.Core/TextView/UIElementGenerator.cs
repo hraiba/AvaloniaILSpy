@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	using Pair = KeyValuePair<int, Lazy<IControl>>;
 	
 	/// <summary>
@@ -70,4 +70,3 @@ namespace ICSharpCode.ILSpy.TextView
 			return x.Key.CompareTo(y.Key);
 		}
 	}
-}

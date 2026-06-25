@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows entities that are used by a method.
 	/// </summary>
@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			Debug.Assert(analyzedSymbol is IMethod);
 			var scope = context.GetScopeOf((IEntity)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
-                var parentModule = (MetadataModule)type.ParentModule;
+            var parentModule = (MetadataModule)type.ParentModule;
 				var mappingInfo = context.Language.GetCodeMappingInfo(parentModule.MetadataFile, type.MetadataToken);
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
@@ -99,7 +99,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 				ILOpCode opCode;
 				try {
 					opCode = blob.DecodeOpCode();
-                    if (!IsSupportedOpCode(opCode)) {
+                if (!IsSupportedOpCode(opCode)) {
 						ILParser.SkipOperand(ref blob, opCode);
 						continue;
 					}
@@ -132,26 +132,25 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return false;
 		}
 
-        static bool IsSupportedOpCode(ILOpCode opCode)
+    static bool IsSupportedOpCode(ILOpCode opCode)
+    {
+        switch (opCode)
         {
-            switch (opCode)
-            {
-                case ILOpCode.Call:
-                case ILOpCode.Callvirt:
-                case ILOpCode.Ldtoken:
-                case ILOpCode.Ldftn:
-                case ILOpCode.Ldvirtftn:
-                case ILOpCode.Newobj:
-                    return true;
-                default:
-                    return false;
-            }
+            case ILOpCode.Call:
+            case ILOpCode.Callvirt:
+            case ILOpCode.Ldtoken:
+            case ILOpCode.Ldftn:
+            case ILOpCode.Ldvirtftn:
+            case ILOpCode.Newobj:
+                return true;
+            default:
+                return false;
         }
+    }
 
-        static bool IsSameMember(IMember analyzedMethod, IMember m)
+    static bool IsSameMember(IMember analyzedMethod, IMember m)
 		{
 			return m.MetadataToken == analyzedMethod.MetadataToken
 				&& m.ParentModule.MetadataFile == analyzedMethod.ParentModule.MetadataFile;
 		}
 	}
-}

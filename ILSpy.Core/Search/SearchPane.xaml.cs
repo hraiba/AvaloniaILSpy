@@ -36,8 +36,8 @@ using Avalonia.Threading;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Search
-{
+namespace ICSharpCode.ILSpy.Search;
+
 	/// <summary>
 	/// Search pane
 	/// </summary>
@@ -48,9 +48,9 @@ namespace ICSharpCode.ILSpy.Search
 		static SearchPane instance;
 		RunningSearch currentSearch;
 		bool runSearchOnNextShow;
-        DispatcherTimer updateResultTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(2D) };
+    DispatcherTimer updateResultTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(2D) };
 
-        public ObservableCollection<SearchResult> Results { get; } = new ObservableCollection<SearchResult>();
+    public ObservableCollection<SearchResult> Results { get; } = new ObservableCollection<SearchResult>();
 
 		public static SearchPane Instance {
 			get {
@@ -76,22 +76,22 @@ namespace ICSharpCode.ILSpy.Search
 			    new { Image = Images.Event, Name = "Event" },
 			    new { Image = Images.Literal, Name = "Constant" },
 			    new { Image = Images.Library, Name = "Metadata Token" }
-            };
+        };
 
 
 			ContextMenuProvider.Add(listBox);
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 			MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged += FilterSettings_PropertyChanged;
 
-            // This starts empty search right away, so do at the end (we're still in ctor)
-            searchModeComboBox.SelectedIndex = (int)MainWindow.Instance.SessionSettings.SelectedSearchMode;
+        // This starts empty search right away, so do at the end (we're still in ctor)
+        searchModeComboBox.SelectedIndex = (int)MainWindow.Instance.SessionSettings.SelectedSearchMode;
 			searchModeComboBox.SelectionChanged += (sender, e) => MainWindow.Instance.SessionSettings.SelectedSearchMode = (Search.SearchMode)searchModeComboBox.SelectedIndex;
-            updateResultTimer.Tick += UpdateResults;
+        updateResultTimer.Tick += UpdateResults;
 
-            DataContext = new DataGridCollectionView(Results);
-        }
+        DataContext = new DataGridCollectionView(Results);
+    }
 
-        void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
+    void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (VisualRoot != null) {
 				StartSearch(SearchTerm);
@@ -123,35 +123,35 @@ namespace ICSharpCode.ILSpy.Search
 					StartSearch(SearchTerm);
 				}
 			}
-            Dispatcher.UIThread.InvokeAsync(
-                new Action(
-                    delegate {
-                        searchBox.Focus();
-                        //searchBox.SelectAll();
-                        searchBox.SelectionStart = 0;
-                        searchBox.SelectionEnd = searchBox.Text?.Length ?? 0;
-                    }),
-                DispatcherPriority.Background);
-            updateResultTimer.Start();
-        }
+        Dispatcher.UIThread.InvokeAsync(
+            new Action(
+                delegate {
+                    searchBox.Focus();
+                    //searchBox.SelectAll();
+                    searchBox.SelectionStart = 0;
+                    searchBox.SelectionEnd = searchBox.Text?.Length ?? 0;
+                }),
+            DispatcherPriority.Background);
+        updateResultTimer.Start();
+    }
 
-        public static readonly StyledProperty<string> SearchTermProperty =
-            AvaloniaProperty.Register<SearchPane, string>("SearchTerm", string.Empty, notifying: OnSearchTermChanged);
+    public static readonly StyledProperty<string> SearchTermProperty =
+        AvaloniaProperty.Register<SearchPane, string>("SearchTerm", string.Empty, notifying: OnSearchTermChanged);
 
-        public string SearchTerm {
+    public string SearchTerm {
 			get { return GetValue(SearchTermProperty) ?? string.Empty; }
 			set { SetValue(SearchTermProperty, value ?? string.Empty); }
 		}
 
-        static void OnSearchTermChanged(IAvaloniaObject o, bool changed)
+    static void OnSearchTermChanged(IAvaloniaObject o, bool changed)
+    {
+        if (changed)
         {
-            if (changed)
-            {
-                ((SearchPane)o).StartSearch(o.GetValue(SearchTermProperty));
-            }
+            ((SearchPane)o).StartSearch(o.GetValue(SearchTermProperty));
         }
+    }
 
-        void SearchModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    void SearchModeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			MainWindow.Instance.SessionSettings.SelectedSearchMode = (SearchMode)searchModeComboBox.SelectedIndex;
 			StartSearch(SearchTerm);
@@ -160,8 +160,8 @@ namespace ICSharpCode.ILSpy.Search
 		void IPane.Closed()
 		{
 			SearchTerm = string.Empty;
-            updateResultTimer.Stop();
-        }
+        updateResultTimer.Stop();
+    }
 		
 		void ListBox_MouseDoubleClick(object sender, RoutedEventArgs e)
 		{
@@ -200,7 +200,7 @@ namespace ICSharpCode.ILSpy.Search
 		{
 			if (e.Key == Key.Down && Results.Count > 0) {
 				e.Handled = true;
-                // TODO: movefocus
+            // TODO: movefocus
 				//listBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
 				listBox.SelectedIndex = 0;
 			}
@@ -298,46 +298,46 @@ namespace ICSharpCode.ILSpy.Search
 				this.apiVisibility = apiVisibility;
 			}
 
-            static IEnumerable<string> Split(string str, Func<char, bool> controller)
+        static IEnumerable<string> Split(string str, Func<char, bool> controller)
+        {
+            int nextPiece = 0;
+            for (int c = 0; c < str.Length; c++)
             {
-                int nextPiece = 0;
-                for (int c = 0; c < str.Length; c++)
+                if (controller(str[c]))
                 {
-                    if (controller(str[c]))
-                    {
-                        yield return str.Substring(nextPiece, c - nextPiece);
-                        nextPiece = c + 1;
-                    }
+                    yield return str.Substring(nextPiece, c - nextPiece);
+                    nextPiece = c + 1;
                 }
-
-                yield return str.Substring(nextPiece);
             }
 
-            static string TrimMatchingQuotes(string input, char quote)
+            yield return str.Substring(nextPiece);
+        }
+
+        static string TrimMatchingQuotes(string input, char quote)
+        {
+            input = input.Trim();
+            if (input.Length >= 2 && input[0] == quote && input[input.Length-1] == quote)
             {
-                input = input.Trim();
-                if (input.Length >= 2 && input[0] == quote && input[input.Length-1] == quote)
+                return input.Substring(1, input.Length - 2);
+            }
+            return input;
+        }
+
+        string[] CommandLineToArgumentArray(string commandLine)
+        {
+            bool inQuotes = false;
+
+            return Split(commandLine, c =>
+            {
+                if (c == '\"')
                 {
-                    return input.Substring(1, input.Length - 2);
+                    inQuotes = !inQuotes;
                 }
-                return input;
-            }
-
-            string[] CommandLineToArgumentArray(string commandLine)
-            {
-                bool inQuotes = false;
-
-                return Split(commandLine, c =>
-                {
-                    if (c == '\"')
-                    {
-                        inQuotes = !inQuotes;
-                    }
-                    return !inQuotes && c == ' ';
-                }).Select(arg => TrimMatchingQuotes(arg, '\"'))
-                .Where(arg => !string.IsNullOrEmpty(arg))
-                .ToArray();
-            }
+                return !inQuotes && c == ' ';
+            }).Select(arg => TrimMatchingQuotes(arg, '\"'))
+            .Where(arg => !string.IsNullOrEmpty(arg))
+            .ToArray();
+        }
 			
 			public void Cancel()
 			{
@@ -476,4 +476,3 @@ namespace ICSharpCode.ILSpy.Search
 		Literal,
 		Token
 	}
-}

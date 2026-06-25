@@ -6,8 +6,8 @@ using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Allows language specific search for matching brackets.
 	/// </summary>
@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TextView
 		BracketSearchResult result;
 		IPen borderPen;
 		IBrush backgroundBrush;
-        global::AvaloniaEdit.Rendering.TextView textView;
+    global::AvaloniaEdit.Rendering.TextView textView;
 
 		public void SetHighlight(BracketSearchResult result)
 		{
@@ -107,4 +107,3 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 	}
-}

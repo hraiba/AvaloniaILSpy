@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Properties;
 using SRM = System.Reflection.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the sub types of a class.
 	/// </summary>
@@ -97,4 +97,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			threading.Decompile(language, output, options, EnsureLazyChildren);
 		}
 	}
-}

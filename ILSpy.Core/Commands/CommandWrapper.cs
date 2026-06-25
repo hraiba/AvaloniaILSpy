@@ -19,8 +19,8 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	class CommandWrapper : ICommand
 	{
 		private readonly ICommand wrappedCommand;
@@ -55,4 +55,3 @@ namespace ICSharpCode.ILSpy
 			return wrappedCommand.CanExecute(parameter);
 		}
 	}
-}

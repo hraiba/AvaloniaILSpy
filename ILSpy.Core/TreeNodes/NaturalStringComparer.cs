@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	public sealed class NaturalStringComparer : IComparer<string>
 	{
 		public static readonly NaturalStringComparer Instance = new NaturalStringComparer(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
@@ -161,4 +161,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return 0;
 		}
 	}
-}

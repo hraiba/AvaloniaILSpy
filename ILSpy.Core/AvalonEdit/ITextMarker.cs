@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Media;
 
-namespace ICSharpCode.ILSpy.AvaloniaEdit
-{
+namespace ICSharpCode.ILSpy.AvaloniaEdit;
+
 	/// <summary>
 	/// Represents a text marker.
 	/// </summary>
@@ -164,4 +164,3 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit
 		/// </summary>
 		IEnumerable<ITextMarker> GetMarkersAtOffset(int offset);
 	}
-}

@@ -21,8 +21,8 @@ using System.Collections.Specialized;
 using System.Linq;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	public abstract class AnalyzerTreeNode : SharpTreeNode
 	{
 		private Language language;
@@ -67,4 +67,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		/// </summary>
 		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
 	}
-}

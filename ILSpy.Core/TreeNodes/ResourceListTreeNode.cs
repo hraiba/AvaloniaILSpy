@@ -21,8 +21,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
@@ -37,10 +37,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-            get { return Resources._Resources; }
-        }
+        get { return Resources._Resources; }
+    }
 
-        public override object Icon {
+    public override object Icon {
 			get { return Images.FolderClosed; }
 		}
 
@@ -65,10 +65,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
-            foreach (ILSpyTreeNode child in Children) {
+        foreach (ILSpyTreeNode child in Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();
 			}
 		}
 	}
-}
