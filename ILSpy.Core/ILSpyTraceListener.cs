@@ -61,10 +61,16 @@ namespace ICSharpCode.ILSpy;
 			} catch { }
 			lock (ignoredStacks) {
 				if (ignoredStacks.Contains(topFrame))
-					return;
-				if (dialogIsOpen)
-					return;
-				dialogIsOpen = true;
+            {
+                return;
+            }
+
+            if (dialogIsOpen)
+            {
+                return;
+            }
+
+            dialogIsOpen = true;
 			}
 			// We might be unable to display a dialog here, e.g. because
 			// we're on the UI thread but dispatcher processing is disabled.

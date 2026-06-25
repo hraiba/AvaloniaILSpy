@@ -18,26 +18,37 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			var scope = context.GetScopeOf((ITypeDefinition)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in ScanType((ITypeDefinition)analyzedSymbol, type, context))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> ScanType(ITypeDefinition analyzedType, ITypeDefinition type, AnalyzerContext context)
 		{
 			if (!type.HasExtensions)
-				yield break;
+        {
+            yield break;
+        }
 
-			if (analyzedType.ParentModule?.MetadataFile == null)
-				yield break;
+        if (analyzedType.ParentModule?.MetadataFile == null)
+        {
+            yield break;
+        }
 
-			foreach (IMethod method in type.Methods) {
-				if (!method.IsExtensionMethod) continue;
+        foreach (IMethod method in type.Methods) {
+				if (!method.IsExtensionMethod)
+            {
+                continue;
+            }
 
-				var firstParamType = method.Parameters[0].Type.GetDefinition();
+            var firstParamType = method.Parameters[0].Type.GetDefinition();
 				if (firstParamType != null &&
 					firstParamType.MetadataToken == analyzedType.MetadataToken &&
 					firstParamType.ParentModule.MetadataFile == analyzedType.ParentModule.MetadataFile)
-					yield return method;
-			}
+            {
+                yield return method;
+            }
+        }
 		}
 	}

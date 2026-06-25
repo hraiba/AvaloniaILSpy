@@ -55,10 +55,15 @@ namespace ICSharpCode.ILSpy;
 			if (e.PropertyName == nameof(Entry.IsSelected)) {
 				var entry = (Entry)sender;
 				if (entry.IsSelected)
-					SelectedEntries.Add(entry);
-				else
-					SelectedEntries.Remove(entry);
-				OnPropertyChanged(nameof(SelectedEntries));
+            {
+                SelectedEntries.Add(entry);
+            }
+            else
+            {
+                SelectedEntries.Remove(entry);
+            }
+
+            OnPropertyChanged(nameof(SelectedEntries));
 			}
 		}
 

@@ -37,16 +37,21 @@ namespace ICSharpCode.ILSpy;
 			}
 
 			if (step < 0)
-				return -1;
+        {
+            return -1;
+        }
 
-			return buffer[step];
+        return buffer[step];
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-				reader.Dispose();
-			base.Dispose(disposing);
+        {
+            reader.Dispose();
+        }
+
+        base.Dispose(disposing);
 		}
 	}
 
@@ -96,8 +101,11 @@ namespace ICSharpCode.ILSpy;
 		{
 			int val = reader.Read();
 			if (recordRead && val >= 0)
-				recordedText.Append((char)val);
-			if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
+        {
+            recordedText.Append((char)val);
+        }
+
+        if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
 				++line;
 				col = 1;
 				LineBreak();
@@ -125,8 +133,10 @@ namespace ICSharpCode.ILSpy;
 			for (int i = 0; i < length; i++) {
 				int peek = ReaderPeek(i);
 				if (peek != -1)
-					builder.Append((char)peek);
-			}
+            {
+                builder.Append((char)peek);
+            }
+        }
 
 			return builder.ToString();
 		}
@@ -201,9 +211,17 @@ namespace ICSharpCode.ILSpy;
 
 		protected static bool IsIdentifierPart(int ch)
 		{
-			if (ch == 95) return true;  // 95 = '_'
-			if (ch == -1) return false;
-			return char.IsLetterOrDigit((char)ch); // accept unicode letters
+			if (ch == 95)
+        {
+            return true;  // 95 = '_'
+        }
+
+        if (ch == -1)
+        {
+            return false;
+        }
+
+        return char.IsLetterOrDigit((char)ch); // accept unicode letters
 		}
 
     protected static bool IsHex(char digit) => Char.IsDigit(digit) || ('A' <= digit && digit <= 'F') || ('a' <= digit && digit <= 'f');
@@ -249,8 +267,11 @@ namespace ICSharpCode.ILSpy;
 			while ((nextChar = reader.Read()) != -1) {
 				if (nextChar == '\r') {
 					if (reader.Peek() == '\n')
-						reader.Read();
-					nextChar = '\n';
+                {
+                    reader.Read();
+                }
+
+                nextChar = '\n';
 				}
 				if (nextChar == '\n') {
 					++line;
@@ -269,8 +290,11 @@ namespace ICSharpCode.ILSpy;
 
 				if (nextChar == '\r') {
 					if (reader.Peek() == '\n')
-						reader.Read();
-					nextChar = '\n';
+                {
+                    reader.Read();
+                }
+
+                nextChar = '\n';
 				}
 				// Return read string, if EOL is reached
 				if (nextChar == '\n') {
@@ -301,9 +325,11 @@ namespace ICSharpCode.ILSpy;
 			while (true) {
 				int nextChar = ReaderRead();
 				if (nextChar == -1)
-					break;
+            {
+                break;
+            }
 
-				Literal token = null;
+            Literal token = null;
 
 				switch (nextChar) {
 					case ' ':
@@ -402,9 +428,11 @@ namespace ICSharpCode.ILSpy;
 
 				if (curPos < MAX_IDENTIFIER_LENGTH) {
 					if (ch != '\0') // only add character, if it is valid
-									// prevents \ from being added
-						identBuffer[curPos++] = ch;
-				} else {
+                {
+                    // prevents \ from being added
+                    identBuffer[curPos++] = ch;
+                }
+            } else {
 					Error(Line, Col, String.Format("Identifier too long"));
 					while (IsIdentifierPart(ReaderPeek())) {
 						ReaderRead();
@@ -585,7 +613,7 @@ namespace ICSharpCode.ILSpy;
 					isunsigned = true;
 				} else if (result > uint.MaxValue) {
 					islong = true;
-				} else if (islong == false && result > int.MaxValue) {
+				} else if (!islong && result > int.MaxValue) {
 					isunsigned = true;
 				}
 

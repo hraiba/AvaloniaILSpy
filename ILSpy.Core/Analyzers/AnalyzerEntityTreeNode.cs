@@ -41,13 +41,14 @@ namespace ICSharpCode.ILSpy.Analyzers;
 		{
 			foreach (LoadedAssembly asm in removedAssemblies) {
 				if (Member.ParentModule.MetadataFile == asm.GetPEFileOrNull())
-					return false; // remove this node
-			}
+            {
+                return false; // remove this node
+            }
+        }
 			Children.RemoveAll(
 				delegate(SharpTreeNode n) {
-					AnalyzerTreeNode an = n as AnalyzerTreeNode;
-					return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
-				});
+                    return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+                });
 			return true;
 		}
 	}

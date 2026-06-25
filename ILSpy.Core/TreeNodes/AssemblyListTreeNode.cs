@@ -77,10 +77,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			e.DragEffects = DragDropEffects.Move;
 			if (e.Data.Contains(AssemblyTreeNode.DataFormat))
-				return true;
-			else if (e.Data.Contains(DataFormats.FileNames))
-				return true;
-			else {
+        {
+            return true;
+        }
+        else if (e.Data.Contains(DataFormats.FileNames))
+        {
+            return true;
+        }
+        else {
 				e.DragEffects = DragDropEffects.None;
 				return false;
 			}
@@ -101,8 +105,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					foreach (LoadedAssembly asm in assemblies) {
 						int nodeIndex = assemblyList.assemblies.IndexOf(asm);
 						if (nodeIndex < index)
-							index--;
-						assemblyList.assemblies.RemoveAt(nodeIndex);
+                    {
+                        index--;
+                    }
+
+                    assemblyList.assemblies.RemoveAt(nodeIndex);
 					}
 					Array.Reverse(assemblies);
 					foreach (LoadedAssembly asm in assemblies) {
@@ -151,8 +158,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public ILSpyTreeNode FindResourceNode(Resource resource)
 		{
 			if (resource == null)
-				return null;
-			foreach (AssemblyTreeNode node in Children)
+        {
+            return null;
+        }
+
+        foreach (AssemblyTreeNode node in Children)
 			{
 				if (node.LoadedAssembly.IsLoaded)
 				{
@@ -161,12 +171,16 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					{
 						var founded = item.Children.OfType<ResourceTreeNode>().Where(x => x.Resource == resource).FirstOrDefault();
 						if (founded != null)
-							return founded;
+                    {
+                        return founded;
+                    }
 
-						var foundedResEntry = item.Children.OfType<ResourceEntryNode>().Where(x => resource.Name.Equals(x.Text)).FirstOrDefault();
+                    var foundedResEntry = item.Children.OfType<ResourceEntryNode>().Where(x => resource.Name.Equals(x.Text)).FirstOrDefault();
 						if (foundedResEntry != null)
-							return foundedResEntry;
-					}
+                    {
+                        return foundedResEntry;
+                    }
+                }
 				}
 			}
 			return null;
@@ -177,24 +191,34 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public AssemblyTreeNode FindAssemblyNode(MetadataFile module)
 		{
 			if (module == null)
-				return null;
+        {
+            return null;
+        }
+
         Dispatcher.UIThread.VerifyAccess();
         foreach (AssemblyTreeNode node in Children) {
 				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.GetPEFileOrNull() == module)
-					return node;
-			}
+            {
+                return node;
+            }
+        }
 			return null;
 		}
 
 		public AssemblyTreeNode FindAssemblyNode(LoadedAssembly asm)
 		{
 			if (asm == null)
-				return null;
-			Dispatcher.UIThread.VerifyAccess();
+        {
+            return null;
+        }
+
+        Dispatcher.UIThread.VerifyAccess();
 			foreach (AssemblyTreeNode node in Children) {
 				if (node.LoadedAssembly == asm)
-					return node;
-			}
+            {
+                return node;
+            }
+        }
 			return null;
 		}
 
@@ -205,8 +229,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public TypeTreeNode FindTypeNode(ITypeDefinition def)
 		{
 			if (def == null)
-				return null;
-			var declaringType = def.DeclaringTypeDefinition;
+        {
+            return null;
+        }
+
+        var declaringType = def.DeclaringTypeDefinition;
 			if (declaringType != null) {
 				TypeTreeNode decl = FindTypeNode(declaringType);
 				if (decl != null) {
@@ -230,35 +257,52 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringTypeDefinition);
 			if (typeNode == null)
-				return null;
-			// method might be an accessor, must look for parent node
-			ILSpyTreeNode parentNode = typeNode;
+        {
+            return null;
+        }
+        // method might be an accessor, must look for parent node
+        ILSpyTreeNode parentNode = typeNode;
 			MethodTreeNode methodNode;
 			parentNode.EnsureLazyChildren();
 			switch (def.AccessorOwner) {
 				case IProperty p:
 					parentNode = parentNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition.MetadataToken == p.MetadataToken && !m.IsHidden);
 					if (parentNode == null)
-						return null;
-					parentNode.EnsureLazyChildren();
+                {
+                    return null;
+                }
+
+                parentNode.EnsureLazyChildren();
 					methodNode = parentNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
-					if (methodNode == null || methodNode.IsHidden)
-						return parentNode;
-					return methodNode;
+					if (methodNode?.IsHidden != false)
+                {
+                    return parentNode;
+                }
+
+                return methodNode;
 				case IEvent e:
 					parentNode = parentNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition.MetadataToken == e.MetadataToken && !m.IsHidden);
 					if (parentNode == null)
-						return null;
-					parentNode.EnsureLazyChildren();
+                {
+                    return null;
+                }
+
+                parentNode.EnsureLazyChildren();
 					methodNode = parentNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
-					if (methodNode == null || methodNode.IsHidden)
-						return parentNode;
-					return methodNode;
+					if (methodNode?.IsHidden != false)
+                {
+                    return parentNode;
+                }
+
+                return methodNode;
 				default:
 					methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
 					if (methodNode != null)
-						return methodNode;
-					return null;
+                {
+                    return methodNode;
+                }
+
+                return null;
 			}
 		}
 
@@ -270,8 +314,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringTypeDefinition);
 			if (typeNode == null)
-				return null;
-			typeNode.EnsureLazyChildren();
+        {
+            return null;
+        }
+
+        typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
 		}
 
@@ -283,8 +330,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringTypeDefinition);
 			if (typeNode == null)
-				return null;
-			typeNode.EnsureLazyChildren();
+        {
+            return null;
+        }
+
+        typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
 		}
 
@@ -296,8 +346,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringTypeDefinition);
 			if (typeNode == null)
-				return null;
-			typeNode.EnsureLazyChildren();
+        {
+            return null;
+        }
+
+        typeNode.EnsureLazyChildren();
 			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition.MetadataToken == def.MetadataToken && !m.IsHidden);
 		}
 		#endregion

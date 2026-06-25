@@ -46,7 +46,7 @@ sealed class DecompileAllCommand : SimpleCommand
                 {
                     try
                     {
-                        new CSharpLanguage().DecompileAssembly(asm, new Decompiler.PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
+                        new CSharpLanguage().DecompileAssembly(asm, new PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
                     }
                     catch (Exception ex)
                     {

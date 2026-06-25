@@ -45,7 +45,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
 
             // Validate our invariants:
             if (updateFlattener)
+            {
                 CheckRootInvariants();
+            }
 
             // Tell the flattener about the removed nodes:
             if (removedNodes != null)
@@ -55,7 +57,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 {
                     flattener.NodesRemoved(GetVisibleIndexForNode(this), removedNodes);
                     foreach (var n in removedNodes)
+                    {
                         n.OnIsVisibleChanged();
+                    }
                 }
             }
             // Tell the flattener about the new nodes:
@@ -66,7 +70,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 {
                     flattener.NodesInserted(GetVisibleIndexForNode(this), VisibleDescendantsAndSelf());
                     foreach (var n in VisibleDescendantsAndSelf())
+                    {
                         n.OnIsVisibleChanged();
+                    }
                 }
             }
         }
@@ -157,7 +163,9 @@ public partial class SharpTreeNode : INotifyPropertyChanged
                 Debug.WriteLine("Removing {0} from {1}", node, this);
                 SharpTreeNode removeEnd = node;
                 while (removeEnd.modelChildren?.Count > 0)
+                {
                     removeEnd = removeEnd.modelChildren.Last();
+                }
 
                 List<SharpTreeNode> removedNodes = null;
                 int visibleIndexOfRemoval = 0;
@@ -180,9 +188,13 @@ public partial class SharpTreeNode : INotifyPropertyChanged
         {
             SharpTreeNode insertionPos;
             if (e.NewStartingIndex == 0)
+            {
                 insertionPos = null;
+            }
             else
+            {
                 insertionPos = modelChildren[e.NewStartingIndex - 1];
+            }
 
             foreach (SharpTreeNode node in e.NewItems)
             {
@@ -436,12 +448,17 @@ public partial class SharpTreeNode : INotifyPropertyChanged
     {
         DragDropEffects effects = DragDropEffects.Copy | DragDropEffects.Link | DragDropEffects.Move;
         if (!nodes.All(n => n.CanDelete()))
+        {
             effects &= ~DragDropEffects.Move;
+        }
+
         DragDropEffects result = await DragDrop.DoDragDrop(e, Copy(nodes), effects);
         if (result == DragDropEffects.Move)
         {
             foreach (SharpTreeNode node in nodes)
+            {
                 node.DeleteCore();
+            }
         }
     }
 

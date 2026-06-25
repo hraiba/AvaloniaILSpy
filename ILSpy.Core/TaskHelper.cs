@@ -172,11 +172,18 @@ public static class TaskHelper
             {
                 Exception ex = t.Exception;
                 while (ex is AggregateException)
+                {
                     ex = ex.InnerException;
+                }
+
                 if (ex is not TException)
+                {
                     throw t.Exception;
+                }
                 else
+                {
                     action((TException)ex);
+                }
             }
         }, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, TaskScheduler.FromCurrentSynchronizationContext());
     }

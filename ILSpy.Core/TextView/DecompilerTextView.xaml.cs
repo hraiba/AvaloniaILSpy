@@ -138,7 +138,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         //	handler.InputBindings.Remove(inputBinding);
         var commandBinding = handler.CommandBindings.FirstOrDefault(b => b.Command == command);
         if (commandBinding != null)
+        {
             handler.CommandBindings.Remove(commandBinding);
+        }
     }
     #endregion
 
@@ -173,13 +175,22 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     {
         TextViewPosition? position = GetPositionFromMousePosition();
         if (position == null)
+        {
             return;
+        }
+
         int offset = textEditor.Document.GetOffset(position.Value.Location);
         if (referenceElementGenerator.References == null)
+        {
             return;
+        }
+
         ReferenceSegment seg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
         if (seg == null)
+        {
             return;
+        }
+
         object content = GenerateTooltip(seg);
         ToolTip.SetIsOpen(this, false);
         if (content != null)
@@ -191,7 +202,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     object GenerateTooltip(ReferenceSegment segment)
     {
-        if (segment.Reference is ICSharpCode.Decompiler.Disassembler.OpCodeInfo code)
+        if (segment.Reference is Decompiler.Disassembler.OpCodeInfo code)
         {
             XmlDocumentationProvider docProvider = XmlDocLoader.MscorlibDocumentation;
             if (docProvider != null)
@@ -218,7 +229,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             {
                 IEntity resolved = typeSystem.MainModule.ResolveEntity(unresolvedEntity.Item2);
                 if (resolved == null)
+                {
                     return null;
+                }
+
                 return CreateTextBlockForEntity(resolved);
             }
             catch (BadImageFormatException)
@@ -236,7 +250,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         try
         {
             if (resolved.ParentModule == null || resolved.ParentModule.MetadataFile == null)
+            {
                 return null;
+            }
+
             var docProvider = XmlDocLoader.LoadDocumentation(resolved.ParentModule.MetadataFile);
             if (docProvider != null)
             {
@@ -306,8 +323,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         var myCancellationTokenSource = new CancellationTokenSource();
         currentCancellationTokenSource = myCancellationTokenSource;
         // cancel the previous only after current was set to the new one (avoid that the old one still finishes successfully)
-        if (previousCancellationTokenSource != null)
-            previousCancellationTokenSource.Cancel();
+        previousCancellationTokenSource?.Cancel();
 
         var tcs = new TaskCompletionSource<T>();
         Task<T> task;
@@ -360,11 +376,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     void cancelButton_Click(object sender, RoutedEventArgs e)
     {
-        if (currentCancellationTokenSource != null)
-        {
-            currentCancellationTokenSource.Cancel();
-            // Don't set to null: the task still needs to produce output and hide the wait adorner
-        }
+        currentCancellationTokenSource?.Cancel();
     }
     #endregion
 
@@ -419,7 +431,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         textEditor.Options.EnableEmailHyperlinks = textOutput.EnableHyperlinks;
         textEditor.Options.EnableHyperlinks = textOutput.EnableHyperlinks;
         if (activeRichTextColorizer != null)
+        {
             textEditor.TextArea.TextView.LineTransformers.Remove(activeRichTextColorizer);
+        }
+
         if (textOutput.HighlightingModel != null)
         {
             activeRichTextColorizer = new RichTextColorizer(textOutput.HighlightingModel);
@@ -467,7 +482,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     DecompilationContext nextDecompilationRun;
 
     [Obsolete("Use DecompileAsync() instead")]
-    public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options) => DecompileAsync(language, treeNodes, options).HandleExceptions();
+    public void Decompile(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options) => DecompileAsync(language, treeNodes, options).HandleExceptions();
 
     /// <summary>
     /// Starts the decompilation of the given nodes.
@@ -475,14 +490,17 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     /// If any errors occur, the error message is displayed in the text view, and the task returned by this method completes successfully.
     /// If the operation is cancelled (by starting another decompilation action); the returned task is marked as cancelled.
     /// </summary>
-    public Task DecompileAsync(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
+    public Task DecompileAsync(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
     {
         // Some actions like loading an assembly list cause several selection changes in the tree view,
         // and each of those will start a decompilation action.
 
         bool isDecompilationScheduled = nextDecompilationRun != null;
         if (nextDecompilationRun != null)
+        {
             nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
+        }
+
         nextDecompilationRun = new DecompilationContext(language, [.. treeNodes], options);
         var task = nextDecompilationRun.TaskCompletionSource.Task;
         if (!isDecompilationScheduled)
@@ -494,8 +512,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
                     var context = nextDecompilationRun;
                     nextDecompilationRun = null;
                     if (context != null)
+                    {
                         DoDecompile(context, DefaultOutputLengthLimit)
                             .ContinueWith(t => context.TaskCompletionSource.SetFromTask(t)).HandleExceptions();
+                    }
                 }
             ), DispatcherPriority.Background);
         }
@@ -504,12 +524,12 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 
     sealed class DecompilationContext
     {
-        public readonly ILSpy.Language Language;
+        public readonly Language Language;
         public readonly ILSpyTreeNode[] TreeNodes;
         public readonly DecompilationOptions Options;
         public readonly TaskCompletionSource<object> TaskCompletionSource = new TaskCompletionSource<object>();
 
-        public DecompilationContext(ILSpy.Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
+        public DecompilationContext(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
         {
             Language = language;
             TreeNodes = treeNodes;
@@ -588,7 +608,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         for (int i = 0; i < nodes.Length; i++)
         {
             if (i > 0)
+            {
                 textOutput.WriteLine();
+            }
 
             context.Options.CancellationToken.ThrowIfCancellationRequested();
             nodes[i].Decompile(context.Language, textOutput, context.Options);
@@ -683,7 +705,10 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     void TextAreaMouseUp(object sender, PointerEventArgs e)
     {
         if (mouseDownPos == null)
+        {
             return;
+        }
+
         Vector dragDistance = e.GetPosition(this) - mouseDownPos.Value;
         if (Math.Abs(dragDistance.X) < SystemParameters.MinimumHorizontalDragDistance
             && Math.Abs(dragDistance.Y) < SystemParameters.MinimumVerticalDragDistance
@@ -729,7 +754,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     public async void SaveToDisk(Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
     {
         if (!treeNodes.Any())
+        {
             return;
+        }
 
         SaveFileDialog dlg = new SaveFileDialog();
         dlg.Title = "Save file";
@@ -832,10 +859,16 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     internal ReferenceSegment GetReferenceSegmentAtMousePosition()
     {
         if (referenceElementGenerator.References == null)
+        {
             return null;
+        }
+
         TextViewPosition? position = GetPositionFromMousePosition();
         if (position == null)
+        {
             return null;
+        }
+
         int offset = textEditor.Document.GetOffset(position.Value.Location);
         return referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
     }
@@ -845,21 +878,32 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         IPointerDevice mouse = MainWindow.Instance.PlatformImpl.MouseDevice;
         var position = textEditor.TextArea.TextView.GetPosition(mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
         if (position == null)
+        {
             return null;
+        }
+
         var lineLength = textEditor.Document.GetLineByNumber(position.Value.Line).Length + 1;
         if (position.Value.Column == lineLength)
+        {
             return null;
+        }
+
         return position;
     }
 
     public DecompilerTextViewState GetState()
     {
         if (decompiledNodes == null)
+        {
             return null;
+        }
 
         var state = new DecompilerTextViewState();
         if (foldingManager != null)
+        {
             state.SaveFoldingsState(foldingManager.AllFoldings);
+        }
+
         state.VerticalOffset = textEditor.VerticalOffset;
         state.HorizontalOffset = textEditor.HorizontalOffset;
         state.DecompiledNodes = decompiledNodes;
@@ -872,7 +916,9 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     public void UnfoldAndScroll(int lineNumber)
     {
         if (lineNumber <= 0 || lineNumber > textEditor.Document.LineCount)
+        {
             return;
+        }
 
         var line = textEditor.Document.GetLineByNumber(lineNumber);
 
@@ -914,7 +960,11 @@ public class DecompilerTextViewState
     {
         var checksum = unchecked(list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
         if (FoldingsChecksum == checksum)
+        {
             foreach (var folding in list)
+            {
                 folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);
+            }
+        }
     }
 }

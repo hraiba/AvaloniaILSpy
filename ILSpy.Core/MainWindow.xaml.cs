@@ -63,16 +63,13 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 {
     bool refreshInProgress;
     bool handlingNugetPackageSelection;
-    readonly NavigationHistory<NavigationState> history = new NavigationHistory<NavigationState>();
+    readonly NavigationHistory<NavigationState> history = new();
     ILSpySettings spySettingsForMainWindow_Loaded;
     internal SessionSettings sessionSettings;
 
     internal AssemblyListManager assemblyListManager;
     AssemblyList assemblyList;
     AssemblyListTreeNode assemblyListTreeNode;
-
-    readonly DecompilerTextView decompilerTextView;
-
     static MainWindow instance;
 
     internal Menu mainMenu;
@@ -123,8 +120,8 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         this.AttachDevTools();
 #endif
 
-        decompilerTextView = App.ExportProvider.GetExportedValue<DecompilerTextView>();
-        mainPane.Content = decompilerTextView;
+        TextView = App.ExportProvider.GetExportedValue<DecompilerTextView>();
+        mainPane.Content = TextView;
 
         if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1)
         {
@@ -133,7 +130,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         }
         sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 
-        ContextMenuProvider.Add(treeView, decompilerTextView);
+        ContextMenuProvider.Add(treeView, TextView);
 
     }
     private void InitializeComponent()
@@ -255,7 +252,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         if (Styles.TryGetResource("ILAsm-Mode", out object ilasm) && ilasm is string ilmode)
         {
             HighlightingManager.Instance.RegisterHighlighting(
-                "ILAsm", new string[] { ".il" },
+                "ILAsm", [".il"],
                 delegate
                 {
                     using Stream s = File.OpenRead($"Themes/{ilmode}");
@@ -266,11 +263,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         else
         {
             HighlightingManager.Instance.RegisterHighlighting(
-                "ILAsm", new string[] { ".il" },
+                "ILAsm", [".il"],
                 delegate
                 {
                     using Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.ILAsm-Mode.xshd");
-                    using XmlTextReader reader = new XmlTextReader(s);
+                    using var reader = new XmlTextReader(s);
                     return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
@@ -278,22 +275,22 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         if (Styles.TryGetResource("CSharp-Mode", out object csharp) && csharp is string csmode)
         {
             HighlightingManager.Instance.RegisterHighlighting(
-            "C#", new string[] { ".cs" },
+            "C#", [".cs"],
                 delegate
                 {
                     using Stream s = File.OpenRead($"Themes/{csmode}");
-                    using XmlTextReader reader = new XmlTextReader(s);
+                    using var reader = new XmlTextReader(s);
                     return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
         else
         {
             HighlightingManager.Instance.RegisterHighlighting(
-            "C#", new string[] { ".cs" },
+            "C#", [".cs"],
                 delegate
                 {
                     using Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.CSharp-Mode.xshd");
-                    using XmlTextReader reader = new XmlTextReader(s);
+                    using var reader = new XmlTextReader(s);
                     return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
@@ -372,7 +369,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         var mainMenuItems = mainMenu.Items as IList<object> ?? [];
         foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => GetResourceString(c.Metadata.Menu)))
         {
-            MenuItem topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (GetResourceString(m.Header as string)) == topLevelMenu.Key);
+            MenuItem topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => GetResourceString(m.Header as string) == topLevelMenu.Key);
             var topLevelMenuItems = topLevelMenuItem?.Items as IList<object> ?? [];
             foreach (var category in topLevelMenu.GroupBy(c => GetResourceString(c.Metadata.MenuCategory)))
             {
@@ -391,7 +388,10 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     MenuItem menuItem = new MenuItem();
                     menuItem.Command = CommandWrapper.Unwrap(entry.Value);
                     if (!string.IsNullOrEmpty(GetResourceString(entry.Metadata.Header)))
+                    {
                         menuItem.Header = GetResourceString(entry.Metadata.Header);
+                    }
+
                     if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon))
                     {
                         menuItem.Icon = new Image
@@ -417,7 +417,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         var mainMenuItems = NativeMenu.GetMenu(this).Items;
         foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => GetResourceString(c.Metadata.Menu)))
         {
-            NativeMenuItem topLevelMenuItem = mainMenuItems.OfType<NativeMenuItem>().FirstOrDefault(m => (GetResourceString(m.Header as string)) == topLevelMenu.Key);
+            NativeMenuItem topLevelMenuItem = mainMenuItems.OfType<NativeMenuItem>().FirstOrDefault(m => GetResourceString(m.Header) == topLevelMenu.Key);
             if (topLevelMenuItem == null)
             {
                 topLevelMenuItem = new NativeMenuItem();
@@ -438,7 +438,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     NativeMenuItem menuItem = new NativeMenuItem();
                     menuItem.Command = CommandWrapper.Unwrap(entry.Value);
                     if (!string.IsNullOrEmpty(GetResourceString(entry.Metadata.Header)))
+                    {
                         menuItem.Header = GetResourceString(entry.Metadata.Header);
+                    }
 
                     // NOTE: add icon here if Avalonia add icon support for native menu
 
@@ -473,12 +475,18 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 {
                     var intersection = boundsRect.Intersect(screen.WorkingArea.ToRect(instance.PlatformImpl.DesktopScaling));
                     if (intersection.Width > 10 && intersection.Height > 10)
+                    {
                         boundsOK = true;
+                    }
                 }
                 if (boundsOK)
+                {
                     instance.SetWindowBounds(instance.sessionSettings.WindowBounds);
+                }
                 else
+                {
                     instance.SetWindowBounds(SessionSettings.DefaultWindowBounds);
+                }
             }
             else
             {
@@ -514,7 +522,10 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         }
         LoadAssemblies(args.AssembliesToLoad, commandLineLoadedAssemblies, focusNode: false);
         if (args.Language != null)
+        {
             sessionSettings.FilterSettings.Language = Languages.GetLanguage(args.Language);
+        }
+
         return true;
     }
 
@@ -596,7 +607,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             {
                 AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
                 output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", navigateTo));
-                decompilerTextView.ShowText(output);
+                TextView.ShowText(output);
             }
         }
         else if (relevantAssemblies.Count == 1)
@@ -632,11 +643,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     SelectNode(node);
 
                     // only if not showing the about page, perform the update check:
-                    ShowMessageIfUpdatesAvailableAsync(spySettings);
+                    ShowMessageIfUpdatesAvailable(spySettings);
                 }
                 else
                 {
-                    AboutPage.Display(decompilerTextView);
+                    AboutPage.Display(TextView);
                 }
             }
         }
@@ -644,8 +655,8 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     private IEntity FindEntityInRelevantAssemblies(string navigateTo, IEnumerable<LoadedAssembly> relevantAssemblies)
     {
-        ITypeReference typeRef = null;
         IMemberReference memberRef = null;
+        ITypeReference typeRef;
         if (navigateTo.StartsWith("T:", StringComparison.Ordinal))
         {
             typeRef = IdStringProvider.ParseTypeName(navigateTo);
@@ -665,7 +676,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     : new SimpleCompilation((PEFile)module, MinimalCorlib.Instance);
                 return memberRef == null
                     ? typeRef.Resolve(new SimpleTypeResolveContext(compilation)) as ITypeDefinition
-                    : (IEntity)memberRef.Resolve(new SimpleTypeResolveContext(compilation));
+                    : memberRef.Resolve(new SimpleTypeResolveContext(compilation));
             }
         }
         return null;
@@ -680,9 +691,15 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 return !typeHandle.IsNil;
             case NestedTypeReference nestedType:
                 if (!CanResolveTypeInPEFile(module, nestedType.DeclaringTypeReference, out typeHandle))
+                {
                     return false;
+                }
+
                 if (typeHandle.Kind == HandleKind.ExportedType)
+                {
                     return true;
+                }
+
                 var typeDef = module.Metadata.GetTypeDefinition((TypeDefinitionHandle)typeHandle);
                 typeHandle = typeDef.GetNestedTypes().FirstOrDefault(t =>
                 {
@@ -744,7 +761,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
         AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
         if (FormatExceptions([.. App.StartupExceptions], output))
-            decompilerTextView.ShowText(output);
+        {
+            TextView.ShowText(output);
+        }
     }
 
     bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
@@ -760,19 +779,27 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     internal static bool FormatExceptions(App.ExceptionData[] exceptions, StringBuilder output)
     {
-        if (exceptions.Length == 0) return false;
+        if (exceptions.Length == 0)
+        {
+            return false;
+        }
+
         bool first = true;
 
         foreach (var item in exceptions)
         {
             if (first)
-                first = false;
-            else
-                output.AppendLine("-------------------------------------------------");
-            output.AppendLine("Error(s) loading plugin: " + item.PluginName);
-            if (item.Exception is System.Reflection.ReflectionTypeLoadException)
             {
-                var e = (System.Reflection.ReflectionTypeLoadException)item.Exception;
+                first = false;
+            }
+            else
+            {
+                output.AppendLine("-------------------------------------------------");
+            }
+
+            output.AppendLine("Error(s) loading plugin: " + item.PluginName);
+            if (item.Exception is System.Reflection.ReflectionTypeLoadException e)
+            {
                 foreach (var ex in e.LoaderExceptions)
                 {
                     output.AppendLine(ex.ToString());
@@ -780,7 +807,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 }
             }
             else
+            {
                 output.AppendLine(item.Exception.ToString());
+            }
         }
 
         return true;
@@ -789,7 +818,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     #region Update Check
     string updateAvailableDownloadUrl;
 
-    public void ShowMessageIfUpdatesAvailableAsync(ILSpySettings spySettings, bool forceCheck = false)
+    public void ShowMessageIfUpdatesAvailable(ILSpySettings spySettings, bool forceCheck = false)
     {
         Task<string> result;
         if (forceCheck)
@@ -809,7 +838,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     {
         if (updateAvailableDownloadUrl != null)
         {
-            MainWindow.OpenLink(updateAvailableDownloadUrl);
+            OpenLink(updateAvailableDownloadUrl);
         }
         else
         {
@@ -822,7 +851,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     void AdjustUpdateUIAfterCheck(Task<string> task, bool displayMessage)
     {
         updateAvailableDownloadUrl = task.Result;
-        updatePanel.IsVisible = displayMessage ? true : false;
+        updatePanel.IsVisible = displayMessage;
         if (task.Result != null)
         {
             updatePanelMessage.Text = Properties.Resources.ILSpyVersionAvailable;
@@ -896,11 +925,13 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         System.Reflection.Assembly[] initialAssemblies = {
             typeof(object).Assembly,
             typeof(Uri).Assembly,
-            typeof(System.Linq.Enumerable).Assembly,
-            typeof(System.Xml.XmlDocument).Assembly,
+            typeof(Enumerable).Assembly,
+            typeof(XmlDocument).Assembly,
         };
         foreach (System.Reflection.Assembly asm in initialAssemblies)
+        {
             assemblyList.OpenAssembly(asm.Location);
+        }
     }
 
     void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -918,7 +949,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         // Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
         // mutable instance changes.
         if (assemblyListTreeNode != null)
+        {
             assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
+        }
     }
 
     internal AssemblyListTreeNode AssemblyListTreeNode => assemblyListTreeNode;
@@ -960,24 +993,35 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     public SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
     {
         if (path == null)
+        {
             return null;
+        }
+
         SharpTreeNode node = treeView.Root;
         SharpTreeNode bestMatch = node;
         foreach (var element in path)
         {
             if (node == null)
+            {
                 break;
+            }
+
             bestMatch = node;
             node.EnsureLazyChildren();
-            var ilSpyTreeNode = node as ILSpyTreeNode;
-            if (ilSpyTreeNode != null)
+            if (node is ILSpyTreeNode ilSpyTreeNode)
+            {
                 ilSpyTreeNode.EnsureChildrenFiltered();
+            }
             node = node.Children.FirstOrDefault(c => c.ToString() == element);
         }
         if (returnBestMatch)
+        {
             return node ?? bestMatch;
+        }
         else
+        {
             return node;
+        }
     }
 
     /// <summary>
@@ -986,7 +1030,10 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     public static string[] GetPathForNode(SharpTreeNode node)
     {
         if (node == null)
+        {
             return null;
+        }
+
         List<string> path = [];
         while (node.Parent != null)
         {
@@ -997,28 +1044,18 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         return [.. path];
     }
 
-    public ILSpyTreeNode FindTreeNode(object reference)
-    {
-        switch (reference)
+    public ILSpyTreeNode FindTreeNode(object reference) =>
+        reference switch
         {
-            case PEFile asm:
-                return assemblyListTreeNode.FindAssemblyNode(asm);
-            case Resource res:
-                return assemblyListTreeNode.FindResourceNode(res);
-            case ITypeDefinition type:
-                return assemblyListTreeNode.FindTypeNode(type);
-            case IField fd:
-                return assemblyListTreeNode.FindFieldNode(fd);
-            case IMethod md:
-                return assemblyListTreeNode.FindMethodNode(md);
-            case IProperty pd:
-                return assemblyListTreeNode.FindPropertyNode(pd);
-            case IEvent ed:
-                return assemblyListTreeNode.FindEventNode(ed);
-            default:
-                return null;
-        }
-    }
+            PEFile asm => assemblyListTreeNode.FindAssemblyNode(asm),
+            Resource res => assemblyListTreeNode.FindResourceNode(res),
+            ITypeDefinition type => assemblyListTreeNode.FindTypeNode(type),
+            IField fd => assemblyListTreeNode.FindFieldNode(fd),
+            IMethod md => assemblyListTreeNode.FindMethodNode(md),
+            IProperty pd => assemblyListTreeNode.FindPropertyNode(pd),
+            IEvent ed => assemblyListTreeNode.FindEventNode(ed),
+            _ => null,
+        };
 
     public void JumpToReference(object reference) => JumpToReferenceAsync(reference).HandleExceptions();
 
@@ -1039,13 +1076,16 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 break;
             case ValueTuple<MetadataFile, EntityHandle> unresolvedEntity:
                 var typeSystem =
-                    new DecompilerTypeSystem(unresolvedEntity.Item1, unresolvedEntity.Item1.GetAssemblyResolver() );
+                    new DecompilerTypeSystem(unresolvedEntity.Item1, unresolvedEntity.Item1.GetAssemblyResolver());
                 reference = typeSystem.MainModule.ResolveEntity(unresolvedEntity.Item2);
                 goto default;
             default:
                 ILSpyTreeNode treeNode = FindTreeNode(reference);
                 if (treeNode != null)
+                {
                     SelectNode(treeNode);
+                }
+
                 break;
         }
         return decompilationTask;
@@ -1146,7 +1186,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     async void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
     {
         e.Handled = true;
-        OpenFileDialog dlg = new OpenFileDialog();
+        var dlg = new OpenFileDialog();
         dlg.Title = "Open file";
         dlg.Filters =
         [
@@ -1157,7 +1197,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         dlg.AllowMultiple = true;
         //dlg.RestoreDirectory = true;
         var filenames = await dlg.ShowAsync(this);
-        if (filenames != null && filenames.Length > 0)
+        if (filenames?.Length > 0)
         {
             OpenFiles(filenames);
         }
@@ -1168,7 +1208,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         ArgumentNullException.ThrowIfNull(fileNames);
 
         if (focusNode)
+        {
             treeView.UnselectAll();
+        }
 
         LoadAssemblies(fileNames, focusNode: focusNode);
     }
@@ -1184,17 +1226,22 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     handlingNugetPackageSelection = true;
                     try
                     {
-                        LoadedNugetPackage package = new LoadedNugetPackage(file);
+                        var package = new LoadedNugetPackage(file);
                         var selectionDialog = new NugetPackageBrowserDialog(package, this);
-                        if (await selectionDialog.ShowDialog<bool>(this) != true)
+                        if (!await selectionDialog.ShowDialog<bool>(this))
+                        {
                             break;
+                        }
+
                         foreach (var entry in selectionDialog.SelectedItems)
                         {
                             var nugetAsm = assemblyList.OpenAssembly("nupkg://" + file + ";" + entry.Name, entry.Stream, true);
                             if (nugetAsm != null)
                             {
                                 if (loadedAssemblies != null)
+                                {
                                     loadedAssemblies.Add(nugetAsm);
+                                }
                                 else
                                 {
                                     var node = assemblyListTreeNode.FindAssemblyNode(nugetAsm);
@@ -1218,7 +1265,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                     if (asm != null)
                     {
                         if (loadedAssemblies != null)
+                        {
                             loadedAssemblies.Add(asm);
+                        }
                         else
                         {
                             var node = assemblyListTreeNode.FindAssemblyNode(asm);
@@ -1232,7 +1281,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             }
 
             if (lastNode != null && focusNode)
+            {
                 treeView.FocusNode(lastNode);
+            }
         }
 
 
@@ -1276,29 +1327,38 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     void DecompileSelectedNodes(DecompilerTextViewState state = null, bool recordHistory = true)
     {
         if (ignoreDecompilationRequests)
+        {
             return;
+        }
 
         if (treeView.SelectedItems.Count == 0 && refreshInProgress)
+        {
             return;
+        }
 
-        if (decompilerTextView == null)
+        if (TextView == null)
+        {
             return;
+        }
 
         if (recordHistory)
         {
-            var dtState = decompilerTextView.GetState();
+            var dtState = TextView.GetState();
             if (dtState != null)
+            {
                 history.UpdateCurrent(new NavigationState(dtState));
+            }
+
             history.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>()));
         }
 
-        if (treeView.SelectedItems.Count == 1)
+        if (treeView.SelectedItems.Count == 1
+            && treeView.SelectedItem is ILSpyTreeNode node
+            && node.View(TextView))
         {
-            ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-            if (node != null && node.View(decompilerTextView))
-                return;
+            return;
         }
-        decompilationTask = decompilerTextView.DecompileAsync(CurrentLanguage, SelectedNodes, new DecompilationOptions() { TextViewState = state });
+        decompilationTask = TextView.DecompileAsync(CurrentLanguage, SelectedNodes, new DecompilationOptions() { TextViewState = state });
     }
 
     void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1307,7 +1367,8 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         e.CanExecute = SaveCodeContextMenuEntry.CanExecute(SelectedNodes.ToList());
     }
 
-    void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCodeContextMenuEntry.Execute(SelectedNodes.ToList());
+    void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) =>
+        SaveCodeContextMenuEntry.Execute(SelectedNodes.ToList());
 
     public void RefreshDecompiledView()
     {
@@ -1323,7 +1384,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     }
 
-    public DecompilerTextView TextView => decompilerTextView;
+    public DecompilerTextView TextView { get; }
 
     public Language CurrentLanguage => sessionSettings.FilterSettings.Language;
     public LanguageVersion CurrentLanguageVersion => sessionSettings.FilterSettings.LanguageVersion;
@@ -1366,9 +1427,12 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     void NavigateHistory(bool forward)
     {
-        var dtState = decompilerTextView.GetState();
+        var dtState = TextView.GetState();
         if (dtState != null)
+        {
             history.UpdateCurrent(new NavigationState(dtState));
+        }
+
         var newState = forward ? history.GoForward() : history.GoBack();
 
         ignoreDecompilationRequests = true;
@@ -1378,7 +1442,10 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             treeView.SelectedItems.Add(node);
         }
         if (newState.TreeNodes.Any())
+        {
             treeView.FocusNode(newState.TreeNodes.First());
+        }
+
         ignoreDecompilationRequests = false;
         DecompileSelectedNodes(newState.ViewState, false);
     }
@@ -1390,7 +1457,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         base.HandleWindowStateChanged(state);
         // store window state in settings only if it's not minimized
         if (WindowState != WindowState.Minimized)
+        {
             sessionSettings.WindowState = WindowState;
+        }
     }
 
     protected override bool HandleClosing()
@@ -1400,10 +1469,16 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         sessionSettings.ActiveAutoLoadedAssembly = GetAutoLoadedAssemblyNode(treeView.SelectedItem as SharpTreeNode);
         sessionSettings.WindowBounds = new Rect(Position.ToPoint(PlatformImpl.DesktopScaling), ClientSize);
         sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
-        if (topPane.IsVisible == true)
+        if (topPane.IsVisible)
+        {
             sessionSettings.TopPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
-        if (bottomPane.IsVisible == true)
+        }
+
+        if (bottomPane.IsVisible)
+        {
             sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
+        }
+
         sessionSettings.Save();
 
         return base.HandleClosing();
@@ -1412,16 +1487,21 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     private string GetAutoLoadedAssemblyNode(SharpTreeNode node)
     {
         if (node == null)
+        {
             return null;
-        while (!(node is TreeNodes.AssemblyTreeNode) && node.Parent != null)
+        }
+
+        while (node is not AssemblyTreeNode && node.Parent != null)
         {
             node = node.Parent;
         }
         //this should be an assembly node
-        var assyNode = node as TreeNodes.AssemblyTreeNode;
+        var assyNode = node as AssemblyTreeNode;
         var loadedAssy = assyNode.LoadedAssembly;
         if (!(loadedAssy.IsLoaded && loadedAssy.IsAutoLoaded))
+        {
             return null;
+        }
 
         return loadedAssy.FileName;
     }
@@ -1468,9 +1548,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         topPane.Title = title;
         if (topPane.Content != content)
         {
-            IPane pane = topPane.Content as IPane;
-            if (pane != null)
+            if (topPane.Content is IPane pane)
+            {
                 pane.Closed();
+            }
+
             topPane.Content = content;
         }
         topPane.IsVisible = true;
@@ -1485,8 +1567,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
         IPane pane = topPane.Content as IPane;
         topPane.Content = null;
-        if (pane != null)
-            pane.Closed();
+        pane?.Closed();
     }
 
     public void ShowInBottomPane(string title, object content)
@@ -1503,9 +1584,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         bottomPane.Title = title;
         if (bottomPane.Content != content)
         {
-            IPane pane = bottomPane.Content as IPane;
-            if (pane != null)
+            if (bottomPane.Content is IPane pane)
+            {
                 pane.Closed();
+            }
+
             bottomPane.Content = content;
         }
         bottomPane.IsVisible = true;
@@ -1520,8 +1603,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
         IPane pane = bottomPane.Content as IPane;
         bottomPane.Content = null;
-        if (pane != null)
-            pane.Closed();
+        pane?.Closed();
     }
     #endregion
 
@@ -1529,8 +1611,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     public void SetStatus(string status, IBrush foreground)
     {
-        if (statusBar.IsVisible == false)
+        if (!statusBar.IsVisible)
+        {
             statusBar.IsVisible = true;
+        }
+
         StatusLabel.Foreground = foreground;
         StatusLabel.Text = status;
     }

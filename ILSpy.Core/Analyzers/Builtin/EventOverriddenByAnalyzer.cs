@@ -35,8 +35,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			var scope = context.GetScopeOf((IEvent)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in AnalyzeType((IEvent)analyzedSymbol, type))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> AnalyzeType(IEvent analyzedEntity, ITypeDefinition type)
@@ -46,10 +48,16 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
         var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
         var allTypes = type.GetAllBaseTypeDefinitions();
         if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+        {
             yield break;
+        }
 
-			foreach (var @event in type.Events) {
-				if (!@event.IsOverride) continue;
+        foreach (var @event in type.Events) {
+				if (!@event.IsOverride)
+            {
+                continue;
+            }
+
             var baseMembers = InheritanceHelper.GetBaseMembers(@event, false);
             if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
                 yield return @event;

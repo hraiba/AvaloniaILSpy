@@ -85,8 +85,12 @@ namespace ICSharpCode.ILSpy;
 		private void ILAstStepperUpdated(object sender, EventArgs e)
 		{
 #if DEBUG
-			if (language == null) return;
-			Dispatcher.UIThread.InvokeAsync(() => {
+			if (language == null)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.InvokeAsync(() => {
 				tree.Items = language.Stepper.Steps;
 				lastSelectedStep = int.MaxValue;
 			});
@@ -110,22 +114,34 @@ namespace ICSharpCode.ILSpy;
 		private void ShowStateAfter_Click(object sender, RoutedEventArgs e)
 		{
 			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null) return;
-			DecompileAsync(n.EndStep);
+			if (n == null)
+        {
+            return;
+        }
+
+        DecompileAsync(n.EndStep);
 		}
 
 		private void ShowStateBefore_Click(object sender, RoutedEventArgs e)
 		{
 			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null) return;
-			DecompileAsync(n.BeginStep);
+			if (n == null)
+        {
+            return;
+        }
+
+        DecompileAsync(n.BeginStep);
 		}
 
 		private void DebugStep_Click(object sender, RoutedEventArgs e)
 		{
 			Stepper.Node n = (Stepper.Node)tree.SelectedItem;
-			if (n == null) return;
-			DecompileAsync(n.BeginStep, true);
+			if (n == null)
+        {
+            return;
+        }
+
+        DecompileAsync(n.BeginStep, true);
 		}
 
 		int lastSelectedStep = int.MaxValue;
@@ -147,10 +163,15 @@ namespace ICSharpCode.ILSpy;
 		{
 			if (e.Key == Key.Enter || e.Key == Key.Return) {
 				if (e.KeyModifiers == KeyModifiers.Shift)
-					ShowStateBefore_Click(sender, e);
-				else
-					ShowStateAfter_Click(sender, e);
-				e.Handled = true;
+            {
+                ShowStateBefore_Click(sender, e);
+            }
+            else
+            {
+                ShowStateAfter_Click(sender, e);
+            }
+
+            e.Handled = true;
 			}
 		}
 	}

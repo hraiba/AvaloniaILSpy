@@ -21,8 +21,11 @@ namespace ICSharpCode.ILSpy;
 		public unsafe static Mono.Cecil.ModuleDefinition CreateCecilObjectModel(this PEFile file)
 		{
 			if (!file.Reader.IsEntireImageAvailable)
-				throw new InvalidOperationException("Need full image to create Cecil object model!");
-			var image = file.Reader.GetEntireImage();
+        {
+            throw new InvalidOperationException("Need full image to create Cecil object model!");
+        }
+
+        var image = file.Reader.GetEntireImage();
 			return Mono.Cecil.ModuleDefinition.ReadModule(new UnmanagedMemoryStream(image.Pointer, image.Length));
 		}
     public static IAssemblyResolver GetAssemblyResolver(this MetadataFile file, bool loadOnDemand = true) => GetLoadedAssembly(file).GetAssemblyResolver(loadOnDemand);
@@ -50,8 +53,10 @@ namespace ICSharpCode.ILSpy;
 			lock (LoadedAssembly.loadedAssemblies)
 			{
 				if (!LoadedAssembly.loadedAssemblies.TryGetValue(file, out loadedAssembly))
-					throw new ArgumentException("The specified file is not associated with a LoadedAssembly!");
-			}
+            {
+                throw new ArgumentException("The specified file is not associated with a LoadedAssembly!");
+            }
+        }
 			return loadedAssembly;
 		}
 	}

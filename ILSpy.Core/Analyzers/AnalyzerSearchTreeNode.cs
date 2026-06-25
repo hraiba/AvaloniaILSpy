@@ -112,8 +112,10 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			bool manualAdd = false;
 			foreach (var asm in addedAssemblies) {
 				if (!asm.IsAutoLoaded)
-					manualAdd = true;
-			}
+            {
+                manualAdd = true;
+            }
+        }
 			if (removedAssemblies.Count > 0 || manualAdd) {
 				LazyLoading = true;
 				threading.Cancel();

@@ -12,8 +12,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public void Execute(TextViewContext context)
 		{
 			var member = GetMemberNodeFromContext(context)?.Member;
-			if (member == null) return;
-			App.Current.Clipboard.SetTextAsync(member.ReflectionName);
+			if (member == null)
+        {
+            return;
+        }
+
+        App.Current.Clipboard.SetTextAsync(member.ReflectionName);
 		}
 
     private IMemberTreeNode GetMemberNodeFromContext(TextViewContext context) => context.SelectedTreeNodes?.Length == 1 ? context.SelectedTreeNodes[0] as IMemberTreeNode : null;

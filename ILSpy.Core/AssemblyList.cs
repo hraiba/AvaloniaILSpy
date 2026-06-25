@@ -165,8 +165,10 @@ namespace ICSharpCode.ILSpy;
 			
 			foreach (LoadedAssembly asm in assemblies) {
 				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
+            {
+                return asm;
+            }
+        }
 			
 			var newAsm = new LoadedAssembly(this, file);
 			newAsm.IsAutoLoaded = isAutoLoaded;
@@ -185,8 +187,10 @@ namespace ICSharpCode.ILSpy;
 
 			foreach (LoadedAssembly asm in assemblies) {
 				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
+            {
+                return asm;
+            }
+        }
 
 			var newAsm = new LoadedAssembly(this, file, stream);
 			newAsm.IsAutoLoaded = isAutoLoaded;
@@ -207,9 +211,11 @@ namespace ICSharpCode.ILSpy;
 
 			var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
 			if (target == null)
-				return null;
+        {
+            return null;
+        }
 
-			var index = assemblies.IndexOf(target);
+        var index = assemblies.IndexOf(target);
 			var newAsm = new LoadedAssembly(this, file, stream);
 			newAsm.IsAutoLoaded = target.IsAutoLoaded;
 			lock (assemblies) {
@@ -226,9 +232,11 @@ namespace ICSharpCode.ILSpy;
 
 			var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
 			if (target == null)
-				return null;
+        {
+            return null;
+        }
 
-			var index = assemblies.IndexOf(target);
+        var index = assemblies.IndexOf(target);
 			var newAsm = new LoadedAssembly(this, file);
 			newAsm.IsAutoLoaded = target.IsAutoLoaded;
 			lock (assemblies) {
@@ -251,8 +259,12 @@ namespace ICSharpCode.ILSpy;
 		
 		void RequestGC()
 		{
-			if (gcRequested) return;
-			gcRequested = true;
+			if (gcRequested)
+        {
+            return;
+        }
+
+        gcRequested = true;
 			Dispatcher.UIThread.InvokeAsync(new Action(
 				delegate {
 					gcRequested = false;

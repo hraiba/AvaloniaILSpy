@@ -58,11 +58,12 @@ namespace ICSharpCode.ILSpy.Options;
             tabItem.Header = MainWindow.GetResourceString(optionPage.Metadata.Title);
 				tabItem.Content = optionPage.Value;
 				tabItems.Add(tabItem);
-				
-				IOptionPage page = optionPage.Value as IOptionPage;
-				if (page != null)
-					page.Load(settings);
-			}
+
+            if (optionPage.Value is IOptionPage page)
+            {
+                page.Load(settings);
+            }
+        }
 			tabControl.Items = tabItems;
 		}
 
@@ -81,10 +82,11 @@ namespace ICSharpCode.ILSpy.Options;
 			ILSpySettings.Update(
 				delegate (XElement root) {
 					foreach (var optionPage in optionPages) {
-						IOptionPage page = optionPage.Value as IOptionPage;
-						if (page != null)
-							page.Save(root);
-					}
+                        if (optionPage.Value is IOptionPage page)
+                        {
+                            page.Save(root);
+                        }
+                    }
 				});
 			//this.DialogResult = true;
 			Close(true);
@@ -122,7 +124,7 @@ sealed class ShowOptionsCommand : SimpleCommand
 		{
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Title = "Options";
-			if (await dlg.ShowDialog<bool>(MainWindow.Instance) == true) {
+			if (await dlg.ShowDialog<bool>(MainWindow.Instance)) {
 				new RefreshCommand().Execute(parameter);
 			}
 		}

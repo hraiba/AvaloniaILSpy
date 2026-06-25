@@ -25,9 +25,17 @@ class MetadataTokenSearchStrategy : AbstractSearchStrategy
     public override void Search(MetadataFile module, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (searchTermToken.IsNil) return;
+        if (searchTermToken.IsNil)
+        {
+            return;
+        }
+
         var typeSystem = module.GetTypeSystemOrNull();
-        if (typeSystem == null) return;
+        if (typeSystem == null)
+        {
+            return;
+        }
+
         var metadataModule = (MetadataModule)typeSystem.MainModule;
         int row = module.Metadata.GetRowNumber(searchTermToken);
 
@@ -35,37 +43,72 @@ class MetadataTokenSearchStrategy : AbstractSearchStrategy
         {
             case HandleKind.TypeDefinition:
                 if (row < 1 || row > module.Metadata.TypeDefinitions.Count)
+                {
                     break;
+                }
+
                 var type = metadataModule.GetDefinition((TypeDefinitionHandle)searchTermToken);
-                if (!CheckVisibility(type)) break;
+                if (!CheckVisibility(type))
+                {
+                    break;
+                }
+
                 OnFoundResult(type);
                 break;
             case HandleKind.MethodDefinition:
                 if (row < 1 || row > module.Metadata.MethodDefinitions.Count)
+                {
                     break;
+                }
+
                 var method = metadataModule.GetDefinition((MethodDefinitionHandle)searchTermToken);
-                if (!CheckVisibility(method)) break;
+                if (!CheckVisibility(method))
+                {
+                    break;
+                }
+
                 OnFoundResult(method);
                 break;
             case HandleKind.FieldDefinition:
                 if (row < 1 || row > module.Metadata.FieldDefinitions.Count)
+                {
                     break;
+                }
+
                 var field = metadataModule.GetDefinition((FieldDefinitionHandle)searchTermToken);
-                if (!CheckVisibility(field)) break;
+                if (!CheckVisibility(field))
+                {
+                    break;
+                }
+
                 OnFoundResult(field);
                 break;
             case HandleKind.PropertyDefinition:
                 if (row < 1 || row > module.Metadata.PropertyDefinitions.Count)
+                {
                     break;
+                }
+
                 var property = metadataModule.GetDefinition((PropertyDefinitionHandle)searchTermToken);
-                if (!CheckVisibility(property)) break;
+                if (!CheckVisibility(property))
+                {
+                    break;
+                }
+
                 OnFoundResult(property);
                 break;
             case HandleKind.EventDefinition:
                 if (row < 1 || row > module.Metadata.EventDefinitions.Count)
+                {
                     break;
+                }
+
                 var @event = metadataModule.GetDefinition((EventDefinitionHandle)searchTermToken);
-                if (!CheckVisibility(@event)) break;
+                if (!CheckVisibility(@event))
+                {
+                    break;
+                }
+
                 OnFoundResult(@event);
                 break;
         }

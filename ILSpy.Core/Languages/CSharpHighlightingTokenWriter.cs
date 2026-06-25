@@ -112,10 +112,15 @@ namespace ICSharpCode.ILSpy;
 				case "namespace":
 				case "using":
 					if (role == UsingStatement.UsingKeywordRole)
-						color = structureKeywordsColor;
-					else
-						color = namespaceKeywordsColor;
-					break;
+                {
+                    color = structureKeywordsColor;
+                }
+                else
+                {
+                    color = namespaceKeywordsColor;
+                }
+
+                break;
 				case "this":
 				case "base":
 					color = thisKeywordColor;
@@ -146,18 +151,30 @@ namespace ICSharpCode.ILSpy;
 					break;
 				case "where":
 					if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					else
-						color = structureKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+                else
+                {
+                    color = structureKeywordsColor;
+                }
+
+                break;
 				case "in":
 					if (nodeStack.PeekOrDefault() is ForeachStatement)
-						color = structureKeywordsColor;
-					else if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					else
-						color = parameterModifierColor;
-					break;
+                {
+                    color = structureKeywordsColor;
+                }
+                else if (nodeStack.PeekOrDefault() is QueryClause)
+                {
+                    color = queryKeywordsColor;
+                }
+                else
+                {
+                    color = parameterModifierColor;
+                }
+
+                break;
 				case "as":
 				case "is":
 				case "new":
@@ -175,8 +192,11 @@ namespace ICSharpCode.ILSpy;
 					break;
 				case "when":
 					if (role == CatchClause.WhenKeywordRole)
-						color = exceptionKeywordsColor;
-					break;
+                {
+                    color = exceptionKeywordsColor;
+                }
+
+                break;
 				case "get":
 				case "set":
 				case "add":
@@ -185,8 +205,11 @@ namespace ICSharpCode.ILSpy;
 						role == PropertyDeclaration.SetKeywordRole ||
 						role == CustomEventDeclaration.AddKeywordRole ||
 						role == CustomEventDeclaration.RemoveKeywordRole)
-						color = accessorKeywordsColor;
-					break;
+                {
+                    color = accessorKeywordsColor;
+                }
+
+                break;
 				case "abstract":
 				case "const":
 				case "event":
@@ -229,13 +252,19 @@ namespace ICSharpCode.ILSpy;
 				case "on":
 				case "equals":
 					if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+
+                break;
 				case "ascending":
 				case "descending":
 					if (nodeStack.PeekOrDefault() is QueryOrdering)
-						color = queryKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+
+                break;
 				case "explicit":
 				case "implicit":
 				case "operator":
@@ -255,8 +284,11 @@ namespace ICSharpCode.ILSpy;
 					break;
 			}
 			if (nodeStack.PeekOrDefault() is AttributeSection)
-				color = attributeKeywordsColor;
-			if (color != null) {
+        {
+            color = attributeKeywordsColor;
+        }
+
+        if (color != null) {
 				textOutput.BeginSpan(color);
 			}
 			base.WriteKeyword(role, keyword);
@@ -312,10 +344,16 @@ namespace ICSharpCode.ILSpy;
 		{
 			HighlightingColor color = null;
 			if (identifier.Name == "value" && identifier.Ancestors.OfType<Accessor>().FirstOrDefault() is Accessor accessor && accessor.Role != PropertyDeclaration.GetterRole)
-				color = valueKeywordColor;
-			if ((identifier.Name == "dynamic" || identifier.Name == "var") && identifier.Parent is AstType)
-				color = queryKeywordsColor;
-			switch (GetCurrentDefinition()) {
+        {
+            color = valueKeywordColor;
+        }
+
+        if ((identifier.Name == "dynamic" || identifier.Name == "var") && identifier.Parent is AstType)
+        {
+            color = queryKeywordsColor;
+        }
+
+        switch (GetCurrentDefinition()) {
 				case ITypeDefinition t:
 					switch (t.Kind) {
 						case TypeKind.Delegate:
@@ -399,15 +437,22 @@ namespace ICSharpCode.ILSpy;
 		ISymbol GetCurrentDefinition()
 		{
 			if (nodeStack == null || nodeStack.Count == 0)
-				return null;
+        {
+            return null;
+        }
 
-			var node = nodeStack.Peek();
+        var node = nodeStack.Peek();
 			if (node is Identifier)
-				node = node.Parent;
-        if (Decompiler.TextTokenWriter.IsDefinition(ref node))
-            return node.GetSymbol();
+        {
+            node = node.Parent;
+        }
 
-			return null;
+        if (Decompiler.TextTokenWriter.IsDefinition(ref node))
+        {
+            return node.GetSymbol();
+        }
+
+        return null;
 		}
 
 		ISymbol GetCurrentMemberReference()
@@ -423,8 +468,10 @@ namespace ICSharpCode.ILSpy;
 			if (node is IdentifierExpression && node.Role == Roles.TargetExpression && node.Parent is InvocationExpression && symbol is IMember member) {
 				var declaringType = member.DeclaringType;
 				if (declaringType != null && declaringType.Kind == TypeKind.Delegate)
-					return null;
-			}
+            {
+                return null;
+            }
+        }
 			return symbol;
 		}
 

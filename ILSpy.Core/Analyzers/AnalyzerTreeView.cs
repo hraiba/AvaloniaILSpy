@@ -63,19 +63,27 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			} else {
 				List<LoadedAssembly> removedAssemblies = [];
 				if (e.OldItems != null)
-					removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
-				List<LoadedAssembly> addedAssemblies = [];
+            {
+                removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
+            }
+
+            List<LoadedAssembly> addedAssemblies = [];
 				if (e.NewItems != null)
-					addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
-				((AnalyzerRootNode)Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+            {
+                addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
+            }
+
+            ((AnalyzerRootNode)Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 			}
 		}
 
 		public void Show()
 		{
 			if (VisualRoot == null)
-				MainWindow.Instance.ShowInBottomPane("Analyzer", this);
-		}
+        {
+            MainWindow.Instance.ShowInBottomPane("Analyzer", this);
+        }
+    }
 
 		public void Show(AnalyzerTreeNode node)
 		{
@@ -120,8 +128,11 @@ namespace ICSharpCode.ILSpy.Analyzers;
 					break;
 				case IField fd:
                 if (!fd.IsConst)
+                {
                     ShowOrFocus(new AnalyzedFieldTreeNode(fd));
-					break;
+                }
+
+                break;
 				case IMethod md:
 					ShowOrFocus(new AnalyzedMethodTreeNode(md));
 					break;
@@ -144,9 +155,8 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			{
 				Children.RemoveAll(
 					delegate(SharpTreeNode n) {
-						AnalyzerTreeNode an = n as AnalyzerTreeNode;
-						return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
-					});
+                        return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+                    });
 				return true;
 			}
 		}

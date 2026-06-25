@@ -49,16 +49,19 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 		{
 			var module = (MetadataModule)analyzedMethod.ParentModule;
 			var md = module.MetadataFile.Metadata.GetMethodDefinition(handle);
-			if (!md.HasBody()) yield break;
+			if (!md.HasBody())
+        {
+            yield break;
+        }
 
-			BlobReader blob;
+        BlobReader blob;
 			try {
 				blob = module.MetadataFile.GetMethodBody(md.RelativeVirtualAddress).GetILReader();
 			} catch (BadImageFormatException) {
 				yield break;
 			}
 			var visitor = new TypeDefinitionCollector();
-			var genericContext = new Decompiler.TypeSystem.GenericContext(); // type parameters don't matter for this analyzer
+			var genericContext = new GenericContext(); // type parameters don't matter for this analyzer
 
 			while (blob.RemainingBytes > 0) {
 				ILOpCode opCode;
@@ -73,9 +76,12 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 					case OperandType.Sig:
 					case OperandType.Tok:
 						var member = MetadataTokenHelpers.EntityHandleOrNil(blob.ReadInt32());
-						if (member.IsNil) continue;
+						if (member.IsNil)
+                    {
+                        continue;
+                    }
 
-						switch (member.Kind) {
+                    switch (member.Kind) {
 							case HandleKind.StandaloneSignature:
 								break;
 							case HandleKind.TypeDefinition:
@@ -100,8 +106,11 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 									m = null;
 								}
 								if (m != null)
-									yield return m;
-								break;
+                            {
+                                yield return m;
+                            }
+
+                            break;
 						}
 						break;
 					default:

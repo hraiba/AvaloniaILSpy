@@ -30,36 +30,56 @@ namespace ICSharpCode.ILSpy;
 		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
 		{
 			foreach (T item in items)
-				if (!list.Contains(item))
-					list.Add(item);
-		}
+        {
+            if (!list.Contains(item))
+            {
+                list.Add(item);
+            }
+        }
+    }
 
 		public static T PeekOrDefault<T>(this Stack<T> stack)
 		{
 			if (stack.Count == 0)
-				return default(T);
-			return stack.Peek();
+        {
+            return default(T);
+        }
+
+        return stack.Peek();
 		}
 
 		public static int BinarySearch<T>(this IList<T> list, T item, int start, int count, IComparer<T> comparer)
 		{
         ArgumentNullException.ThrowIfNull(list);
         if (start < 0 || start >= list.Count)
-				throw new ArgumentOutOfRangeException(nameof(start), start, "Value must be between 0 and " + (list.Count - 1));
-			if (count < 0 || count > list.Count - start)
-				throw new ArgumentOutOfRangeException(nameof(count), count, "Value must be between 0 and " + (list.Count - start));
-			int end = start + count - 1;
+        {
+            throw new ArgumentOutOfRangeException(nameof(start), start, "Value must be between 0 and " + (list.Count - 1));
+        }
+
+        if (count < 0 || count > list.Count - start)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), count, "Value must be between 0 and " + (list.Count - start));
+        }
+
+        int end = start + count - 1;
 			while (start <= end)
 			{
 				int pivot = (start + end) / 2;
 				int result = comparer.Compare(item, list[pivot]);
 				if (result == 0)
-					return pivot;
-				if (result < 0)
-					end = pivot - 1;
-				else
-					start = pivot + 1;
-			}
+            {
+                return pivot;
+            }
+
+            if (result < 0)
+            {
+                end = pivot - 1;
+            }
+            else
+            {
+                start = pivot + 1;
+            }
+        }
 			return ~start;
 		}
 
@@ -78,12 +98,19 @@ namespace ICSharpCode.ILSpy;
 				TKey key = keySelector(instance[m]);
 				int result = key.CompareTo(itemKey);
 				if (result == 0)
-					return m;
-				if (result < 0)
-					start = m + 1;
-				else
-					end = m - 1;
-			}
+            {
+                return m;
+            }
+
+            if (result < 0)
+            {
+                start = m + 1;
+            }
+            else
+            {
+                end = m - 1;
+            }
+        }
 			return ~start;
 		}
 		/*
@@ -103,12 +130,17 @@ namespace ICSharpCode.ILSpy;
 		public static string ToSuffixString(this System.Reflection.Metadata.EntityHandle handle)
 		{
 			if (!DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
-				return string.Empty;
+        {
+            return string.Empty;
+        }
 
-			int token = System.Reflection.Metadata.Ecma335.MetadataTokens.GetToken(handle);
+        int token = System.Reflection.Metadata.Ecma335.MetadataTokens.GetToken(handle);
 			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokensInBase10)
-				return " @" + token;
-			return " @" + token.ToString("x8");
+        {
+            return " @" + token;
+        }
+
+        return " @" + token.ToString("x8");
 		}
 
     public static string ToSuffixString(this System.Reflection.Metadata.MethodDefinitionHandle handle) => ToSuffixString((System.Reflection.Metadata.EntityHandle)handle);
@@ -128,8 +160,11 @@ namespace ICSharpCode.ILSpy;
     public static string TakeStartEllipsis(this string s, int length)
 		{
 			if (string.IsNullOrEmpty(s) || length >= s.Length)
-				return s;
-			return s.Substring(0, length) + "...";
+        {
+            return s;
+        }
+
+        return s.Substring(0, length) + "...";
 		}
 
 		/// <summary>

@@ -31,7 +31,9 @@ internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
     public bool IsVisible(TextViewContext context)
     {
         if (context.SelectedTreeNodes == null)
+        {
             return false;
+        }
 
         return context.SelectedTreeNodes.All(
             n => n is NamespaceTreeNode
@@ -45,27 +47,41 @@ internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
     public bool IsEnabled(TextViewContext context)
     {
         if (context.SelectedTreeNodes == null)
+        {
             return false;
+        }
 
         foreach (var node in context.SelectedTreeNodes)
         {
             if (node is TypeTreeNode typeNode && !typeNode.IsPublicAPI)
+            {
                 return false;
+            }
 
             if (node is EventTreeNode eventNode && (!eventNode.IsPublicAPI || !IsAccessible(eventNode.EventDefinition)))
+            {
                 return false;
+            }
 
             if (node is FieldTreeNode fieldNode && (!fieldNode.IsPublicAPI || !IsAccessible(fieldNode.FieldDefinition)))
+            {
                 return false;
+            }
 
             if (node is PropertyTreeNode propertyNode && (!propertyNode.IsPublicAPI || !IsAccessible(propertyNode.PropertyDefinition)))
+            {
                 return false;
+            }
 
             if (node is MethodTreeNode methodNode && (!methodNode.IsPublicAPI || !IsAccessible(methodNode.MethodDefinition)))
+            {
                 return false;
+            }
 
             if (node is NamespaceTreeNode namespaceNode && string.IsNullOrEmpty(namespaceNode.Name))
+            {
                 return false;
+            }
         }
 
         return true;
@@ -74,7 +90,10 @@ internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
     bool IsAccessible(IEntity entity)
     {
         if (entity.DeclaringTypeDefinition == null)
+        {
             return false;
+        }
+
         switch (entity.DeclaringTypeDefinition.Accessibility)
         {
             case Accessibility.Public:
@@ -101,9 +120,10 @@ internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
     {
         var address = string.Empty;
 
-        var namespaceNode = node as NamespaceTreeNode;
-        if (namespaceNode != null)
+        if (node is NamespaceTreeNode namespaceNode)
+        {
             address = string.Format(msdnAddress, namespaceNode.Name, Thread.CurrentThread.CurrentUICulture.Name);
+        }
 
         if (node is IMemberTreeNode memberNode)
         {
@@ -111,15 +131,21 @@ internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
             var memberName = string.Empty;
 
             if (member.DeclaringType == null)
+            {
                 memberName = member.FullName;
+            }
             else
+            {
                 memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
+            }
 
             address = string.Format(msdnAddress, memberName, Thread.CurrentThread.CurrentUICulture.Name);
         }
 
         address = address.ToLower();
         if (!string.IsNullOrEmpty(address))
+        {
             MainWindow.OpenLink(address);
+        }
     }
 }

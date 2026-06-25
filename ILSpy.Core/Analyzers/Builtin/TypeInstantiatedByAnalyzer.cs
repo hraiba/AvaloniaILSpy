@@ -45,8 +45,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
 					if (IsUsedInMethod((ITypeDefinition)analyzedSymbol, method, mappingInfo, context))
-						yield return method;
-				}
+                {
+                    yield return method;
+                }
+            }
 
 				foreach (var property in type.Properties) {
 					if (property.CanGet && IsUsedInMethod((ITypeDefinition)analyzedSymbol, property.Getter, mappingInfo, context)) {
@@ -81,10 +83,13 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
     bool ScanMethodBody(ITypeDefinition analyzedEntity, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
-				return false;
-			var blob = methodBody.GetILReader();
+        {
+            return false;
+        }
+
+        var blob = methodBody.GetILReader();
 			var module = (MetadataModule)method.ParentModule;
-			var genericContext = new Decompiler.TypeSystem.GenericContext(); // type parameters don't matter for this analyzer
+			var genericContext = new GenericContext(); // type parameters don't matter for this analyzer
 
 			while (blob.RemainingBytes > 0) {
 				ILOpCode opCode;
@@ -99,20 +104,27 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 				}
 				EntityHandle methodHandle = MetadataTokenHelpers.EntityHandleOrNil(blob.ReadInt32());
 				if (!methodHandle.Kind.IsMemberKind())
-					continue;
-				IMethod ctor;
+            {
+                continue;
+            }
+
+            IMethod ctor;
 				try {
 					ctor = module.ResolveMethod(methodHandle, genericContext);
 				} catch (BadImageFormatException) {
 					continue;
 				}
-				if (ctor == null || !ctor.IsConstructor)
-					continue;
+				if (ctor?.IsConstructor != true)
+            {
+                continue;
+            }
 
-				if (ctor.DeclaringTypeDefinition?.MetadataToken == analyzedEntity.MetadataToken
+            if (ctor.DeclaringTypeDefinition?.MetadataToken == analyzedEntity.MetadataToken
 					&& ctor.ParentModule.MetadataFile == analyzedEntity.ParentModule.MetadataFile)
-					return true;
-			}
+            {
+                return true;
+            }
+        }
 
 			return false;
 		}

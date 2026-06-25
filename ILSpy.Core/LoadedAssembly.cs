@@ -93,7 +93,11 @@ public sealed class LoadedAssembly
     {
         try
         {
-            if (IsLoaded && HasLoadError) return null;
+            if (IsLoaded && HasLoadError)
+            {
+                return null;
+            }
+
             return GetPEFileAsync().Result;
         }
         catch (Exception ex)
@@ -115,10 +119,16 @@ public sealed class LoadedAssembly
     public ICompilation GetTypeSystemOrNull()
     {
         if (typeSystem != null)
+        {
             return typeSystem;
+        }
+
         var module = GetPEFileOrNull();
         if (module == null)
+        {
             return null;
+        }
+
         return typeSystem = new SimpleCompilation(
             module.WithOptions(TypeSystemOptions.Default | TypeSystemOptions.Uncached | TypeSystemOptions.KeepModifiers),
             MinimalCorlib.Instance);
@@ -168,10 +178,16 @@ public sealed class LoadedAssembly
         lock (typeSystemWithOptionsLockObj)
         {
             if (typeSystemWithOptions != null && options == currentTypeSystemOptions)
+            {
                 return typeSystemWithOptions;
+            }
+
             var module = GetMetadataFileOrNull();
-            if (module == null || module.IsMetadataOnly)
+            if (module?.IsMetadataOnly != false)
+            {
                 return null;
+            }
+
             currentTypeSystemOptions = options;
             return typeSystemWithOptions = new SimpleCompilation(
                 module.WithOptions(options | TypeSystemOptions.Uncached | TypeSystemOptions.KeepModifiers),
@@ -194,10 +210,16 @@ public sealed class LoadedAssembly
             {
                 var metadata = GetPEFileOrNull()?.Metadata;
                 string version = null;
-                if (metadata != null && metadata.IsAssembly)
+                if (metadata?.IsAssembly == true)
+                {
                     version = metadata.GetAssemblyDefinition().Version?.ToString();
+                }
+
                 if (version == null)
+                {
                     return ShortName;
+                }
+
                 return String.Format("{0} ({1})", ShortName, version);
             }
             else
@@ -333,10 +355,16 @@ public sealed class LoadedAssembly
     Stream OpenStream(string fileName)
     {
         if (!File.Exists(fileName))
+        {
             return null;
+        }
+
         var memory = new MemoryStream();
         using (var stream = File.OpenRead(fileName))
+        {
             stream.CopyTo(memory);
+        }
+
         memory.Position = 0;
         return memory;
     }
@@ -394,11 +422,14 @@ public sealed class LoadedAssembly
     public IDebugInfoProvider GetDebugInfoOrNull()
     {
         if (GetPEFileOrNull() == null)
+        {
             return null;
+        }
+
         return debugInfoProvider;
     }
 
-    public LoadedAssembly LookupReferencedAssembly(Decompiler.Metadata.IAssemblyReference reference)
+    public LoadedAssembly LookupReferencedAssembly(IAssemblyReference reference)
     {
         ArgumentNullException.ThrowIfNull(reference);
         if (reference.IsWindowsRuntime)
@@ -428,9 +459,9 @@ public sealed class LoadedAssembly
 
     static Dictionary<string, LoadedAssembly> loadingAssemblies = [];
 
-    LoadedAssembly LookupReferencedAssemblyInternal(Decompiler.Metadata.IAssemblyReference fullName, bool isWinRT)
+    LoadedAssembly LookupReferencedAssemblyInternal(IAssemblyReference fullName, bool isWinRT)
     {
-        string GetName(Decompiler.Metadata.IAssemblyReference name) => isWinRT ? name.Name : name.FullName;
+        string GetName(IAssemblyReference name) => isWinRT ? name.Name : name.FullName;
 
         string file;
         LoadedAssembly asm;
@@ -439,7 +470,11 @@ public sealed class LoadedAssembly
             foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
             {
                 var reader = loaded.GetPEFileOrNull()?.Metadata;
-                if (reader == null || !reader.IsAssembly) continue;
+                if (reader?.IsAssembly != true)
+                {
+                    continue;
+                }
+
                 var asmDef = reader.GetAssemblyDefinition();
                 var asmDefName = isWinRT ? reader.GetString(asmDef.Name) : reader.GetFullAssemblyName();
                 if (GetName(fullName).Equals(asmDefName, StringComparison.OrdinalIgnoreCase))
@@ -461,10 +496,14 @@ public sealed class LoadedAssembly
             }
 
             if (file != null && loadingAssemblies.TryGetValue(file, out asm))
+            {
                 return asm;
+            }
 
             if (assemblyLoadDisableCount > 0)
+            {
                 return null;
+            }
 
             if (file != null)
             {
@@ -501,7 +540,11 @@ public sealed class LoadedAssembly
             foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
             {
                 var reader = loaded.GetPEFileOrNull()?.Metadata;
-                if (reader == null || reader.IsAssembly) continue;
+                if (reader?.IsAssembly != false)
+                {
+                    continue;
+                }
+
                 var moduleDef = reader.GetModuleDefinition();
                 if (moduleName.Equals(reader.GetString(moduleDef.Name), StringComparison.OrdinalIgnoreCase))
                 {
@@ -512,7 +555,9 @@ public sealed class LoadedAssembly
 
             file = Path.Combine(Path.GetDirectoryName(mainModule.FileName), moduleName);
             if (!File.Exists(file))
+            {
                 return null;
+            }
 
             foreach (LoadedAssembly loaded in assemblyList.GetAssemblies())
             {
@@ -523,10 +568,14 @@ public sealed class LoadedAssembly
             }
 
             if (file != null && loadingAssemblies.TryGetValue(file, out asm))
+            {
                 return asm;
+            }
 
             if (assemblyLoadDisableCount > 0)
+            {
                 return null;
+            }
 
             if (file != null)
             {

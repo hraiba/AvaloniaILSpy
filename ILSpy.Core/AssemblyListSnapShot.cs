@@ -40,7 +40,10 @@ class AssemblyListSnapshot
             lookup = LazyInit.GetOrSet(ref isWinRT ? ref asmLookupByShortName : ref asmLookupByFullName, lookup);
         }
         if (lookup.TryGetValue(key, out MetadataFile? module))
+        {
             return module;
+        }
+
         return null;
     }
 
@@ -54,7 +57,10 @@ class AssemblyListSnapshot
         }
 
         if (!lookup.TryGetValue(reference.Name, out var candidates))
+        {
             return null;
+        }
+
         return candidates.FirstOrDefault(c => c.version >= reference.Version).module ?? candidates.Last().module;
     }
 
@@ -67,10 +73,16 @@ class AssemblyListSnapshot
             {
                 var module = await loaded.GetMetadataFileOrNullAsync().ConfigureAwait(false);
                 if (module == null)
+                {
                     continue;
+                }
+
                 var reader = module.Metadata;
-                if (reader == null || !reader.IsAssembly)
+                if (reader?.IsAssembly != true)
+                {
                     continue;
+                }
+
                 string tfm = await loaded.GetTargetFrameworkIdAsync().ConfigureAwait(false);
                 if (tfm.StartsWith(".NETFramework,Version=v4.", StringComparison.Ordinal))
                 {
@@ -101,8 +113,11 @@ class AssemblyListSnapshot
             {
                 var module = await loaded.GetMetadataFileOrNullAsync().ConfigureAwait(false);
                 var reader = module?.Metadata;
-                if (reader == null || !reader.IsAssembly)
+                if (reader?.IsAssembly != true)
+                {
                     continue;
+                }
+
                 var asmDef = reader.GetAssemblyDefinition();
                 var asmDefName = reader.GetString(asmDef.Name);
 
@@ -168,10 +183,16 @@ class AssemblyListSnapshot
             foreach (var entry in folder.Entries)
             {
                 if (!entry.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !entry.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
                     continue;
+                }
+
                 var asm = folder.ResolveFileName(entry.Name);
                 if (asm == null)
+                {
                     continue;
+                }
+
                 results.Add(asm);
             }
         }

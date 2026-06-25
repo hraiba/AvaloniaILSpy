@@ -44,26 +44,39 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public static IBitmap GetIcon(IField field)
 		{
 			if (field.DeclaringType.Kind == TypeKind.Enum && field.ReturnType.Kind == TypeKind.Enum)
-				return Images.GetIcon(MemberIcon.EnumValue, MethodTreeNode.GetOverlayIcon(field.Accessibility), false);
+        {
+            return Images.GetIcon(MemberIcon.EnumValue, MethodTreeNode.GetOverlayIcon(field.Accessibility), false);
+        }
 
-			if (field.IsConst)
-				return Images.GetIcon(MemberIcon.Literal, MethodTreeNode.GetOverlayIcon(field.Accessibility), false);
+        if (field.IsConst)
+        {
+            return Images.GetIcon(MemberIcon.Literal, MethodTreeNode.GetOverlayIcon(field.Accessibility), false);
+        }
 
-			if (field.IsReadOnly)
-				return Images.GetIcon(MemberIcon.FieldReadOnly, MethodTreeNode.GetOverlayIcon(field.Accessibility), field.IsStatic);
+        if (field.IsReadOnly)
+        {
+            return Images.GetIcon(MemberIcon.FieldReadOnly, MethodTreeNode.GetOverlayIcon(field.Accessibility), field.IsStatic);
+        }
 
-			return Images.GetIcon(MemberIcon.Field, MethodTreeNode.GetOverlayIcon(field.Accessibility), field.IsStatic);
+        return Images.GetIcon(MemberIcon.Field, MethodTreeNode.GetOverlayIcon(field.Accessibility), field.IsStatic);
 		}
 
 		public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
             return FilterResult.Hidden;
+        }
+
         if (settings.SearchTermMatches(FieldDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(FieldDefinition)))
+        {
             return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
     public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileField(FieldDefinition, output, options);
 

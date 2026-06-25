@@ -36,7 +36,7 @@ using ICSharpCode.Decompiler.Util;
 
 namespace ICSharpCode.ILSpy;
 
-	using SequencePoint = ICSharpCode.Decompiler.DebugInfo.SequencePoint;
+	using SequencePoint = Decompiler.DebugInfo.SequencePoint;
 
 	[Export(typeof(Language))]
 	class CSharpILMixedLanguage : ILLanguage
@@ -110,13 +110,21 @@ namespace ICSharpCode.ILSpy;
 								int startColumn = 1;
 								int endColumn = text.Length + 1;
 								if (line == info.StartLine)
-									startColumn = info.StartColumn;
-								if (line == info.EndLine)
-									endColumn = info.EndColumn;
-								WriteHighlightedCommentLine(highlightingOutput, text, startColumn - 1, endColumn - 1, info.StartLine == info.EndLine);
+                            {
+                                startColumn = info.StartColumn;
+                            }
+
+                            if (line == info.EndLine)
+                            {
+                                endColumn = info.EndColumn;
+                            }
+
+                            WriteHighlightedCommentLine(highlightingOutput, text, startColumn - 1, endColumn - 1, info.StartLine == info.EndLine);
 							} else
-								WriteCommentLine(output, codeLines[line - 1]);
-						}
+                        {
+                            WriteCommentLine(output, codeLines[line - 1]);
+                        }
+                    }
 					} else {
 						output.Write("// ");
 						highlightingOutput?.BeginSpan(gray);
@@ -142,10 +150,15 @@ namespace ICSharpCode.ILSpy;
 				output.Write("// ");
 				output.BeginSpan(gray);
 				if (isSingleLine)
-					output.Write(text.Substring(0, startColumn).TrimStart());
-				else
-					output.Write(text.Substring(0, startColumn));
-				output.EndSpan();
+            {
+                output.Write(text.Substring(0, startColumn).TrimStart());
+            }
+            else
+            {
+                output.Write(text.Substring(0, startColumn));
+            }
+
+            output.EndSpan();
 				output.Write(text.Substring(startColumn, endColumn - startColumn));
 				output.BeginSpan(gray);
 				output.Write(text.Substring(endColumn));

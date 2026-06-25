@@ -32,14 +32,22 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			EventDefinition = @event ?? throw new ArgumentNullException(nameof(@event));
 			if (@event.CanAdd)
-				Children.Add(new MethodTreeNode(@event.AddAccessor));
-			if (@event.CanRemove)
-				Children.Add(new MethodTreeNode(@event.RemoveAccessor));
-			if (@event.CanInvoke)
-				Children.Add(new MethodTreeNode(@event.InvokeAccessor));
-			//foreach (var m in ev.OtherMethods)
-			//	this.Children.Add(new MethodTreeNode(m));
-		}
+        {
+            Children.Add(new MethodTreeNode(@event.AddAccessor));
+        }
+
+        if (@event.CanRemove)
+        {
+            Children.Add(new MethodTreeNode(@event.RemoveAccessor));
+        }
+
+        if (@event.CanInvoke)
+        {
+            Children.Add(new MethodTreeNode(@event.InvokeAccessor));
+        }
+        //foreach (var m in ev.OtherMethods)
+        //	this.Children.Add(new MethodTreeNode(m));
+    }
 
 		public IEvent EventDefinition { get; }
 
@@ -54,12 +62,19 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
             return FilterResult.Hidden;
+        }
+
         if (settings.SearchTermMatches(EventDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(EventDefinition)))
+        {
             return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
     public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileEvent(EventDefinition, output, options);
 

@@ -62,8 +62,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     protected override void LoadChildren()
 		{
 			Stream s = Resource.TryOpenStream();
-			if (s == null) return;
-			s.Position = 0;
+			if (s == null)
+        {
+            return;
+        }
+
+        s.Position = 0;
 			try {
             foreach (var entry in new ResourcesFile(s).OrderBy(e => e.Key, NaturalStringComparer.Instance)) {
 					ProcessResourceEntry(entry);
@@ -107,7 +111,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public override async Task<bool> Save(DecompilerTextView textView)
 		{
 			Stream s = Resource.TryOpenStream();
-			if (s == null) return false;
+			if (s == null)
+        {
+            return false;
+        }
+
         SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
@@ -150,27 +158,29 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			EnsureLazyChildren();
 			base.Decompile(language, output, options);
 			if (stringTableEntries.Count != 0) {
-				ISmartTextOutput smartOutput = output as ISmartTextOutput;
-				if (null != smartOutput) {
-					smartOutput.AddUIElement(
-						delegate {
-							return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
-						}
-					);
-				}
-				output.WriteLine();
+            if (output is ISmartTextOutput smartOutput)
+            {
+                smartOutput.AddUIElement(
+                    delegate
+                    {
+                        return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
+                    }
+                );
+            }
+            output.WriteLine();
 				output.WriteLine();
 			}
 			if (otherEntries.Count != 0) {
-				ISmartTextOutput smartOutput = output as ISmartTextOutput;
-				if (null != smartOutput) {
-					smartOutput.AddUIElement(
-						delegate {
-							return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
-						}
-					);
-				}
-				output.WriteLine();
+            if (output is ISmartTextOutput smartOutput)
+            {
+                smartOutput.AddUIElement(
+                    delegate
+                    {
+                        return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
+                    }
+                );
+            }
+            output.WriteLine();
 			}
 		}
 

@@ -38,8 +38,11 @@ namespace ICSharpCode.ILSpy.TextView;
     public void AddXmlDocumentation(string xmlDocumentation)
 		{
 			if (xmlDocumentation == null)
-				return;
-			Debug.WriteLine(xmlDocumentation);
+        {
+            return;
+        }
+
+        Debug.WriteLine(xmlDocumentation);
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;

@@ -23,7 +23,10 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
     {
         root = modelRoot;
         while (root.listParent != null)
+        {
             root = root.listParent;
+        }
+
         root.treeFlattener = this;
         this.includeRoot = includeRoot;
     }
@@ -34,7 +37,11 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
 
     public void NodesInserted(int index, IEnumerable<SharpTreeNode> nodes)
     {
-        if (!includeRoot) index--;
+        if (!includeRoot)
+        {
+            index--;
+        }
+
         foreach (SharpTreeNode node in nodes)
         {
             RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, node, index++));
@@ -43,7 +50,11 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
 
     public void NodesRemoved(int index, IEnumerable<SharpTreeNode> nodes)
     {
-        if (!includeRoot) index--;
+        if (!includeRoot)
+        {
+            index--;
+        }
+
         foreach (SharpTreeNode node in nodes)
         {
             RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, node, index));
@@ -61,7 +72,10 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
         get
         {
             if (index < 0 || index >= Count)
+            {
                 throw new ArgumentOutOfRangeException();
+            }
+
             return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
         }
         set
@@ -112,7 +126,9 @@ sealed class TreeFlattener : IList, INotifyCollectionChanged
     public void CopyTo(Array array, int arrayIndex)
     {
         foreach (object item in this)
+        {
             array.SetValue(item, arrayIndex++);
+        }
     }
 
     void IList.Remove(object item) => throw new NotSupportedException();

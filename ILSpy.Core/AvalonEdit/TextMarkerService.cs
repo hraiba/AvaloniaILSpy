@@ -47,24 +47,35 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		void OnDocumentChanged(object sender, EventArgs e)
 		{
 			if (textView.Document != null)
-				markers = [with(textView.Document)];
-			else
-				markers = null;
-		}
+        {
+            markers = [with(textView.Document)];
+        }
+        else
+        {
+            markers = null;
+        }
+    }
 		
 		#region ITextMarkerService
 		public ITextMarker Create(int startOffset, int length)
 		{
 			if (markers == null)
-				throw new InvalidOperationException("Cannot create a marker when not attached to a document");
-			
-			int textLength = textView.Document.TextLength;
+        {
+            throw new InvalidOperationException("Cannot create a marker when not attached to a document");
+        }
+
+        int textLength = textView.Document.TextLength;
 			if (startOffset < 0 || startOffset > textLength)
-				throw new ArgumentOutOfRangeException(nameof(startOffset), startOffset, "Value must be between 0 and " + textLength);
-			if (length < 0 || startOffset + length > textLength)
-				throw new ArgumentOutOfRangeException(nameof(length), length, "length must not be negative and startOffset+length must not be after the end of the document");
-			
-			TextMarker m = new TextMarker(this, startOffset, length);
+        {
+            throw new ArgumentOutOfRangeException(nameof(startOffset), startOffset, "Value must be between 0 and " + textLength);
+        }
+
+        if (length < 0 || startOffset + length > textLength)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length), length, "length must not be negative and startOffset+length must not be after the end of the document");
+        }
+
+        TextMarker m = new TextMarker(this, startOffset, length);
 			markers.Add(m);
 			// no need to mark segment for redraw: the text marker is invisible until a property is set
 			return m;
@@ -73,10 +84,14 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		public IEnumerable<ITextMarker> GetMarkersAtOffset(int offset)
 		{
 			if (markers == null)
-				return Enumerable.Empty<ITextMarker>();
-			else
-				return markers.FindSegmentsContaining(offset);
-		}
+        {
+            return Enumerable.Empty<ITextMarker>();
+        }
+        else
+        {
+            return markers.FindSegmentsContaining(offset);
+        }
+    }
 
     public IEnumerable<ITextMarker> TextMarkers => markers ?? Enumerable.Empty<ITextMarker>();
 
@@ -86,8 +101,10 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
         if (markers != null) {
 				foreach (TextMarker m in markers.ToArray()) {
 					if (predicate(m))
-						Remove(m);
-				}
+                {
+                    Remove(m);
+                }
+            }
 			}
 		}
 		
@@ -95,7 +112,7 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		{
         ArgumentNullException.ThrowIfNull(marker);
         TextMarker m = marker as TextMarker;
-			if (markers != null && markers.Remove(m)) {
+			if (markers?.Remove(m) == true) {
 				Redraw(m);
 				m.OnDeleted();
 			}
@@ -117,8 +134,11 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		protected override void ColorizeLine(DocumentLine line)
 		{
 			if (markers == null)
-				return;
-			int lineStart = line.Offset;
+        {
+            return;
+        }
+
+        int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length)) {
 				Brush foregroundBrush = null;
@@ -157,11 +177,17 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
         ArgumentNullException.ThrowIfNull(textView);
         ArgumentNullException.ThrowIfNull(drawingContext);
         if (markers == null || !textView.VisualLinesValid)
-				return;
-			var visualLines = textView.VisualLines;
+        {
+            return;
+        }
+
+        var visualLines = textView.VisualLines;
 			if (visualLines.Count == 0)
-				return;
-			int viewStart = visualLines.First().FirstDocumentLine.Offset;
+        {
+            return;
+        }
+
+        int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
 				if (marker.BackgroundColor != null) {
@@ -223,8 +249,10 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		IEnumerable<Point> CreatePoints(Point start, Point end, double offset, int count)
 		{
 			for (int i = 0; i < count; i++)
-				yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
-		}
+        {
+            yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
+        }
+    }
 		#endregion
 	}
 	

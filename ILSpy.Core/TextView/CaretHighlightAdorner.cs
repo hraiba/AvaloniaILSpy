@@ -107,6 +107,8 @@ namespace ICSharpCode.ILSpy.TextView;
 		public override void Render(DrawingContext context)
 		{
         using (context.PushOpacity(RectOpacity))
+        {
             context.DrawRectangle(pen, Rect, 2f);
-		}
+        }
+    }
 	}

@@ -142,18 +142,23 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
 
         XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
+        {
+            existingElement.ReplaceWith(section);
+        }
+        else
+        {
+            root.Add(section);
+        }
 
-			if (currentDisplaySettings != null)
-				currentDisplaySettings.CopyValues(s);
-		}
+        currentDisplaySettings?.CopyValues(s);
+    }
 
     private void TextBox_PreviewTextInput(object sender, TextInputEventArgs e)
     {
         if (!e.Text.All(char.IsDigit))
+        {
             e.Handled = true;
+        }
     }
 }
 
@@ -187,7 +192,10 @@ public class FontSizeConverter : IValueConverter
 
         if (value is string s) {
             if (double.TryParse(s, out double d))
+            {
                 return d * 4 / 3;
+            }
+
             return 11.0 * 4 / 3;
         }
 

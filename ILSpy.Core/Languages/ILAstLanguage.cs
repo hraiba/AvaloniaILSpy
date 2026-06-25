@@ -79,8 +79,11 @@ namespace ICSharpCode.ILSpy;
 				var module = method.ParentModule.MetadataFile;
 				var methodDef = module.Metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
-					return;
-				var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
+            {
+                return;
+            }
+
+            var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
 				ILReader reader = new ILReader(typeSystem.MainModule);
 				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				reader.WriteTypedIL((SRM.MethodDefinitionHandle)method.MetadataToken, methodBody, output, cancellationToken: options.CancellationToken);
@@ -103,8 +106,11 @@ namespace ICSharpCode.ILSpy;
 				var metadata = module.Metadata;
 				var methodDef = metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
-					return;
-				IAssemblyResolver assemblyResolver = module.GetAssemblyResolver();
+            {
+                return;
+            }
+
+            IAssemblyResolver assemblyResolver = module.GetAssemblyResolver();
 				var typeSystem = new DecompilerTypeSystem(module, assemblyResolver);
 				var reader = new ILReader(typeSystem.MainModule);
 				reader.UseDebugSymbols = options.DecompilerSettings.UseDebugSymbols;

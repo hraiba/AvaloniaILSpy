@@ -10,15 +10,18 @@ namespace TestPlugin;
 	[ExportContextMenuEntryAttribute(Header = "_Save Assembly")]
 	public class SaveAssembly : IContextMenuEntry
 	{
-    public bool IsVisible(TextViewContext context) => context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+    public bool IsVisible(TextViewContext context) => context.SelectedTreeNodes?.All(n => n is AssemblyTreeNode) == true;
 
-    public bool IsEnabled(TextViewContext context) => context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
+    public bool IsEnabled(TextViewContext context) => context.SelectedTreeNodes?.Length == 1;
 
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
-			AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
+        {
+            return;
+        }
+
+        AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
 			var asm = node.LoadedAssembly.GetPEFileOrNull();
 			if (asm != null) {
 				/*SaveFileDialog dlg = new SaveFileDialog();

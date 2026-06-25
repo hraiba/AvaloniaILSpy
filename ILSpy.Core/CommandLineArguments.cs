@@ -36,23 +36,40 @@ namespace ICSharpCode.ILSpy;
 		{
 			foreach (string arg in arguments) {
 				if (arg.Length == 0)
-					continue;
-				if (arg[0] == '/') {
+            {
+                continue;
+            }
+
+            if (arg[0] == '/') {
 					if (arg.Equals("/singleInstance", StringComparison.OrdinalIgnoreCase))
-						SingleInstance = true;
-					else if (arg.Equals("/separate", StringComparison.OrdinalIgnoreCase))
-						SingleInstance = false;
-					else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
-						NavigateTo = arg.Substring("/navigateTo:".Length);
-					else if (arg.StartsWith("/search:", StringComparison.OrdinalIgnoreCase))
-						Search = arg.Substring("/search:".Length);
-					else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
-						Language = arg.Substring("/language:".Length);
-					else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
-						NoActivate = true;
-					else if (arg.StartsWith("/config:", StringComparison.OrdinalIgnoreCase))
-						ConfigFile = arg.Substring("/config:".Length);
-				}
+                {
+                    SingleInstance = true;
+                }
+                else if (arg.Equals("/separate", StringComparison.OrdinalIgnoreCase))
+                {
+                    SingleInstance = false;
+                }
+                else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
+                {
+                    NavigateTo = arg.Substring("/navigateTo:".Length);
+                }
+                else if (arg.StartsWith("/search:", StringComparison.OrdinalIgnoreCase))
+                {
+                    Search = arg.Substring("/search:".Length);
+                }
+                else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
+                {
+                    Language = arg.Substring("/language:".Length);
+                }
+                else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
+                {
+                    NoActivate = true;
+                }
+                else if (arg.StartsWith("/config:", StringComparison.OrdinalIgnoreCase))
+                {
+                    ConfigFile = arg.Substring("/config:".Length);
+                }
+            }
 				else {
 					AssembliesToLoad.Add(arg);
 				}

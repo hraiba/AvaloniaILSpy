@@ -31,7 +31,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 		public IEnumerable<ISymbol> Analyze(ISymbol analyzedSymbol, AnalyzerContext context)
 		{
         if (!(analyzedSymbol is ITypeDefinition attributeType))
+        {
             return Array.Empty<ISymbol>();
+        }
+
         var scope = context.GetScopeOf(attributeType);
         // TODO: DeclSecurity attributes are not supported.
         if (!IsBuiltinAttribute(attributeType, out var knownAttribute))
@@ -161,8 +164,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 						} else {
 							var parent = GetParentEntity(ts, customAttribute);
 							if (parent != null)
-								yield return parent;
-						}
+                        {
+                            yield return parent;
+                        }
+                    }
 					}
 				}
 				if (referencedParameters.Count > 0) {
@@ -173,10 +178,14 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 								var method = ts.MainModule.ResolveMethod(h, genericContext);
 								if (method != null) {
 									if (method.IsAccessor)
-										yield return method.AccessorOwner;
-									else
-										yield return method;
-								}
+                                {
+                                    yield return method.AccessorOwner;
+                                }
+                                else
+                                {
+                                    yield return method;
+                                }
+                            }
 								break;
 							}
 						}

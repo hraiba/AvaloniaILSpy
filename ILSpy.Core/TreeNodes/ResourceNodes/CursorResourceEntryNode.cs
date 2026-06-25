@@ -36,18 +36,26 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in imageFileExtensions) {
+        {
+            return null;
+        }
+
+        foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new CursorResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new CursorResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}
@@ -70,14 +78,13 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
             //HACK: windows imaging does not understand that .cur files have the same layout as .ico
             // so load to data, and modify the ResourceType in the header to make look like an icon...
-            MemoryStream s = Data as MemoryStream;
-				if (null == s)
-				{
-					// data was stored in another stream type (e.g. PinnedBufferedMemoryStream)
-					s = new MemoryStream();
-					Data.CopyTo(s);
-				}
-				byte[] curData = s.ToArray();
+            if (Data is not MemoryStream s)
+            {
+                // data was stored in another stream type (e.g. PinnedBufferedMemoryStream)
+                s = new MemoryStream();
+                Data.CopyTo(s);
+            }
+            byte[] curData = s.ToArray();
 				curData[2] = 1;
 				using (Stream stream = new MemoryStream(curData)) {
                 image = new Bitmap(stream);

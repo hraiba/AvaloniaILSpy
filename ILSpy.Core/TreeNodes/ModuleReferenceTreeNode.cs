@@ -41,8 +41,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			this.parentAssembly = parentAssembly ?? throw new ArgumentNullException(nameof(parentAssembly));
 			if (r.IsNil)
-				throw new ArgumentNullException(nameof(r));
-			metadata = module;
+        {
+            throw new ArgumentNullException(nameof(r));
+        }
+
+        metadata = module;
 			handle = r;
 			reference = module.GetModuleReference(r);
 			moduleName = metadata.GetString(reference.Name);
@@ -64,12 +67,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 		public override void ActivateItem(RoutedEventArgs e)
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
-			if (assemblyListNode != null && containsMetadata) {
-				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedModule(parentAssembly.LoadedAssembly.GetPEFileOrNull(), metadata.GetString(reference.Name))));
-				e.Handled = true;
-			}
-		}
+        if (parentAssembly.Parent is AssemblyListTreeNode assemblyListNode && containsMetadata)
+        {
+            assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedModule(parentAssembly.LoadedAssembly.GetPEFileOrNull(), metadata.GetString(reference.Name))));
+            e.Handled = true;
+        }
+    }
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{

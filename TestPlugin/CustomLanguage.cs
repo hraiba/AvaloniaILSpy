@@ -30,25 +30,25 @@ namespace TestPlugin;
 			if (methodDef.HasBody()) {
 				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				output.WriteLine("Size of method: {0} bytes", methodBody.GetCodeSize());
-				
-				ISmartTextOutput smartOutput = output as ISmartTextOutput;
-				if (smartOutput != null) {
-					// when writing to the text view (but not when writing to a file), we can even add UI elements such as buttons:
-					smartOutput.AddButton(null, "Click me!", (sender, e) => (sender as Button).Content = "I was clicked!");
-					smartOutput.WriteLine();
-				}
 
-				// ICSharpCode.Decompiler.CSharp.CSharpDecompiler can be used to decompile to C#.
-				/*
-					ModuleDefinition module = LoadModule(assemblyFileName);
-					var typeSystem = new DecompilerTypeSystem(module);
-					CSharpDecompiler decompiler = new CSharpDecompiler(typeSystem, new DecompilerSettings());
+            if (output is ISmartTextOutput smartOutput)
+            {
+                // when writing to the text view (but not when writing to a file), we can even add UI elements such as buttons:
+                smartOutput.AddButton(null, "Click me!", (sender, e) => (sender as Button).Content = "I was clicked!");
+                smartOutput.WriteLine();
+            }
 
-					decompiler.AstTransforms.Add(new EscapeInvalidIdentifiers());
-					SyntaxTree syntaxTree = decompiler.DecompileWholeModuleAsSingleFile();
-					var visitor = new CSharpOutputVisitor(output, FormattingOptionsFactory.CreateSharpDevelop());
-					syntaxTree.AcceptVisitor(visitor);
-				*/
-			}
+            // ICSharpCode.Decompiler.CSharp.CSharpDecompiler can be used to decompile to C#.
+            /*
+                ModuleDefinition module = LoadModule(assemblyFileName);
+                var typeSystem = new DecompilerTypeSystem(module);
+                CSharpDecompiler decompiler = new CSharpDecompiler(typeSystem, new DecompilerSettings());
+
+                decompiler.AstTransforms.Add(new EscapeInvalidIdentifiers());
+                SyntaxTree syntaxTree = decompiler.DecompileWholeModuleAsSingleFile();
+                var visitor = new CSharpOutputVisitor(output, FormattingOptionsFactory.CreateSharpDevelop());
+                syntaxTree.AcceptVisitor(visitor);
+            */
+        }
 		}
 	}

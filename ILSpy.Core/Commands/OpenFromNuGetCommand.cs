@@ -40,7 +40,7 @@ sealed class OpenFromNuGetCommand : SimpleCommand
         ];
         dlg.AllowMultiple = true;
         var filenames = await dlg.ShowAsync(MainWindow.Instance);
-        if (filenames != null && filenames.Length > 0)
+        if (filenames?.Length > 0)
         {
             MainWindow.Instance.OpenFiles(filenames);
         }

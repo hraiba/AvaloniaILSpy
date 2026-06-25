@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.TextView;
 	{
     public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-    public bool IsEnabled(TextViewContext context) => context.TextView != null && context.TextView.textEditor.SelectionLength > 0;
+    public bool IsEnabled(TextViewContext context) => context.TextView?.textEditor.SelectionLength > 0;
 
     public void Execute(TextViewContext context) => context.TextView.textEditor.Copy();
 }

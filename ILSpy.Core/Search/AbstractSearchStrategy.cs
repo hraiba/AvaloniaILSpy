@@ -34,7 +34,10 @@ abstract class AbstractSearchStrategy
                 fullNameSearch = search.Contains("\\.");
                 omitGenerics = !search.Contains("<");
                 if (regexString.EndsWith("/", StringComparison.Ordinal))
+                {
                     regexString = regexString.Substring(0, regexString.Length - 1);
+                }
+
                 regex = SafeNewRegex(regexString);
             }
             else
@@ -59,7 +62,11 @@ abstract class AbstractSearchStrategy
         {
             // How to handle overlapping matches?
             var term = searchTerm[i];
-            if (string.IsNullOrEmpty(term)) continue;
+            if (string.IsNullOrEmpty(term))
+            {
+                continue;
+            }
+
             string text = entityName;
             switch (term[0])
             {
@@ -68,26 +75,39 @@ abstract class AbstractSearchStrategy
                     goto default;
                 case '-': // should not contain
                     if (term.Length > 1 && text.IndexOf(term.Substring(1), StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
                         return false;
+                    }
+
                     break;
                 case '=': // exact match
                     {
                         var equalCompareLength = text.IndexOf('`');
                         if (equalCompareLength == -1)
+                        {
                             equalCompareLength = text.Length;
+                        }
 
                         if (term.Length > 1 && String.Compare(term, 1, text, 0, Math.Max(term.Length, equalCompareLength),
                             StringComparison.OrdinalIgnoreCase) != 0)
+                        {
                             return false;
+                        }
                     }
                     break;
                 case '~':
                     if (term.Length > 1 && !IsNoncontiguousMatch(text.ToLower(), term.Substring(1).ToLower()))
+                    {
                         return false;
+                    }
+
                     break;
                 default:
                     if (text.IndexOf(term, StringComparison.OrdinalIgnoreCase) < 0)
+                    {
                         return false;
+                    }
+
                     break;
             }
         }
@@ -97,7 +117,9 @@ abstract class AbstractSearchStrategy
     protected bool CheckVisibility(IEntity entity)
     {
         if (apiVisibility == ApiVisibility.All)
+        {
             return true;
+        }
 
         do
         {
@@ -106,12 +128,16 @@ abstract class AbstractSearchStrategy
                 if (!(entity.Accessibility == Accessibility.Public ||
                     entity.Accessibility == Accessibility.Protected ||
                     entity.Accessibility == Accessibility.ProtectedOrInternal))
+                {
                     return false;
+                }
             }
             else if (apiVisibility == ApiVisibility.PublicAndInternal)
             {
                 if (!language.ShowMember(entity))
+                {
                     return false;
+                }
             }
             entity = entity.DeclaringTypeDefinition;
         }
@@ -140,14 +166,19 @@ abstract class AbstractSearchStrategy
                 {
                     // Check if all characters in searchTerm have been matched
                     if (searchTerm.Length == ++searchIndex)
+                    {
                         return true;
+                    }
+
                     i++;
                     break;
                 }
                 i++;
             }
             if (i == textLength)
+            {
                 return false;
+            }
         }
         return false;
     }

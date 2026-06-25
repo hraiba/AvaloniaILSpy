@@ -39,8 +39,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public BaseTypesEntryNode(MetadataFile module, EntityHandle handle, IType type, bool isInterface)
 		{
 			if (handle.IsNil)
-				throw new ArgumentNullException(nameof(handle));
-			this.module = module ?? throw new ArgumentNullException(nameof(module));
+        {
+            throw new ArgumentNullException(nameof(handle));
+        }
+
+        this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.handle = handle;
 			this.type = type;
 			this.isInterface = isInterface;

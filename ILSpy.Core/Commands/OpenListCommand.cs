@@ -28,7 +28,9 @@ sealed class OpenListCommand : SimpleCommand
 		{
 			OpenListDialog dlg = new OpenListDialog();
 			dlg.Title = "Open List";
-        if (await dlg.ShowDialog<bool>(MainWindow.Instance) == true)
-				MainWindow.Instance.ShowAssemblyList(dlg.SelectedListName);
-		}
+        if (await dlg.ShowDialog<bool>(MainWindow.Instance))
+        {
+            MainWindow.Instance.ShowAssemblyList(dlg.SelectedListName);
+        }
+    }
 	}

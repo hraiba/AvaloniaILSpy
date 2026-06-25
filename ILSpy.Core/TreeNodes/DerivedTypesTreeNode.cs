@@ -71,8 +71,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					foreach (var iface in td.GetInterfaceImplementations()) {
 						var ifaceImpl = metadata.GetInterfaceImplementation(iface);
 						if (IsSameType(metadata, ifaceImpl.Interface, definitionMetadata, metadataToken))
-							yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));
-					}
+                    {
+                        yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));
+                    }
+                }
 					SRM.EntityHandle baseType = td.GetBaseTypeOrNil();
 					if (!baseType.IsNil && IsSameType(metadata, baseType, definitionMetadata, metadataToken)) {
 						yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));

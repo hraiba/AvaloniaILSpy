@@ -54,13 +54,16 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			foreach (var factory in App.ExportProvider.GetExportedValues<IResourceNodeFactory>()) {
 				result = factory.CreateNode(key, data);
 				if (result != null)
-					return result;
-			}
-			var streamData = data as Stream;
-			if(streamData !=null)
-				result =  new ResourceEntryNode(key, data as Stream);
+            {
+                return result;
+            }
+        }
+        if (data is Stream streamData)
+        {
+            result = new ResourceEntryNode(key, data as Stream);
+        }
 
-			return result;
+        return result;
 		}
 
     public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));

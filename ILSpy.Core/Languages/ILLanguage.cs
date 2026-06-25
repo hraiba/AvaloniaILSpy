@@ -158,10 +158,16 @@ namespace ICSharpCode.ILSpy;
 				dis.AssemblyResolver = module.GetAssemblyResolver();
 				dis.DebugInfo = module.GetDebugInfoOrNull();
 				if (options.FullDecompilation)
-					dis.WriteAssemblyReferences(metadata);
-				if (metadata.IsAssembly)
-					dis.WriteAssemblyHeader(module);
-				output.WriteLine();
+            {
+                dis.WriteAssemblyReferences(metadata);
+            }
+
+            if (metadata.IsAssembly)
+            {
+                dis.WriteAssemblyHeader(module);
+            }
+
+            output.WriteLine();
 				dis.WriteModuleHeader(module);
 				if (options.FullDecompilation) {
 					output.WriteLine();

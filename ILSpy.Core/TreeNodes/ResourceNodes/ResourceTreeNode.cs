@@ -53,28 +53,35 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && (r.Attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private)
+        {
             return FilterResult.Hidden;
-			if (settings.SearchTermMatches(r.Name))
-				return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        }
+
+        if (settings.SearchTermMatches(r.Name))
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.WriteCommentLine(output, string.Format("{0} ({1}, {2})", r.Name, r.ResourceType, r.Attributes));
-			
-			ISmartTextOutput smartOutput = output as ISmartTextOutput;
-			if (smartOutput != null) {
+
+        if (output is ISmartTextOutput smartOutput)
+        {
             smartOutput.AddButton(Images.Save, Resources.Save, delegate { Save(MainWindow.Instance.TextView); });
-				output.WriteLine();
-			}
-		}
+            output.WriteLine();
+        }
+    }
 		
 		public override bool View(DecompilerTextView textView)
 		{
 			Stream s = Resource.TryOpenStream();
-			if (s != null && s.Length < DecompilerTextView.DefaultOutputLengthLimit) {
+			if (s?.Length < DecompilerTextView.DefaultOutputLengthLimit) {
 				s.Position = 0;
 				FileType type = GuessFileType.DetectFileType(s);
 				if (type != FileType.Binary) {
@@ -83,10 +90,15 @@ namespace ICSharpCode.ILSpy.TreeNodes;
                 output.Write(new StreamReader(s, Encoding.UTF8).ReadToEnd());
 					string ext;
 					if (type == FileType.Xml)
-						ext = ".xml";
-					else
-						ext = Path.GetExtension(DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension));
-					textView.ShowNode(output, this, HighlightingManager.Instance.GetDefinitionByExtension(ext));
+                {
+                    ext = ".xml";
+                }
+                else
+                {
+                    ext = Path.GetExtension(DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension));
+                }
+
+                textView.ShowNode(output, this, HighlightingManager.Instance.GetDefinitionByExtension(ext));
 					return true;
 				}
 			}
@@ -97,7 +109,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			Stream s = Resource.TryOpenStream();
 			if (s == null)
-				return false;
+        {
+            return false;
+        }
+
         SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
@@ -117,8 +132,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			foreach (var factory in App.ExportProvider.GetExportedValues<IResourceNodeFactory>()) {
 				result = factory.CreateNode(resource);
 				if (result != null)
-					break;
-			}
+            {
+                break;
+            }
+        }
 			return result ?? new ResourceTreeNode(resource);
 		}
 	}

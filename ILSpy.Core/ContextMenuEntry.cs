@@ -78,12 +78,19 @@ namespace ICSharpCode.ILSpy;
 		{
 			ReferenceSegment reference;
 			if (textView != null)
-				reference = textView.GetReferenceSegmentAtMousePosition();
-			else if (listBox?.SelectedItem is SearchResult result)
-				reference = new ReferenceSegment { Reference = result.Member };
-			else
-				reference = null;
-			var position = textView != null ? textView.GetPositionFromMousePosition() : null;
+        {
+            reference = textView.GetReferenceSegmentAtMousePosition();
+        }
+        else if (listBox?.SelectedItem is SearchResult result)
+        {
+            reference = new ReferenceSegment { Reference = result.Member };
+        }
+        else
+        {
+            reference = null;
+        }
+
+        var position = textView != null ? textView.GetPositionFromMousePosition() : null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
 				TreeView = treeView,
@@ -180,33 +187,45 @@ namespace ICSharpCode.ILSpy;
 			}
 			ContextMenu menu = (ContextMenu)sender;
 			if (ShowContextMenu(context, out IEnumerable<IControl> items))
-				menu.Items = items;
-			else
-				// hide the context menu.
-				e.Cancel = true;
-		}
+        {
+            menu.Items = items;
+        }
+        else
+        {
+            // hide the context menu.
+            e.Cancel = true;
+        }
+    }
 		
 		void textView_ContextMenuOpening(object sender, CancelEventArgs e)
 		{
 			TextViewContext context = TextViewContext.Create(textView: textView);
 			ContextMenu menu = (ContextMenu)sender;
 			if (ShowContextMenu(context, out IEnumerable<IControl> items))
-				menu.Items = items;
-			else
-				// hide the context menu.
-				e.Cancel = true;
-		}
+        {
+            menu.Items = items;
+        }
+        else
+        {
+            // hide the context menu.
+            e.Cancel = true;
+        }
+    }
 
 		void listBox_ContextMenuOpening(object sender, CancelEventArgs e)
 		{
 			TextViewContext context = TextViewContext.Create(listBox: listBox);
 			ContextMenu menu = (ContextMenu)sender;
 			if (ShowContextMenu(context, out IEnumerable<IControl> items))
-				menu.Items = items;
-			else
-				// hide the context menu.
-				e.Cancel = true;
-		}
+        {
+            menu.Items = items;
+        }
+        else
+        {
+            // hide the context menu.
+            e.Cancel = true;
+        }
+    }
 		
 		bool ShowContextMenu(TextViewContext context, out IEnumerable<IControl> menuItems)
 		{
@@ -232,8 +251,11 @@ namespace ICSharpCode.ILSpy;
 						if (entryPair.Value.IsEnabled(context)) {
 							menuItem.Click += delegate { entry.Execute(context); };
 						} else
-							menuItem.IsEnabled = false;
-						items.Add(menuItem);
+                    {
+                        menuItem.IsEnabled = false;
+                    }
+
+                    items.Add(menuItem);
 					}
 				}
 			}

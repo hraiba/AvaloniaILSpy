@@ -70,9 +70,17 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				{
 					int jA = iA + 1;
 					int jB = iB + 1;
-					while (jA < x.Length && !Char.IsDigit(x[jA])) jA++;
-					while (jB < y.Length && !Char.IsDigit(y[jB])) jB++;
-					int cmpResult = cmp.Compare(x, iA, jA - iA, y, iB, jB - iB, options);
+					while (jA < x.Length && !Char.IsDigit(x[jA]))
+                {
+                    jA++;
+                }
+
+                while (jB < y.Length && !Char.IsDigit(y[jB]))
+                {
+                    jB++;
+                }
+
+                int cmpResult = cmp.Compare(x, iA, jA - iA, y, iB, jB - iB, options);
 					if (cmpResult != 0)
 					{
 						// Certain strings may be considered different due to "soft" differences that are
@@ -100,18 +108,34 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					char zeroB = (char)(y[iB] - (int)Char.GetNumericValue(y[iB]));
 					int jA = iA;
 					int jB = iB;
-					while (jA < x.Length && x[jA] == zeroA) jA++;
-					while (jB < y.Length && y[jB] == zeroB) jB++;
-					int resultIfSameLength = 0;
+					while (jA < x.Length && x[jA] == zeroA)
+                {
+                    jA++;
+                }
+
+                while (jB < y.Length && y[jB] == zeroB)
+                {
+                    jB++;
+                }
+
+                int resultIfSameLength = 0;
 					do
 					{
 						isDigitA = jA < x.Length && Char.IsDigit(x[jA]);
 						isDigitB = jB < y.Length && Char.IsDigit(y[jB]);
 						int numA = isDigitA ? (int)Char.GetNumericValue(x[jA]) : 0;
 						int numB = isDigitB ? (int)Char.GetNumericValue(y[jB]) : 0;
-						if (isDigitA && (char)(x[jA] - numA) != zeroA) isDigitA = false;
-						if (isDigitB && (char)(y[jB] - numB) != zeroB) isDigitB = false;
-						if (isDigitA && isDigitB)
+						if (isDigitA && (char)(x[jA] - numA) != zeroA)
+                    {
+                        isDigitA = false;
+                    }
+
+                    if (isDigitB && (char)(y[jB] - numB) != zeroB)
+                    {
+                        isDigitB = false;
+                    }
+
+                    if (isDigitA && isDigitB)
 						{
 							if (numA != numB && resultIfSameLength == 0)
 							{

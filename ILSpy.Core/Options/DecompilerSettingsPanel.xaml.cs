@@ -55,7 +55,9 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
         {
             var value = (bool?)e.Attribute(p.Name);
             if (value.HasValue)
+            {
                 p.SetValue(newSettings, value.Value);
+            }
         }
         return newSettings;
     }
@@ -74,9 +76,13 @@ internal partial class DecompilerSettingsPanel : UserControl, IOptionPage
         }
         XElement existingElement = root.Element("DecompilerSettings");
         if (existingElement != null)
+        {
             existingElement.ReplaceWith(section);
+        }
         else
+        {
             root.Add(section);
+        }
 
         currentDecompilerSettings = newSettings;
     }

@@ -36,12 +36,17 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			isIndexer = property.IsIndexer;
 
 			if (property.CanGet)
-				Children.Add(new MethodTreeNode(property.Getter));
-			if (property.CanSet)
-				Children.Add(new MethodTreeNode(property.Setter));
-			/*foreach (var m in property.OtherMethods)
-				this.Children.Add(new MethodTreeNode(m));*/
-		}
+        {
+            Children.Add(new MethodTreeNode(property.Getter));
+        }
+
+        if (property.CanSet)
+        {
+            Children.Add(new MethodTreeNode(property.Setter));
+        }
+        /*foreach (var m in property.OtherMethods)
+    this.Children.Add(new MethodTreeNode(m));*/
+    }
 
 		public IProperty PropertyDefinition { get; }
 
@@ -57,12 +62,19 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override FilterResult Filter(FilterSettings settings)
 		{
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
             return FilterResult.Hidden;
+        }
+
         if (settings.SearchTermMatches(PropertyDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(PropertyDefinition)))
+        {
             return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
     public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileProperty(PropertyDefinition, output, options);
 

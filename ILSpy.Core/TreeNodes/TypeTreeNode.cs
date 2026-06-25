@@ -56,14 +56,21 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public override FilterResult Filter(FilterSettings settings)
     {
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
             return FilterResult.Hidden;
-			if (settings.SearchTermMatches(TypeDefinition.Name))
+        }
+
+        if (settings.SearchTermMatches(TypeDefinition.Name))
         {
             if (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(TypeDefinition))
+            {
                 return FilterResult.Match;
-				else
-					return FilterResult.Hidden;
-			} else {
+            }
+            else
+            {
+                return FilterResult.Hidden;
+            }
+        } else {
 				return FilterResult.Recurse;
 			}
 		}
@@ -71,10 +78,16 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		protected override void LoadChildren()
 		{
 			if (TypeDefinition.DirectBaseTypes.Any())
-				Children.Add(new BaseTypesTreeNode(ParentAssemblyNode.LoadedAssembly.GetPEFileOrNull(), TypeDefinition));
-			if (!TypeDefinition.IsSealed)
-				Children.Add(new DerivedTypesTreeNode(ParentAssemblyNode.AssemblyList, TypeDefinition));
-			foreach (var nestedType in TypeDefinition.NestedTypes.OrderBy(t => t.Name, NaturalStringComparer.Instance)) {
+        {
+            Children.Add(new BaseTypesTreeNode(ParentAssemblyNode.LoadedAssembly.GetPEFileOrNull(), TypeDefinition));
+        }
+
+        if (!TypeDefinition.IsSealed)
+        {
+            Children.Add(new DerivedTypesTreeNode(ParentAssemblyNode.AssemblyList, TypeDefinition));
+        }
+
+        foreach (var nestedType in TypeDefinition.NestedTypes.OrderBy(t => t.Name, NaturalStringComparer.Instance)) {
 				Children.Add(new TypeTreeNode(nestedType, ParentAssemblyNode));
 			}
         if (TypeDefinition.Kind == TypeKind.Enum) {
@@ -94,8 +107,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 				Children.Add(new EventTreeNode(ev));
 			}
 			foreach (var method in TypeDefinition.Methods.OrderBy(m => m.Name, NaturalStringComparer.Instance)) {
-				if (method.MetadataToken.IsNil) continue;
-				Children.Add(new MethodTreeNode(method));
+				if (method.MetadataToken.IsNil)
+            {
+                continue;
+            }
+
+            Children.Add(new MethodTreeNode(method));
 			}
 		}
 
@@ -120,8 +137,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 					return TypeIcon.Enum;
 				default:
 					if (type.GetDefinition()?.IsStatic == true)
-						return TypeIcon.StaticClass;
-					return TypeIcon.Class;
+                {
+                    return TypeIcon.StaticClass;
+                }
+
+                return TypeIcon.Class;
 			}
 		}
 

@@ -36,18 +36,26 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in imageFileExtensions) {
+        {
+            return null;
+        }
+
+        foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new ImageResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new ImageResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}

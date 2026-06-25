@@ -49,8 +49,11 @@ namespace ICSharpCode.ILSpy;
 		{
 			AssemblyList list = DoLoadList(spySettings, listName);
 			if (!AssemblyLists.Contains(list.ListName))
-				AssemblyLists.Add(list.ListName);
-			return list;
+        {
+            AssemblyLists.Add(list.ListName);
+        }
+
+        return list;
 		}
 		
 		AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
@@ -65,10 +68,14 @@ namespace ICSharpCode.ILSpy;
 			}
 			XElement firstList = doc.Elements("List").FirstOrDefault();
 			if (firstList != null)
-				return new AssemblyList(this, firstList);
-			else
-				return new AssemblyList(this, listName ?? DefaultListName);
-		}
+        {
+            return new AssemblyList(this, firstList);
+        }
+        else
+        {
+            return new AssemblyList(this, listName ?? DefaultListName);
+        }
+    }
 		
 		public const string DefaultListName = "(Default)";
 
@@ -86,9 +93,13 @@ namespace ICSharpCode.ILSpy;
                 }
                 XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
                 if (listElement != null)
+                {
                     listElement.ReplaceWith(list.SaveAsXml());
+                }
                 else
+                {
                     doc.Add(list.SaveAsXml());
+                }
             });
 
     public bool CreateList(AssemblyList list)
@@ -117,9 +128,8 @@ namespace ICSharpCode.ILSpy;
 							return;
 						}
 						XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
-						if (listElement != null)
-							listElement.Remove();
-					});
+						listElement?.Remove();
+                    });
 				return true;
 			}
 			return false;

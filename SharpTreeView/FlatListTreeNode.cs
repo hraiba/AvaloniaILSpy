@@ -32,8 +32,11 @@ namespace ICSharpCode.TreeView;
 		{
 			SharpTreeNode node = this;
 			while (node.listParent != null)
-				node = node.listParent;
-			return node;
+        {
+            node = node.listParent;
+        }
+
+        return node;
 		}
 
     #region Debugging
@@ -84,8 +87,11 @@ namespace ICSharpCode.TreeView;
 					}
 					if (node.isVisible) {
 						if (index == 0)
-							return node;
-						index--;
+                    {
+                        return node;
+                    }
+
+                    index--;
 					}
 					node = node.right;
 				}
@@ -98,10 +104,15 @@ namespace ICSharpCode.TreeView;
 			while (node.listParent != null) {
 				if (node == node.listParent.right) {
 					if (node.listParent.left != null)
-						index += node.listParent.left.GetTotalListLength();
-					if (node.listParent.isVisible)
-						index++;
-				}
+                {
+                    index += node.listParent.left.GetTotalListLength();
+                }
+
+                if (node.listParent.isVisible)
+                {
+                    index++;
+                }
+            }
 				node = node.listParent;
 			}
 			return index;
@@ -150,8 +161,11 @@ namespace ICSharpCode.TreeView;
 		internal int GetTotalListLength()
 		{
 			if (totalListLength >= 0)
-				return totalListLength;
-			int length = (isVisible ? 1 : 0);
+        {
+            return totalListLength;
+        }
+
+        int length = (isVisible ? 1 : 0);
 			if (left != null) {
 				length += left.GetTotalListLength();
 			}
@@ -241,8 +255,11 @@ namespace ICSharpCode.TreeView;
 				// insert before pos.right's leftmost:
 				pos = pos.right;
 				while (pos.left != null)
-					pos = pos.left;
-				Debug.Assert(pos.left == null);
+            {
+                pos = pos.left;
+            }
+
+            Debug.Assert(pos.left == null);
 				pos.left = newNode;
 				newNode.listParent = pos;
 			}
@@ -264,9 +281,11 @@ namespace ICSharpCode.TreeView;
 				// recalculate the endAncestors every time, because the tree might have been rebalanced
 				HashSet<SharpTreeNode> endAncestors = [];
 				for (SharpTreeNode tmp = end; tmp != null; tmp = tmp.listParent)
-					endAncestors.Add(tmp);
-				
-				removedSubtrees.Add(pos);
+            {
+                endAncestors.Add(tmp);
+            }
+
+            removedSubtrees.Add(pos);
 				if (!endAncestors.Contains(pos)) {
 					// we can remove pos' right subtree in a single step:
 					if (pos.right != null) {
@@ -293,8 +312,11 @@ namespace ICSharpCode.TreeView;
 		{
 			SharpTreeNode tmp = first;
 			while (tmp.right != null)
-				tmp = tmp.right;
-			InsertNodeAfter(tmp, second);
+        {
+            tmp = tmp.right;
+        }
+
+        InsertNodeAfter(tmp, second);
 			return tmp.GetListRoot();
 		}
 		
@@ -303,8 +325,11 @@ namespace ICSharpCode.TreeView;
 			if (right != null) {
 				SharpTreeNode node = right;
 				while (node.left != null)
-					node = node.left;
-				return node;
+            {
+                node = node.left;
+            }
+
+            return node;
 			} else {
 				SharpTreeNode node = this;
 				SharpTreeNode oldNode;
@@ -331,9 +356,11 @@ namespace ICSharpCode.TreeView;
 			} else {
 				SharpTreeNode tmp = node.right;
 				while (tmp.left != null)
-					tmp = tmp.left;
-				// First replace tmp with tmp.right
-				balancingNode = tmp.listParent;
+            {
+                tmp = tmp.left;
+            }
+            // First replace tmp with tmp.right
+            balancingNode = tmp.listParent;
 				tmp.ReplaceWith(tmp.right);
 				tmp.right = null;
 				Debug.Assert(tmp.left == null);
@@ -346,16 +373,20 @@ namespace ICSharpCode.TreeView;
 				// Then replace node with tmp
 				node.ReplaceWith(tmp);
 				if (balancingNode == node)
-					balancingNode = tmp;
-			}
+            {
+                balancingNode = tmp;
+            }
+        }
 			Debug.Assert(node.listParent == null);
 			Debug.Assert(node.left == null);
 			Debug.Assert(node.right == null);
 			node.height = 1;
 			node.totalListLength = -1;
 			if (balancingNode != null)
-				RebalanceUntilRoot(balancingNode);
-		}
+        {
+            RebalanceUntilRoot(balancingNode);
+        }
+    }
 		
 		void ReplaceWith(SharpTreeNode node)
 		{

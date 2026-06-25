@@ -38,8 +38,12 @@ namespace ICSharpCode.ILSpy;
 		public void Execute(TextViewContext context)
 		{
 			var assembly = (context.SelectedTreeNodes?.FirstOrDefault() as AssemblyTreeNode)?.LoadedAssembly;
-			if (assembly == null) return;
-			GeneratePdbForAssembly(assembly);
+			if (assembly == null)
+        {
+            return;
+        }
+
+        GeneratePdbForAssembly(assembly);
 		}
 
 		public bool IsEnabled(TextViewContext context) => true;
@@ -61,8 +65,12 @@ namespace ICSharpCode.ILSpy;
 			dlg.Filters = [new FileDialogFilter { Name = "Portable PDB", Extensions = { "pdb" } }, new FileDialogFilter { Name = "All files", Extensions = { "*" } }];
         dlg.Directory = Path.GetDirectoryName(assembly.FileName);
         string fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
-        if (string.IsNullOrEmpty(fileName)) return;
-			DecompilationOptions options = new DecompilationOptions();
+        if (string.IsNullOrEmpty(fileName))
+        {
+            return;
+        }
+
+        DecompilationOptions options = new DecompilationOptions();
 			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
 				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
 				Stopwatch stopwatch = Stopwatch.StartNew();
@@ -96,7 +104,11 @@ class GeneratePdbMainMenuEntry : SimpleCommand
     public override void Execute(object parameter)
 		{
 			var assembly = (MainWindow.Instance.SelectedNodes?.FirstOrDefault() as AssemblyTreeNode)?.LoadedAssembly;
-			if (assembly == null) return;
-			GeneratePdbContextMenuEntry.GeneratePdbForAssembly(assembly);
+			if (assembly == null)
+        {
+            return;
+        }
+
+        GeneratePdbContextMenuEntry.GeneratePdbForAssembly(assembly);
 		}
 	}

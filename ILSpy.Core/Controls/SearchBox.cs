@@ -91,10 +91,7 @@ namespace ICSharpCode.ILSpy.Controls;
     {
         base.OnApplyTemplate(e);
         Border iconBorder = e.NameScope.Find<Border>("PART_IconBorder");
-        if (iconBorder != null)
-        {
-            iconBorder.AddHandler(Border.PointerReleasedEvent, IconBorder_MouseLeftButtonUp, RoutingStrategies.Tunnel);
-        }
+        iconBorder?.AddHandler(Border.PointerReleasedEvent, IconBorder_MouseLeftButtonUp, RoutingStrategies.Tunnel);
     }
 
     protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)

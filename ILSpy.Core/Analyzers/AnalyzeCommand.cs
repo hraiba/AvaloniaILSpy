@@ -28,21 +28,32 @@ namespace ICSharpCode.ILSpy.Analyzers;
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return false;
-			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && IsValidReference(context.Reference.Reference);
-			return context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
+			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes?.All(n => n.Parent.IsRoot) == true)
+        {
+            return false;
+        }
+
+        if (context.SelectedTreeNodes == null)
+        {
+            return context.Reference != null && IsValidReference(context.Reference.Reference);
+        }
+
+        return context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && context.Reference.Reference is IEntity;
-			foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
+        {
+            return context.Reference?.Reference is IEntity;
+        }
+
+        foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
 				if (!IsValidReference(node.Member))
-					return false;
-			}
+            {
+                return false;
+            }
+        }
 
 			return true;
 		}
@@ -55,7 +66,7 @@ namespace ICSharpCode.ILSpy.Analyzers;
 				foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
 					AnalyzerTreeView.Instance.Analyze(node.Member);
 				}
-			} else if (context.Reference != null && context.Reference.Reference is IEntity entity) {
+			} else if (context.Reference?.Reference is IEntity entity) {
 				AnalyzerTreeView.Instance.Analyze(entity);
 			}
 		}

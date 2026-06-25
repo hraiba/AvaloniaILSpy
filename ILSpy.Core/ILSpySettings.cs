@@ -77,9 +77,13 @@ namespace ICSharpCode.ILSpy;
             {
                 XElement existingElement = root.Element(section.Name);
                 if (existingElement != null)
+                {
                     existingElement.ReplaceWith(section);
+                }
                 else
+                {
                     root.Add(section);
+                }
             });
 
     /// <summary>
@@ -110,11 +114,17 @@ namespace ICSharpCode.ILSpy;
 		static string GetConfigFile()
 		{
 			if (App.CommandLineArguments.ConfigFile != null)
-				return App.CommandLineArguments.ConfigFile;
-			string localPath = Path.Combine(AppContext.BaseDirectory, "ILSpy.xml");
+        {
+            return App.CommandLineArguments.ConfigFile;
+        }
+
+        string localPath = Path.Combine(AppContext.BaseDirectory, "ILSpy.xml");
 			if (File.Exists(localPath))
-				return localPath;
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ILSpy.xml");
+        {
+            return localPath;
+        }
+
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ILSpy.xml");
 		}
 		
 		const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";

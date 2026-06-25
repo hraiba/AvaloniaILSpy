@@ -118,7 +118,10 @@ public class CSharpLanguage : Language
         decompiler.CancellationToken = options.CancellationToken;
         decompiler.DebugInfoProvider = module.GetDebugInfoOrNull();
         while (decompiler.AstTransforms.Count > transformCount)
+        {
             decompiler.AstTransforms.RemoveAt(decompiler.AstTransforms.Count - 1);
+        }
+
         return decompiler;
     }
 
@@ -210,7 +213,9 @@ public class CSharpLanguage : Language
             foreach (var node in rootNode.Children)
             {
                 if (node is Comment && removedSymbols.Contains(node.GetSymbol()))
+                {
                     node.Remove();
+                }
             }
         }
     }
@@ -251,12 +256,16 @@ public class CSharpLanguage : Language
         foreach (var field in type.Fields)
         {
             if (!field.MetadataToken.IsNil && field.IsStatic == isStatic)
+            {
                 members.Add(field.MetadataToken);
+            }
         }
         foreach (var ctor in type.Methods)
         {
             if (!ctor.MetadataToken.IsNil && ctor.IsConstructor && ctor.IsStatic == isStatic)
+            {
                 members.Add(ctor.MetadataToken);
+            }
         }
 
         return members;
@@ -282,11 +291,17 @@ public class CSharpLanguage : Language
                 {
                     case EntityDeclaration ed:
                         if (node.GetSymbol() != field)
+                        {
                             node.Remove();
+                        }
+
                         break;
                     case Comment c:
                         if (c.GetSymbol() != field)
+                        {
                             node.Remove();
+                        }
+
                         break;
                 }
             }
@@ -316,8 +331,11 @@ public class CSharpLanguage : Language
     void AddReferenceWarningMessage(MetadataFile module, ITextOutput output)
     {
         var loadedAssembly = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().FirstOrDefault(la => la.GetPEFileOrNull() == module);
-        if (loadedAssembly == null || !loadedAssembly.LoadedAssemblyReferencesInfo.HasErrors)
+        if (loadedAssembly?.LoadedAssemblyReferencesInfo.HasErrors != true)
+        {
             return;
+        }
+
         string line1 = Properties.Resources.WarningSomeAssemblyReference;
         string line2 = Properties.Resources.PropertyManuallyMissingReferencesListLoadedAssemblies;
         AddWarningMessage(module, output, line1, line2, Properties.Resources.ShowAssemblyLoad, Images.ViewCode, delegate
@@ -332,7 +350,10 @@ public class CSharpLanguage : Language
     {
         var metadata = module.Metadata;
         if (!metadata.GetCustomAttributes(Handle.AssemblyDefinition).HasKnownAttribute(metadata, KnownAttribute.ReferenceAssembly))
+        {
             return;
+        }
+
         string line1 = Properties.Resources.WarningAsmMarkedRef;
         AddWarningMessage(module, output, line1);
     }
@@ -344,7 +365,10 @@ public class CSharpLanguage : Language
         {
             string text = line1;
             if (!string.IsNullOrEmpty(line2))
+            {
                 text += Environment.NewLine + line2;
+            }
+
             fancyOutput.AddUIElement(() => new StackPanel
             {
                 Margin = new Thickness(5),
@@ -372,7 +396,9 @@ public class CSharpLanguage : Language
         {
             WriteCommentLine(output, line1);
             if (!string.IsNullOrEmpty(line2))
+            {
                 WriteCommentLine(output, line2);
+            }
         }
     }
 
@@ -408,7 +434,7 @@ public class CSharpLanguage : Language
                 var entrypointHandle = MetadataTokenHelpers.EntityHandleOrNil(corHeader.EntryPointTokenOrRelativeVirtualAddress);
                 if (!entrypointHandle.IsNil && entrypointHandle.Kind == HandleKind.MethodDefinition)
                 {
-                    var entrypoint = typeSystem.MainModule.ResolveMethod(entrypointHandle, new Decompiler.TypeSystem.GenericContext());
+                    var entrypoint = typeSystem.MainModule.ResolveMethod(entrypointHandle, new GenericContext());
                     if (entrypoint != null)
                     {
                         output.Write("// Entry point: ");
@@ -434,13 +460,19 @@ public class CSharpLanguage : Language
                 {
                     var asm = metadata.GetAssemblyDefinition();
                     if (asm.HashAlgorithm != AssemblyHashAlgorithm.None)
+                    {
                         output.WriteLine("// Hash algorithm: " + asm.HashAlgorithm.ToString().ToUpper());
+                    }
+
                     if (!asm.PublicKey.IsNil)
                     {
                         output.Write("// Public key: ");
                         var reader = metadata.GetBlobReader(asm.PublicKey);
                         while (reader.RemainingBytes > 0)
+                        {
                             output.Write(reader.ReadByte().ToString("x2"));
+                        }
+
                         output.WriteLine();
                     }
                 }
@@ -515,11 +547,20 @@ public class CSharpLanguage : Language
         var ambience = CreateAmbience();
         ambience.ConversionFlags |= ConversionFlags.ShowReturnType | ConversionFlags.ShowParameterList | ConversionFlags.ShowParameterModifiers;
         if (includeDeclaringTypeName)
+        {
             ambience.ConversionFlags |= ConversionFlags.ShowDeclaringType;
+        }
+
         if (includeNamespace)
+        {
             ambience.ConversionFlags |= ConversionFlags.UseFullyQualifiedTypeNames;
+        }
+
         if (includeNamespaceOfDeclaringTypeName)
+        {
             ambience.ConversionFlags |= ConversionFlags.UseFullyQualifiedEntityNames;
+        }
+
         return ambience.ConvertSymbol(entity);
     }
 
@@ -582,7 +623,10 @@ public class CSharpLanguage : Language
         while (!currentTypeDefHandle.IsNil)
         {
             if (builder.Length > 0)
+            {
                 builder.Insert(0, '.');
+            }
+
             typeDef = metadata.GetTypeDefinition(currentTypeDefHandle);
             var part = ReflectionHelper.SplitTypeParameterCountFromReflectionName(metadata.GetString(typeDef.Name), out int typeParamCount);
             var genericParams = typeDef.GetGenericParameters();
@@ -598,7 +642,10 @@ public class CSharpLanguage : Language
             }
             builder.Insert(0, part);
             currentTypeDefHandle = typeDef.GetDeclaringType();
-            if (!fullName) break;
+            if (!fullName)
+            {
+                break;
+            }
         }
 
         if (fullName && !typeDef.Namespace.IsNil)
@@ -621,7 +668,10 @@ public class CSharpLanguage : Language
                 var fd = metadata.GetFieldDefinition((FieldDefinitionHandle)handle);
                 var declaringType = fd.GetDeclaringType();
                 if (fullName)
+                {
                     return ToCSharpString(metadata, declaringType, fullName, omitGenerics) + "." + metadata.GetString(fd.Name);
+                }
+
                 return metadata.GetString(fd.Name);
             case HandleKind.MethodDefinition:
                 var md = metadata.GetMethodDefinition((MethodDefinitionHandle)handle);
@@ -637,10 +687,16 @@ public class CSharpLanguage : Language
                     case "Finalize":
                         const MethodAttributes finalizerAttributes = (MethodAttributes.Virtual | MethodAttributes.Family | MethodAttributes.HideBySig);
                         if ((md.Attributes & finalizerAttributes) != finalizerAttributes)
+                        {
                             goto default;
+                        }
+
                         MethodSignature<IType> methodSignature = md.DecodeSignature(MetadataExtensions.MinimalSignatureTypeProvider, default);
                         if (methodSignature.GenericParameterCount != 0 || methodSignature.ParameterTypes.Length != 0)
+                        {
                             goto default;
+                        }
+
                         td = metadata.GetTypeDefinition(declaringType);
                         methodName = "~" + ReflectionHelper.SplitTypeParameterCountFromReflectionName(metadata.GetString(td.Name));
                         break;
@@ -653,7 +709,10 @@ public class CSharpLanguage : Language
                             foreach (var h in genericParams)
                             {
                                 if (i > 0)
+                                {
                                     methodName += ",";
+                                }
+
                                 var gp = metadata.GetGenericParameter(h);
                                 methodName += metadata.GetString(gp.Name);
                             }
@@ -662,19 +721,28 @@ public class CSharpLanguage : Language
                         break;
                 }
                 if (fullName)
+                {
                     return ToCSharpString(metadata, declaringType, fullName, omitGenerics) + "." + methodName;
+                }
+
                 return methodName;
             case HandleKind.EventDefinition:
                 var ed = metadata.GetEventDefinition((EventDefinitionHandle)handle);
                 declaringType = metadata.GetMethodDefinition(ed.GetAccessors().GetAny()).GetDeclaringType();
                 if (fullName)
+                {
                     return ToCSharpString(metadata, declaringType, fullName, omitGenerics) + "." + metadata.GetString(ed.Name);
+                }
+
                 return metadata.GetString(ed.Name);
             case HandleKind.PropertyDefinition:
                 var pd = metadata.GetPropertyDefinition((PropertyDefinitionHandle)handle);
                 declaringType = metadata.GetMethodDefinition(pd.GetAccessors().GetAny()).GetDeclaringType();
                 if (fullName)
+                {
                     return ToCSharpString(metadata, declaringType, fullName, omitGenerics) + "." + metadata.GetString(pd.Name);
+                }
+
                 return metadata.GetString(pd.Name);
             default:
                 return null;

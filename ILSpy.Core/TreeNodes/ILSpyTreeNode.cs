@@ -50,10 +50,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public virtual FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
-				return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 
@@ -76,8 +80,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			if (e.NewItems != null) {
 				if (IsVisible) {
 					foreach (ILSpyTreeNode node in e.NewItems)
-						ApplyFilterToChild(node);
-				} else {
+                {
+                    ApplyFilterToChild(node);
+                }
+            } else {
 					childrenNeedFiltering = true;
 				}
 			}
@@ -88,10 +94,15 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			FilterResult r;
 			if (FilterSettings == null)
-				r = FilterResult.Match;
-			else
-				r = child.Filter(FilterSettings);
-			switch (r) {
+        {
+            r = FilterResult.Match;
+        }
+        else
+        {
+            r = child.Filter(FilterSettings);
+        }
+
+        switch (r) {
 				case FilterResult.Hidden:
 					child.IsHidden = true;
 					break;
@@ -117,8 +128,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		static FilterSettings StripSearchTerm(FilterSettings filterSettings)
 		{
 			if (filterSettings == null)
-				return null;
-			if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
 				filterSettings = filterSettings.Clone();
 				filterSettings.SearchTerm = null;
 			}
@@ -130,8 +144,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			RaisePropertyChanged("Text");
 			if (IsVisible) {
 				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
-					ApplyFilterToChild(node);
-			} else {
+            {
+                ApplyFilterToChild(node);
+            }
+        } else {
 				childrenNeedFiltering = true;
 			}
 		}
@@ -148,8 +164,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			if (childrenNeedFiltering) {
 				childrenNeedFiltering = false;
 				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
-					ApplyFilterToChild(node);
-			}
+            {
+                ApplyFilterToChild(node);
+            }
+        }
 		}
 
     public virtual bool IsPublicAPI => true;
@@ -159,15 +177,19 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override Avalonia.Media.IBrush Foreground {
 			get {
 				if (IsPublicAPI)
-					if (IsAutoLoaded) {
+            {
+                if (IsAutoLoaded) {
 						// HACK: should not be hard coded?
 						return Avalonia.Media.Brushes.SteelBlue;
 					}
 					else {
 						return base.Foreground;
 					}
-				else
-					return Avalonia.SystemColors.GrayTextBrush;
-			}
+            }
+            else
+            {
+                return Avalonia.SystemColors.GrayTextBrush;
+            }
+        }
 		}
 	}

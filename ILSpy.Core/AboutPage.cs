@@ -83,8 +83,11 @@ namespace ICSharpCode.ILSpy;
 				});
 			output.WriteLine();
 			foreach (var plugin in App.ExportProvider.GetExportedValues<IAboutPageAddition>())
-				plugin.Write(output);
-			output.WriteLine();
+        {
+            plugin.Write(output);
+        }
+
+        output.WriteLine();
 			var asm = typeof(AboutPage).Assembly;
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
             using StreamReader r = new StreamReader(s);
@@ -200,8 +203,11 @@ namespace ICSharpCode.ILSpy;
 							Version version = new Version((string)currentBand.Element("latestVersion"));
 							string url = (string)currentBand.Element("downloadUrl");
 							if (!(url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal)))
-								url = null; // don't accept non-urls
-							latestAvailableVersion = new AvailableVersionInfo { Version = version, DownloadUrl = url };
+                            {
+                                url = null; // don't accept non-urls
+                            }
+
+                            latestAvailableVersion = new AvailableVersionInfo { Version = version, DownloadUrl = url };
 							tcs.SetResult(latestAvailableVersion);
 						}
 						catch (Exception ex)
@@ -266,8 +272,11 @@ namespace ICSharpCode.ILSpy;
 				XElement updateSettings = new XElement("UpdateSettings");
 				updateSettings.Add(new XElement("AutomaticUpdateCheckEnabled", automaticUpdateCheckEnabled));
 				if (lastSuccessfulUpdateCheck != null)
-					updateSettings.Add(new XElement("LastSuccessfulUpdateCheck", lastSuccessfulUpdateCheck));
-				ILSpySettings.SaveSettings(updateSettings);
+            {
+                updateSettings.Add(new XElement("LastSuccessfulUpdateCheck", lastSuccessfulUpdateCheck));
+            }
+
+            ILSpySettings.SaveSettings(updateSettings);
 			}
 			
 			public event PropertyChangedEventHandler PropertyChanged;
@@ -317,9 +326,13 @@ namespace ICSharpCode.ILSpy;
                     s.LastSuccessfulUpdateCheck = DateTime.UtcNow;
                     AvailableVersionInfo v = task.Result;
                     if (v.Version > currentVersion)
+                    {
                         tcs.SetResult(v.DownloadUrl);
+                    }
                     else
+                    {
                         tcs.SetResult(null);
+                    }
                 }
                 catch (AggregateException)
                 {

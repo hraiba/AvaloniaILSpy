@@ -47,22 +47,29 @@ namespace ICSharpCode.ILSpy.TextView;
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
 			if (References == null)
-				return -1;
-			// inform AvalonEdit about the next position where we want to build a hyperlink
-			var segment = References.FindFirstSegmentWithStartAfter(startOffset);
+        {
+            return -1;
+        }
+        // inform AvalonEdit about the next position where we want to build a hyperlink
+        var segment = References.FindFirstSegmentWithStartAfter(startOffset);
 			return segment != null ? segment.StartOffset : -1;
 		}
 		
 		public override VisualLineElement ConstructElement(int offset)
 		{
 			if (References == null)
-				return null;
-			foreach (var segment in References.FindSegmentsContaining(offset)) {
+        {
+            return null;
+        }
+
+        foreach (var segment in References.FindSegmentsContaining(offset)) {
 				// skip all non-links
 				if (!isLink(segment))
-					continue;
-				// ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
-				int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
+            {
+                continue;
+            }
+            // ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
+            int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
 				// don't create hyperlinks with length 0
 				if (offset < endOffset) {
 					return new VisualLineReferenceText(CurrentContext.VisualLine, endOffset - offset, this, segment);

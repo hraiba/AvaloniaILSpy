@@ -165,7 +165,11 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
 
     void UpdateFocusedNode(List<SharpTreeNode> newSelection, int topSelectedIndex)
     {
-        if (updatesLocked) return;
+        if (updatesLocked)
+        {
+            return;
+        }
+
         SetSelectedNodes(newSelection ?? Enumerable.Empty<SharpTreeNode>());
         if (SelectedItem == null)
         {
@@ -173,7 +177,9 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
             // preceding the first of the old selected nodes
             SelectedIndex = topSelectedIndex;
             if (SelectedItem != null)
+            {
                 FocusNode((SharpTreeNode)SelectedItem);
+            }
         }
     }
 
@@ -226,7 +232,9 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
     internal void HandleExpanding(SharpTreeNode node)
     {
         if (doNotScrollOnExpanding)
+        {
             return;
+        }
 
         SharpTreeNode lastVisibleChild = node;
         while (true)
@@ -344,7 +352,9 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
         }
 
         if (!e.Handled)
+        {
             base.OnKeyDown(e);
+        }
     }
 
     protected override void OnTextInput(TextInputEventArgs e)
@@ -359,7 +369,9 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
             }
         }
         if (!e.Handled)
+        {
             base.OnTextInput(e);
+        }
     }
 
     void ExpandRecursively(SharpTreeNode node)
@@ -380,7 +392,10 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
     public void FocusNode(SharpTreeNode node)
     {
         if (node == null)
+        {
             throw new ArgumentNullException("node");
+        }
+
         ScrollIntoView(node);
         // WPF's ScrollIntoView() uses the same if/dispatcher construct, so we call OnFocusItem() after the item was brought into view.
         //if (this.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated) {
@@ -393,10 +408,16 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
     public void ScrollIntoView(SharpTreeNode node)
     {
         if (node == null)
+        {
             throw new ArgumentNullException("node");
+        }
+
         doNotScrollOnExpanding = true;
         foreach (SharpTreeNode ancestor in node.Ancestors())
+        {
             ancestor.IsExpanded = true;
+        }
+
         doNotScrollOnExpanding = false;
         base.ScrollIntoView(node);
     }
@@ -748,7 +769,10 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
             foreach (SharpTreeNode node in treeView.GetTopLevelSelection().ToArray())
             {
                 if (selectedIndex == -1)
+                {
                     selectedIndex = treeView.flattener.IndexOf(node);
+                }
+
                 node.Delete();
             }
         }

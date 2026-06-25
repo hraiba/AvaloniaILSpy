@@ -61,10 +61,14 @@ public partial class MiscSettingsPanel : UserControl, IOptionPage
 
         XElement existingElement = root.Element("MiscSettings");
 			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
+        {
+            existingElement.ReplaceWith(section);
+        }
+        else
+        {
+            root.Add(section);
+        }
 
-			currentMiscSettings = null; // invalidate cached settings
+        currentMiscSettings = null; // invalidate cached settings
 		}
 	}

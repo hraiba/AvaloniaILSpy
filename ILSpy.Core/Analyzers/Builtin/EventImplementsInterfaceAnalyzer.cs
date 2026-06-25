@@ -35,8 +35,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			var scope = context.GetScopeOf((IEvent)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in AnalyzeType((IEvent)analyzedSymbol, type))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> AnalyzeType(IEvent analyzedEntity, ITypeDefinition type)
@@ -46,13 +48,17 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
         var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
         var allTypes = type.GetAllBaseTypeDefinitions();
         if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+        {
             yield break;
+        }
 
         foreach (var @event in type.Events) {
             var baseMembers = InheritanceHelper.GetBaseMembers(@event, true);
             if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
+            {
                 yield return @event;
-			}
+            }
+        }
 		}
 
     public bool Show(ISymbol symbol) => symbol is IEvent entity && entity.DeclaringType.Kind == TypeKind.Interface;

@@ -40,11 +40,15 @@ class CSharpBracketSearcher : IBracketSearcher
             int index = openingBrackets.IndexOf(c);
             int otherOffset = -1;
             if (index > -1)
+            {
                 otherOffset = SearchBracketForward(document, offset, openingBrackets[index], closingBrackets[index]);
+            }
 
             index = closingBrackets.IndexOf(c);
             if (index > -1)
+            {
                 otherOffset = SearchBracketBackward(document, offset - 2, openingBrackets[index], closingBrackets[index]);
+            }
 
             if (otherOffset > -1)
             {
@@ -63,7 +67,9 @@ class CSharpBracketSearcher : IBracketSearcher
         for (int i = offset - 1; i > 0; --i)
         {
             if (document.GetCharAt(i) == '\n')
+            {
                 return i + 1;
+            }
         }
         return 0;
     }
@@ -117,11 +123,18 @@ class CSharpBracketSearcher : IBracketSearcher
                     }
                     break;
                 case '\'':
-                    if (!inString) inChar = !inChar;
+                    if (!inString)
+                    {
+                        inChar = !inChar;
+                    }
+
                     break;
                 case '\\':
                     if ((inString && !verbatim) || inChar)
+                    {
                         ++i; // skip next character
+                    }
+
                     break;
             }
         }
@@ -133,12 +146,18 @@ class CSharpBracketSearcher : IBracketSearcher
     #region SearchBracketBackward
     int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
     {
-        if (offset + 1 >= document.TextLength) return -1;
+        if (offset + 1 >= document.TextLength)
+        {
+            return -1;
+        }
         // this method parses a c# document backwards to find the matching bracket
 
         // first try "quick find" - find the matching bracket if there is no string/comment in the way
         int quickResult = QuickSearchBracketBackward(document, offset, openBracket, closingBracket);
-        if (quickResult >= 0) return quickResult;
+        if (quickResult >= 0)
+        {
+            return quickResult;
+        }
 
         // we need to parse the line from the beginning, so get the line start position
         int linestart = ScanLineStart(document, offset + 1);
@@ -169,7 +188,11 @@ class CSharpBracketSearcher : IBracketSearcher
                 case '\n':
                     lineComment = false;
                     inChar = false;
-                    if (!verbatim) inString = false;
+                    if (!verbatim)
+                    {
+                        inString = false;
+                    }
+
                     break;
                 case '/':
                     if (blockComment)
@@ -222,7 +245,10 @@ class CSharpBracketSearcher : IBracketSearcher
                     break;
                 case '\\':
                     if ((inString && !verbatim) || inChar)
+                    {
                         ++i; // skip next character
+                    }
+
                     break;
                 default:
                     if (ch == openBracket)
@@ -237,13 +263,19 @@ class CSharpBracketSearcher : IBracketSearcher
                         if (!(inString || inChar || lineComment || blockComment))
                         {
                             if (bracketStack.Count > 0)
+                            {
                                 bracketStack.Pop();
+                            }
                         }
                     }
                     break;
             }
         }
-        if (bracketStack.Count > 0) return (int)bracketStack.Pop();
+        if (bracketStack.Count > 0)
+        {
+            return (int)bracketStack.Pop();
+        }
+
         return -1;
     }
     #endregion
@@ -258,11 +290,17 @@ class CSharpBracketSearcher : IBracketSearcher
         bool lineComment = false;
         bool blockComment = false;
 
-        if (offset < 0) return -1;
+        if (offset < 0)
+        {
+            return -1;
+        }
 
         // first try "quick find" - find the matching bracket if there is no string/comment in the way
         int quickResult = QuickSearchBracketForward(document, offset, openBracket, closingBracket);
-        if (quickResult >= 0) return quickResult;
+        if (quickResult >= 0)
+        {
+            return quickResult;
+        }
 
         // we need to parse the line from the beginning, so get the line start position
         int linestart = ScanLineStart(document, offset);
@@ -270,7 +308,10 @@ class CSharpBracketSearcher : IBracketSearcher
         // we need to know where offset is - in a string/comment or in normal code?
         // ignore cases where offset is in a block comment
         int starttype = GetStartType(document, linestart, offset);
-        if (starttype != 0) return -1; // start position is in a comment/string
+        if (starttype != 0)
+        {
+            return -1; // start position is in a comment/string
+        }
 
         int brackets = 1;
 
@@ -283,7 +324,11 @@ class CSharpBracketSearcher : IBracketSearcher
                 case '\n':
                     lineComment = false;
                     inChar = false;
-                    if (!verbatim) inString = false;
+                    if (!verbatim)
+                    {
+                        inString = false;
+                    }
+
                     break;
                 case '/':
                     if (blockComment)
@@ -336,7 +381,10 @@ class CSharpBracketSearcher : IBracketSearcher
                     break;
                 case '\\':
                     if ((inString && !verbatim) || inChar)
+                    {
                         ++offset; // skip next character
+                    }
+
                     break;
                 default:
                     if (ch == openBracket)
@@ -375,7 +423,10 @@ class CSharpBracketSearcher : IBracketSearcher
             if (ch == openBracket)
             {
                 ++brackets;
-                if (brackets == 0) return i;
+                if (brackets == 0)
+                {
+                    return i;
+                }
             }
             else if (ch == closingBracket)
             {
@@ -391,8 +442,15 @@ class CSharpBracketSearcher : IBracketSearcher
             }
             else if (ch == '/' && i > 0)
             {
-                if (document.GetCharAt(i - 1) == '/') break;
-                if (document.GetCharAt(i - 1) == '*') break;
+                if (document.GetCharAt(i - 1) == '/')
+                {
+                    break;
+                }
+
+                if (document.GetCharAt(i - 1) == '*')
+                {
+                    break;
+                }
             }
         }
         return -1;
@@ -412,7 +470,10 @@ class CSharpBracketSearcher : IBracketSearcher
             else if (ch == closingBracket)
             {
                 --brackets;
-                if (brackets == 0) return i;
+                if (brackets == 0)
+                {
+                    return i;
+                }
             }
             else if (ch == '"')
             {
@@ -424,11 +485,17 @@ class CSharpBracketSearcher : IBracketSearcher
             }
             else if (ch == '/' && i > 0)
             {
-                if (document.GetCharAt(i - 1) == '/') break;
+                if (document.GetCharAt(i - 1) == '/')
+                {
+                    break;
+                }
             }
             else if (ch == '*' && i > 0)
             {
-                if (document.GetCharAt(i - 1) == '/') break;
+                if (document.GetCharAt(i - 1) == '/')
+                {
+                    break;
+                }
             }
         }
         return -1;

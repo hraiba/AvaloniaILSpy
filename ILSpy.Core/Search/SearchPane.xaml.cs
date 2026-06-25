@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy.Search;
 
         // This starts empty search right away, so do at the end (we're still in ctor)
         searchModeComboBox.SelectedIndex = (int)MainWindow.Instance.SessionSettings.SelectedSearchMode;
-			searchModeComboBox.SelectionChanged += (sender, e) => MainWindow.Instance.SessionSettings.SelectedSearchMode = (Search.SearchMode)searchModeComboBox.SelectedIndex;
+			searchModeComboBox.SelectionChanged += (sender, e) => MainWindow.Instance.SessionSettings.SelectedSearchMode = (SearchMode)searchModeComboBox.SelectedIndex;
         updateResultTimer.Tick += UpdateResults;
 
         DataContext = new DataGridCollectionView(Results);
@@ -104,9 +104,11 @@ namespace ICSharpCode.ILSpy.Search;
 		void FilterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != nameof(FilterSettings.ShowApiLevel))
-				return;
+        {
+            return;
+        }
 
-			if (IsVisible) {
+        if (IsVisible) {
 				StartSearch(SearchTerm);
 			} else {
 				StartSearch(null);
@@ -209,9 +211,11 @@ namespace ICSharpCode.ILSpy.Search;
 		void UpdateResults(object sender, EventArgs e)
 		{
 			if (currentSearch == null)
-				return;
+        {
+            return;
+        }
 
-			var timer = Stopwatch.StartNew();
+        var timer = Stopwatch.StartNew();
 			int resultsAdded = 0;
 			while (Results.Count < MAX_RESULTS && timer.ElapsedMilliseconds < MAX_REFRESH_TIME_MS && currentSearch.resultQueue.TryTake(out var result)) {
 				InsertResult(Results, result);
@@ -349,8 +353,11 @@ namespace ICSharpCode.ILSpy.Search;
 							foreach (var loadedAssembly in assemblies) {
 								var module = loadedAssembly.GetPEFileOrNull();
 								if (module == null)
-									continue;
-								searcher.Search(module, cts.Token);
+                                {
+                                    continue;
+                                }
+
+                                searcher.Search(module, cts.Token);
 							}
 						} catch (OperationCanceledException) {
 							// ignore cancellation
@@ -366,32 +373,50 @@ namespace ICSharpCode.ILSpy.Search;
 			{
 				if (searchTerm.Length == 1) {
 					if (searchTerm[0].StartsWith("tm:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(3), resultQueue);
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(3), resultQueue);
+                }
 
-					if (searchTerm[0].StartsWith("t:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Type);
+                if (searchTerm[0].StartsWith("t:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Type);
+                }
 
-					if (searchTerm[0].StartsWith("m:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Member);
+                if (searchTerm[0].StartsWith("m:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Member);
+                }
 
-					if (searchTerm[0].StartsWith("md:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(3), resultQueue, MemberSearchKind.Method);
+                if (searchTerm[0].StartsWith("md:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(3), resultQueue, MemberSearchKind.Method);
+                }
 
-					if (searchTerm[0].StartsWith("f:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Field);
+                if (searchTerm[0].StartsWith("f:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Field);
+                }
 
-					if (searchTerm[0].StartsWith("p:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Property);
+                if (searchTerm[0].StartsWith("p:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Property);
+                }
 
-					if (searchTerm[0].StartsWith("e:", StringComparison.Ordinal))
-						return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Event);
+                if (searchTerm[0].StartsWith("e:", StringComparison.Ordinal))
+                {
+                    return new MemberSearchStrategy(language, apiVisibility, searchTerm[0].Substring(2), resultQueue, MemberSearchKind.Event);
+                }
 
-					if (searchTerm[0].StartsWith("c:", StringComparison.Ordinal))
-						return new LiteralSearchStrategy(language, apiVisibility, resultQueue, searchTerm[0].Substring(2));
+                if (searchTerm[0].StartsWith("c:", StringComparison.Ordinal))
+                {
+                    return new LiteralSearchStrategy(language, apiVisibility, resultQueue, searchTerm[0].Substring(2));
+                }
 
-					if (searchTerm[0].StartsWith("@", StringComparison.Ordinal))
-						return new MetadataTokenSearchStrategy(language, apiVisibility, resultQueue, searchTerm[0].Substring(1));
-				}
+                if (searchTerm[0].StartsWith("@", StringComparison.Ordinal))
+                {
+                    return new MetadataTokenSearchStrategy(language, apiVisibility, resultQueue, searchTerm[0].Substring(1));
+                }
+            }
 
 				switch (searchMode)
 				{
@@ -422,7 +447,7 @@ namespace ICSharpCode.ILSpy.Search;
 
 	public sealed class SearchResult : IMemberTreeNode
 	{
-		public static readonly System.Collections.Generic.IComparer<SearchResult> Comparer = new SearchResultComparer();
+		public static readonly IComparer<SearchResult> Comparer = new SearchResultComparer();
 		
 		public IEntity Member { get; set; }
 		public float Fitness { get; set; }
@@ -435,8 +460,8 @@ namespace ICSharpCode.ILSpy.Search;
 
     public override string ToString() => Name;
 
-    class SearchResultComparer : System.Collections.Generic.IComparer<SearchResult>
-		{
+    class SearchResultComparer : IComparer<SearchResult>
+    {
         public int Compare(SearchResult x, SearchResult y) => StringComparer.Ordinal.Compare(x?.Name ?? "", y?.Name ?? "");
     }
 	}

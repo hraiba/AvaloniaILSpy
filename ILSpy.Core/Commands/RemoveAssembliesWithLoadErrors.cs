@@ -29,10 +29,16 @@ class RemoveAssembliesWithLoadErrors : SimpleCommand
     public override void Execute(object parameter)
 		{
 			foreach (var asm in MainWindow.Instance.CurrentAssemblyList.GetAssemblies()) {
-				if (!asm.HasLoadError) continue;
-				var node = MainWindow.Instance.AssemblyListTreeNode.FindAssemblyNode(asm);
-				if (node != null && node.CanDelete())
-					node.Delete();
-			}
+				if (!asm.HasLoadError)
+            {
+                continue;
+            }
+
+            var node = MainWindow.Instance.AssemblyListTreeNode.FindAssemblyNode(asm);
+				if (node?.CanDelete() == true)
+            {
+                node.Delete();
+            }
+        }
 		}
 	}

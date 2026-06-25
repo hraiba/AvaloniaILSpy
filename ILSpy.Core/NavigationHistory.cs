@@ -21,71 +21,76 @@ using System.Collections.Generic;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Stores the navigation history.
-	/// </summary>
-	internal sealed class NavigationHistory<T>
-		where T : class, IEquatable<T>
-	{
-		private const double NavigationSecondsBeforeNewEntry = 0.5;
+/// <summary>
+/// Stores the navigation history.
+/// </summary>
+internal sealed class NavigationHistory<T>
+    where T : class, IEquatable<T>
+{
+    private const double NavigationSecondsBeforeNewEntry = 0.5;
 
-		private DateTime lastNavigationTime = DateTime.MinValue;
-		T current;
-		List<T> back = [];
-		List<T> forward = [];
+    private DateTime lastNavigationTime = DateTime.MinValue;
+    T current;
+    List<T> back = [];
+    List<T> forward = [];
 
     public bool CanNavigateBack => back.Count > 0;
 
     public bool CanNavigateForward => forward.Count > 0;
 
     public T GoBack()
-		{
-			forward.Add(current);
-			current = back[back.Count - 1];
-			back.RemoveAt(back.Count - 1);
-			return current;
-		}
-		
-		public T GoForward()
-		{
-			back.Add(current);
-			current = forward[forward.Count - 1];
-			forward.RemoveAt(forward.Count - 1);
-			return current;
-		}
+    {
+        forward.Add(current);
+        current = back[^1];
+        back.RemoveAt(back.Count - 1);
+        return current;
+    }
 
-		public void RemoveAll(Predicate<T> predicate)
-		{
-			back.RemoveAll(predicate);
-			forward.RemoveAll(predicate);
-		}
-		
-		public void Clear()
-		{
-			back.Clear();
-			forward.Clear();
-		}
+    public T GoForward()
+    {
+        back.Add(current);
+        current = forward[^1];
+        forward.RemoveAt(forward.Count - 1);
+        return current;
+    }
+
+    public void RemoveAll(Predicate<T> predicate)
+    {
+        back.RemoveAll(predicate);
+        forward.RemoveAll(predicate);
+    }
+
+    public void Clear()
+    {
+        back.Clear();
+        forward.Clear();
+    }
 
     public void UpdateCurrent(T node) => current = node;
 
     public void Record(T node)
-		{
-			var navigationTime = DateTime.Now;
-			var period = navigationTime - lastNavigationTime;
+    {
+        var navigationTime = DateTime.Now;
+        var period = navigationTime - lastNavigationTime;
 
-			if (period.TotalSeconds < NavigationSecondsBeforeNewEntry) {
-				current = node;
-			} else {
-				if (current != null)
-					back.Add(current);
+        if (period.TotalSeconds < NavigationSecondsBeforeNewEntry)
+        {
+            current = node;
+        }
+        else
+        {
+            if (current != null)
+            {
+                back.Add(current);
+            }
 
-				// We only store a record once, and ensure it is on the top of the stack, so we just remove the old record
-				back.Remove(node);
-				current = node;
-			}
+            // We only store a record once, and ensure it is on the top of the stack, so we just remove the old record
+            back.Remove(node);
+            current = node;
+        }
 
-			forward.Clear();
+        forward.Clear();
 
-			lastNavigationTime = navigationTime;
-		}
-	}
+        lastNavigationTime = navigationTime;
+    }
+}

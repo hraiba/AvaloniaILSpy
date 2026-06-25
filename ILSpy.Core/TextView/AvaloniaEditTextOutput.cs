@@ -54,10 +54,14 @@ namespace ICSharpCode.ILSpy.TextView;
 		{
 			int val;
 			if (definitions.TryGetValue(definition, out val))
-				return val;
-			else
-				return -1;
-		}
+        {
+            return val;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
     public void AddDefinition(object definition, int offset) => definitions[definition] = offset;
 }
@@ -293,8 +297,11 @@ bool isDefinition = false)
 		{
 			if (element != null) {
 				if (UIElements.Count > 0 && UIElements.Last().Key == TextLength)
-					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
-				UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(TextLength, new Lazy<IControl>(element)));
+            {
+                throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
+            }
+
+            UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(TextLength, new Lazy<IControl>(element)));
 			}
 		}
 
@@ -306,8 +313,11 @@ bool isDefinition = false)
 		{
 			WriteIndent();
 			if (currentColorBegin > -1)
-				HighlightingModel.SetHighlighting(currentColorBegin, b.Length - currentColorBegin, currentColor);
-			colorStack.Push(currentColor);
+        {
+            HighlightingModel.SetHighlighting(currentColorBegin, b.Length - currentColorBegin, currentColor);
+        }
+
+        colorStack.Push(currentColor);
 			currentColor = currentColor.Clone();
 			currentColorBegin = b.Length;
 			currentColor.MergeWith(highlightingColor);

@@ -44,18 +44,26 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public static IBitmap GetIcon(IMethod method)
 		{
 			if (method.IsOperator)
-				return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Accessibility), false);
+        {
+            return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Accessibility), false);
+        }
 
-			if (method.IsExtensionMethod)
-				return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Accessibility), false);
+        if (method.IsExtensionMethod)
+        {
+            return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Accessibility), false);
+        }
 
-			if (method.IsConstructor)
-				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Accessibility), method.IsStatic);
+        if (method.IsConstructor)
+        {
+            return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Accessibility), method.IsStatic);
+        }
 
-			if (!method.HasBody && method.HasAttribute(KnownAttribute.DllImport))
-				return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Accessibility), true);
+        if (!method.HasBody && method.HasAttribute(KnownAttribute.DllImport))
+        {
+            return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Accessibility), true);
+        }
 
-			return Images.GetIcon(method.IsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
+        return Images.GetIcon(method.IsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
 				GetOverlayIcon(method.Accessibility), method.IsStatic);
 		}
 
@@ -84,12 +92,19 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override FilterResult Filter(FilterSettings settings)
 		{
         if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
             return FilterResult.Hidden;
+        }
+
         if (settings.SearchTermMatches(MethodDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(MethodDefinition)))
+        {
             return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
 		public override bool IsPublicAPI {
 			get {

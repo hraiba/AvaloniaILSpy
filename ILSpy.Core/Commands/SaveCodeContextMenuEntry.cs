@@ -39,8 +39,11 @@ sealed class SaveCodeContextMenuEntry : IContextMenuEntry
 
     public static bool CanExecute(IReadOnlyList<SharpTreeNode> selectedNodes)
     {
-        if (selectedNodes == null || selectedNodes.Any(n => !(n is ILSpyTreeNode)))
+        if (selectedNodes?.Any(n => !(n is ILSpyTreeNode)) != false)
+        {
             return false;
+        }
+
         return selectedNodes.Count == 1
             || (selectedNodes.Count > 1 && (selectedNodes.All(n => n is AssemblyTreeNode) || selectedNodes.All(n => n is IMemberTreeNode)));
     }
@@ -54,7 +57,9 @@ sealed class SaveCodeContextMenuEntry : IContextMenuEntry
             // if there's only one treenode selected
             // we will invoke the custom Save logic
             if (await singleSelection.Save(textView))
+            {
                 return;
+            }
         }
         else if (selectedNodes.Count > 1 && selectedNodes.All(n => n is AssemblyTreeNode))
         {
@@ -122,7 +127,9 @@ sealed class SaveCodeContextMenuEntry : IContextMenuEntry
                 Resources.AssemblySaveCodeDirectoryNotEmptyTitle,
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (result == MessageBoxResult.No)
+            {
                 return null; // -> abort
+            }
         }
 
         return filename;

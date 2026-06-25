@@ -25,54 +25,55 @@ using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Interaction logic for NugetPackageBrowserDialog.xaml
-	/// </summary>
-	public partial class NugetPackageBrowserDialog : DialogWindow, INotifyPropertyChanged
-	{
-		public LoadedNugetPackage Package { get; }
+/// <summary>
+/// Interaction logic for NugetPackageBrowserDialog.xaml
+/// </summary>
+public partial class NugetPackageBrowserDialog : DialogWindow, INotifyPropertyChanged
+{
+    public LoadedNugetPackage Package { get; }
 
-		internal Button okButton;
-		internal Button cancelButton;
+    internal Button okButton;
+    internal Button cancelButton;
 
-		public NugetPackageBrowserDialog()
-		{
-			InitializeComponent();
+    public NugetPackageBrowserDialog()
+    {
+        InitializeComponent();
 #if DEBUG
-			this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-		}
+    }
 
-		public NugetPackageBrowserDialog(LoadedNugetPackage package, WindowBase owner)
-		{
-			InitializeComponent();
-			Owner = owner;
+    public NugetPackageBrowserDialog(LoadedNugetPackage package, WindowBase owner)
+    {
+        InitializeComponent();
+        Owner = owner;
 #if DEBUG
-			this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-			Package = package;
-			Package.PropertyChanged += Package_PropertyChanged;
-			DataContext = this;
-		}
+        Package = package;
+        Package.PropertyChanged += Package_PropertyChanged;
+        DataContext = this;
+    }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-			okButton = this.FindControl<Button>("okButton");
-			cancelButton = this.FindControl<Button>("cancelButton");
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        okButton = this.FindControl<Button>("okButton");
+        cancelButton = this.FindControl<Button>("cancelButton");
 
-			okButton.Click += OKButton_Click;
-			cancelButton.Click += CancelButton_Click;
-		}
+        okButton.Click += OKButton_Click;
+        cancelButton.Click += CancelButton_Click;
+    }
 
-		public new event PropertyChangedEventHandler PropertyChanged;
+    public new event PropertyChangedEventHandler PropertyChanged;
 
-		void Package_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(Package.SelectedEntries)) {
-				OnPropertyChanged(new PropertyChangedEventArgs("HasSelection"));
-			}
-		}
+    void Package_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Package.SelectedEntries))
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSelection)));
+        }
+    }
 
     void OKButton_Click(object sender, RoutedEventArgs e) => Close(true);
 

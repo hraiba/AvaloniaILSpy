@@ -35,8 +35,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 			var scope = context.GetScopeOf((IEntity)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in AnalyzeType((IMethod)analyzedSymbol, type))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> AnalyzeType(IMethod analyzedEntity, ITypeDefinition type)
@@ -46,13 +48,17 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
         var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
         var allTypes = type.GetAllBaseTypeDefinitions();
         if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+        {
             yield break;
+        }
 
         foreach (var method in type.Methods) {
             var baseMembers = InheritanceHelper.GetBaseMembers(method, true);
             if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
+            {
                 yield return method;
-			}
+            }
+        }
 		}
 
     public bool Show(ISymbol entity) => entity is IMethod method && method.DeclaringType.Kind == TypeKind.Interface;

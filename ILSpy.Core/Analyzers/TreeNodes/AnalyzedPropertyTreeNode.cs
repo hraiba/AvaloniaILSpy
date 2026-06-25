@@ -43,13 +43,18 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
 		protected override void LoadChildren()
 		{
 			if (analyzedProperty.CanGet)
-				Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Getter, "get"));
-			if (analyzedProperty.CanSet)
-				Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Setter, "set"));
-			//foreach (var accessor in analyzedProperty.OtherMethods)
-			//	this.Children.Add(new AnalyzedPropertyAccessorTreeNode(accessor, null));
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Getter, "get"));
+        }
 
-			var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
+        if (analyzedProperty.CanSet)
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Setter, "set"));
+        }
+        //foreach (var accessor in analyzedProperty.OtherMethods)
+        //	this.Children.Add(new AnalyzedPropertyAccessorTreeNode(accessor, null));
+
+        var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedProperty)) {

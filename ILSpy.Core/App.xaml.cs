@@ -137,8 +137,11 @@ namespace ICSharpCode.ILSpy;
 			// Fully qualify the paths before passing them to another process,
 			// because that process might use a different current directory.
 			if (string.IsNullOrEmpty(argument) || argument[0] == '/')
-				return argument;
-			try {
+        {
+            return argument;
+        }
+
+        try {
 				return Path.Combine(Environment.CurrentDirectory, argument);
 			} catch (ArgumentException) {
 				return argument;
@@ -158,23 +161,23 @@ namespace ICSharpCode.ILSpy;
 
     static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
 		{
-			Exception ex = e.ExceptionObject as Exception;
-			if (ex != null) {
-				UnhandledException(ex);
-			}
-		}
+        if (e.ExceptionObject is Exception ex)
+        {
+            UnhandledException(ex);
+        }
+    }
 
 		static void UnhandledException(Exception exception)
 		{
 			Debug.WriteLine(exception.ToString());
 			for (Exception ex = exception; ex != null; ex = ex.InnerException) {
-				ReflectionTypeLoadException rtle = ex as ReflectionTypeLoadException;
-				if (rtle != null && rtle.LoaderExceptions.Length > 0) {
-					exception = rtle.LoaderExceptions[0];
-					Debug.WriteLine(exception.ToString());
-					break;
-				}
-			}
+            if (ex is ReflectionTypeLoadException rtle && rtle.LoaderExceptions.Length > 0)
+            {
+                exception = rtle.LoaderExceptions[0];
+                Debug.WriteLine(exception.ToString());
+                break;
+            }
+        }
 			MessageBox.Show(exception.ToString(), "Sorry, we crashed");
 		}
 

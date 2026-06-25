@@ -119,9 +119,13 @@ public sealed partial class SessionSettings : INotifyPropertyChanged
         foreach (char ch in p)
         {
             if (char.IsLetterOrDigit(ch))
+            {
                 sb.Append(ch);
+            }
             else
+            {
                 sb.AppendFormat("\\x{0:X4}", (int)ch);
+            }
         }
         return sb.ToString();
     }
@@ -132,7 +136,10 @@ public sealed partial class SessionSettings : INotifyPropertyChanged
     static T FromString<T>(string s, T defaultValue)
     {
         if (s == null)
+        {
             return defaultValue;
+        }
+
         try
         {
             TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
@@ -147,7 +154,10 @@ public sealed partial class SessionSettings : INotifyPropertyChanged
     static Rect FromString(string s, Rect defaultValue)
     {
         if (s == null)
+        {
             return defaultValue;
+        }
+
         return Rect.Parse(s);
     }
 

@@ -44,10 +44,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(name))
-				return FilterResult.MatchAndRecurse;
-			else
-				return FilterResult.Recurse;
-		}
+        {
+            return FilterResult.MatchAndRecurse;
+        }
+        else
+        {
+            return FilterResult.Recurse;
+        }
+    }
 
     public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileNamespace(name, Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
 }

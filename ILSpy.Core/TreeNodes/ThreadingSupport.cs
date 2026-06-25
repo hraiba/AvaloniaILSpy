@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		Task<List<SharpTreeNode>> loadChildrenTask;
 		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-    public bool IsRunning => loadChildrenTask != null && !loadChildrenTask.IsCompleted;
+    public bool IsRunning => loadChildrenTask?.IsCompleted == false;
 
     public void Cancel()
 		{
@@ -148,9 +148,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			public bool IsVisible(TextViewContext context)
 			{
-				if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is ErrorTreeNode))
-					return true;
-				return false;
+				if (context.SelectedTreeNodes?.All(n => n is ErrorTreeNode) == true)
+            {
+                return true;
+            }
+
+            return false;
 			}
 
         public bool IsEnabled(TextViewContext context) => true;

@@ -52,7 +52,10 @@ public sealed class SharpTreeViewTextSearch : AvaloniaObject
     public bool RevertLastCharacter()
     {
         if (!isActive || inputStack.Count == 0)
+        {
             return false;
+        }
+
         matchPrefix = matchPrefix.Substring(0, matchPrefix.Length - inputStack.Pop().Length);
         ResetTimeout();
         return true;
@@ -91,7 +94,10 @@ public sealed class SharpTreeViewTextSearch : AvaloniaObject
         IList items = (IList)treeView.Items;
         charWasUsed = false;
         if (items.Count == 0 || string.IsNullOrEmpty(needle))
+        {
             return -1;
+        }
+
         int index = -1;
         int fallbackIndex = -1;
         bool fallbackMatch = false;
@@ -126,7 +132,9 @@ public sealed class SharpTreeViewTextSearch : AvaloniaObject
             }
             i++;
             if (i >= items.Count)
+            {
                 i = 0;
+            }
         } while (i != startIndex);
         return index == -1 ? fallbackIndex : index;
     }

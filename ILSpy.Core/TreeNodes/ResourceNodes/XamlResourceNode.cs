@@ -36,10 +36,14 @@ namespace ICSharpCode.ILSpy.Xaml;
     public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (key.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) && data is Stream)
-				return new XamlResourceEntryNode(key, (Stream)data);
-			else
-				return null;
-		}
+        {
+            return new XamlResourceEntryNode(key, (Stream)data);
+        }
+        else
+        {
+            return null;
+        }
+    }
 	}
 	
 	sealed class XamlResourceEntryNode : ResourceEntryNode

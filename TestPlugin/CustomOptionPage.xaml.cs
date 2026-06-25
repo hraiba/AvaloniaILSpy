@@ -46,9 +46,13 @@ partial class CustomOptionPage : UserControl, IOptionPage
         // if required.
         XElement existingElement = root.Element(ns + "CustomOptions");
         if (existingElement != null)
+        {
             existingElement.ReplaceWith(section);
+        }
         else
+        {
             root.Add(section);
+        }
     }
 }
 

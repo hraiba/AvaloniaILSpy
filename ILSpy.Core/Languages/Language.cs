@@ -103,8 +103,12 @@ namespace ICSharpCode.ILSpy;
 		{
 			WriteCommentLine(output, assembly.FileName);
 			var asm = assembly.GetPEFileOrNull();
-			if (asm == null) return null;
-			var metadata = asm.Metadata;
+			if (asm == null)
+        {
+            return null;
+        }
+
+        var metadata = asm.Metadata;
 			if (metadata.IsAssembly) {
 				var name = metadata.GetAssemblyDefinition();
 				if ((name.Flags & System.Reflection.AssemblyFlags.WindowsRuntime) != 0) {
@@ -198,8 +202,11 @@ namespace ICSharpCode.ILSpy;
 				builder.Append('<');
 				for (int i = 0; i < type.TypeArguments.Count; i++) {
 					if (i > 0)
-						builder.Append(',');
-					type.TypeArguments[i].AcceptVisitor(this);
+                {
+                    builder.Append(',');
+                }
+
+                type.TypeArguments[i].AcceptVisitor(this);
 				}
 				builder.Append('>');
 				return type;
@@ -220,9 +227,14 @@ namespace ICSharpCode.ILSpy;
 			private void WriteType(IType type)
 			{
 				if (includeNamespace)
+            {
                 EscapeName(builder, type.FullName);
+            }
             else
+            {
                 EscapeName(builder, type.Name);
+            }
+
             if (type.TypeParameterCount > 0) {
 					builder.Append('`');
 					builder.Append(type.TypeParameterCount);
@@ -327,8 +339,11 @@ namespace ICSharpCode.ILSpy;
 				buffer.Append('<');
 				foreach (var tp in typeParameters) {
 					if (i > 0)
-						buffer.Append(", ");
-					buffer.Append(tp.Name);
+                {
+                    buffer.Append(", ");
+                }
+
+                buffer.Append(tp.Name);
 					i++;
 				}
 				buffer.Append('>');
@@ -339,8 +354,11 @@ namespace ICSharpCode.ILSpy;
 			var parameters = method.Parameters;
 			foreach (var param in parameters) {
 				if (i > 0)
-					buffer.Append(", ");
-				buffer.Append(TypeToString(param.Type, includeNamespace));
+            {
+                buffer.Append(", ");
+            }
+
+            buffer.Append(TypeToString(param.Type, includeNamespace));
 				i++;
 			}
 			buffer.Append(')');
@@ -373,7 +391,10 @@ namespace ICSharpCode.ILSpy;
         }
         if (includeNamespace || includeDeclaringTypeName) {
             if (entity.DeclaringTypeDefinition != null)
+            {
                 return TypeToString(entity.DeclaringTypeDefinition, includeNamespaceOfDeclaringTypeName) + "." + entityName;
+            }
+
             return EscapeName(entity.Namespace) + "." + entityName;
         } else {
             return entityName;
@@ -396,13 +417,19 @@ namespace ICSharpCode.ILSpy;
 			switch (handle.Kind) {
 				case HandleKind.TypeDefinition:
 					if (fullName)
+                {
                     return EscapeName(((TypeDefinitionHandle)handle).GetFullTypeName(metadata).ToILNameString(omitGenerics));
+                }
+
                 var td = metadata.GetTypeDefinition((TypeDefinitionHandle)handle);
                 return EscapeName(metadata.GetString(td.Name));
             case HandleKind.FieldDefinition:
 					var fd = metadata.GetFieldDefinition((FieldDefinitionHandle)handle);
 					if (fullName)
+                {
                     return EscapeName(fd.GetDeclaringType().GetFullTypeName(metadata).ToILNameString(omitGenerics) + "." + metadata.GetString(fd.Name));
+                }
+
                 return EscapeName(metadata.GetString(fd.Name));
             case HandleKind.MethodDefinition:
 					var md = metadata.GetMethodDefinition((MethodDefinitionHandle)handle);
@@ -410,37 +437,48 @@ namespace ICSharpCode.ILSpy;
                 if (!omitGenerics) {
                     int genericParamCount = md.GetGenericParameters().Count;
                     if (genericParamCount > 0)
+                    {
                         methodName += "``" + genericParamCount;
+                    }
                 }
                 if (fullName)
+                {
                     return EscapeName(md.GetDeclaringType().GetFullTypeName(metadata).ToILNameString(omitGenerics) + "." + methodName);
+                }
+
                 return EscapeName(methodName);
             case HandleKind.EventDefinition:
 					var ed = metadata.GetEventDefinition((EventDefinitionHandle)handle);
 					var declaringType = metadata.GetMethodDefinition(ed.GetAccessors().GetAny()).GetDeclaringType();
 					if (fullName)
+                {
                     return EscapeName(declaringType.GetFullTypeName(metadata).ToILNameString(omitGenerics) + "." + metadata.GetString(ed.Name));
+                }
+
                 return EscapeName(metadata.GetString(ed.Name));
             case HandleKind.PropertyDefinition:
 					var pd = metadata.GetPropertyDefinition((PropertyDefinitionHandle)handle);
 					declaringType = metadata.GetMethodDefinition(pd.GetAccessors().GetAny()).GetDeclaringType();
 					if (fullName)
+                {
                     return EscapeName(declaringType.GetFullTypeName(metadata).ToILNameString(omitGenerics) + "." + metadata.GetString(pd.Name));
+                }
+
                 return EscapeName(metadata.GetString(pd.Name));
             default:
 					return null;
 			}
 		}
 
-		public virtual CodeMappingInfo GetCodeMappingInfo(MetadataFile module, SRM.EntityHandle member)
+		public virtual CodeMappingInfo GetCodeMappingInfo(MetadataFile module, EntityHandle member)
 		{
-			var parts = new Dictionary<SRM.MethodDefinitionHandle, SRM.MethodDefinitionHandle[]>();
-			var locations = new Dictionary<SRM.EntityHandle, SRM.MethodDefinitionHandle>();
+			var parts = new Dictionary<MethodDefinitionHandle, MethodDefinitionHandle[]>();
+			var locations = new Dictionary<EntityHandle, MethodDefinitionHandle>();
 
 			var declaringType = member.GetDeclaringType(module.Metadata);
 
 			if (declaringType.IsNil && member.Kind == SRM.HandleKind.TypeDefinition) {
-				declaringType = (SRM.TypeDefinitionHandle)member;
+				declaringType = (TypeDefinitionHandle)member;
 			}
 
 			return new CodeMappingInfo(module, (TypeDefinitionHandle)declaringType);
@@ -455,14 +493,22 @@ namespace ICSharpCode.ILSpy;
         switch (architecture) {
 				case Machine.I386:
                 if ((corflags & CorFlags.Prefers32Bit) != 0)
+                {
                     return "AnyCPU (32-bit preferred)";
+                }
+
                 if ((corflags & CorFlags.Requires32Bit) != 0)
+                {
                     return "x86";
+                }
                 // According to ECMA-335, II.25.3.3.1 CorFlags.Requires32Bit and Characteristics.Bit32Machine must be in sync
                 // for assemblies containing managed code. However, this is not true for C++/CLI assemblies.
                 if ((corflags & CorFlags.ILOnly) == 0 && (characteristics & Characteristics.Bit32Machine) != 0)
+                {
                     return "x86";
-					return "AnyCPU (64-bit preferred)";
+                }
+
+                return "AnyCPU (64-bit preferred)";
 				case Machine.Amd64:
 					return "x64";
 				case Machine.IA64:
@@ -482,9 +528,13 @@ namespace ICSharpCode.ILSpy;
         foreach (char ch in name)
         {
             if (char.IsWhiteSpace(ch) || char.IsControl(ch) || char.IsSurrogate(ch))
+            {
                 sb.AppendFormat("\\u{0:x4}", (int)ch);
+            }
             else
+            {
                 sb.Append(ch);
+            }
         }
         return sb;
     }

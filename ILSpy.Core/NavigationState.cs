@@ -23,26 +23,31 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy;
 
-	public class NavigationState : IEquatable<NavigationState>
-	{
-		private readonly HashSet<SharpTreeNode> treeNodes;
+public class NavigationState : IEquatable<NavigationState>
+{
+    private readonly HashSet<SharpTreeNode> treeNodes;
 
     public IEnumerable<SharpTreeNode> TreeNodes => treeNodes;
     public DecompilerTextViewState ViewState { get; }
 
     public NavigationState(DecompilerTextViewState viewState)
-		{
-			treeNodes = [with(viewState.DecompiledNodes)];
-			ViewState = viewState;
-		}
+    {
+        treeNodes = [.. viewState.DecompiledNodes];
+        ViewState = viewState;
+    }
 
-		public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
-		{
-			this.treeNodes = [with(treeNodes)];
-		}
+    public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
+    {
+        this.treeNodes = [.. treeNodes];
+    }
 
 
     public bool Equals(NavigationState other) =>
         // TODO: should this care about the view state as well?
         treeNodes.SetEquals(other.treeNodes);
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as NavigationState);
+    }
 }

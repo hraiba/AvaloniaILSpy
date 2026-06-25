@@ -60,7 +60,10 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil;
             var cecilMethod = moduleDef.LookupToken(MetadataTokens.GetToken(method)) as MethodDefinition;
             var debugInfo = cecilMethod?.DebugInformation;
             if (debugInfo == null)
+            {
                 continue;
+            }
+
             IList<SequencePoint> sequencePoints = EmptyList<SequencePoint>.Instance;
             if (debugInfo.HasSequencePoints)
             {
@@ -82,7 +85,10 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil;
             foreach (var scope in debugInfo.GetScopes())
             {
                 if (!scope.HasVariables)
+                {
                     continue;
+                }
+
                 foreach (var v in scope.Variables)
                 {
                     variables.Add(new Variable(v.Index, v.Name));

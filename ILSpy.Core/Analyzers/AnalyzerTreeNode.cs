@@ -33,12 +33,14 @@ namespace ICSharpCode.ILSpy.Analyzers;
 				if (language != value) {
 					language = value;
 					foreach (var child in Children.OfType<AnalyzerTreeNode>())
-						child.Language = value;
-				}
+                {
+                    child.Language = value;
+                }
+            }
 			}
 		}
 
-    public override bool CanDelete() => Parent != null && Parent.IsRoot;
+    public override bool CanDelete() => Parent?.IsRoot == true;
 
     public override void DeleteCore() => Parent.Children.Remove(this);
 
@@ -48,8 +50,10 @@ namespace ICSharpCode.ILSpy.Analyzers;
 		{
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
-					a.Language = Language;
-			}
+            {
+                a.Language = Language;
+            }
+        }
 			base.OnChildrenChanged(e);
 		}
 

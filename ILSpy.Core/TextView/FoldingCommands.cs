@@ -24,21 +24,27 @@ using ICSharpCode.ILSpy.Properties;
 
 namespace ICSharpCode.ILSpy.TextView;
 
-	[ExportContextMenuEntryAttribute(Header = nameof(Resources.ToggleFolding), Category = nameof(Resources.Folding))]
+	[ExportContextMenuEntry(Header = nameof(Resources.ToggleFolding), Category = nameof(Resources.Folding))]
 	internal sealed class ToggleAllContextMenuEntry : IContextMenuEntry
 	{
     public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-    public bool IsEnabled(TextViewContext context) => context.TextView != null && context.TextView.FoldingManager != null;
+    public bool IsEnabled(TextViewContext context) => context.TextView?.FoldingManager != null;
 
     public void Execute(TextViewContext context)
 		{
 			if (null == context.TextView)
-				return;
-			FoldingManager foldingManager = context.TextView.FoldingManager;
+        {
+            return;
+        }
+
+        FoldingManager foldingManager = context.TextView.FoldingManager;
 			if (null == foldingManager)
-				return;
-			bool doFold = true;
+        {
+            return;
+        }
+
+        bool doFold = true;
 			foreach (FoldingSection fm in foldingManager.AllFoldings) {
 				if (fm.IsFolded) {
 					doFold = false;
@@ -51,27 +57,35 @@ namespace ICSharpCode.ILSpy.TextView;
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = nameof(Resources._ToggleFolding), Category = nameof(Resources.Folding))]
+	[ExportContextMenuEntry(Header = nameof(Resources._ToggleFolding), Category = nameof(Resources.Folding))]
 	internal sealed class ToggleContextMenuEntry : IContextMenuEntry
 	{
     public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-    public bool IsEnabled(TextViewContext context) => context.TextView != null && context.TextView.FoldingManager != null;
+    public bool IsEnabled(TextViewContext context) => context.TextView?.FoldingManager != null;
 
     public void Execute(TextViewContext context)
 		{
 			var textView = context.TextView;
 			if (null == textView)
-				return;
-			var editor = textView.textEditor;
+        {
+            return;
+        }
+
+        var editor = textView.textEditor;
 			FoldingManager foldingManager = context.TextView.FoldingManager;
 			if (null == foldingManager)
-				return;
-			// TODO: or use Caret if position is not given?
-			var posBox = context.Position;
+        {
+            return;
+        }
+        // TODO: or use Caret if position is not given?
+        var posBox = context.Position;
 			if (null == posBox)
-				return;
-			TextViewPosition pos = posBox.Value;
+        {
+            return;
+        }
+
+        TextViewPosition pos = posBox.Value;
 			// look for folding on this line:
 			FoldingSection folding = foldingManager.GetNextFolding(editor.Document.GetOffset(pos.Line, 1));
 			if (folding == null || editor.Document.GetLineByOffset(folding.StartOffset).LineNumber != pos.Line) {

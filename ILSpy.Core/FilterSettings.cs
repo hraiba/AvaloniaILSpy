@@ -40,8 +40,10 @@ namespace ICSharpCode.ILSpy;
 			Language = Languages.GetLanguage((string)element.Element("Language"));
 			LanguageVersion = Language.LanguageVersions.FirstOrDefault(v => v.Version == (string)element.Element("LanguageVersion"));
 			if (LanguageVersion == default(LanguageVersion))
-				LanguageVersion = language.LanguageVersions.LastOrDefault();
-		}
+        {
+            LanguageVersion = language.LanguageVersions.LastOrDefault();
+        }
+    }
 
     public XElement SaveAsXml() => new XElement(
             "FilterSettings",
@@ -75,8 +77,11 @@ namespace ICSharpCode.ILSpy;
 		public bool SearchTermMatches(string text)
 		{
 			if (string.IsNullOrEmpty(searchTerm))
-				return true;
-			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
+        {
+            return true;
+        }
+
+        return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		ApiVisibility showApiLevel;

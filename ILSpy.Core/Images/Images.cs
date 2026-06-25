@@ -122,14 +122,18 @@ static class Images
 		public static IBitmap GetIcon(TypeIcon icon, AccessOverlayIcon overlay, bool isStatic = false)
 		{
 			lock (typeIconCache)
-				return typeIconCache.GetIcon(icon, overlay, isStatic);
-		}
+        {
+            return typeIconCache.GetIcon(icon, overlay, isStatic);
+        }
+    }
 
 		public static IBitmap GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)
 		{
 			lock (memberIconCache)
-				return memberIconCache.GetIcon(icon, overlay, isStatic);
-		}
+        {
+            return memberIconCache.GetIcon(icon, overlay, isStatic);
+        }
+    }
 
 		#region icon caches & overlay management
 

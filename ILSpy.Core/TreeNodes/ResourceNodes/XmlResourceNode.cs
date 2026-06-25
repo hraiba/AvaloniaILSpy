@@ -37,19 +37,27 @@ namespace ICSharpCode.ILSpy.Xaml;
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 		
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in xmlFileExtensions)
+        {
+            return null;
+        }
+
+        foreach (string fileExt in xmlFileExtensions)
 			{
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new XmlResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new XmlResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}
@@ -69,14 +77,22 @@ namespace ICSharpCode.ILSpy.Xaml;
 			{
 				string text = (string)Text;
 				if (text.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXml;
-				else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXsd;
-				else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXslt;
-				else
-					return Images.Resource;
-			}
+            {
+                return Images.ResourceXml;
+            }
+            else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
+            {
+                return Images.ResourceXsd;
+            }
+            else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
+            {
+                return Images.ResourceXslt;
+            }
+            else
+            {
+                return Images.Resource;
+            }
+        }
 		}
 
 		public override bool View(DecompilerTextView textView)

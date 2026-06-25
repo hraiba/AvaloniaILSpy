@@ -62,8 +62,11 @@ namespace ICSharpCode.ILSpy.Analyzers;
 		public MethodBodyBlock GetMethodBody(IMethod method)
 		{
 			if (!method.HasBody || method.MetadataToken.IsNil)
-				return null;
-			var module = method.ParentModule.MetadataFile;
+        {
+            return null;
+        }
+
+        var module = method.ParentModule.MetadataFile;
 			var md = module.Metadata.GetMethodDefinition((MethodDefinitionHandle)method.MetadataToken);
 			try {
 				return module.GetMethodBody(md.RelativeVirtualAddress);

@@ -30,8 +30,10 @@ sealed class SortAssemblyListCommand : SimpleCommand, IComparer<LoadedAssembly>
 		public override void Execute(object parameter)
 		{
 			using (MainWindow.Instance.treeView.LockUpdates())
-				MainWindow.Instance.CurrentAssemblyList.Sort(this);
-		}
+        {
+            MainWindow.Instance.CurrentAssemblyList.Sort(this);
+        }
+    }
 
     int IComparer<LoadedAssembly>.Compare(LoadedAssembly x, LoadedAssembly y) => string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCulture);
 }
@@ -43,14 +45,19 @@ sealed class CollapseAllCommand : SimpleCommand
 		public override void Execute(object parameter)
 		{
 			using (MainWindow.Instance.treeView.LockUpdates())
-				CollapseChildren(MainWindow.Instance.treeView.Root);
+        {
+            CollapseChildren(MainWindow.Instance.treeView.Root);
+        }
 
-			void CollapseChildren(SharpTreeNode node)
+        void CollapseChildren(SharpTreeNode node)
 			{
 				foreach (var child in node.Children) {
 					if (!child.IsExpanded)
-						continue;
-					CollapseChildren(child);
+                {
+                    continue;
+                }
+
+                CollapseChildren(child);
 					child.IsExpanded = false;
 				}
 			}

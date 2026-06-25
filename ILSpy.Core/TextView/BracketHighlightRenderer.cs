@@ -83,9 +83,11 @@ namespace ICSharpCode.ILSpy.TextView;
     public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
 		{
 			if (result == null)
-				return;
+        {
+            return;
+        }
 
-			BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
+        BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
 
 			builder.CornerRadius = 1;
 

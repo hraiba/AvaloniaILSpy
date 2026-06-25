@@ -24,5 +24,5 @@ namespace ICSharpCode.ILSpy;
 [ExportMainMenuCommand(Menu = nameof(Resources._Help), Header = nameof(Resources._CheckUpdates), MenuOrder = 5000)]
 sealed class CheckForUpdatesCommand : SimpleCommand
 	{
-    public override void Execute(object parameter) => MainWindow.Instance.ShowMessageIfUpdatesAvailableAsync(ILSpySettings.Load(), forceCheck: true);
+    public override void Execute(object parameter) => MainWindow.Instance.ShowMessageIfUpdatesAvailable(ILSpySettings.Load(), forceCheck: true);
 }

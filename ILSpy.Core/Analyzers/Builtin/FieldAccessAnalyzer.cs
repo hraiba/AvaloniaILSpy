@@ -72,8 +72,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
 					if (IsUsedInMethod((IField)analyzedSymbol, method, mappingInfo, context))
-						yield return method;
-				}
+                {
+                    yield return method;
+                }
+            }
 
 				foreach (var property in type.Properties) {
 					if (property.CanGet && IsUsedInMethod((IField)analyzedSymbol, property.Getter, mappingInfo, context)) {
@@ -106,31 +108,42 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 		bool IsUsedInMethod(IField analyzedField, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context)
 		{
 			if (method.MetadataToken.IsNil)
-				return false;
-			var module = method.ParentModule.MetadataFile;
+        {
+            return false;
+        }
+
+        var module = method.ParentModule.MetadataFile;
 			foreach (var part in mappingInfo.GetMethodParts((MethodDefinitionHandle)method.MetadataToken)) {
 				var md = module.Metadata.GetMethodDefinition(part);
-				if (!md.HasBody()) continue;
-				MethodBodyBlock body;
+				if (!md.HasBody())
+            {
+                continue;
+            }
+
+            MethodBodyBlock body;
 				try {
 					body = module.GetMethodBody(md.RelativeVirtualAddress);
 				} catch (BadImageFormatException) {
 					return false;
 				}
 				if (ScanMethodBody(analyzedField, method, body))
-					return true;
-			}
+            {
+                return true;
+            }
+        }
 			return false;
 		}
 
 		bool ScanMethodBody(IField analyzedField, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
-				return false;
+        {
+            return false;
+        }
 
-			var mainModule = (MetadataModule)method.ParentModule;
+        var mainModule = (MetadataModule)method.ParentModule;
 			var blob = methodBody.GetILReader();
-			var genericContext = new Decompiler.TypeSystem.GenericContext(); // type parameters don't matter for this analyzer
+			var genericContext = new GenericContext(); // type parameters don't matter for this analyzer
 
 			while (blob.RemainingBytes > 0) {
 				ILOpCode opCode;
@@ -145,20 +158,27 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 				}
 				EntityHandle fieldHandle = MetadataTokenHelpers.EntityHandleOrNil(blob.ReadInt32());
 				if (!fieldHandle.Kind.IsMemberKind())
-					continue;
-				IField field;
+            {
+                continue;
+            }
+
+            IField field;
 				try {
 					field = mainModule.ResolveEntity(fieldHandle, genericContext) as IField;
 				} catch (BadImageFormatException) {
 					continue;
 				}
 				if (field == null)
-					continue;
+            {
+                continue;
+            }
 
-				if (field.MetadataToken == analyzedField.MetadataToken
+            if (field.MetadataToken == analyzedField.MetadataToken
 					&& field.ParentModule.MetadataFile== analyzedField.ParentModule.MetadataFile)
-					return true;
-			}
+            {
+                return true;
+            }
+        }
 
 			return false;
 		}

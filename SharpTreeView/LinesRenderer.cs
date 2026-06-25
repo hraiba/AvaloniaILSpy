@@ -35,9 +35,12 @@ namespace ICSharpCode.TreeView;
 				dc.DrawLine(pen, new Point(p.X, Bounds.Height / 2), new Point(p.X + 10, Bounds.Height / 2));
 			}
 
-			if (NodeView.Node.IsRoot) return;
+			if (NodeView.Node.IsRoot)
+        {
+            return;
+        }
 
-			if (NodeView.Node.IsLast) {
+        if (NodeView.Node.IsLast) {
 				dc.DrawLine(pen, p, new Point(p.X, Bounds.Height / 2));
 			}
 			else {
@@ -48,8 +51,12 @@ namespace ICSharpCode.TreeView;
 			while (true) {
 				p = p.WithX(p.X - 19);
 				current = current.Parent;
-				if (p.X < 0) break;
-				if (!current.IsLast) {
+				if (p.X < 0)
+            {
+                break;
+            }
+
+            if (!current.IsLast) {
 					dc.DrawLine(pen, p, new Point(p.X, Bounds.Height));
 				}
 			}

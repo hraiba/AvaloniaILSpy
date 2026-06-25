@@ -25,7 +25,10 @@ class MemberSearchStrategy : AbstractSearchStrategy
         cancellationToken.ThrowIfCancellationRequested();
         var metadata = module.Metadata;
         var typeSystem = module.GetTypeSystemOrNull();
-        if (typeSystem == null) return;
+        if (typeSystem == null)
+        {
+            return;
+        }
 
         if (searchKind == MemberSearchKind.All || searchKind == MemberSearchKind.Type)
         {
@@ -34,9 +37,16 @@ class MemberSearchStrategy : AbstractSearchStrategy
                 cancellationToken.ThrowIfCancellationRequested();
                 string languageSpecificName = language.GetEntityName(module, handle, fullNameSearch, omitGenerics);
                 if (languageSpecificName != null && !IsMatch(languageSpecificName))
+                {
                     continue;
+                }
+
                 var type = ((MetadataModule)typeSystem.MainModule).GetDefinition(handle);
-                if (!CheckVisibility(type)) continue;
+                if (!CheckVisibility(type))
+                {
+                    continue;
+                }
+
                 OnFoundResult(type);
             }
         }
@@ -48,9 +58,16 @@ class MemberSearchStrategy : AbstractSearchStrategy
                 cancellationToken.ThrowIfCancellationRequested();
                 string languageSpecificName = language.GetEntityName(module, handle, fullNameSearch, omitGenerics);
                 if (languageSpecificName != null && !IsMatch(languageSpecificName))
+                {
                     continue;
+                }
+
                 var method = ((MetadataModule)typeSystem.MainModule).GetDefinition(handle);
-                if (!CheckVisibility(method)) continue;
+                if (!CheckVisibility(method))
+                {
+                    continue;
+                }
+
                 OnFoundResult(method);
             }
         }
@@ -62,9 +79,16 @@ class MemberSearchStrategy : AbstractSearchStrategy
                 cancellationToken.ThrowIfCancellationRequested();
                 string languageSpecificName = language.GetEntityName(module, handle, fullNameSearch, omitGenerics);
                 if (languageSpecificName != null && !IsMatch(languageSpecificName))
+                {
                     continue;
+                }
+
                 var field = ((MetadataModule)typeSystem.MainModule).GetDefinition(handle);
-                if (!CheckVisibility(field)) continue;
+                if (!CheckVisibility(field))
+                {
+                    continue;
+                }
+
                 OnFoundResult(field);
             }
         }
@@ -76,9 +100,16 @@ class MemberSearchStrategy : AbstractSearchStrategy
                 cancellationToken.ThrowIfCancellationRequested();
                 string languageSpecificName = language.GetEntityName(module, handle, fullNameSearch, omitGenerics);
                 if (languageSpecificName != null && !IsMatch(languageSpecificName))
+                {
                     continue;
+                }
+
                 var property = ((MetadataModule)typeSystem.MainModule).GetDefinition(handle);
-                if (!CheckVisibility(property)) continue;
+                if (!CheckVisibility(property))
+                {
+                    continue;
+                }
+
                 OnFoundResult(property);
             }
         }
@@ -90,9 +121,16 @@ class MemberSearchStrategy : AbstractSearchStrategy
                 cancellationToken.ThrowIfCancellationRequested();
                 string languageSpecificName = language.GetEntityName(module, handle, fullNameSearch, omitGenerics);
                 if (!IsMatch(languageSpecificName))
+                {
                     continue;
+                }
+
                 var @event = ((MetadataModule)typeSystem.MainModule).GetDefinition(handle);
-                if (!CheckVisibility(@event)) continue;
+                if (!CheckVisibility(@event))
+                {
+                    continue;
+                }
+
                 OnFoundResult(@event);
             }
         }

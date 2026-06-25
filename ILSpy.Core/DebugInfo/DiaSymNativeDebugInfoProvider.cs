@@ -54,8 +54,11 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 		{
 			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
 			if (method == null || method.GetSequencePointCount(out int count) != 0)
-				return Empty<Decompiler.DebugInfo.SequencePoint>.Array;
-			var sequencePoints = new Decompiler.DebugInfo.SequencePoint[count];
+        {
+            return Empty<Decompiler.DebugInfo.SequencePoint>.Array;
+        }
+
+        var sequencePoints = new Decompiler.DebugInfo.SequencePoint[count];
 			var points = method.GetSequencePoints();
 			int i = 0;
 			var buffer = new char[1024];
@@ -94,8 +97,10 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 				}
 
 				foreach (var s in scope.GetChildren())
-					scopes.Enqueue(s);
-			}
+            {
+                scopes.Enqueue(s);
+            }
+        }
 
 			return variables;
 		}
@@ -119,8 +124,10 @@ namespace ICSharpCode.ILSpy.DebugInfo;
 				}
 
 				foreach (var s in scope.GetChildren())
-					scopes.Enqueue(s);
-			}
+            {
+                scopes.Enqueue(s);
+            }
+        }
 
 			return false;
 		}

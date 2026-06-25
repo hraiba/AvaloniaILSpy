@@ -63,15 +63,22 @@ public class LoadedPackage
         {
             int pos = filename.LastIndexOfAny(new char[] { '/', '\\' });
             if (pos == -1)
+            {
                 return ("", filename); // file in root
+            }
             else
+            {
                 return (filename.Substring(0, pos), filename.Substring(pos + 1));
+            }
         }
 
         PackageFolder GetFolder(string name)
         {
             if (folders.TryGetValue(name, out var result))
+            {
                 return result;
+            }
+
             var (dirname, basename) = SplitName(name);
             PackageFolder parent = GetFolder(dirname);
             result = new PackageFolder(this, parent, basename);
@@ -99,7 +106,10 @@ public class LoadedPackage
         try
         {
             if (!SingleFileBundle.IsBundle(view, out long bundleHeaderOffset))
+            {
                 return null;
+            }
+
             var manifest = SingleFileBundle.ReadManifest(view, bundleHeaderOffset);
             var entries = manifest.Entries.Select(e => new BundleEntry(fileName, view, e)).ToList();
             var result = new LoadedPackage(PackageKind.Bundle, entries);
@@ -159,7 +169,10 @@ public class LoadedPackage
             using var archive = ZipFile.OpenRead(zipFile);
             var entry = archive.GetEntry(Name);
             if (entry == null)
+            {
                 return null;
+            }
+
             var memoryStream = new MemoryStream();
             using (var s = entry.Open())
             {
@@ -175,7 +188,10 @@ public class LoadedPackage
             using var archive = ZipFile.OpenRead(zipFile);
             var entry = archive.GetEntry(Name);
             if (entry == null)
+            {
                 return null;
+            }
+
             return entry.Length;
         }
     }
@@ -317,11 +333,17 @@ public sealed class PackageFolder : IAssemblyResolver
     public LoadedAssembly? ResolveFileName(string name)
     {
         if (package.LoadedAssembly == null)
+        {
             return null;
+        }
+
         lock (assemblies)
         {
             if (assemblies.TryGetValue(name, out var asm))
+            {
                 return asm;
+            }
+
             var entry = Entries.FirstOrDefault(e => string.Equals(name, e.Name, StringComparison.OrdinalIgnoreCase));
             if (entry != null)
             {

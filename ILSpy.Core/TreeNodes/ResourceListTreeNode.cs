@@ -45,16 +45,22 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     protected override void LoadChildren()
 		{
 			foreach (Resource r in module.Resources.OrderBy(m => m.Name, NaturalStringComparer.Instance))
-				Children.Add(ResourceTreeNode.Create(r));
-		}
+        {
+            Children.Add(ResourceTreeNode.Create(r));
+        }
+    }
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
-				return FilterResult.MatchAndRecurse;
-			else
-				return FilterResult.Recurse;
-		}
+        {
+            return FilterResult.MatchAndRecurse;
+        }
+        else
+        {
+            return FilterResult.Recurse;
+        }
+    }
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{

@@ -60,10 +60,14 @@ namespace ICSharpCode.ILSpy.Controls;
 			public object GetService(Type serviceType)
 			{
 				if (serviceType == typeof(IProvideValueTarget))
-					return this;
-				else
-					return null;
-			}
+            {
+                return this;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         public object TargetObject => targetObject;
 

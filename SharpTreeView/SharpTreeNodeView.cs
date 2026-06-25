@@ -128,18 +128,24 @@ namespace ICSharpCode.TreeView;
 			} else if (e.PropertyName == "IsExpanded") {
 				RaisePropertyChanged(IconProperty, null, Icon);
 				if (Node.IsExpanded)
-					ParentTreeView.HandleExpanding(Node);
-			}
+            {
+                ParentTreeView.HandleExpanding(Node);
+            }
+        }
 		}
 
 		void OnIsEditingChanged()
 		{
 			if (Node.IsEditing) {
 				if (CellEditor == null)
-					textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
-				else
-					textEditorContainer.Child = CellEditor;
-			}
+            {
+                textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
+            }
+            else
+            {
+                textEditorContainer.Child = CellEditor;
+            }
+        }
 			else {
 				textEditorContainer.Child = null;
 			}

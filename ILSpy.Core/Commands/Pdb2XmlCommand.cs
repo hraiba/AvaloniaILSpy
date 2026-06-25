@@ -52,7 +52,11 @@ sealed class Pdb2XmlCommand : SimpleCommand
             foreach (var node in nodes)
             {
                 string pdbFileName = Path.ChangeExtension(node.LoadedAssembly.FileName, ".pdb");
-                if (!File.Exists(pdbFileName)) continue;
+                if (!File.Exists(pdbFileName))
+                {
+                    continue;
+                }
+
                 using var pdbStream = File.OpenRead(pdbFileName);
                 using var peStream = File.OpenRead(node.LoadedAssembly.FileName);
                 PdbToXmlConverter.ToXml(writer, pdbStream, peStream, options);

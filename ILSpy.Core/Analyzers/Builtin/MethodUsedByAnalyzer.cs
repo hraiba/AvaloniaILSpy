@@ -48,8 +48,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
 					if (IsUsedInMethod((IMethod)analyzedSymbol, method, mappingInfo, context))
-						yield return method;
-				}
+                {
+                    yield return method;
+                }
+            }
 
 				foreach (var property in type.Properties) {
 					if (property.CanGet && IsUsedInMethod((IMethod)analyzedSymbol, property.Getter, mappingInfo, context)) {
@@ -84,13 +86,15 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
     static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
-				return false;
+        {
+            return false;
+        }
 
-			var mainModule = (MetadataModule)method.ParentModule;
+        var mainModule = (MetadataModule)method.ParentModule;
 			var blob = methodBody.GetILReader();
 
 			var baseMethod = InheritanceHelper.GetBaseMember(analyzedMethod);
-			var genericContext = new Decompiler.TypeSystem.GenericContext(); // type parameters don't matter for this analyzer
+			var genericContext = new GenericContext(); // type parameters don't matter for this analyzer
 
 			while (blob.RemainingBytes > 0) {
 				ILOpCode opCode;
@@ -104,18 +108,23 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 					return false; // unexpected end of blob
 				}
 				var member = MetadataTokenHelpers.EntityHandleOrNil(blob.ReadInt32());
-				if (member.IsNil || !member.Kind.IsMemberKind()) continue;
+				if (member.IsNil || !member.Kind.IsMemberKind())
+            {
+                continue;
+            }
 
-				IMember m;
+            IMember m;
 				try {
 					m = (mainModule.ResolveEntity(member, genericContext) as IMember)?.MemberDefinition;
 				} catch (BadImageFormatException) {
 					continue;
 				}
 				if (m == null)
-					continue;
+            {
+                continue;
+            }
 
-				if (opCode == ILOpCode.Callvirt && baseMethod != null) {
+            if (opCode == ILOpCode.Callvirt && baseMethod != null) {
 					if (IsSameMember(baseMethod, m)) {
 						return true;
 					}

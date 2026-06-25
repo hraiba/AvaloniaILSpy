@@ -46,7 +46,10 @@ public sealed class XamarinCompressedFileLoader : IFileLoader
         // Read compressed file header
         var magic = fileReader.ReadUInt32();
         if (magic != CompressedDataMagic)
+        {
             return null;
+        }
+
         _ = fileReader.ReadUInt32(); // skip index into descriptor table, unused
         int uncompressedLength = (int)fileReader.ReadUInt32();
         int compressedLength = (int)stream.Length;  // Ensure we read all of compressed data

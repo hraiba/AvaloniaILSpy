@@ -77,7 +77,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public override object ToolTip {
 			get {
 				if (LoadedAssembly.HasLoadError)
-					return "Assembly could not be loaded. Click here for details.";
+            {
+                return "Assembly could not be loaded. Click here for details.";
+            }
 
             // TODO: AVALONIA: add inlines tooltip
             //if (tooltip == null && LoadedAssembly.IsLoaded) {
@@ -172,8 +174,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 
 			Children.Add(new ReferenceFolderTreeNode(module, this));
 			if (module.Resources.Any())
-				Children.Add(new ResourceListTreeNode(module));
-			foreach (NamespaceTreeNode ns in namespaces.Values) {
+        {
+            Children.Add(new ResourceListTreeNode(module));
+        }
+
+        foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
 			foreach (var type in assembly.TopLevelTypeDefinitions.OrderBy(t => t.ReflectionName, NaturalStringComparer.Instance)) {
@@ -188,8 +193,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			}
 			foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name, NaturalStringComparer.Instance)) {
 				if (ns.Children.Count > 0)
-					Children.Add(ns);
-			}
+            {
+                Children.Add(ns);
+            }
+        }
 		}
 
 		public override bool CanExpandRecursively => true;
@@ -200,14 +207,21 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public TypeTreeNode FindTypeNode(ITypeDefinition type)
 		{
 			if (type == null)
-				return null;
-			EnsureLazyChildren();
+        {
+            return null;
+        }
+
+        EnsureLazyChildren();
 			TypeTreeNode node;
 			if (typeDict.TryGetValue((TypeDefinitionHandle)type.MetadataToken, out node))
-				return node;
-			else
-				return null;
-		}
+        {
+            return node;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 		/// <summary>
 		/// Finds the node for a namespace.
@@ -215,14 +229,21 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public NamespaceTreeNode FindNamespaceNode(string namespaceName)
 		{
 			if (string.IsNullOrEmpty(namespaceName))
-				return null;
-			EnsureLazyChildren();
+        {
+            return null;
+        }
+
+        EnsureLazyChildren();
 			NamespaceTreeNode node;
 			if (namespaces.TryGetValue(namespaceName, out node))
-				return node;
-			else
-				return null;
-		}
+        {
+            return node;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
     public override bool CanDrag(SharpTreeNode[] nodes) => nodes.All(n => n is AssemblyTreeNode);
 
@@ -246,10 +267,14 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (settings.SearchTermMatches(LoadedAssembly.ShortName))
-				return FilterResult.Match;
-			else
-				return FilterResult.Recurse;
-		}
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Recurse;
+        }
+    }
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
@@ -291,8 +316,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			Language language = Language;
 			if (string.IsNullOrEmpty(language.ProjectFileExtension))
-				return false;
-			SaveFileDialog dlg = new SaveFileDialog();
+        {
+            return false;
+        }
+
+        SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(LoadedAssembly.ShortName, language.FileExtension);
 			dlg.Filters =
@@ -315,8 +343,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
                             Resources.AssemblySaveCodeDirectoryNotEmptyTitle,
                             MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
 							if (result == MessageBoxResult.No)
-								return true; // don't save, but mark the Save operation as handled
-							break;
+                        {
+                            return true; // don't save, but mark the Save operation as handled
+                        }
+
+                        break;
 						}
 					}
 				}
@@ -337,8 +368,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
     public bool IsEnabled(TextViewContext context) => true;
@@ -346,8 +380,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
+        {
+            return;
+        }
+
+        foreach (var node in context.SelectedTreeNodes) {
 				node.Delete();
 			}
 		}
@@ -359,8 +396,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
     public bool IsEnabled(TextViewContext context) => true;
@@ -368,8 +408,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
-			var paths = new List<string[]>();
+        {
+            return;
+        }
+
+        var paths = new List<string[]>();
 			using (context.TreeView.LockUpdates()) {
 				foreach (var node in context.SelectedTreeNodes) {
 					paths.Add(MainWindow.GetPathForNode(node));
@@ -388,8 +431,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
     public bool IsEnabled(TextViewContext context) => true;
@@ -397,8 +443,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
+        {
+            return;
+        }
+
+        foreach (var node in context.SelectedTreeNodes) {
 				var la = ((AssemblyTreeNode)node).LoadedAssembly;
 				var module = la.GetPEFileOrNull();
 				if (module != null) {
@@ -418,22 +467,31 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => ((AssemblyTreeNode)n).IsAutoLoaded);
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => ((AssemblyTreeNode)n).IsAutoLoaded);
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => !((AssemblyTreeNode)n).LoadedAssembly.FileName.StartsWith("nupkg://"));
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => !((AssemblyTreeNode)n).LoadedAssembly.FileName.StartsWith("nupkg://"));
 		}
 
 		public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
+        {
+            return;
+        }
+
+        foreach (var node in context.SelectedTreeNodes) {
 				var loadedAssm = ((AssemblyTreeNode)node).LoadedAssembly;
 				if (!loadedAssm.HasLoadError && !loadedAssm.FileName.StartsWith("nupkg://")) {
 					loadedAssm.IsAutoLoaded = false;
@@ -450,8 +508,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes
             .All(n => {
                 var a = GetAssemblyTreeNode(n);
                 return a != null && File.Exists(a.LoadedAssembly.FileName);
@@ -463,7 +524,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         while (node != null)
         {
             if (node is AssemblyTreeNode a)
+            {
                 return a;
+            }
+
             node = node.Parent;
         }
         return null;
@@ -473,8 +537,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public bool IsEnabled(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes
             .All(n => {
                 var a = GetAssemblyTreeNode(n);
                 return a != null && File.Exists(a.LoadedAssembly.FileName);
@@ -484,7 +551,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
+        {
+            return;
+        }
+
         foreach (var n in context.SelectedTreeNodes) {
             var node = GetAssemblyTreeNode(n);
             var path = Path.GetDirectoryName(node.LoadedAssembly.FileName);
@@ -501,8 +571,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes
             .All(n => {
                 var a = OpenContainingFolder.GetAssemblyTreeNode(n);
                 return a != null && File.Exists(a.LoadedAssembly.FileName);
@@ -512,8 +585,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public bool IsEnabled(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes
+        {
+            return false;
+        }
+
+        return context.SelectedTreeNodes
             .All(n => {
                 var a = OpenContainingFolder.GetAssemblyTreeNode(n);
                 return a != null && File.Exists(a.LoadedAssembly.FileName);
@@ -523,7 +599,10 @@ namespace ICSharpCode.ILSpy.TreeNodes;
     public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return;
+        {
+            return;
+        }
+
         foreach (var n in context.SelectedTreeNodes) {
             var node = OpenContainingFolder.GetAssemblyTreeNode(n);
 				var path = Path.GetDirectoryName(node.LoadedAssembly.FileName);
