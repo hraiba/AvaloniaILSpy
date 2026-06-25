@@ -12,7 +12,6 @@ namespace ICSharpCode.ILSpy
 {
 	static class Program
 	{
-		
 		static void Main(string[] args)
 		{
 			Directory.SetCurrentDirectory(AppContext.BaseDirectory);
@@ -60,7 +59,7 @@ namespace ICSharpCode.ILSpy
 
 		class ProxyLogSink : ILogSink
 		{
-			private ILogSink sink;
+			private readonly ILogSink sink;
 
 			public ProxyLogSink(ILogSink sink)
 			{

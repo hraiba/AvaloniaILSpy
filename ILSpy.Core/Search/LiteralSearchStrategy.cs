@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.Search
             }
         }
 
-        public override void Search(PEFile module, CancellationToken cancellationToken)
+        public override void Search(MetadataFile module, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var metadata = module.Metadata;
@@ -113,9 +113,9 @@ namespace ICSharpCode.ILSpy.Search
             }
         }
 
-        bool MethodIsLiteralMatch(PEFile module, MethodDefinition methodDefinition)
+        bool MethodIsLiteralMatch(MetadataFile module, MethodDefinition methodDefinition)
         {
-            var blob = module.Reader.GetMethodBody(methodDefinition.RelativeVirtualAddress).GetILReader();
+            var blob = module.GetMethodBody(methodDefinition.RelativeVirtualAddress).GetILReader();
             if (searchTermLiteralType == TypeCode.Int64)
             {
                 long val = (long)searchTermLiteralValue;

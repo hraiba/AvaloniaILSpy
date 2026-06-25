@@ -84,7 +84,12 @@ namespace ICSharpCode.ILSpy.DebugInfo
 			return variables;
 		}
 
-		public bool TryGetName(MethodDefinitionHandle method, int index, out string name)
+        public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetName(MethodDefinitionHandle method, int index, out string name)
 		{
 			var metadata = provider.GetMetadataReader();
 			name = null;

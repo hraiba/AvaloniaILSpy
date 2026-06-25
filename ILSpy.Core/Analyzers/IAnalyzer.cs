@@ -66,10 +66,10 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			if (!method.HasBody || method.MetadataToken.IsNil)
 				return null;
-			var module = method.ParentModule.PEFile;
+			var module = method.ParentModule.MetadataFile;
 			var md = module.Metadata.GetMethodDefinition((MethodDefinitionHandle)method.MetadataToken);
 			try {
-				return module.Reader.GetMethodBody(md.RelativeVirtualAddress);
+				return module.GetMethodBody(md.RelativeVirtualAddress);
 			} catch (BadImageFormatException) {
 				return null;
 			}

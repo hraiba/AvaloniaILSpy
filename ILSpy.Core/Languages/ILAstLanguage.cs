@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy
 		{
 			base.DecompileMethod(method, output, options);
 			new ReflectionDisassembler(output, options.CancellationToken)
-				.DisassembleMethodHeader(method.ParentModule.PEFile, (SRM.MethodDefinitionHandle)method.MetadataToken);
+				.DisassembleMethodHeader(method.ParentModule.MetadataFile, (SRM.MethodDefinitionHandle)method.MetadataToken);
 			output.WriteLine();
 			output.WriteLine();
 		}
@@ -86,13 +86,13 @@ namespace ICSharpCode.ILSpy
 			public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 			{
 				base.DecompileMethod(method, output, options);
-				var module = method.ParentModule.PEFile;
+				var module = method.ParentModule.MetadataFile;
 				var methodDef = module.Metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
 					return;
 				var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
 				ILReader reader = new ILReader(typeSystem.MainModule);
-				var methodBody = module.Reader.GetMethodBody(methodDef.RelativeVirtualAddress);
+				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				reader.WriteTypedIL((SRM.MethodDefinitionHandle)method.MetadataToken, methodBody, output, cancellationToken: options.CancellationToken);
 			}
 		}
@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy
 			public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 			{
 				base.DecompileMethod(method, output, options);
-				var module = method.ParentModule.PEFile;
+				var module = method.ParentModule.MetadataFile;
 				var metadata = module.Metadata;
 				var methodDef = metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
@@ -118,7 +118,7 @@ namespace ICSharpCode.ILSpy
 				var typeSystem = new DecompilerTypeSystem(module, assemblyResolver);
 				var reader = new ILReader(typeSystem.MainModule);
 				reader.UseDebugSymbols = options.DecompilerSettings.UseDebugSymbols;
-				var methodBody = module.Reader.GetMethodBody(methodDef.RelativeVirtualAddress);
+				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				ILFunction il = reader.ReadIL((SRM.MethodDefinitionHandle)method.MetadataToken, methodBody, kind: ILFunctionKind.TopLevelFunction, cancellationToken: options.CancellationToken);
 				var namespaces = new HashSet<string>();
 				var decompiler = new CSharpDecompiler(typeSystem, options.DecompilerSettings) { CancellationToken = options.CancellationToken };

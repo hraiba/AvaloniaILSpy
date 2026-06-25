@@ -103,7 +103,12 @@ namespace ICSharpCode.ILSpy.DebugInfo
 			return variables;
 		}
 
-		public bool TryGetName(MethodDefinitionHandle handle, int index, out string name)
+        public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGetName(MethodDefinitionHandle handle, int index, out string name)
 		{
 			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
 			var scopes = new Queue<ISymUnmanagedScope>(new[] { method.GetRootScope() });

@@ -21,7 +21,7 @@ namespace ICSharpCode.ILSpy.Search
             this.searchKind = searchKind;
         }
 
-        public override void Search(PEFile module, CancellationToken cancellationToken)
+        public override void Search(MetadataFile module, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var metadata = module.Metadata;

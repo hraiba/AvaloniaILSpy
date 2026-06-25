@@ -26,6 +26,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy.Controls.FileLoaders;
 
 namespace ICSharpCode.ILSpy
 {
@@ -35,10 +36,10 @@ namespace ICSharpCode.ILSpy
 	public sealed class AssemblyList
 	{
 		readonly string listName;
-		
+        public AssemblyListManager Manager {get;}
+        
 		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
 		bool dirty;
-
 		internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly>();
 		internal readonly ConcurrentDictionary<string, LoadedAssembly> moduleLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
 
@@ -53,17 +54,18 @@ namespace ICSharpCode.ILSpy
 		/// </remarks>
 		internal readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
 		
-		public AssemblyList(string listName)
+		public AssemblyList(AssemblyListManager manager, string listName)
 		{
 			this.listName = listName;
+            Manager = manager ?? throw new ArgumentNullException(nameof(manager));
 			assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		
 		/// <summary>
 		/// Loads an assembly list from XML.
 		/// </summary>
-		public AssemblyList(XElement listElement)
-			: this((string)listElement.Attribute("name"))
+		public AssemblyList(AssemblyListManager manager, XElement listElement)
+			: this(manager, (string)listElement.Attribute("name"))
 		{
 			foreach (var asm in listElement.Elements("Assembly")) {
 				OpenAssembly((string)asm);
@@ -282,5 +284,10 @@ namespace ICSharpCode.ILSpy
 				assemblies.AddRange(list);
 			}
 		}
+
+
+		public bool ApplyWinRTProjections { get; set; }
+		public bool UseDebugSymbols { get; set; }
+		public FileLoaderRegistry LoaderRegistry => this.Manager.LoaderRegistry;
 	}
 }

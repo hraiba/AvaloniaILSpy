@@ -20,6 +20,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy.Controls.FileLoaders;
 
 namespace ICSharpCode.ILSpy
 {
@@ -28,7 +29,7 @@ namespace ICSharpCode.ILSpy
 	/// 
 	/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
 	/// </summary>
-	sealed class AssemblyListManager
+	public sealed class AssemblyListManager
 	{
 		public AssemblyListManager(ILSpySettings spySettings)
 		{
@@ -39,6 +40,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
+        public FileLoaderRegistry LoaderRegistry {get;} = new();
 		
 		/// <summary>
 		/// Loads an assembly list from the ILSpySettings.
@@ -58,15 +60,15 @@ namespace ICSharpCode.ILSpy
 			if (listName != null) {
 				foreach (var list in doc.Elements("List")) {
 					if ((string)list.Attribute("name") == listName) {
-						return new AssemblyList(list);
+						return new AssemblyList(this, list);
 					}
 				}
 			}
 			XElement firstList = doc.Elements("List").FirstOrDefault();
 			if (firstList != null)
-				return new AssemblyList(firstList);
+				return new AssemblyList(this, firstList);
 			else
-				return new AssemblyList(listName ?? DefaultListName);
+				return new AssemblyList(this, listName ?? DefaultListName);
 		}
 		
 		public const string DefaultListName = "(Default)";
