@@ -308,7 +308,7 @@ public sealed class PackageFolder : IAssemblyResolver
         return Task.FromResult<MetadataFile?>(null);
     }
 
-    readonly Dictionary<string, LoadedAssembly?> assemblies = [with(StringComparer.OrdinalIgnoreCase)];
+    readonly Dictionary<string, LoadedAssembly?> assemblies = new(StringComparer.OrdinalIgnoreCase);
 
     public LoadedAssembly? ResolveFileName(string name)
     {

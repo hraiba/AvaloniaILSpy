@@ -67,7 +67,7 @@ namespace ICSharpCode.Decompiler.PdbProvider.Cecil;
             IList<SequencePoint> sequencePoints = EmptyList<SequencePoint>.Instance;
             if (debugInfo.HasSequencePoints)
             {
-                sequencePoints = [with(debugInfo.SequencePoints.Count)];
+                sequencePoints = new List<SequencePoint>(debugInfo.SequencePoints.Count);
                 foreach (var point in debugInfo.SequencePoints)
                 {
                     sequencePoints.Add(new SequencePoint

@@ -297,7 +297,7 @@ public sealed class AssemblyList
         Dispatcher.UIThread.VerifyAccess();
         lock (assemblies)
         {
-            List<LoadedAssembly> list = [with(assemblies)];
+            List<LoadedAssembly> list = [.. assemblies];
             list.Sort(index, Math.Min(count, list.Count - index), comparer);
             assemblies.Clear();
             assemblies.AddRange(list);

@@ -47,14 +47,14 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		void OnDocumentChanged(object sender, EventArgs e)
 		{
 			if (textView.Document != null)
-        {
-            markers = [with(textView.Document)];
-        }
-        else
-        {
-            markers = null;
-        }
-    }
+		{
+			markers = new TextSegmentCollection<TextMarker>(textView.Document);
+		}
+		else
+		{
+			markers = null;
+		}
+	}
 		
 		#region ITextMarkerService
 		public ITextMarker Create(int startOffset, int length)
