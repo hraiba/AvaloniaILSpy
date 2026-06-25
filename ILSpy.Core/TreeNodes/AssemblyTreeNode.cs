@@ -41,8 +41,8 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 	/// </summary>
 	public sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
-		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
-		readonly Dictionary<TypeDefinitionHandle, TypeTreeNode> typeDict = new Dictionary<TypeDefinitionHandle, TypeTreeNode>();
+		readonly Dictionary<string, NamespaceTreeNode> namespaces = [];
+		readonly Dictionary<TypeDefinitionHandle, TypeTreeNode> typeDict = [];
 		ICompilation typeSystem;
 
 		public AssemblyTreeNode(LoadedAssembly assembly)
@@ -310,12 +310,12 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(LoadedAssembly.ShortName, language.FileExtension);
-			dlg.Filters = new List<FileDialogFilter>() 
-			{
+			dlg.Filters =
+            [
             new FileDialogFilter() { Name = language.Name + " project", Extensions = { language.ProjectFileExtension.TrimStart('.') } },
             new FileDialogFilter() { Name = language.Name + "  single file", Extensions = { language.FileExtension.TrimStart('.') }},
 				new FileDialogFilter() { Name = "All files", Extensions = { "*" }}
-			};
+			];
 
 			var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
 			if (!string.IsNullOrEmpty(filename)) {

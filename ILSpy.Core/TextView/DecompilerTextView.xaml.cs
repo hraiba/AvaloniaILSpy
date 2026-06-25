@@ -62,7 +62,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
 {
     readonly ReferenceElementGenerator referenceElementGenerator;
     readonly UIElementGenerator uiElementGenerator;
-    List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
+    List<VisualLineElementGenerator> activeCustomElementGenerators = [];
     RichTextColorizer activeRichTextColorizer;
     BracketHighlightRenderer bracketHighlightRenderer;
     FoldingManager foldingManager;
@@ -73,7 +73,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     CancellationTokenSource currentCancellationTokenSource;
 
     readonly TextMarkerService textMarkerService;
-    readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
+    readonly List<ITextMarker> localReferenceMarks = [];
 
     internal TextEditor textEditor;
     internal Border waitAdorner;
@@ -758,11 +758,11 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         SaveFileDialog dlg = new SaveFileDialog();
         dlg.Title = "Save file";
         dlg.DefaultExtension = language.FileExtension;
-        dlg.Filters = new List<FileDialogFilter>()
-        {
+        dlg.Filters =
+        [
             new FileDialogFilter() { Name = language.Name, Extensions = { language.FileExtension } },
             new FileDialogFilter(){ Name = Properties.Resources.AllFiles, Extensions = { "*" } }
-        };
+        ];
         dlg.InitialFileName = CleanUpName(treeNodes.First().ToString(), language.FileExtension) + language.FileExtension;
         var fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
         if (fileName != null)

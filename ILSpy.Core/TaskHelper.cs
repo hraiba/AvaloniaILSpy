@@ -173,10 +173,10 @@ public static class TaskHelper
                 Exception ex = t.Exception;
                 while (ex is AggregateException)
                     ex = ex.InnerException;
-                if (ex is TException)
-                    action((TException)ex);
-                else
+                if (ex is not TException)
                     throw t.Exception;
+                else
+                    action((TException)ex);
             }
         }, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, TaskScheduler.FromCurrentSynchronizationContext());
     }
@@ -186,6 +186,7 @@ public static class TaskHelper
     /// </summary>
     public static void IgnoreExceptions(this Task task)
     {
+        ArgumentNullException.ThrowIfNull(task);
     }
 
     /// <summary>
@@ -195,7 +196,7 @@ public static class TaskHelper
     {
         task.Catch<Exception>(exception => Dispatcher.UIThread.InvokeAsync(new Action(delegate
         {
-            AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+            var output = new AvaloniaEditTextOutput();
             output.Write(exception.ToString());
             MainWindow.Instance.TextView.ShowText(output);
         }))).IgnoreExceptions();

@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			Task<List<SharpTreeNode>> thisTask = null;
 			thisTask = new Task<List<SharpTreeNode>>(
 				delegate {
-					List<SharpTreeNode> result = new List<SharpTreeNode>();
+					List<SharpTreeNode> result = [];
 					foreach (SharpTreeNode child in fetchChildrenEnumerable) {
 						ct.ThrowIfCancellationRequested();
 						result.Add(child);

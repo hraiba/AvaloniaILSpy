@@ -60,7 +60,7 @@ namespace ICSharpCode.TreeView;
 		internal CheckBox checkBox;
 		internal Border textContainer;
 		internal ContentPresenter textContent;
-		List<IDisposable> bindings = new List<IDisposable>();
+		List<IDisposable> bindings = [];
 
 		protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
 		{

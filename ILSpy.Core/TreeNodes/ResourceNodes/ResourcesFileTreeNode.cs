@@ -114,11 +114,11 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
-        dlg.Filters = new List<FileDialogFilter>()
-        {
+        dlg.Filters =
+        [
             new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
             new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
-        };
+        ];
         var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
         if (!string.IsNullOrEmpty(filename)) {
             s.Position = 0;

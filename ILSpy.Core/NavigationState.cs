@@ -32,13 +32,13 @@ namespace ICSharpCode.ILSpy;
 
 		public NavigationState(DecompilerTextViewState viewState)
 		{
-			treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
+			treeNodes = [with(viewState.DecompiledNodes)];
 			ViewState = viewState;
 		}
 
 		public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
 		{
-			this.treeNodes = new HashSet<SharpTreeNode>(treeNodes);
+			this.treeNodes = [with(treeNodes)];
 		}
 
 

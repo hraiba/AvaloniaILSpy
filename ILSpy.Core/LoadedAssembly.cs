@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy;
 public sealed class LoadedAssembly
 {
     internal static readonly ConditionalWeakTable<MetadataFile, LoadedAssembly> loadedAssemblies =
-                                                            new ConditionalWeakTable<MetadataFile, LoadedAssembly>();
+                                                            [];
 
     readonly Task<PEFile> assemblyTask;
 
@@ -451,7 +451,7 @@ public sealed class LoadedAssembly
         }
     }
 
-    static Dictionary<string, LoadedAssembly> loadingAssemblies = new Dictionary<string, LoadedAssembly>();
+    static Dictionary<string, LoadedAssembly> loadingAssemblies = [];
 
     LoadedAssembly LookupReferencedAssemblyInternal(Decompiler.Metadata.IAssemblyReference fullName, bool isWinRT)
     {

@@ -258,7 +258,7 @@ static class Images
 
     private abstract class IconCache<T>
 		{
-			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap>();
+			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap> cache = [];
 
 			protected void PreloadPublicIconToCache(T icon, IBitmap image)
 			{

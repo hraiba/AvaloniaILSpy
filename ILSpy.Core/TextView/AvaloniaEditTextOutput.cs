@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.TextView;
 	/// </summary>
 	sealed class DefinitionLookup
 	{
-		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
+		internal Dictionary<object, int> definitions = [];
 
 		public int GetDefinitionPosition(object definition)
 		{
@@ -81,23 +81,23 @@ namespace ICSharpCode.ILSpy.TextView;
 
 		public string IndentationString { get; set; } = "\t";
 
-		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
+		internal readonly List<VisualLineElementGenerator> elementGenerators = [];
 
 		/// <summary>List of all references that were written to the output</summary>
-		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		TextSegmentCollection<ReferenceSegment> references = [];
 
 		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
 		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
 
 		/// <summary>List of all foldings that were written to the output</summary>
-		internal readonly List<NewFolding> Foldings = new List<NewFolding>();
+		internal readonly List<NewFolding> Foldings = [];
 
 		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 
     internal bool EnableHyperlinks { get; set; }
 
     /// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
-    internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = new List<KeyValuePair<int, Lazy<IControl>>>();
+    internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = [];
 
 		public RichTextModel HighlightingModel { get; } = new RichTextModel();
 

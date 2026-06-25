@@ -264,8 +264,8 @@ public sealed class PackageFolder : IAssemblyResolver
     }
 
     public PackageFolder? Parent => parent;
-    public List<PackageFolder> Folders { get; } = new List<PackageFolder>();
-    public List<PackageEntry> Entries { get; } = new List<PackageEntry>();
+    public List<PackageFolder> Folders { get; } = [];
+    public List<PackageEntry> Entries { get; } = [];
 
     public MetadataFile? Resolve(IAssemblyReference reference)
     {
@@ -315,7 +315,7 @@ public sealed class PackageFolder : IAssemblyResolver
         return Task.FromResult<MetadataFile?>(null);
     }
 
-    readonly Dictionary<string, LoadedAssembly?> assemblies = new Dictionary<string, LoadedAssembly?>(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string, LoadedAssembly?> assemblies = [with(StringComparer.OrdinalIgnoreCase)];
 
     public LoadedAssembly? ResolveFileName(string name)
     {

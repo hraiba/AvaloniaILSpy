@@ -121,7 +121,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 
 		class TypeDefinitionCollector : TypeVisitor
 		{
-			public readonly List<ITypeDefinition> UsedTypes = new List<ITypeDefinition>(); 
+			public readonly List<ITypeDefinition> UsedTypes = []; 
 
 			public override IType VisitTypeDefinition(ITypeDefinition type)
 			{

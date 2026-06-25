@@ -110,7 +110,7 @@ class AssemblyListSnapshot
 
                 if (!result.TryGetValue(asmDefName, out var existing))
                 {
-                    existing = new List<(MetadataFile module, Version version)>();
+                    existing = [];
                     result.Add(asmDefName, existing);
                     existing.Add(line);
                     continue;

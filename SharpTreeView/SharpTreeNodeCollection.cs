@@ -15,7 +15,7 @@ namespace ICSharpCode.TreeView;
 	public sealed class SharpTreeNodeCollection : IList<SharpTreeNode>, INotifyCollectionChanged
 	{
 		readonly SharpTreeNode parent;
-		List<SharpTreeNode> list = new List<SharpTreeNode>();
+		List<SharpTreeNode> list = [];
 		bool isRaisingEvent;
 		
 		public SharpTreeNodeCollection(SharpTreeNode parent)
@@ -137,7 +137,7 @@ namespace ICSharpCode.TreeView;
 		{
 			ThrowOnReentrancy();
 			var oldList = list;
-			list = new List<SharpTreeNode>();
+			list = [];
 			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldList, 0));
 		}
 		

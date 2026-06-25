@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy;
 		
 		public static IExportProviderFactory ExportProviderFactory => exportProviderFactory;
 		
-		internal static readonly IList<ExceptionData> StartupExceptions = new List<ExceptionData>();
+		internal static readonly IList<ExceptionData> StartupExceptions = [];
 		
 		internal class ExceptionData
 		{

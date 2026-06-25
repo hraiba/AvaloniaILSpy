@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy;
 			}
 		}
 		
-		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
+		public readonly ObservableCollection<string> AssemblyLists = [];
     public FileLoaderRegistry LoaderRegistry {get;} = new();
 		
 		/// <summary>

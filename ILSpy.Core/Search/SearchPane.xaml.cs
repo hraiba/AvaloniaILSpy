@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.Search;
 		bool runSearchOnNextShow;
     DispatcherTimer updateResultTimer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(2D) };
 
-    public ObservableCollection<SearchResult> Results { get; } = new ObservableCollection<SearchResult>();
+    public ObservableCollection<SearchResult> Results { get; } = [];
 
 		public static SearchPane Instance {
 			get {

@@ -160,7 +160,7 @@ public class CSharpLanguage : Language
     class SelectCtorTransform : IAstTransform
     {
         readonly IMethod ctor;
-        readonly HashSet<ISymbol> removedSymbols = new HashSet<ISymbol>();
+        readonly HashSet<ISymbol> removedSymbols = [];
 
         public SelectCtorTransform(IMethod ctor)
         {

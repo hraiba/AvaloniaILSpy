@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy;
 		/// Technically read accesses need locking when done on non-GUI threads... but whenever possible, use the
 		/// thread-safe <see cref="GetAssemblies()"/> method.
 		/// </remarks>
-		internal readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
+		internal readonly ObservableCollection<LoadedAssembly> assemblies = [];
 		
 		public AssemblyList(AssemblyListManager manager, string listName)
 		{
@@ -275,7 +275,7 @@ namespace ICSharpCode.ILSpy;
 		{
 			Dispatcher.UIThread.VerifyAccess();
 			lock (assemblies) {
-				List<LoadedAssembly> list = new List<LoadedAssembly>(assemblies);
+				List<LoadedAssembly> list = [with(assemblies)];
 				list.Sort(index, Math.Min(count, list.Count - index), comparer);
 				assemblies.Clear();
 				assemblies.AddRange(list);

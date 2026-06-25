@@ -728,7 +728,7 @@ public class SharpTreeView : ListBox, IStyleable, IRoutedCommandBindable
 
     #region Cut / Copy / Paste / Delete Commands
 
-    public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+    public IList<RoutedCommandBinding> CommandBindings { get; } = [];
 
     void RegisterCommands()
     {

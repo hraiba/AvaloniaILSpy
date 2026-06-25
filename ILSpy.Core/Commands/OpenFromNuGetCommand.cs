@@ -32,12 +32,12 @@ sealed class OpenFromNuGetCommand : SimpleCommand
         OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Title = "Open file";
         dlg.Directory = NuGetEnvironment.GetFolderPath(NuGetFolderPath.NuGetHome);
-        dlg.Filters = new List<FileDialogFilter>()
-        {
+        dlg.Filters =
+        [
             new FileDialogFilter() { Name = "Nuget Packages (*.nupkg)", Extensions = { "nupkg" }},
             new FileDialogFilter() { Name = ".NET assemblies", Extensions = {"dll","exe", "winmd" }},
             new FileDialogFilter() { Name = "All files", Extensions = { "*" }},
-        };
+        ];
         dlg.AllowMultiple = true;
         var filenames = await dlg.ShowAsync(MainWindow.Instance);
         if (filenames != null && filenames.Length > 0)

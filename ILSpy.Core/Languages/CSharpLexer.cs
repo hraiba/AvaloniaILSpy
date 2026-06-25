@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy;
 
 		public LATextReader(TextReader reader)
 		{
-			buffer = new List<int>();
+			buffer = [];
 			this.reader = reader;
 		}
 

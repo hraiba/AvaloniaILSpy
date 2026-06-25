@@ -14,7 +14,7 @@ namespace ICSharpCode.ILSpy.Controls.FileLoaders;
 
 public sealed class FileLoaderRegistry
 {
-    readonly List<IFileLoader> registeredLoaders = new List<IFileLoader>();
+    readonly List<IFileLoader> registeredLoaders = [];
 
     public IReadOnlyList<IFileLoader> RegisteredLoaders => registeredLoaders;
 

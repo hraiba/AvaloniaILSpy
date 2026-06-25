@@ -31,147 +31,168 @@ using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// An utility class that creates a Visual Studio solution containing projects for the
-	/// decompiled assemblies.
-	/// </summary>
-	internal class SolutionWriter
-	{
-		/// <summary>
-		/// Creates a Visual Studio solution that contains projects with decompiled code
-		/// of the specified <paramref name="assemblies"/>. The solution file will be saved
-		/// to the <paramref name="solutionFilePath"/>. The directory of this file must either
-		/// be empty or not exist.
-		/// </summary>
-		/// <param name="textView">A reference to the <see cref="DecompilerTextView"/> instance.</param>
-		/// <param name="solutionFilePath">The target file path of the solution file.</param>
-		/// <param name="assemblies">The assembly nodes to decompile.</param>
-		/// 
-		/// <exception cref="ArgumentException">Thrown when <paramref name="solutionFilePath"/> is null,
-		/// an empty or a whitespace string.</exception>
-		/// <exception cref="ArgumentNullException">Thrown when <paramref name="textView"/>> or
-		/// <paramref name="assemblies"/> is null.</exception>
-		public static void CreateSolution(DecompilerTextView textView, string solutionFilePath, Language language, IEnumerable<LoadedAssembly> assemblies)
-		{
+/// <summary>
+/// An utility class that creates a Visual Studio solution containing projects for the
+/// decompiled assemblies.
+/// </summary>
+internal sealed class SolutionWriter
+{
+    /// <summary>
+    /// Creates a Visual Studio solution that contains projects with decompiled code
+    /// of the specified <paramref name="assemblies"/>. The solution file will be saved
+    /// to the <paramref name="solutionFilePath"/>. The directory of this file must either
+    /// be empty or not exist.
+    /// </summary>
+    /// <param name="textView">A reference to the <see cref="DecompilerTextView"/> instance.</param>
+    /// <param name="solutionFilePath">The target file path of the solution file.</param>
+    /// <param name="assemblies">The assembly nodes to decompile.</param>
+    ///
+    /// <exception cref="ArgumentException">Thrown when <paramref name="solutionFilePath"/> is null,
+    /// an empty or a whitespace string.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="textView"/>> or
+    /// <paramref name="assemblies"/> is null.</exception>
+    public static void CreateSolution(DecompilerTextView textView, string solutionFilePath, Language language, IEnumerable<LoadedAssembly> assemblies)
+    {
         ArgumentNullException.ThrowIfNull(textView);
 
-        if (string.IsNullOrWhiteSpace(solutionFilePath)) {
-				throw new ArgumentException("The solution file path cannot be null or empty.", nameof(solutionFilePath));
-			}
+        if (string.IsNullOrWhiteSpace(solutionFilePath))
+        {
+            throw new ArgumentException("The solution file path cannot be null or empty.", nameof(solutionFilePath));
+        }
 
         ArgumentNullException.ThrowIfNull(assemblies);
 
         var writer = new SolutionWriter(solutionFilePath);
 
-			textView
-				.RunWithCancellation(ct => writer.CreateSolution(assemblies, language, ct))
-				.Then(output => textView.ShowText(output))
-				.HandleExceptions();
-		}
+        textView
+            .RunWithCancellation(ct => writer.CreateSolution(assemblies, language, ct))
+            .Then(textView.ShowText)
+            .HandleExceptions();
+    }
 
-		readonly string solutionFilePath;
-		readonly string solutionDirectory;
-		readonly ConcurrentBag<ProjectItem> projects;
-		readonly ConcurrentBag<string> statusOutput;
+    readonly string solutionFilePath;
+    readonly string solutionDirectory;
+    readonly ConcurrentBag<ProjectItem> projects;
+    readonly ConcurrentBag<string> statusOutput;
 
-		SolutionWriter(string solutionFilePath)
-		{
-			this.solutionFilePath = solutionFilePath;
-			solutionDirectory = Path.GetDirectoryName(solutionFilePath);
-			statusOutput = new ConcurrentBag<string>();
-			projects = new ConcurrentBag<ProjectItem>();
-		}
+    SolutionWriter(string solutionFilePath)
+    {
+        this.solutionFilePath = solutionFilePath;
+        solutionDirectory = Path.GetDirectoryName(solutionFilePath);
+        statusOutput = [];
+        projects = [];
+    }
 
-		async Task<AvaloniaEditTextOutput> CreateSolution(IEnumerable<LoadedAssembly> assemblies, Language language, CancellationToken ct)
-		{
-			var result = new AvaloniaEditTextOutput();
+    async Task<AvaloniaEditTextOutput> CreateSolution(IEnumerable<LoadedAssembly> assemblies, Language language, CancellationToken ct)
+    {
+        var result = new AvaloniaEditTextOutput();
 
-			var duplicates = new HashSet<string>();
-			if (assemblies.Any(asm => !duplicates.Add(asm.ShortName))) {
-				result.WriteLine("Duplicate assembly names selected, cannot generate a solution.");
-				return result;
-			}
+        var duplicates = new HashSet<string>();
+        if (assemblies.Any(asm => !duplicates.Add(asm.ShortName)))
+        {
+            result.WriteLine("Duplicate assembly names selected, cannot generate a solution.");
+            return result;
+        }
 
-			Stopwatch stopwatch = Stopwatch.StartNew();
+        Stopwatch stopwatch = Stopwatch.StartNew();
 
-			try {
-				await Task.Run(() => Parallel.ForEach(assemblies, n => WriteProject(n, language, solutionDirectory, ct)))
-					.ConfigureAwait(false);
+        try
+        {
+            await Task.Run(() => Parallel.ForEach(assemblies, n => WriteProject(n, language, solutionDirectory, ct)))
+                .ConfigureAwait(false);
 
-				await Task.Run(() => SolutionCreator.WriteSolutionFile(solutionFilePath, projects.ToList()))
-					.ConfigureAwait(false);
-			} catch (AggregateException ae) {
-				if (ae.Flatten().InnerExceptions.All(e => e is OperationCanceledException)) {
-					result.WriteLine();
-					result.WriteLine("Generation was cancelled.");
-					return result;
-				}
+            await Task.Run(() => SolutionCreator.WriteSolutionFile(solutionFilePath, projects.ToList()))
+                .ConfigureAwait(false);
+        }
+        catch (AggregateException ae)
+        {
+            if (ae.Flatten().InnerExceptions.All(e => e is OperationCanceledException))
+            {
+                result.WriteLine();
+                result.WriteLine("Generation was cancelled.");
+                return result;
+            }
 
-				result.WriteLine();
-				result.WriteLine("Failed to generate the Visual Studio Solution. Errors:");
-				ae.Handle(e => {
-					result.WriteLine(e.Message);
-					return true;
-				});
+            result.WriteLine();
+            result.WriteLine("Failed to generate the Visual Studio Solution. Errors:");
+            ae.Handle(e =>
+            {
+                result.WriteLine(e.Message);
+                return true;
+            });
 
-				return result;
-			}
+            return result;
+        }
 
-			foreach (var item in statusOutput) {
-				result.WriteLine(item);
-			}
+        foreach (var item in statusOutput)
+        {
+            result.WriteLine(item);
+        }
 
-			if (statusOutput.Count == 0) {
-				result.WriteLine("Successfully decompiled the following assemblies into Visual Studio projects:");
-				foreach (var item in assemblies.Select(n => n.Text.ToString())) {
-					result.WriteLine(item);
-				}
+        if (statusOutput.Count == 0)
+        {
+            result.WriteLine("Successfully decompiled the following assemblies into Visual Studio projects:");
+            foreach (var item in assemblies.Select(n => n.Text.ToString()))
+            {
+                result.WriteLine(item);
+            }
 
-				result.WriteLine();
+            result.WriteLine();
 
-				if (assemblies.Count() == projects.Count) {
-					result.WriteLine("Created the Visual Studio Solution file.");
-				}
+            if (assemblies.Count() == projects.Count)
+            {
+                result.WriteLine("Created the Visual Studio Solution file.");
+            }
 
-				result.WriteLine();
-				result.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
-				result.WriteLine();
-				result.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + solutionFilePath + "\""); });
-			}
+            result.WriteLine();
+            result.WriteLine("Elapsed time: " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
+            result.WriteLine();
+            result.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + solutionFilePath + "\""); });
+        }
 
-			return result;
-		}
+        return result;
+    }
 
-		void WriteProject(LoadedAssembly loadedAssembly, Language language, string targetDirectory, CancellationToken ct)
-		{
-			targetDirectory = Path.Combine(targetDirectory, loadedAssembly.ShortName);
-			string projectFileName = Path.Combine(targetDirectory, loadedAssembly.ShortName + language.ProjectFileExtension);
+    void WriteProject(LoadedAssembly loadedAssembly, Language language, string targetDirectory, CancellationToken ct)
+    {
+        targetDirectory = Path.Combine(targetDirectory, loadedAssembly.ShortName);
+        string projectFileName = Path.Combine(targetDirectory, loadedAssembly.ShortName + language.ProjectFileExtension);
 
-			if (!Directory.Exists(targetDirectory)) {
-				try {
-					Directory.CreateDirectory(targetDirectory);
-				} catch (Exception e) {
-					statusOutput.Add($"Failed to create a directory '{targetDirectory}':{Environment.NewLine}{e}");
-					return;
-				}
-			}
+        if (!Directory.Exists(targetDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(targetDirectory);
+            }
+            catch (Exception e)
+            {
+                statusOutput.Add($"Failed to create a directory '{targetDirectory}':{Environment.NewLine}{e}");
+                return;
+            }
+        }
 
-			try {
-				using (var projectFileWriter = new StreamWriter(projectFileName)) {
-					var projectFileOutput = new PlainTextOutput(projectFileWriter);
-					var options = new DecompilationOptions() {
-						FullDecompilation = true,
-						CancellationToken = ct,
-						SaveAsProjectDirectory = targetDirectory
-					};
+        try
+        {
+            using (var projectFileWriter = new StreamWriter(projectFileName))
+            {
+                var projectFileOutput = new PlainTextOutput(projectFileWriter);
+                var options = new DecompilationOptions()
+                {
+                    FullDecompilation = true,
+                    CancellationToken = ct,
+                    SaveAsProjectDirectory = targetDirectory
+                };
 
-					var projectInfo = language.DecompileAssembly(loadedAssembly, projectFileOutput, options);
-					if (projectInfo != null) {
-						projects.Add (new ProjectItem (projectFileName, projectInfo.PlatformName, projectInfo.Guid, projectInfo.TypeGuid));
-					}
-				}
-			} catch (Exception e) when (!(e is OperationCanceledException)) {
-				statusOutput.Add($"Failed to decompile the assembly '{loadedAssembly.FileName}':{Environment.NewLine}{e}");
-			}
-		}
-	}
+                var projectInfo = language.DecompileAssembly(loadedAssembly, projectFileOutput, options);
+                if (projectInfo != null)
+                {
+                    projects.Add(new ProjectItem(projectFileName, projectInfo.PlatformName, projectInfo.Guid, projectInfo.TypeGuid));
+                }
+            }
+        }
+        catch (Exception e) when (!(e is OperationCanceledException))
+        {
+            statusOutput.Add($"Failed to decompile the assembly '{loadedAssembly.FileName}':{Environment.NewLine}{e}");
+        }
+    }
+}

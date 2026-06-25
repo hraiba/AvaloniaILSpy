@@ -61,10 +61,10 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			if (e.Action == NotifyCollectionChangedAction.Reset) {
 				Root.Children.Clear();
 			} else {
-				List<LoadedAssembly> removedAssemblies = new List<LoadedAssembly>();
+				List<LoadedAssembly> removedAssemblies = [];
 				if (e.OldItems != null)
 					removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
-				List<LoadedAssembly> addedAssemblies = new List<LoadedAssembly>();
+				List<LoadedAssembly> addedAssemblies = [];
 				if (e.NewItems != null)
 					addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
 				((AnalyzerRootNode)Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);

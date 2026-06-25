@@ -94,11 +94,11 @@ sealed class SaveCodeContextMenuEntry : IContextMenuEntry
         SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Title = "Save file";
         dlg.InitialFileName = "Solution.sln";
-        dlg.Filters = new List<FileDialogFilter>()
-        {
+        dlg.Filters =
+        [
             new FileDialogFilter { Name = "Visual Studio Solution file", Extensions = { "sln" } },
             new FileDialogFilter { Name = "All files", Extensions = { "*"} },
-        };
+        ];
 
         string filename = await dlg.ShowAsync(MainWindow.Instance);
         if (filename == null)

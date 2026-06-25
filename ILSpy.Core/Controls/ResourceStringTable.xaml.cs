@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.Controls;
 {
 		internal DataGrid resourceListView;
 
-    public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+    public IList<RoutedCommandBinding> CommandBindings { get; } = [];
 
     public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
 		{

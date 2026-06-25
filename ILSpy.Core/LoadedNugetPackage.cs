@@ -27,8 +27,8 @@ namespace ICSharpCode.ILSpy;
 
 	public class LoadedNugetPackage : INotifyPropertyChanged
 	{
-		public List<Entry> Entries { get; } = new List<Entry>();
-		public List<Entry> SelectedEntries { get; } = new List<Entry>();
+		public List<Entry> Entries { get; } = [];
+		public List<Entry> SelectedEntries { get; } = [];
 
 		public LoadedNugetPackage(string file)
 		{

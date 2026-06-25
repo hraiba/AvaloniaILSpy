@@ -100,7 +100,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     public SessionSettings SessionSettings => sessionSettings;
 
-    public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+    public IList<RoutedCommandBinding> CommandBindings { get; } = [];
 
     static MainWindow()
     {
@@ -169,8 +169,8 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         bottomPane = this.FindControl<DockedPane>("bottomPane");
         bottomPane.CloseButtonClicked += BottomPane_CloseButtonClicked;
 
-        List<string> themeNames = new List<string>();
-        List<IStyle> themes = new List<IStyle>();
+        List<string> themeNames = [];
+        List<IStyle> themes = [];
         foreach (string file in Directory.EnumerateFiles("Themes", "*.xaml"))
         {
             try
@@ -331,7 +331,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         int navigationPos = 0;
         int openPos = 1;
         var toolbarCommands = App.ExportProvider.GetExports<ICommand, IToolbarCommandMetadata>("ToolbarCommand");
-        var toolbarItems = toolBar.Items as IList<object> ?? new List<object>();
+        var toolbarItems = toolBar.Items as IList<object> ?? [];
         foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => Properties.Resources.ResourceManager.GetString(c.Metadata.ToolbarCategory)))
         {
             if (commandGroup.Key == Properties.Resources.ResourceManager.GetString("Navigation"))
@@ -385,11 +385,11 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     void InitMainMenu()
     {
         var mainMenuCommands = App.ExportProvider.GetExports<ICommand, IMainMenuCommandMetadata>("MainMenuCommand");
-        var mainMenuItems = mainMenu.Items as IList<object> ?? new List<object>();
+        var mainMenuItems = mainMenu.Items as IList<object> ?? [];
         foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => GetResourceString(c.Metadata.Menu)))
         {
             MenuItem topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (GetResourceString(m.Header as string)) == topLevelMenu.Key);
-            var topLevelMenuItems = topLevelMenuItem?.Items as IList<object> ?? new List<object>();
+            var topLevelMenuItems = topLevelMenuItem?.Items as IList<object> ?? [];
             foreach (var category in topLevelMenu.GroupBy(c => GetResourceString(c.Metadata.MenuCategory)))
             {
                 if (topLevelMenuItem == null)
@@ -438,7 +438,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             {
                 topLevelMenuItem = new NativeMenuItem();
                 topLevelMenuItem.Header = GetResourceString(topLevelMenu.Key);
-                topLevelMenuItem.Menu = new NativeMenu();
+                topLevelMenuItem.Menu = [];
                 mainMenuItems.Add(topLevelMenuItem);
             }
 
@@ -508,9 +508,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
 
     public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
 
-    List<LoadedAssembly> commandLineLoadedAssemblies = new List<LoadedAssembly>();
+    List<LoadedAssembly> commandLineLoadedAssemblies = [];
 
-    List<string> nugetPackagesToLoad = new List<string>();
+    List<string> nugetPackagesToLoad = [];
 
     bool HandleCommandLineArguments(CommandLineArguments args)
     {
@@ -1007,7 +1007,7 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
     {
         if (node == null)
             return null;
-        List<string> path = new List<string>();
+        List<string> path = [];
         while (node.Parent != null)
         {
             path.Add(node.ToString());
@@ -1171,12 +1171,12 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
         e.Handled = true;
         OpenFileDialog dlg = new OpenFileDialog();
         dlg.Title = "Open file";
-        dlg.Filters = new List<FileDialogFilter>()
-        {
+        dlg.Filters =
+        [
             new FileDialogFilter() { Name = ".NET assemblies", Extensions = {"dll","exe", "winmd" }},
             new FileDialogFilter() { Name = "Nuget Packages (*.nupkg)", Extensions = { "nupkg" }},
             new FileDialogFilter() { Name = "All files", Extensions = { "*" }},
-        };
+        ];
         dlg.AllowMultiple = true;
         //dlg.RestoreDirectory = true;
         var filenames = await dlg.ShowAsync(this);

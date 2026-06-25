@@ -266,12 +266,12 @@ namespace ICSharpCode.TreeView;
 			// All removed nodes will be reorganized in a separate tree, do not delete
 			// regions that don't belong together in the tree model!
 			
-			List<SharpTreeNode> removedSubtrees = new List<SharpTreeNode>();
+			List<SharpTreeNode> removedSubtrees = [];
 			SharpTreeNode oldPos;
 			SharpTreeNode pos = start;
 			do {
 				// recalculate the endAncestors every time, because the tree might have been rebalanced
-				HashSet<SharpTreeNode> endAncestors = new HashSet<SharpTreeNode>();
+				HashSet<SharpTreeNode> endAncestors = [];
 				for (SharpTreeNode tmp = end; tmp != null; tmp = tmp.listParent)
 					endAncestors.Add(tmp);
 				

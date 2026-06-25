@@ -39,8 +39,7 @@ namespace ICSharpCode.ILSpy;
 
     internal static void Initialize(ExportProvider ep)
 		{
-			List<Language> languages = new List<Language>();
-			languages.AddRange(ep.GetExportedValues<Language>());
+			List<Language> languages = [.. ep.GetExportedValues<Language>()];
 			languages.Sort((a, b) => a.Name.CompareTo(b.Name));
 			#if DEBUG
 			languages.AddRange(ILAstLanguage.GetDebugLanguages());
