@@ -46,7 +46,8 @@ namespace ICSharpCode.ILSpy.Analyzers;
             }
         }
 			Children.RemoveAll(
-				delegate(SharpTreeNode n) {
+                n =>
+                {
                     return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
                 });
 			return true;

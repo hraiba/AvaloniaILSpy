@@ -46,21 +46,25 @@ public partial class DisplaySettingsPanel : UserControl, IOptionPage
         Task<FontFamily[]> task = new(FontLoader);
 			task.Start();
 			task.ContinueWith(
-				delegate(Task continuation) {
-					Dispatcher.UIThread.InvokeAsync(
-						(Action)(
-							async () => {
-								fontSelector.Items = task.Result;
-								if (continuation.Exception != null) {
-									foreach (var ex in continuation.Exception.InnerExceptions) {
-										await MessageBox.Show(ex.ToString());
-									}
-								}
-							}),
-						DispatcherPriority.Normal
-					);
-				}
-			);
+                (Task continuation) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(
+                        (Action)(
+                            async () =>
+                            {
+                                fontSelector.Items = task.Result;
+                                if (continuation.Exception != null)
+                                {
+                                    foreach (var ex in continuation.Exception.InnerExceptions)
+                                    {
+                                        await MessageBox.Show(ex.ToString());
+                                    }
+                                }
+                            }),
+                        DispatcherPriority.Normal
+                    );
+                }
+            );
 		}
 
 		private void InitializeComponent()

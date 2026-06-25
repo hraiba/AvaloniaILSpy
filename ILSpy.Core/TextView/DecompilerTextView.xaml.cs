@@ -530,13 +530,13 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     }
 
     Task DoDecompile(DecompilationContext context, int outputLengthLimit) => RunWithCancellation(
-            delegate (CancellationToken ct)
+            ct =>
             { // creation of the background task
                 context.Options.CancellationToken = ct;
                 return DecompileAsync(context, outputLengthLimit);
             })
         .Then(
-            delegate (AvaloniaEditTextOutput textOutput)
+            textOutput =>
             { // handling the result
                 ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
                 decompiledNodes = context.TreeNodes;
@@ -774,7 +774,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
     /// The result will be saved to the given file name.
     /// </summary>
     void SaveToDisk(DecompilationContext context, string fileName) => RunWithCancellation(
-            delegate (CancellationToken ct)
+            ct =>
             {
                 context.Options.CancellationToken = ct;
                 return SaveToDiskAsync(context, fileName);

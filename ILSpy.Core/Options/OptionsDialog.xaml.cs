@@ -80,14 +80,16 @@ namespace ICSharpCode.ILSpy.Options;
     void OKButton_Click(object sender, RoutedEventArgs e)
 		{
 			ILSpySettings.Update(
-				delegate (XElement root) {
-					foreach (var optionPage in optionPages) {
+                root =>
+                {
+                    foreach (var optionPage in optionPages)
+                    {
                         if (optionPage.Value is IOptionPage page)
                         {
                             page.Save(root);
                         }
                     }
-				});
+                });
 			//this.DialogResult = true;
 			Close(true);
 		}

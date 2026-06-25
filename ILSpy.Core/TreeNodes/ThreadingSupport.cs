@@ -65,35 +65,43 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 						result.Add(child);
 						var newChild = child;
 						Dispatcher.UIThread.InvokeAsync(new Action(
-							delegate () {
-								// don't access "child" here the
-								// background thread might already be running the next loop iteration
-								if (loadChildrenTask == thisTask) {
-									node.Children.Insert(node.Children.Count - 1, newChild);
-								}
-							}), DispatcherPriority.Normal);
+                            () =>
+                            {
+                                // don't access "child" here the
+                                // background thread might already be running the next loop iteration
+                                if (loadChildrenTask == thisTask)
+                                {
+                                    node.Children.Insert(node.Children.Count - 1, newChild);
+                                }
+                            }), DispatcherPriority.Normal);
 					}
 					return result;
 				}, ct);
 			loadChildrenTask = thisTask;
 			thisTask.Start();
 			thisTask.ContinueWith(
-				delegate (Task continuation) {
-					Dispatcher.UIThread.InvokeAsync(new Action(
-                    delegate {
-							if (loadChildrenTask == thisTask) {
-								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
-								node.RaisePropertyChanged(nameof(node.Text));
-							}
-							if (continuation.Exception != null) { // observe exception even when task isn't current
-								if (loadChildrenTask == thisTask) {
-									foreach (Exception ex in continuation.Exception.InnerExceptions) {
-										node.Children.Add(new ErrorTreeNode(ex.ToString()));
-									}
-								}
-							}
-						}), DispatcherPriority.Normal);
-    });
+                (Task continuation) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(new Action(
+                    delegate
+                    {
+                        if (loadChildrenTask == thisTask)
+                        {
+                            node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
+                            node.RaisePropertyChanged(nameof(node.Text));
+                        }
+                        if (continuation.Exception != null)
+                        { // observe exception even when task isn't current
+                            if (loadChildrenTask == thisTask)
+                            {
+                                foreach (Exception ex in continuation.Exception.InnerExceptions)
+                                {
+                                    node.Children.Add(new ErrorTreeNode(ex.ToString()));
+                                }
+                            }
+                        }
+                    }), DispatcherPriority.Normal);
+                });
 			
 			// Give the task a bit time to complete before we return to WPF - this keeps "Loading..."
 			// from showing up for very short waits.

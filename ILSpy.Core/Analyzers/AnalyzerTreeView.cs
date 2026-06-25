@@ -152,7 +152,8 @@ namespace ICSharpCode.ILSpy.Analyzers;
 			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 			{
 				Children.RemoveAll(
-					delegate(SharpTreeNode n) {
+                    n =>
+                    {
                         return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
                     });
 				return true;

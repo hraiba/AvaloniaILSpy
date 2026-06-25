@@ -51,25 +51,27 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 		{
 			Children.Clear();
 			Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
-			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
-				switch (e.Action) {
-					case NotifyCollectionChangedAction.Add:
-						Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
-						break;
-					case NotifyCollectionChangedAction.Remove:
-						Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
-						break;
-					case NotifyCollectionChangedAction.Replace:
-					case NotifyCollectionChangedAction.Move:
-						throw new NotImplementedException();
-					case NotifyCollectionChangedAction.Reset:
-						Children.Clear();
-						Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
-						break;
-					default:
-						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
-				}
-			};
+			collection.CollectionChanged += (sender, e) =>
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                    case NotifyCollectionChangedAction.Move:
+                        throw new NotImplementedException();
+                    case NotifyCollectionChangedAction.Reset:
+                        Children.Clear();
+                        Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+                        break;
+                    default:
+                        throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
+                }
+            };
 		}
 
 		public override bool CanDrop(DragEventArgs e, int index)

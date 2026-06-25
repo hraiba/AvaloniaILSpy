@@ -35,138 +35,152 @@ using AvaloniaEdit.Rendering;
 
 namespace ICSharpCode.ILSpy;
 
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
-	{
-		const bool alwaysShowErrorBox = true;
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
+{
+    const bool alwaysShowErrorBox = true;
 
-		internal static CommandLineArguments CommandLineArguments;
+    internal static CommandLineArguments CommandLineArguments;
 
     public static ExportProvider ExportProvider { get; private set; }
 
     public static IExportProviderFactory ExportProviderFactory { get; private set; }
 
     internal static readonly IList<ExceptionData> StartupExceptions = [];
-		
-		internal class ExceptionData
-		{
-			public Exception Exception;
-			public string PluginName;
-		}
 
-		public override void Initialize()
-		{
-			AvaloniaXamlLoader.Load(this);
-			var cmdArgs = Environment.GetCommandLineArgs().Skip(1);
+    internal class ExceptionData
+    {
+        public Exception Exception;
+        public string PluginName;
+    }
+
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+        var cmdArgs = Environment.GetCommandLineArgs().Skip(1);
         CommandLineArguments = new CommandLineArguments(cmdArgs);
-			if ((CommandLineArguments.SingleInstance ?? true) && !MiscSettingsPanel.CurrentMiscSettings.AllowMultipleInstances) {
-				cmdArgs = cmdArgs.Select(FullyQualifyPath);
-				string message = string.Join(Environment.NewLine, cmdArgs);
-				if (!CommandLineArguments.NoActivate) {
-					//TODO: singleton mode
-					Debug.WriteLine("NoActivate argument not supported");
-					//Environment.Exit(0);
-				}
-			}
-			//InitializeComponent();
+        if ((CommandLineArguments.SingleInstance ?? true) && !MiscSettingsPanel.CurrentMiscSettings.AllowMultipleInstances)
+        {
+            cmdArgs = cmdArgs.Select(FullyQualifyPath);
+            string message = string.Join(Environment.NewLine, cmdArgs);
+            if (!CommandLineArguments.NoActivate)
+            {
+                //TODO: singleton mode
+                Debug.WriteLine("NoActivate argument not supported");
+                //Environment.Exit(0);
+            }
+        }
+        //InitializeComponent();
 
-			if (alwaysShowErrorBox || !Debugger.IsAttached)
-			{
-				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
-				//TODO: dispatcher UnhandledException
-				//Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
-			}
-			TaskScheduler.UnobservedTaskException += DotNet40_UnobservedTaskException;
+        if (alwaysShowErrorBox || !Debugger.IsAttached)
+        {
+            AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
+            //TODO: dispatcher UnhandledException
+            //Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
+        }
+        TaskScheduler.UnobservedTaskException += DotNet40_UnobservedTaskException;
 
-			// Cannot show MessageBox here, because WPF would crash with a XamlParseException
-			// Remember and show exceptions in text output, once MainWindow is properly initialized
-			try {
-				// Set up VS MEF. For now, only do MEF1 part discovery, since that was in use before.
-				// To support both MEF1 and MEF2 parts, just change this to:
-				// var discovery = PartDiscovery.Combine(new AttributedPartDiscoveryV1(Resolver.DefaultInstance),
-				//                                       new AttributedPartDiscovery(Resolver.DefaultInstance));
-				var discovery = new AttributedPartDiscoveryV1(Resolver.DefaultInstance);
-				var catalog = ComposableCatalog.Create(Resolver.DefaultInstance);
-				var pluginDir = Path.GetDirectoryName(typeof(App).Module.FullyQualifiedName);
-				if (pluginDir != null) {
-					foreach (var plugin in Directory.GetFiles(pluginDir, "*.Plugin.dll")) {
-						var name = Path.GetFileNameWithoutExtension(plugin);
-						try {
-							var asm = Assembly.LoadFile(plugin);
-							var parts = discovery.CreatePartsAsync(asm).Result;
-							catalog = catalog.AddParts(parts);
-						} catch (Exception ex) {
-							StartupExceptions.Add(new ExceptionData { Exception = ex, PluginName = name });
-						}
-					}
-				}
-				// Add the built-in parts
-				catalog = catalog.AddParts(discovery.CreatePartsAsync(Assembly.GetExecutingAssembly()).Result);
-				// If/When the project switches to .NET Standard/Core, this will be needed to allow metadata interfaces (as opposed
-				// to metadata classes). When running on .NET Framework, it's automatic.
-				//   catalog.WithDesktopSupport();
-				// If/When any part needs to import ICompositionService, this will be needed:
-				//   catalog.WithCompositionService();
-				var config = CompositionConfiguration.Create(catalog);
-				ExportProviderFactory = config.CreateExportProviderFactory();
-				ExportProvider = ExportProviderFactory.CreateExportProvider();
-				// This throws exceptions for composition failures. Alternatively, the configuration's CompositionErrors property
-				// could be used to log the errors directly. Used at the end so that it does not prevent the export provider setup.
-				config.ThrowOnErrors();
-			} catch (Exception ex) {
-				StartupExceptions.Add(new ExceptionData { Exception = ex });
-			}
-			Languages.Initialize(ExportProvider);
+        // Cannot show MessageBox here, because WPF would crash with a XamlParseException
+        // Remember and show exceptions in text output, once MainWindow is properly initialized
+        try
+        {
+            // Set up VS MEF. For now, only do MEF1 part discovery, since that was in use before.
+            // To support both MEF1 and MEF2 parts, just change this to:
+            // var discovery = PartDiscovery.Combine(new AttributedPartDiscoveryV1(Resolver.DefaultInstance),
+            //                                       new AttributedPartDiscovery(Resolver.DefaultInstance));
+            var discovery = new AttributedPartDiscoveryV1(Resolver.DefaultInstance);
+            var catalog = ComposableCatalog.Create(Resolver.DefaultInstance);
+            var pluginDir = Path.GetDirectoryName(typeof(App).Module.FullyQualifiedName);
+            if (pluginDir != null)
+            {
+                foreach (var plugin in Directory.GetFiles(pluginDir, "*.Plugin.dll"))
+                {
+                    var name = Path.GetFileNameWithoutExtension(plugin);
+                    try
+                    {
+                        var asm = Assembly.LoadFile(plugin);
+                        var parts = discovery.CreatePartsAsync(asm).Result;
+                        catalog = catalog.AddParts(parts);
+                    }
+                    catch (Exception ex)
+                    {
+                        StartupExceptions.Add(new ExceptionData { Exception = ex, PluginName = name });
+                    }
+                }
+            }
+            // Add the built-in parts
+            catalog = catalog.AddParts(discovery.CreatePartsAsync(Assembly.GetExecutingAssembly()).Result);
+            // If/When the project switches to .NET Standard/Core, this will be needed to allow metadata interfaces (as opposed
+            // to metadata classes). When running on .NET Framework, it's automatic.
+            //   catalog.WithDesktopSupport();
+            // If/When any part needs to import ICompositionService, this will be needed:
+            //   catalog.WithCompositionService();
+            var config = CompositionConfiguration.Create(catalog);
+            ExportProviderFactory = config.CreateExportProviderFactory();
+            ExportProvider = ExportProviderFactory.CreateExportProvider();
+            // This throws exceptions for composition failures. Alternatively, the configuration's CompositionErrors property
+            // could be used to log the errors directly. Used at the end so that it does not prevent the export provider setup.
+            config.ThrowOnErrors();
+        }
+        catch (Exception ex)
+        {
+            StartupExceptions.Add(new ExceptionData { Exception = ex });
+        }
+        Languages.Initialize(ExportProvider);
 
-			VisualLineLinkText.OpenUriEvent.AddClassHandler<Window>((win, e) => Window_RequestNavigate(e));
+        VisualLineLinkText.OpenUriEvent.AddClassHandler<Window>((win, e) => Window_RequestNavigate(e));
 
-			ILSpyTraceListener.Install();
-		}
+        ILSpyTraceListener.Install();
+    }
 
-		public override void OnFrameworkInitializationCompleted() =>
-			this.GetDesktopLifetime().MainWindow = new MainWindow();
+    public override void OnFrameworkInitializationCompleted() =>
+        this.GetDesktopLifetime().MainWindow = new MainWindow();
 
-		string FullyQualifyPath(string argument)
-		{
-			// Fully qualify the paths before passing them to another process,
-			// because that process might use a different current directory.
-			if (string.IsNullOrEmpty(argument) || argument[0] == '/')
+    string FullyQualifyPath(string argument)
+    {
+        // Fully qualify the paths before passing them to another process,
+        // because that process might use a different current directory.
+        if (string.IsNullOrEmpty(argument) || argument[0] == '/')
         {
             return argument;
         }
 
-        try {
-				return Path.Combine(Environment.CurrentDirectory, argument);
-			} catch (ArgumentException) {
-				return argument;
-			}
-		}
+        try
+        {
+            return Path.Combine(Environment.CurrentDirectory, argument);
+        }
+        catch (ArgumentException)
+        {
+            return argument;
+        }
+    }
 
-		void DotNet40_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-		{
-			UnhandledException(e.Exception);
+    void DotNet40_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+    {
+        UnhandledException(e.Exception);
 
-			// On .NET 4.0, an unobserved exception in a task terminates the process unless we mark it as observed
-			e.SetObserved();
-		}
+        // On .NET 4.0, an unobserved exception in a task terminates the process unless we mark it as observed
+        e.SetObserved();
+    }
 
     #region Exception Handling
     static void Dispatcher_UnhandledException(object sender, UnhandledExceptionEventArgs e) => UnhandledException(e.ExceptionObject as Exception);//e.Handled = true;
 
     static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
-		{
+    {
         if (e.ExceptionObject is Exception ex)
         {
             UnhandledException(ex);
         }
     }
 
-		static void UnhandledException(Exception exception)
-		{
-			Debug.WriteLine(exception.ToString());
-			for (Exception ex = exception; ex != null; ex = ex.InnerException) {
+    static void UnhandledException(Exception exception)
+    {
+        Debug.WriteLine(exception.ToString());
+        for (Exception ex = exception; ex != null; ex = ex.InnerException)
+        {
             if (ex is ReflectionTypeLoadException rtle && rtle.LoaderExceptions.Length > 0)
             {
                 exception = rtle.LoaderExceptions[0];
@@ -174,30 +188,19 @@ namespace ICSharpCode.ILSpy;
                 break;
             }
         }
-			MessageBox.Show(exception.ToString(), "Sorry, we crashed");
-		}
+        MessageBox.Show(exception.ToString(), "Sorry, we crashed");
+    }
 
-		//protected override void OnStartup(StartupEventArgs e)
-		//{
-		//    var output = new StringBuilder();
-		//    if (ILSpy.MainWindow.FormatExceptions(StartupExceptions.ToArray(), output))
-		//    {
-		//        MessageBox.Show(output.ToString(), "Sorry we crashed!");
-		//        Environment.Exit(1);
-		//    }
-		//    base.OnStartup(e);
-		//}
-
-		#endregion
+    #endregion
 
 
-		void Window_RequestNavigate(OpenUriRoutedEventArgs e)
-		{
-			if (e.Uri.Scheme == "resource")
-			{
-				AvaloniaEditTextOutput output = new();
-				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath))
-				{
+    void Window_RequestNavigate(OpenUriRoutedEventArgs e)
+    {
+        if (e.Uri.Scheme == "resource")
+        {
+            AvaloniaEditTextOutput output = new();
+            using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath))
+            {
                 using StreamReader r = new(s);
                 string line;
                 while ((line = r.ReadLine()) != null)
@@ -207,11 +210,11 @@ namespace ICSharpCode.ILSpy;
                 }
             }
             MainWindow.Instance.TextView.ShowText(output);
-			}
-			else
-			{
+        }
+        else
+        {
             MainWindow.OpenLink(e.Uri.ToString());
-			}
-			e.Handled = true;
-		}
-	}
+        }
+        e.Handled = true;
+    }
+}
