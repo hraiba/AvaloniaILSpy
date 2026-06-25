@@ -203,16 +203,14 @@ namespace ICSharpCode.ILSpy;
 				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
 				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath))
 				{
-					using (StreamReader r = new StreamReader(s))
-					{
-						string line;
-						while ((line = r.ReadLine()) != null)
-						{
-							output.Write(line);
-							output.WriteLine();
-						}
-					}
-				}
+                using StreamReader r = new StreamReader(s);
+                string line;
+                while ((line = r.ReadLine()) != null)
+                {
+                    output.Write(line);
+                    output.WriteLine();
+                }
+            }
 				ILSpy.MainWindow.Instance.TextView.ShowText(output);
 			}
 			else

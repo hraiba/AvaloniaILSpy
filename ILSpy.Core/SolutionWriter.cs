@@ -129,10 +129,10 @@ internal sealed class SolutionWriter
             result.WriteLine(item);
         }
 
-        if (statusOutput.Count == 0)
+        if (statusOutput.IsEmpty)
         {
             result.WriteLine("Successfully decompiled the following assemblies into Visual Studio projects:");
-            foreach (var item in assemblies.Select(n => n.Text.ToString()))
+            foreach (var item in assemblies.Select(n => n.Text))
             {
                 result.WriteLine(item);
             }
@@ -173,21 +173,19 @@ internal sealed class SolutionWriter
 
         try
         {
-            using (var projectFileWriter = new StreamWriter(projectFileName))
+            using var projectFileWriter = new StreamWriter(projectFileName);
+            var projectFileOutput = new PlainTextOutput(projectFileWriter);
+            var options = new DecompilationOptions()
             {
-                var projectFileOutput = new PlainTextOutput(projectFileWriter);
-                var options = new DecompilationOptions()
-                {
-                    FullDecompilation = true,
-                    CancellationToken = ct,
-                    SaveAsProjectDirectory = targetDirectory
-                };
+                FullDecompilation = true,
+                CancellationToken = ct,
+                SaveAsProjectDirectory = targetDirectory
+            };
 
-                var projectInfo = language.DecompileAssembly(loadedAssembly, projectFileOutput, options);
-                if (projectInfo != null)
-                {
-                    projects.Add(new ProjectItem(projectFileName, projectInfo.PlatformName, projectInfo.Guid, projectInfo.TypeGuid));
-                }
+            var projectInfo = language.DecompileAssembly(loadedAssembly, projectFileOutput, options);
+            if (projectInfo != null)
+            {
+                projects.Add(new ProjectItem(projectFileName, projectInfo.PlatformName, projectInfo.Guid, projectInfo.TypeGuid));
             }
         }
         catch (Exception e) when (!(e is OperationCanceledException))

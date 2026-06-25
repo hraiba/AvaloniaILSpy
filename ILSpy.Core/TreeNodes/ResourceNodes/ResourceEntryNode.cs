@@ -76,10 +76,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
 			var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
 			if (!string.IsNullOrEmpty(filename)) {
 				data.Position = 0;
-				using (var fs = File.OpenWrite(filename)) {
-					data.CopyTo(fs);
-				}
-			}
+            using var fs = File.OpenWrite(filename);
+            data.CopyTo(fs);
+        }
 			return true;
 		}
 	}

@@ -87,13 +87,13 @@ namespace ICSharpCode.ILSpy;
 			output.WriteLine();
 			var asm = typeof(AboutPage).Assembly;
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
-				using (StreamReader r = new StreamReader(s)) {
-					string line;
-					while ((line = r.ReadLine()) != null) {
-						output.WriteLine(line);
-					}
-				}
-			}
+            using StreamReader r = new StreamReader(s);
+            string line;
+            while ((line = r.ReadLine()) != null)
+            {
+                output.WriteLine(line);
+            }
+        }
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("SharpDevelop", "http://www.icsharpcode.net/opensource/sd/"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));

@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy;
 		public LanguageVersion(string version, string name = null)
 		{
 			Version = version ?? "";
-			DisplayName = name ?? version.ToString();
+			DisplayName = name ?? version;
 		}
 
 		public bool Equals(LanguageVersion other)

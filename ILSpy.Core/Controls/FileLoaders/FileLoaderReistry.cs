@@ -60,17 +60,15 @@ public sealed class XamarinCompressedFileLoader : IFileLoader
             // Decompress
             LZ4Codec.Decode(src, 0, compressedLength, dst, 0, uncompressedLength);
             // Load module from decompressed data buffer
-            using (var uncompressedStream = new MemoryStream(dst, writable: false))
-            {
-                MetadataReaderOptions options = context.ApplyWinRTProjections
-                    ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
-                    : MetadataReaderOptions.None;
+            using var uncompressedStream = new MemoryStream(dst, writable: false);
+            MetadataReaderOptions options = context.ApplyWinRTProjections
+                ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
+                : MetadataReaderOptions.None;
 
-                return new LoadResult
-                {
-                    MetadataFile = new PEFile(fileName, uncompressedStream, PEStreamOptions.PrefetchEntireImage, metadataOptions: options)
-                };
-            }
+            return new LoadResult
+            {
+                MetadataFile = new PEFile(fileName, uncompressedStream, PEStreamOptions.PrefetchEntireImage, metadataOptions: options)
+            };
         }
         finally
         {

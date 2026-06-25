@@ -90,10 +90,9 @@ namespace ICSharpCode.ILSpy.Xaml;
 						try {
 							// cache read XAML because stream will be closed after first read
 							if (xml == null) {
-								using (var reader = new StreamReader(Data)) {
-									xml = reader.ReadToEnd();
-								}
-							}
+                                using var reader = new StreamReader(Data);
+                                xml = reader.ReadToEnd();
+                            }
 							output.Write(xml);
 							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
 						}

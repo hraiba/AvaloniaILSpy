@@ -590,12 +590,12 @@ namespace ICSharpCode.ILSpy;
 				if (ishex) {
 					if (!ulong.TryParse(digit, NumberStyles.HexNumber, null, out result)) {
 						Error(y, x, String.Format("Can't parse hexadecimal constant {0}", digit));
-						return new Literal(stringValue.ToString(), 0, LiteralFormat.HexadecimalNumber);
+						return new Literal(stringValue, 0, LiteralFormat.HexadecimalNumber);
 					}
 				} else {
 					if (!ulong.TryParse(digit, NumberStyles.Integer, null, out result)) {
 						Error(y, x, String.Format("Can't parse integral constant {0}", digit));
-						return new Literal(stringValue.ToString(), 0, LiteralFormat.DecimalNumber);
+						return new Literal(stringValue, 0, LiteralFormat.DecimalNumber);
 					}
 				}
 

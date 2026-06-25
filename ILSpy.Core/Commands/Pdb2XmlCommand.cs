@@ -56,9 +56,9 @@ sealed class Pdb2XmlCommand : SimpleCommand
             {
                 string pdbFileName = Path.ChangeExtension(node.LoadedAssembly.FileName, ".pdb");
                 if (!File.Exists(pdbFileName)) continue;
-                using (var pdbStream = File.OpenRead(pdbFileName))
-                using (var peStream = File.OpenRead(node.LoadedAssembly.FileName))
-                    PdbToXmlConverter.ToXml(writer, pdbStream, peStream, options);
+                using var pdbStream = File.OpenRead(pdbFileName);
+                using var peStream = File.OpenRead(node.LoadedAssembly.FileName);
+                PdbToXmlConverter.ToXml(writer, pdbStream, peStream, options);
             }
             return output;
         }, ct)).Then(output => MainWindow.Instance.TextView.ShowNodes(output, null, highlighting)).HandleExceptions();

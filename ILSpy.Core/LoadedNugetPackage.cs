@@ -32,22 +32,23 @@ namespace ICSharpCode.ILSpy;
 
 		public LoadedNugetPackage(string file)
 		{
-			using (var archive = ZipFile.OpenRead(file)) {
-				foreach (var entry in archive.Entries) {
-					switch (Path.GetExtension(entry.FullName)) {
-						case ".dll":
-						case ".exe":
-							var memory = new MemoryStream();
-							entry.Open().CopyTo(memory);
-							memory.Position = 0;
-							var e = new Entry(Uri.UnescapeDataString(entry.FullName), memory);
-							e.PropertyChanged += EntryPropertyChanged;
-							Entries.Add(e);
-							break;
-					}
-				}
-			}
-		}
+        using var archive = ZipFile.OpenRead(file);
+        foreach (var entry in archive.Entries)
+        {
+            switch (Path.GetExtension(entry.FullName))
+            {
+                case ".dll":
+                case ".exe":
+                    var memory = new MemoryStream();
+                    entry.Open().CopyTo(memory);
+                    memory.Position = 0;
+                    var e = new Entry(Uri.UnescapeDataString(entry.FullName), memory);
+                    e.PropertyChanged += EntryPropertyChanged;
+                    Entries.Add(e);
+                    break;
+            }
+        }
+    }
 
 		void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{

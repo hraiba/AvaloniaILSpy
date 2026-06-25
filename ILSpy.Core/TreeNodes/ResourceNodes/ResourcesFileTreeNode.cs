@@ -123,18 +123,15 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         if (!string.IsNullOrEmpty(filename)) {
             s.Position = 0;
             if (filename.Contains("resources")) {
-                using (var fs = File.OpenWrite(filename)) {
-                    s.CopyTo(fs);
-                }
+                using var fs = File.OpenWrite(filename);
+                s.CopyTo(fs);
             } else {
                 try
                 {
-                    using (var writer = new ResXResourceWriter(File.OpenWrite(filename)))
+                    using var writer = new ResXResourceWriter(File.OpenWrite(filename));
+                    foreach (var entry in new ResourcesFile(s))
                     {
-                        foreach (var entry in new ResourcesFile(s))
-                        {
-                            writer.AddResource(entry.Key, entry.Value);
-                        }
+                        writer.AddResource(entry.Key, entry.Value);
                     }
                 }
                 catch (BadImageFormatException)

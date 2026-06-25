@@ -549,7 +549,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
         .Catch<Exception>(exception =>
         {
             textEditor.SyntaxHighlighting = null;
-            Debug.WriteLine("Decompiler crashed: " + exception.ToString());
+            Debug.WriteLine("Decompiler crashed: " + exception);
             AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
             if (exception is OutputLengthExceededException)
             {
@@ -793,7 +793,7 @@ public sealed partial class DecompilerTextView : UserControl, IDisposable
             .Catch((Exception ex) =>
             {
                 textEditor.SyntaxHighlighting = null;
-                Debug.WriteLine("Decompiler crashed: " + ex.ToString());
+                Debug.WriteLine("Decompiler crashed: " + ex);
                 // Unpack aggregate exceptions as long as there's only a single exception:
                 // (assembly load errors might produce nested aggregate exceptions)
                 AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();

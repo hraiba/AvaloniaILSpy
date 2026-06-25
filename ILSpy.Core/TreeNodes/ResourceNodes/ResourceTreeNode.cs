@@ -105,11 +105,9 @@ namespace ICSharpCode.ILSpy.TreeNodes;
         if (!string.IsNullOrEmpty(filename))
         {
             s.Position = 0;
-            using (var fs = File.OpenWrite(filename))
-            {
-                s.CopyTo(fs);
-            }
-			}
+            using var fs = File.OpenWrite(filename);
+            s.CopyTo(fs);
+        }
 			return true;
 		}
 		

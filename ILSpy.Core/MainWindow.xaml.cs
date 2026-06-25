@@ -258,13 +258,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 "ILAsm", new string[] { ".il" },
                 delegate
                 {
-                    using (Stream s = File.OpenRead($"Themes/{ilmode}"))
-                    {
-                        using (XmlTextReader reader = new XmlTextReader(s))
-                        {
-                            return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                        }
-                    }
+                    using Stream s = File.OpenRead($"Themes/{ilmode}");
+                    using XmlTextReader reader = new XmlTextReader(s);
+                    return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
         else
@@ -273,13 +269,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
                 "ILAsm", new string[] { ".il" },
                 delegate
                 {
-                    using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.ILAsm-Mode.xshd"))
-                    {
-                        using (XmlTextReader reader = new XmlTextReader(s))
-                        {
-                            return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                        }
-                    }
+                    using Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.ILAsm-Mode.xshd");
+                    using XmlTextReader reader = new XmlTextReader(s);
+                    return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
 
@@ -289,13 +281,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             "C#", new string[] { ".cs" },
                 delegate
                 {
-                    using (Stream s = File.OpenRead($"Themes/{csmode}"))
-                    {
-                        using (XmlTextReader reader = new XmlTextReader(s))
-                        {
-                            return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                        }
-                    }
+                    using Stream s = File.OpenRead($"Themes/{csmode}");
+                    using XmlTextReader reader = new XmlTextReader(s);
+                    return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
         else
@@ -304,13 +292,9 @@ public partial class MainWindow : PlatformDependentWindow, IRoutedCommandBindabl
             "C#", new string[] { ".cs" },
                 delegate
                 {
-                    using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.CSharp-Mode.xshd"))
-                    {
-                        using (XmlTextReader reader = new XmlTextReader(s))
-                        {
-                            return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                        }
-                    }
+                    using Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream("ICSharpCode.ILSpy.Themes.CSharp-Mode.xshd");
+                    using XmlTextReader reader = new XmlTextReader(s);
+                    return HighlightingLoader.Load(reader, HighlightingManager.Instance);
                 });
         }
 
