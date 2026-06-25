@@ -55,16 +55,11 @@ namespace ICSharpCode.ILSpy
 			return app;
 		}
 
-		class ProxyLogSink : ILogSink
+		class ProxyLogSink(ILogSink sink) : ILogSink
 		{
-			private readonly ILogSink sink;
+			private readonly ILogSink sink = sink;
 
-			public ProxyLogSink(ILogSink sink)
-			{
-				this.sink = sink;
-			}
-
-			public bool IsEnabled(LogEventLevel level) => true;
+            public static bool IsEnabled(LogEventLevel level) => true;
 
             public bool IsEnabled(LogEventLevel level, string area) => true;
 
@@ -72,13 +67,13 @@ namespace ICSharpCode.ILSpy
 				Log(level, area, source, messageTemplate, Array.Empty<object>());
 
 			public void Log<T0>(LogEventLevel level, string area, object source, string messageTemplate, T0 propertyValue0) =>
-				Log(level, area, source, messageTemplate, new object[] { propertyValue0 });
+				Log(level, area, source, messageTemplate, [propertyValue0]);
 
 			public void Log<T0, T1>(LogEventLevel level, string area, object source, string messageTemplate, T0 propertyValue0, T1 propertyValue1) =>
-				Log(level, area, source, messageTemplate, new object[] { propertyValue0, propertyValue1 });
+				Log(level, area, source, messageTemplate, [propertyValue0, propertyValue1]);
 
 			public void Log<T0, T1, T2>(LogEventLevel level, string area, object source, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2) =>
-				Log(level, area, source, messageTemplate, new object[] { propertyValue0, propertyValue1, propertyValue2 });
+				Log(level, area, source, messageTemplate, [propertyValue0, propertyValue1, propertyValue2]);
 
 			public void Log(LogEventLevel level, string area, object source, string messageTemplate, params object[] propertyValues)
 			{
@@ -89,12 +84,11 @@ namespace ICSharpCode.ILSpy
 				sink.Log(level, area, source, messageTemplate, propertyValues);
 			}
 
-			object GetHierachy(object source)
+            static object GetHierachy(object source)
 			{
 				if (source is IControl visual)
 				{
-					List<string> hierachy = new List<string>();
-					hierachy.Add(visual.ToString());
+					List<string> hierachy = [visual.ToString()];
 					while ((visual = visual.Parent) != null)
 					{
 						hierachy.Insert(0, visual.ToString());
