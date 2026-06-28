@@ -21,8 +21,8 @@ using Avalonia.Interactivity;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
@@ -35,50 +35,53 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.r = r ?? throw new ArgumentNullException(nameof(r));
 			this.parentAssembly = parentAssembly ?? throw new ArgumentNullException(nameof(parentAssembly));
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public IAssemblyReference AssemblyNameReference => r;
 
-		public override object Text {
-			get { return r.Name + ((System.Reflection.Metadata.EntityHandle)r.Handle).ToSuffixString(); }
-		}
-		
-		public override object Icon {
-			get { return Images.Assembly; }
-		}
-		
-		public override bool ShowExpander {
+    public override object Text => r.Name + ((System.Reflection.Metadata.EntityHandle)r.Handle).ToSuffixString();
+
+    public override object Icon => Images.Assembly;
+
+    public override bool ShowExpander {
 			get {
 				if (r.Name == "mscorlib")
-					EnsureLazyChildren(); // likely doesn't have any children
-				return base.ShowExpander;
+            {
+                EnsureLazyChildren(); // likely doesn't have any children
+            }
+
+            return base.ShowExpander;
 			}
 		}
 		
 		public override void ActivateItem(RoutedEventArgs e)
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
-			if (assemblyListNode != null) {
-				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
-				e.Handled = true;
-			}
-		}
+        if (parentAssembly.Parent is AssemblyListTreeNode assemblyListNode)
+        {
+            assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
+            e.Handled = true;
+        }
+    }
 		
 		protected override void LoadChildren()
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
-			if (assemblyListNode != null) {
-				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
-				if (refNode != null) {
-					var module = refNode.LoadedAssembly.GetPEFileOrNull();
-					if (module != null) {
-						foreach (var childRef in module.AssemblyReferences)
-							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
-					}
-				}
-			}
-		}
+        if (parentAssembly.Parent is AssemblyListTreeNode assemblyListNode)
+        {
+            var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
+            if (refNode != null)
+            {
+                var module = refNode.LoadedAssembly.GetPEFileOrNull();
+                if (module != null)
+                {
+                    foreach (var childRef in module.AssemblyReferences)
+                    {
+                        Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
+                    }
+                }
+            }
+        }
+    }
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
@@ -92,8 +95,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.Indent();
 				language.WriteCommentLine(output, "Assembly reference loading information:");
 				if (info.HasErrors)
-					language.WriteCommentLine(output, "There were some problems during assembly reference load, see below for more information!");
-				foreach (var item in info.Messages) {
+            {
+                language.WriteCommentLine(output, "There were some problems during assembly reference load, see below for more information!");
+            }
+
+            foreach (var item in info.Messages) {
 					language.WriteCommentLine(output, $"{item.Item1}: {item.Item2}");
 				}
 				output.Unindent();
@@ -101,4 +107,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

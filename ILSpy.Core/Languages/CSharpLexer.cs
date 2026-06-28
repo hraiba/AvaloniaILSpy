@@ -8,25 +8,16 @@ using System.IO;
 using System.Text;
 using ICSharpCode.Decompiler.CSharp.Syntax;
 
-namespace ICSharpCode.ILSpy
-{
-	public class LATextReader : TextReader
+namespace ICSharpCode.ILSpy;
+
+	public class LATextReader(TextReader reader) : TextReader
 	{
-		List<int> buffer;
-		TextReader reader;
+		List<int> buffer = [];
+		TextReader reader = reader;
 
-		public LATextReader(TextReader reader)
-		{
-			this.buffer = new List<int>();
-			this.reader = reader;
-		}
+    public override int Peek() => Peek(0);
 
-		public override int Peek()
-		{
-			return Peek(0);
-		}
-
-		public override int Read()
+    public override int Read()
 		{
 			int c = Peek();
 			buffer.RemoveAt(0);
@@ -40,101 +31,82 @@ namespace ICSharpCode.ILSpy
 			}
 
 			if (step < 0)
-				return -1;
+        {
+            return -1;
+        }
 
-			return buffer[step];
+        return buffer[step];
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-				reader.Dispose();
-			base.Dispose(disposing);
+        {
+            reader.Dispose();
+        }
+
+        base.Dispose(disposing);
 		}
 	}
 
-	public class Literal
-	{
-		internal readonly LiteralFormat literalFormat;
-		internal readonly object literalValue;
-		internal readonly string val;
+	public class Literal(string val, object literalValue, LiteralFormat literalFormat)
+{
+		internal readonly LiteralFormat literalFormat = literalFormat;
+		internal readonly object literalValue = literalValue;
+		internal readonly string val = val;
 		internal Literal next;
 
-		public LiteralFormat LiteralFormat {
-			get { return literalFormat; }
-		}
+    public LiteralFormat LiteralFormat => literalFormat;
 
-		public object LiteralValue {
-			get { return literalValue; }
-		}
+    public object LiteralValue => literalValue;
 
-		public string Value {
-			get { return val; }
-		}
+    public string Value => val;
+}
 
-		public Literal(string val, object literalValue, LiteralFormat literalFormat)
-		{
-			this.val = val;
-			this.literalValue = literalValue;
-			this.literalFormat = literalFormat;
-		}
-	}
-
-	internal abstract class AbstractLexer
-	{
-		LATextReader reader;
-		int col = 1;
-		int line = 1;
-
-		protected Literal lastToken = null;
+/// <summary>
+/// Constructor for the abstract lexer class.
+/// </summary>
+internal abstract class AbstractLexer(TextReader reader)
+{
+		LATextReader reader = new(reader);
+    protected Literal lastToken = null;
 		protected Literal curToken = null;
 		protected Literal peekToken = null;
 
-		protected StringBuilder sb = new StringBuilder();
+		protected StringBuilder sb = new();
 
 		// used for the original value of strings (with escape sequences).
-		protected StringBuilder originalValue = new StringBuilder();
-		
-		protected int Line {
-			get {
-				return line;
-			}
-		}
-		protected int Col {
-			get {
-				return col;
-			}
-		}
+		protected StringBuilder originalValue = new();
 
-		protected bool recordRead = false;
-		protected StringBuilder recordedText = new StringBuilder();
+    protected int Line { get; private set; } = 1;
+    protected int Col { get; private set; } = 1;
+
+    protected bool recordRead = false;
+		protected StringBuilder recordedText = new();
 
 		protected int ReaderRead()
 		{
 			int val = reader.Read();
 			if (recordRead && val >= 0)
-				recordedText.Append((char)val);
-			if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
-				++line;
-				col = 1;
+        {
+            recordedText.Append((char)val);
+        }
+
+        if ((val == '\r' && reader.Peek() != '\n') || val == '\n') {
+				++Line;
+				Col = 1;
 				LineBreak();
 			} else if (val >= 0) {
-				col++;
+				Col++;
 			}
 			return val;
 		}
 
-		protected int ReaderPeek()
-		{
-			return reader.Peek();
-		}
+    protected int ReaderPeek() => reader.Peek();
 
-		protected int ReaderPeek(int step)
-		{
-			return reader.Peek(step);
-		}
+    protected int ReaderPeek(int step) => reader.Peek(step);
 
-		protected void ReaderSkip(int steps)
+    protected void ReaderSkip(int steps)
 		{
 			for (int i = 0; i < steps; i++) {
 				ReaderRead();
@@ -143,71 +115,52 @@ namespace ICSharpCode.ILSpy
 
 		protected string ReaderPeekString(int length)
 		{
-			StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new();
 
 			for (int i = 0; i < length; i++) {
 				int peek = ReaderPeek(i);
 				if (peek != -1)
-					builder.Append((char)peek);
-			}
+            {
+                builder.Append((char)peek);
+            }
+        }
 
 			return builder.ToString();
 		}
 
-		/// <summary>
-		/// The current Token. <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
-		/// </summary>
-		public Literal Token {
-			get {
-				return lastToken;
-			}
-		}
+    /// <summary>
+    /// The current Token. <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
+    /// </summary>
+    public Literal Token => lastToken;
 
-		/// <summary>
-		/// The next Token (The <see cref="Token"/> after <see cref="NextToken"/> call) . <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
-		/// </summary>
-		public Literal LookAhead {
-			get {
-				return curToken;
-			}
-		}
+    /// <summary>
+    /// The next Token (The <see cref="Token"/> after <see cref="NextToken"/> call) . <seealso cref="ICSharpCode.NRefactory.Parser.Token"/>
+    /// </summary>
+    public Literal LookAhead => curToken;
 
-		/// <summary>
-		/// Constructor for the abstract lexer class.
-		/// </summary>
-		protected AbstractLexer(TextReader reader)
-		{
-			this.reader = new LATextReader(reader);
-		}
-
-		#region System.IDisposable interface implementation
-		public virtual void Dispose()
+    #region System.IDisposable interface implementation
+    public virtual void Dispose()
 		{
 			reader.Close();
 			reader = null;
 			lastToken = curToken = peekToken = null;
 			sb = originalValue = null;
 		}
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// Must be called before a peek operation.
-		/// </summary>
-		public void StartPeek()
-		{
-			peekToken = curToken;
-		}
+    /// <summary>
+    /// Must be called before a peek operation.
+    /// </summary>
+    public void StartPeek() => peekToken = curToken;
 
-		/// <summary>
-		/// Gives back the next token. A second call to Peek() gives the next token after the last call for Peek() and so on.
-		/// </summary>
-		/// <returns>An <see cref="Token"/> object.</returns>
-		public Literal Peek()
+    /// <summary>
+    /// Gives back the next token. A second call to Peek() gives the next token after the last call for Peek() and so on.
+    /// </summary>
+    /// <returns>An <see cref="Token"/> object.</returns>
+    public Literal Peek()
 		{
 			//			Console.WriteLine("Call to Peek");
-			if (peekToken.next == null) {
-				peekToken.next = Next();
-			}
+			peekToken.next ??= Next();
 			peekToken = peekToken.next;
 			return peekToken;
 		}
@@ -226,9 +179,7 @@ namespace ICSharpCode.ILSpy
 
 			lastToken = curToken;
 
-			if (curToken.next == null) {
-				curToken.next = Next();
-			}
+			curToken.next ??= Next();
 
 			curToken = curToken.next;
 			//Console.WriteLine(ICSharpCode.NRefactory.Parser.CSharp.Tokens.GetTokenString(curToken.kind) + " -- " + curToken.val + "(" + curToken.kind + ")");
@@ -239,17 +190,22 @@ namespace ICSharpCode.ILSpy
 
 		protected static bool IsIdentifierPart(int ch)
 		{
-			if (ch == 95) return true;  // 95 = '_'
-			if (ch == -1) return false;
-			return char.IsLetterOrDigit((char)ch); // accept unicode letters
+			if (ch == 95)
+        {
+            return true;  // 95 = '_'
+        }
+
+        if (ch == -1)
+        {
+            return false;
+        }
+
+        return char.IsLetterOrDigit((char)ch); // accept unicode letters
 		}
 
-		protected static bool IsHex(char digit)
-		{
-			return Char.IsDigit(digit) || ('A' <= digit && digit <= 'F') || ('a' <= digit && digit <= 'f');
-		}
+    protected static bool IsHex(char digit) => Char.IsDigit(digit) || ('A' <= digit && digit <= 'F') || ('a' <= digit && digit <= 'f');
 
-		protected int GetHexNumber(char digit)
+    protected int GetHexNumber(char digit)
 		{
 			if (Char.IsDigit(digit)) {
 				return digit - '0';
@@ -290,12 +246,15 @@ namespace ICSharpCode.ILSpy
 			while ((nextChar = reader.Read()) != -1) {
 				if (nextChar == '\r') {
 					if (reader.Peek() == '\n')
-						reader.Read();
-					nextChar = '\n';
+                {
+                    reader.Read();
+                }
+
+                nextChar = '\n';
 				}
 				if (nextChar == '\n') {
-					++line;
-					col = 1;
+					++Line;
+					Col = 1;
 					break;
 				}
 			}
@@ -310,13 +269,16 @@ namespace ICSharpCode.ILSpy
 
 				if (nextChar == '\r') {
 					if (reader.Peek() == '\n')
-						reader.Read();
-					nextChar = '\n';
+                {
+                    reader.Read();
+                }
+
+                nextChar = '\n';
 				}
 				// Return read string, if EOL is reached
 				if (nextChar == '\n') {
-					++line;
-					col = 1;
+					++Line;
+					Col = 1;
 					return sb.ToString();
 				}
 
@@ -325,26 +287,24 @@ namespace ICSharpCode.ILSpy
 
 			// Got EOF before EOL
 			string retStr = sb.ToString();
-			col += retStr.Length;
+			Col += retStr.Length;
 			return retStr;
 		}
 	}
 
-	internal sealed class Lexer : AbstractLexer
+	internal sealed class Lexer(TextReader reader) : AbstractLexer(reader)
 	{
-		public Lexer(TextReader reader) : base(reader)
-		{
-		}
-
-		protected override Literal Next()
+    protected override Literal Next()
 		{
 			char ch;
 			while (true) {
 				int nextChar = ReaderRead();
 				if (nextChar == -1)
-					break;
+            {
+                break;
+            }
 
-				Literal token = null;
+            Literal token = null;
 
 				switch (nextChar) {
 					case ' ':
@@ -443,9 +403,11 @@ namespace ICSharpCode.ILSpy
 
 				if (curPos < MAX_IDENTIFIER_LENGTH) {
 					if (ch != '\0') // only add character, if it is valid
-									// prevents \ from being added
-						identBuffer[curPos++] = ch;
-				} else {
+                {
+                    // prevents \ from being added
+                    identBuffer[curPos++] = ch;
+                }
+            } else {
 					Error(Line, Col, String.Format("Identifier too long"));
 					while (IsIdentifierPart(ReaderPeek())) {
 						ReaderRead();
@@ -612,12 +574,12 @@ namespace ICSharpCode.ILSpy
 				if (ishex) {
 					if (!ulong.TryParse(digit, NumberStyles.HexNumber, null, out result)) {
 						Error(y, x, String.Format("Can't parse hexadecimal constant {0}", digit));
-						return new Literal(stringValue.ToString(), 0, LiteralFormat.HexadecimalNumber);
+						return new Literal(stringValue, 0, LiteralFormat.HexadecimalNumber);
 					}
 				} else {
 					if (!ulong.TryParse(digit, NumberStyles.Integer, null, out result)) {
 						Error(y, x, String.Format("Can't parse integral constant {0}", digit));
-						return new Literal(stringValue.ToString(), 0, LiteralFormat.DecimalNumber);
+						return new Literal(stringValue, 0, LiteralFormat.DecimalNumber);
 					}
 				}
 
@@ -626,7 +588,7 @@ namespace ICSharpCode.ILSpy
 					isunsigned = true;
 				} else if (result > uint.MaxValue) {
 					islong = true;
-				} else if (islong == false && result > int.MaxValue) {
+				} else if (!islong && result > int.MaxValue) {
 					isunsigned = true;
 				}
 
@@ -895,4 +857,3 @@ namespace ICSharpCode.ILSpy
 		{
 		}
 	}
-}

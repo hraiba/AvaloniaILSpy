@@ -19,33 +19,26 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public sealed class NaturalStringComparer : IComparer<string>
+namespace ICSharpCode.ILSpy.TreeNodes;
+
+/// <summary>
+/// Create a sequence comparer, using the specified item comparer
+/// for T.
+/// </summary>
+public sealed class NaturalStringComparer(CultureInfo culture, CompareOptions options) : IComparer<string>
 	{
-		public static readonly NaturalStringComparer Instance = new NaturalStringComparer(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
+		public static readonly NaturalStringComparer Instance = new(CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
 
-		/// <summary>
-		/// Create a sequence comparer, using the specified item comparer
-		/// for T.
-		/// </summary>
-		public NaturalStringComparer(CultureInfo culture, CompareOptions options)
-		{
-			this.culture = culture;
-			this.options = options;
-		}
-
-		/// <summary>
-		/// culture used for comparing each element.
-		/// </summary>
-		CultureInfo culture;
+    /// <summary>
+    /// culture used for comparing each element.
+    /// </summary>
+    CultureInfo culture = culture;
 
 		/// <summary>
 		/// options used for comparing each element.
 		/// </summary>
-		CompareOptions options;
+		CompareOptions options = options;
 
 		/// <summary>
 		/// Compare two sequences of T.
@@ -71,9 +64,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				{
 					int jA = iA + 1;
 					int jB = iB + 1;
-					while (jA < x.Length && !Char.IsDigit(x[jA])) jA++;
-					while (jB < y.Length && !Char.IsDigit(y[jB])) jB++;
-					int cmpResult = cmp.Compare(x, iA, jA - iA, y, iB, jB - iB, options);
+					while (jA < x.Length && !Char.IsDigit(x[jA]))
+                {
+                    jA++;
+                }
+
+                while (jB < y.Length && !Char.IsDigit(y[jB]))
+                {
+                    jB++;
+                }
+
+                int cmpResult = cmp.Compare(x, iA, jA - iA, y, iB, jB - iB, options);
 					if (cmpResult != 0)
 					{
 						// Certain strings may be considered different due to "soft" differences that are
@@ -101,18 +102,34 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					char zeroB = (char)(y[iB] - (int)Char.GetNumericValue(y[iB]));
 					int jA = iA;
 					int jB = iB;
-					while (jA < x.Length && x[jA] == zeroA) jA++;
-					while (jB < y.Length && y[jB] == zeroB) jB++;
-					int resultIfSameLength = 0;
+					while (jA < x.Length && x[jA] == zeroA)
+                {
+                    jA++;
+                }
+
+                while (jB < y.Length && y[jB] == zeroB)
+                {
+                    jB++;
+                }
+
+                int resultIfSameLength = 0;
 					do
 					{
 						isDigitA = jA < x.Length && Char.IsDigit(x[jA]);
 						isDigitB = jB < y.Length && Char.IsDigit(y[jB]);
 						int numA = isDigitA ? (int)Char.GetNumericValue(x[jA]) : 0;
 						int numB = isDigitB ? (int)Char.GetNumericValue(y[jB]) : 0;
-						if (isDigitA && (char)(x[jA] - numA) != zeroA) isDigitA = false;
-						if (isDigitB && (char)(y[jB] - numB) != zeroB) isDigitB = false;
-						if (isDigitA && isDigitB)
+						if (isDigitA && (char)(x[jA] - numA) != zeroA)
+                    {
+                        isDigitA = false;
+                    }
+
+                    if (isDigitB && (char)(y[jB] - numB) != zeroB)
+                    {
+                        isDigitB = false;
+                    }
+
+                    if (isDigitA && isDigitB)
 						{
 							if (numA != numB && resultIfSameLength == 0)
 							{
@@ -162,4 +179,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return 0;
 		}
 	}
-}

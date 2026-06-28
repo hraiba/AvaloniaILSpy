@@ -17,13 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows events that implement an interface event.
 	/// </summary>
@@ -36,29 +35,31 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			var scope = context.GetScopeOf((IEvent)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in AnalyzeType((IEvent)analyzedSymbol, type))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> AnalyzeType(IEvent analyzedEntity, ITypeDefinition type)
+    {
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
         {
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+            yield break;
+        }
 
-            foreach (var @event in type.Events) {
-                var baseMembers = InheritanceHelper.GetBaseMembers(@event, true);
-                if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
-                    yield return @event;
-			}
+        foreach (var @event in type.Events) {
+            var baseMembers = InheritanceHelper.GetBaseMembers(@event, true);
+            if (baseMembers.Any(m => m.MetadataToken == token && m.ParentModule.MetadataFile == module))
+            {
+                yield return @event;
+            }
+        }
 		}
 
-		public bool Show(ISymbol symbol)
-		{
-			return symbol is IEvent entity && entity.DeclaringType.Kind == TypeKind.Interface;
-		}
-	}
+    public bool Show(ISymbol symbol) => symbol is IEvent entity && entity.DeclaringType.Kind == TypeKind.Interface;
 }

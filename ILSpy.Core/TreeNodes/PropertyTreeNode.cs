@@ -17,17 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Reflection;
-using System.Reflection.Metadata;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
-using SRM = System.Reflection.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Represents a property in the TreeView.
 	/// </summary>
@@ -37,50 +32,53 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public PropertyTreeNode(IProperty property)
 		{
-			this.PropertyDefinition = property ?? throw new ArgumentNullException(nameof(property));
-			this.isIndexer = property.IsIndexer;
+			PropertyDefinition = property ?? throw new ArgumentNullException(nameof(property));
+			isIndexer = property.IsIndexer;
 
 			if (property.CanGet)
-				this.Children.Add(new MethodTreeNode(property.Getter));
-			if (property.CanSet)
-				this.Children.Add(new MethodTreeNode(property.Setter));
-			/*foreach (var m in property.OtherMethods)
-				this.Children.Add(new MethodTreeNode(m));*/
-		}
+        {
+            Children.Add(new MethodTreeNode(property.Getter));
+        }
+
+        if (property.CanSet)
+        {
+            Children.Add(new MethodTreeNode(property.Setter));
+        }
+        /*foreach (var m in property.OtherMethods)
+    this.Children.Add(new MethodTreeNode(m));*/
+    }
 
 		public IProperty PropertyDefinition { get; }
 
 		public override object Text => GetText(PropertyDefinition, Language) + PropertyDefinition.MetadataToken.ToSuffixString();
 
-		public static object GetText(IProperty property, Language language)
+    public static object GetText(IProperty property, Language language) => language.PropertyToString(property, false, false, false);
+
+    public override object Icon => GetIcon(PropertyDefinition);
+
+    public static IBitmap GetIcon(IProperty property) => Images.GetIcon(property.IsIndexer ? MemberIcon.Indexer : MemberIcon.Property,
+            MethodTreeNode.GetOverlayIcon(property.Accessibility), property.IsStatic);
+
+    public override FilterResult Filter(FilterSettings settings)
 		{
-			return language.PropertyToString(property, false, false, false);
-		}
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
+            return FilterResult.Hidden;
+        }
 
-		public override object Icon => GetIcon(PropertyDefinition);
+        if (settings.SearchTermMatches(PropertyDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(PropertyDefinition)))
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
-		public static IBitmap GetIcon(IProperty property)
-		{
-			return Images.GetIcon(property.IsIndexer ? MemberIcon.Indexer : MemberIcon.Property,
-				MethodTreeNode.GetOverlayIcon(property.Accessibility), property.IsStatic);
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileProperty(PropertyDefinition, output, options);
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
-                return FilterResult.Hidden;
-            if (settings.SearchTermMatches(PropertyDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(PropertyDefinition)))
-                return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
-
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileProperty(PropertyDefinition, output, options);
-		}
-
-		public override bool IsPublicAPI {
+    public override bool IsPublicAPI {
 			get {
 				switch (PropertyDefinition.Accessibility) {
 					case Accessibility.Public:
@@ -95,4 +93,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		IEntity IMemberTreeNode.Member => PropertyDefinition;
 	}
-}

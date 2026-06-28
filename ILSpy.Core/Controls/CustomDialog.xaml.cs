@@ -16,46 +16,37 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using AvaloniaEdit;
-using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	public sealed class CustomDialog : DialogWindow
 	{
-        TextBlock label;
+    TextBlock label;
 		ListBox buttons;
 		int acceptButton;
 		int cancelButton;
 
-		/// <summary>
-		/// Gets the index of the button pressed.
-		/// </summary>
-		public int Result
-		{
-			get {
-				return (int)DialogResult;
-			}
-		}
+    /// <summary>
+    /// Gets the index of the button pressed.
+    /// </summary>
+    public int Result => (int)DialogResult;
 
-		public CustomDialog(string caption, string message, int acceptButton = -1, int cancelButton = -1, params string[] buttonLabels)
+    public CustomDialog(string caption, string message, int acceptButton = -1, int cancelButton = -1, params string[] buttonLabels)
 		{
-			this.InitializeComponent();
+			InitializeComponent();
 #if DEBUG
 			this.AttachDevTools();
 #endif
 			this.acceptButton = acceptButton;
 			this.cancelButton = cancelButton;
-			this.Title = caption;
-			this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-			this.Width = buttonLabels.Length * (100+ 10);
+			Title = caption;
+			WindowStartupLocation = WindowStartupLocation.CenterOwner;
+			Width = buttonLabels.Length * (100+ 10);
 
 			buttons.Items = buttonLabels;
 
@@ -66,23 +57,22 @@ namespace ICSharpCode.ILSpy.Controls
 		void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);
-			this.buttons = this.FindControl<ListBox>("buttons");
-			this.label = this.FindControl<TextBlock>("content");
+			buttons = this.FindControl<ListBox>("buttons");
+			label = this.FindControl<TextBlock>("content");
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (cancelButton != -1 && e.Key == Key.Escape) {
-				this.Close(cancelButton);
+				Close(cancelButton);
 			}
 		}
 
 		void ButtonClick(object sender, RoutedEventArgs e)
 		{
-            Button button = sender as Button;
-            int index = buttons.ItemContainerGenerator.IndexFromContainer(button.Parent);
-            this.Close(index);
+        Button button = sender as Button;
+        int index = buttons.ItemContainerGenerator.IndexFromContainer(button.Parent);
+        Close(index);
 			e.Handled = true;
 		}
 	}
-}

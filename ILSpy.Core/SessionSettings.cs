@@ -25,135 +25,148 @@ using System.Text.RegularExpressions;
 using Avalonia;
 using System.Xml.Linq;
 using Avalonia.Controls;
-using AvaloniaEdit.Search;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// Per-session setting:
+/// Loaded at startup; saved at exit.
+/// </summary>
+public sealed partial class SessionSettings : INotifyPropertyChanged
 {
-	/// <summary>
-	/// Per-session setting:
-	/// Loaded at startup; saved at exit.
-	/// </summary>
-	public sealed class SessionSettings : INotifyPropertyChanged
-	{
-		public SessionSettings(ILSpySettings spySettings)
-		{
-			XElement doc = spySettings["SessionSettings"];
-			
-			XElement filterSettings = doc.Element("FilterSettings");
-			if (filterSettings == null) filterSettings = new XElement("FilterSettings");
-			
-			this.FilterSettings = new FilterSettings(filterSettings);
-			
-			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
-			
-			XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
-			if (activeTreeViewPath != null) {
-				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => Unescape((string)e)).ToArray();
-			}
-			this.ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
-			
-			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
-			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
-			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
-			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
-			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
-			this.SelectedSearchMode = FromString((string)doc.Element("SelectedSearchMode"), Search.SearchMode.TypeAndMember);
-			this.Theme = (string)doc.Element("Theme");
-		}
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-		
-		public FilterSettings FilterSettings { get; private set; }
-		public Search.SearchMode SelectedSearchMode { get; set; }
-		
-		public string[] ActiveTreeViewPath;
-		public string ActiveAutoLoadedAssembly;
-		
-		public string ActiveAssemblyList;
-		
-		public WindowState WindowState = WindowState.Normal;
-		public Rect WindowBounds;
-		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
-		/// <summary>
-		/// position of the left/right splitter
-		/// </summary>
-		public double SplitterPosition;
-		public double TopPaneSplitterPosition, BottomPaneSplitterPosition;
-		public string Theme;
-		
-		public void Save()
-		{
-			XElement doc = new XElement("SessionSettings");
-			doc.Add(this.FilterSettings.SaveAsXml());
-			if (this.ActiveAssemblyList != null) {
-				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
-			}
-			if (this.ActiveTreeViewPath != null) {
-				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", Escape(p)))));
-			}
-			if (this.ActiveAutoLoadedAssembly != null) {
-				doc.Add(new XElement("ActiveAutoLoadedAssembly", this.ActiveAutoLoadedAssembly));
-			}
-			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
-			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
-			doc.Add(new XElement("SplitterPosition", ToString(this.SplitterPosition)));
-			doc.Add(new XElement("TopPaneSplitterPosition", ToString(this.TopPaneSplitterPosition)));
-			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(this.BottomPaneSplitterPosition)));
-			doc.Add(new XElement("SelectedSearchMode", ToString(this.SelectedSearchMode)));
+    public SessionSettings(ILSpySettings spySettings)
+    {
+        XElement doc = spySettings["SessionSettings"];
 
-			doc.Add(new XElement("Theme", this.Theme));
+        XElement filterSettings = doc.Element("FilterSettings");
+        filterSettings ??= new XElement("FilterSettings");
 
-			ILSpySettings.SaveSettings(doc);
-		}
-		
-		static Regex regex = new Regex("\\\\x(?<num>[0-9A-f]{4})");
-		
-		static string Escape(string p)
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach (char ch in p) {
-				if (char.IsLetterOrDigit(ch))
-					sb.Append(ch);
-				else
-					sb.AppendFormat("\\x{0:X4}", (int)ch);
-			}
-			return sb.ToString();
-		}
-		
-		static string Unescape(string p)
-		{
-			return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
-		}
-		
-		static T FromString<T>(string s, T defaultValue)
-		{
-			if (s == null)
-				return defaultValue;
-			try {
-				TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
-				return (T)c.ConvertFromInvariantString(s);
-			} catch (FormatException) {
-				return defaultValue;
-			}
-		}
+        FilterSettings = new FilterSettings(filterSettings);
 
-		static Rect FromString(string s, Rect defaultValue)
-		{
-			if (s == null)
-				return defaultValue;
-			return Rect.Parse(s);
-		}
-		
-		static string ToString<T>(T obj)
-		{
-			TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
-			return c.ConvertToInvariantString(obj);
-		}
-	}
+        ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
+
+        XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
+        if (activeTreeViewPath != null)
+        {
+            ActiveTreeViewPath = [.. activeTreeViewPath.Elements().Select(e => Unescape((string)e))];
+        }
+        ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
+
+        WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
+        WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
+        SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
+        TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
+        BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
+        SelectedSearchMode = FromString((string)doc.Element("SelectedSearchMode"), Search.SearchMode.TypeAndMember);
+        Theme = (string)doc.Element("Theme");
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    public FilterSettings FilterSettings { get; }
+    public Search.SearchMode SelectedSearchMode { get; set; }
+
+    public string[] ActiveTreeViewPath;
+    public string ActiveAutoLoadedAssembly;
+
+    public string ActiveAssemblyList;
+
+    public WindowState WindowState = WindowState.Normal;
+    public Rect WindowBounds;
+    internal static Rect DefaultWindowBounds = new(10, 10, 750, 550);
+    /// <summary>
+    /// position of the left/right splitter
+    /// </summary>
+    public double SplitterPosition;
+    public double TopPaneSplitterPosition, BottomPaneSplitterPosition;
+    public string Theme;
+
+    public void Save()
+    {
+        var doc = new XElement("SessionSettings");
+        doc.Add(FilterSettings.SaveAsXml());
+        if (ActiveAssemblyList != null)
+        {
+            doc.Add(new XElement("ActiveAssemblyList", ActiveAssemblyList));
+        }
+        if (ActiveTreeViewPath != null)
+        {
+            doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", Escape(p)))));
+        }
+        if (ActiveAutoLoadedAssembly != null)
+        {
+            doc.Add(new XElement("ActiveAutoLoadedAssembly", ActiveAutoLoadedAssembly));
+        }
+        doc.Add(new XElement("WindowState", ToString(WindowState)));
+        doc.Add(new XElement("WindowBounds", ToString(WindowBounds)));
+        doc.Add(new XElement("SplitterPosition", ToString(SplitterPosition)));
+        doc.Add(new XElement("TopPaneSplitterPosition", ToString(TopPaneSplitterPosition)));
+        doc.Add(new XElement("BottomPaneSplitterPosition", ToString(BottomPaneSplitterPosition)));
+        doc.Add(new XElement("SelectedSearchMode", ToString(SelectedSearchMode)));
+
+        doc.Add(new XElement("Theme", Theme));
+
+        ILSpySettings.SaveSettings(doc);
+    }
+
+    static readonly Regex regex = MyRegex();
+
+    static string Escape(string p)
+    {
+        var sb = new StringBuilder();
+        foreach (char ch in p)
+        {
+            if (char.IsLetterOrDigit(ch))
+            {
+                sb.Append(ch);
+            }
+            else
+            {
+                sb.AppendFormat("\\x{0:X4}", (int)ch);
+            }
+        }
+        return sb.ToString();
+    }
+
+    static string Unescape(string p) => regex.Replace(p, m =>
+            ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
+
+    static T FromString<T>(string s, T defaultValue)
+    {
+        if (s == null)
+        {
+            return defaultValue;
+        }
+
+        try
+        {
+            TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
+            return (T)c.ConvertFromInvariantString(s);
+        }
+        catch (FormatException)
+        {
+            return defaultValue;
+        }
+    }
+
+    static Rect FromString(string s, Rect defaultValue)
+    {
+        if (s == null)
+        {
+            return defaultValue;
+        }
+
+        return Rect.Parse(s);
+    }
+
+    static string ToString<T>(T obj)
+    {
+        TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
+        return c.ConvertToInvariantString(obj);
+    }
+
+    [GeneratedRegex("\\\\x(?<num>[0-9A-f]{4})")]
+    private static partial Regex MyRegex();
 }

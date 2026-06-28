@@ -22,132 +22,154 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// Manages IL Spy settings.
+/// </summary>
+public sealed class ILSpySettings
 {
-	/// <summary>
-	/// Manages IL Spy settings.
-	/// </summary>
-	public class ILSpySettings
-	{
-		readonly XElement root;
-		
-		ILSpySettings()
-		{
-			this.root = new XElement("ILSpy");
-		}
-		
-		ILSpySettings(XElement root)
-		{
-			this.root = root;
-		}
-		
-		public XElement this[XName section] {
-			get {
-				return root.Element(section) ?? new XElement(section);
-			}
-		}
-		
-		/// <summary>
-		/// Loads the settings file from disk.
-		/// </summary>
-		/// <returns>
-		/// An instance used to access the loaded settings.
-		/// </returns>
-		public static ILSpySettings Load()
-		{
-			using (new MutexProtector(ConfigFileMutex)) {
-				try {
-					XDocument doc = LoadWithoutCheckingCharacters(GetConfigFile());
-					return new ILSpySettings(doc.Root);
-				} catch (IOException) {
-					return new ILSpySettings();
-				} catch (XmlException) {
-					return new ILSpySettings();
-				}
-			}
-		}
-		
-		static XDocument LoadWithoutCheckingCharacters(string fileName)
-		{
-			return XDocument.Load(fileName, LoadOptions.None);
-		}
-		
-		/// <summary>
-		/// Saves a setting section.
-		/// </summary>
-		public static void SaveSettings(XElement section)
-		{
-			Update(
-				delegate (XElement root) {
-					XElement existingElement = root.Element(section.Name);
-					if (existingElement != null)
-						existingElement.ReplaceWith(section);
-					else
-						root.Add(section);
-				});
-		}
-		
-		/// <summary>
-		/// Updates the saved settings.
-		/// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
-		/// by another ILSpy instance.
-		/// </summary>
-		public static void Update(Action<XElement> action)
-		{
-			using (new MutexProtector(ConfigFileMutex)) {
-				string config = GetConfigFile();
-				XDocument doc;
-				try {
-					doc = LoadWithoutCheckingCharacters(config);
-				} catch (IOException) {
-					// ensure the directory exists
-					Directory.CreateDirectory(Path.GetDirectoryName(config));
-					doc = new XDocument(new XElement("ILSpy"));
-				} catch (XmlException) {
-					doc = new XDocument(new XElement("ILSpy"));
-				}
-				doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
-				action(doc.Root);
-				doc.Save(config, SaveOptions.None);
-			}
-		}
-		
-		static string GetConfigFile()
-		{
-			if (App.CommandLineArguments.ConfigFile != null)
-				return App.CommandLineArguments.ConfigFile;
-			string localPath = Path.Combine(AppContext.BaseDirectory, "ILSpy.xml");
-			if (File.Exists(localPath))
-				return localPath;
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ILSpy.xml");
-		}
-		
-		const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";
-		
-		/// <summary>
-		/// Helper class for serializing access to the config file when multiple ILSpy instances are running.
-		/// </summary>
-		sealed class MutexProtector : IDisposable
-		{
-			readonly Mutex mutex;
-			
-			public MutexProtector(string name)
-			{
-				bool createdNew;
-				this.mutex = new Mutex(true, name, out createdNew);
-				if (!createdNew) {
-					try {
-						mutex.WaitOne();
-					} catch (AbandonedMutexException) {
-					}
-				}
-			}
-			
-			public void Dispose()
-			{
-				mutex.ReleaseMutex();
-				mutex.Dispose();
-			}
-		}
-	}
+    readonly XElement root;
+
+    ILSpySettings()
+    {
+        root = new XElement("ILSpy");
+    }
+
+    ILSpySettings(XElement root)
+    {
+        this.root = root;
+    }
+
+    public XElement this[XName section]
+    {
+        get
+        {
+            return root.Element(section) ?? new XElement(section);
+        }
+    }
+
+    /// <summary>
+    /// Loads the settings file from disk.
+    /// </summary>
+    /// <returns>
+    /// An instance used to access the loaded settings.
+    /// </returns>
+    public static ILSpySettings Load()
+    {
+        using (new MutexProtector(ConfigFileMutex))
+        {
+            try
+            {
+                XDocument doc = LoadWithoutCheckingCharacters(GetConfigFile());
+                return new ILSpySettings(doc.Root);
+            }
+            catch (IOException)
+            {
+                return new ILSpySettings();
+            }
+            catch (XmlException)
+            {
+                return new ILSpySettings();
+            }
+        }
+    }
+
+    static XDocument LoadWithoutCheckingCharacters(string fileName) => XDocument.Load(fileName, LoadOptions.None);
+
+    /// <summary>
+    /// Saves a setting section.
+    /// </summary>
+    public static void SaveSettings(XElement section) =>
+        Update(
+            root =>
+            {
+                XElement existingElement = root.Element(section.Name);
+                if (existingElement != null)
+                {
+                    existingElement.ReplaceWith(section);
+                }
+                else
+                {
+                    root.Add(section);
+                }
+            });
+
+    /// <summary>
+    /// Updates the saved settings.
+    /// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
+    /// by another ILSpy instance.
+    /// </summary>
+    public static void Update(Action<XElement> action)
+    {
+        using (new MutexProtector(ConfigFileMutex))
+        {
+            string config = GetConfigFile();
+            XDocument doc;
+            try
+            {
+                doc = LoadWithoutCheckingCharacters(config);
+            }
+            catch (IOException)
+            {
+                // ensure the directory exists
+                Directory.CreateDirectory(Path.GetDirectoryName(config));
+                doc = new XDocument(new XElement("ILSpy"));
+            }
+            catch (XmlException)
+            {
+                doc = new XDocument(new XElement("ILSpy"));
+            }
+            doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
+            action(doc.Root);
+            doc.Save(config, SaveOptions.None);
+        }
+    }
+
+    static string GetConfigFile()
+    {
+        if (App.CommandLineArguments.ConfigFile != null)
+        {
+            return App.CommandLineArguments.ConfigFile;
+        }
+
+        string localPath = Path.Combine(AppContext.BaseDirectory, "ILSpy.xml");
+        if (File.Exists(localPath))
+        {
+            return localPath;
+        }
+
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ILSpy.xml");
+    }
+
+    const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";
+
+    /// <summary>
+    /// Helper class for serializing access to the config file when multiple ILSpy instances are running.
+    /// </summary>
+    sealed class MutexProtector : IDisposable
+    {
+        readonly Mutex mutex;
+
+        public MutexProtector(string name)
+        {
+            mutex = new Mutex(true, name, out bool createdNew);
+            if (!createdNew)
+            {
+                try
+                {
+                    mutex.WaitOne();
+                }
+                catch (AbandonedMutexException)
+                {
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            mutex.ReleaseMutex();
+            mutex.Dispose();
+        }
+    }
 }

@@ -16,65 +16,69 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
-    [ExportContextMenuEntry(Header = nameof(Resources.Analyze), Icon = "Images/Search.png", Category = nameof(Resources.Analyze), InputGestureText = "Ctrl+R", Order = 100)]
+namespace ICSharpCode.ILSpy.Analyzers;
+
+[ExportContextMenuEntry(Header = nameof(Resources.Analyze), Icon = "Images/Search.png", Category = nameof(Resources.Analyze), InputGestureText = "Ctrl+R", Order = 100)]
 	internal sealed class AnalyzeCommand : SimpleCommand, IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return false;
-			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && IsValidReference(context.Reference.Reference);
-			return context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
+			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes?.All(n => n.Parent.IsRoot) == true)
+        {
+            return false;
+        }
+
+        if (context.SelectedTreeNodes == null)
+        {
+            return context.Reference != null && IsValidReference(context.Reference.Reference);
+        }
+
+        return context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && context.Reference.Reference is IEntity;
-			foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
+        {
+            return context.Reference?.Reference is IEntity;
+        }
+
+        foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
 				if (!IsValidReference(node.Member))
-					return false;
-			}
+            {
+                return false;
+            }
+        }
 
 			return true;
 		}
 
-		bool IsValidReference(object reference)
-        {
-            return reference is IEntity && !(reference is IField f && f.IsConst);
-        }
+    bool IsValidReference(object reference) => reference is IEntity && !(reference is IField f && f.IsConst);
 
-        public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
 					AnalyzerTreeView.Instance.Analyze(node.Member);
 				}
-			} else if (context.Reference != null && context.Reference.Reference is IEntity entity) {
+			} else if (context.Reference?.Reference is IEntity entity) {
 				AnalyzerTreeView.Instance.Analyze(entity);
 			}
 		}
 
-		public override bool CanExecute(object parameter)
-		{
+    public override bool CanExecute(object parameter) =>
             //TODO: focus
-			//if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
-			//	return AnalyzerTreeView.Instance.SelectedItems.OfType<object>().All(n => n is IMemberTreeNode);
-			//} else {
-				return MainWindow.Instance.SelectedNodes.All(n => n is IMemberTreeNode);
-			//}
-		}
+            //if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
+            //	return AnalyzerTreeView.Instance.SelectedItems.OfType<object>().All(n => n is IMemberTreeNode);
+            //} else {
+            MainWindow.Instance.SelectedNodes.All(n => n is IMemberTreeNode);//}
 
-		public override void Execute(object parameter)
+    public override void Execute(object parameter)
 		{
 			//if (AnalyzerTreeView.Instance.IsKeyboardFocusWithin) {
 			//	foreach (IMemberTreeNode node in AnalyzerTreeView.Instance.SelectedItems.OfType<IMemberTreeNode>().ToArray()) {
@@ -87,4 +91,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			//}
 		}
 	}
-}

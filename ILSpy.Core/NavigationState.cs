@@ -21,31 +21,33 @@ using System.Collections.Generic;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+public class NavigationState : IEquatable<NavigationState>
 {
-	public class NavigationState : IEquatable<NavigationState>
-	{
-		private readonly HashSet<SharpTreeNode> treeNodes;
+    private readonly HashSet<SharpTreeNode> treeNodes;
 
-		public IEnumerable<SharpTreeNode> TreeNodes { get { return treeNodes; } }
-		public DecompilerTextViewState ViewState { get; private set; }
+    public IEnumerable<SharpTreeNode> TreeNodes => treeNodes;
+    public DecompilerTextViewState ViewState { get; }
 
-		public NavigationState(DecompilerTextViewState viewState)
-		{
-			this.treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
-			ViewState = viewState;
-		}
+    public NavigationState(DecompilerTextViewState viewState)
+    {
+        treeNodes = [.. viewState.DecompiledNodes];
+        ViewState = viewState;
+    }
 
-		public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
-		{
-			this.treeNodes = new HashSet<SharpTreeNode>(treeNodes);
-		}
+    public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
+    {
+        this.treeNodes = [.. treeNodes];
+    }
 
 
-		public bool Equals(NavigationState other)
-		{
-			// TODO: should this care about the view state as well?
-			return this.treeNodes.SetEquals(other.treeNodes);
-		}
-	}
+    public bool Equals(NavigationState other) =>
+        // TODO: should this care about the view state as well?
+        treeNodes.SetEquals(other.treeNodes);
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as NavigationState);
+    }
 }

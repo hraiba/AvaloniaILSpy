@@ -16,20 +16,17 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.Decompiler.Util;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	public class AnalyzerScope
 	{
 		readonly ITypeDefinition typeScope;
@@ -65,23 +62,31 @@ namespace ICSharpCode.ILSpy.Analyzers
 		public IEnumerable<MetadataFile> GetModulesInScope(CancellationToken ct)
 		{
 			if (IsLocal)
-				return new[] { TypeScope.ParentModule.MetadataFile };
+        {
+            return new[] { TypeScope.ParentModule.MetadataFile };
+        }
 
-			if (memberAccessibility == Accessibility.Internal ||
+        if (memberAccessibility == Accessibility.Internal ||
 				memberAccessibility == Accessibility.ProtectedOrInternal ||
 				typeAccessibility == Accessibility.Internal ||
 				typeAccessibility == Accessibility.ProtectedAndInternal)
-				return GetModuleAndAnyFriends(TypeScope, ct);
+        {
+            return GetModuleAndAnyFriends(TypeScope, ct);
+        }
 
-			return GetReferencingModules(TypeScope.ParentModule.MetadataFile, ct);
+        return GetReferencingModules(TypeScope.ParentModule.MetadataFile, ct);
 		}
 
 		public IEnumerable<PEFile> GetAllModules()
 		{
 			foreach (var module in AssemblyList.GetAssemblies()) {
 				var file = module.GetPEFileOrNull();
-				if (file == null) continue;
-				yield return file;
+				if (file == null)
+            {
+                continue;
+            }
+
+            yield return file;
 			}
 		}
 
@@ -89,19 +94,19 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			if (IsLocal) {
 				var typeSystem = new DecompilerTypeSystem(
-                    TypeScope.ParentModule.MetadataFile,
-                    TypeScope.ParentModule.MetadataFile.GetAssemblyResolver());
-                ITypeDefinition scope = typeScope;
-                if (memberAccessibility != Accessibility.Private && typeScope.DeclaringTypeDefinition != null)
-                {
-                    scope = typeScope.DeclaringTypeDefinition;
-                }
-                foreach (var type in TreeTraversal.PreOrder(scope, t => t.NestedTypes))
-                {
-                    yield return type;
-                }
+                TypeScope.ParentModule.MetadataFile,
+                TypeScope.ParentModule.MetadataFile.GetAssemblyResolver());
+            ITypeDefinition scope = typeScope;
+            if (memberAccessibility != Accessibility.Private && typeScope.DeclaringTypeDefinition != null)
+            {
+                scope = typeScope.DeclaringTypeDefinition;
             }
-            else {
+            foreach (var type in TreeTraversal.PreOrder(scope, t => t.NestedTypes))
+            {
+                yield return type;
+            }
+        }
+        else {
 				foreach (var module in GetModulesInScope(ct)) {
 					var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
 					foreach (var type in typeSystem.MainModule.TypeDefinitions) {
@@ -119,8 +124,10 @@ namespace ICSharpCode.ILSpy.Analyzers
 				if ((int)typeAccessibility > (int)accessibility) {
 					typeAccessibility = accessibility;
 					if (typeAccessibility == Accessibility.Private)
-						break;
-				}
+                {
+                    break;
+                }
+            }
 				typeScope = typeScope.DeclaringTypeDefinition;
 			}
 
@@ -135,17 +142,22 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			yield return self;
 
-            string reflectionTypeScopeName = typeScope.Name;
-            if (typeScope.TypeParameterCount > 0)
-                reflectionTypeScopeName += "`" + typeScope.TypeParameterCount;
+        string reflectionTypeScopeName = typeScope.Name;
+        if (typeScope.TypeParameterCount > 0)
+        {
+            reflectionTypeScopeName += "`" + typeScope.TypeParameterCount;
+        }
 
-            foreach (var assembly in AssemblyList.GetAssemblies()) {
+        foreach (var assembly in AssemblyList.GetAssemblies()) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
 				var module = assembly.GetPEFileOrNull();
-				if (module == null || !module.IsAssembly)
-					continue;
-				var resolver = assembly.GetAssemblyResolver();
+				if (module?.IsAssembly != true)
+            {
+                continue;
+            }
+
+            var resolver = assembly.GetAssemblyResolver();
 				foreach (var reference in module.AssemblyReferences) {
 					using (LoadedAssembly.DisableAssemblyLoad()) {
 						if (resolver.Resolve(reference) == self) {
@@ -155,8 +167,10 @@ namespace ICSharpCode.ILSpy.Analyzers
 					}
 				}
 				if (found && ModuleReferencesScopeType(module.Metadata, reflectionTypeScopeName, typeScope.Namespace))
-					yield return module;
-			}
+            {
+                yield return module;
+            }
+        }
 		}
 
 		IEnumerable<MetadataFile> GetModuleAndAnyFriends(ITypeDefinition typeScope, CancellationToken ct)
@@ -183,10 +197,15 @@ namespace ICSharpCode.ILSpy.Analyzers
 					if (friendAssemblies.Contains(assembly.ShortName)) {
 						var module = assembly.GetPEFileOrNull();
 						if (module == null)
-							continue;
-						if (ModuleReferencesScopeType(module.Metadata, typeScope.Name, typeScope.Namespace))
-							yield return module;
-					}
+                    {
+                        continue;
+                    }
+
+                    if (ModuleReferencesScopeType(module.Metadata, typeScope.Name, typeScope.Namespace))
+                    {
+                        yield return module;
+                    }
+                }
 				}
 			}
 		}
@@ -205,4 +224,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		}
 		#endregion
 	}
-}

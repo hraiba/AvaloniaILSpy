@@ -22,42 +22,29 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Entry in a .resources file
 	/// </summary>
 	public class ResourceEntryNode : ILSpyTreeNode
 	{
 		private readonly string key;
-		private readonly Stream data;
 
-		public override object Text
+    public override object Text => key;
+
+    public override object Icon => Images.Resource;
+
+    protected Stream Data { get; }
+
+
+    public ResourceEntryNode(string key, Stream data)
 		{
-			get { return this.key; }
-		}
-
-		public override object Icon
-		{
-			get { return Images.Resource; }
-		}
-
-		protected Stream Data
-		{
-			get { return data; }
-		}
-
-
-		public ResourceEntryNode(string key, Stream data)
-		{
-			if (key == null)
-				throw new ArgumentNullException(nameof(key));
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-			this.key = key;
-			this.data = data;
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(data);
+        this.key = key;
+			Data = data;
 		}
 
 		public static ILSpyTreeNode Create(string key, object data)
@@ -66,33 +53,31 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var factory in App.ExportProvider.GetExportedValues<IResourceNodeFactory>()) {
 				result = factory.CreateNode(key, data);
 				if (result != null)
-					return result;
-			}
-			var streamData = data as Stream;
-			if(streamData !=null)
-				result =  new ResourceEntryNode(key, data as Stream);
+            {
+                return result;
+            }
+        }
+        if (data is Stream streamData)
+        {
+            result = new ResourceEntryNode(key, data as Stream);
+        }
 
-			return result;
+        return result;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, string.Format("{0} = {1}", key, data));
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, string.Format("{0} = {1}", key, Data));
 
-		public override async Task<bool> Save(DecompilerTextView textView)
+    public override async Task<bool> Save(DecompilerTextView textView)
 		{
-			SaveFileDialog dlg = new SaveFileDialog();
+			SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
 			dlg.InitialFileName = Path.GetFileName(DecompilerTextView.CleanUpName(key, Language.FileExtension));
-			var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
+			var filename = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
 			if (!string.IsNullOrEmpty(filename)) {
-				data.Position = 0;
-				using (var fs = File.OpenWrite(filename)) {
-					data.CopyTo(fs);
-				}
-			}
+            Data.Position = 0;
+            using var fs = File.OpenWrite(filename);
+            Data.CopyTo(fs);
+        }
 			return true;
 		}
 	}
-}

@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	// This part of SharpTreeNode controls the 'flat list' data structure, which emulates
 	// a big flat list containing the whole tree; allowing access by visible index.
 	partial class SharpTreeNode
@@ -23,60 +23,50 @@ namespace ICSharpCode.TreeView
 		
 		/// <summary>Length in the flat list, including children (children within the flat list). -1 = invalidated</summary>
 		int totalListLength = -1;
-		
-		int Balance {
-			get { return Height(right) - Height(left); }
-		}
-		
-		static int Height(SharpTreeNode node)
-		{
-			return node != null ? node.height : 0;
-		}
-		
-		internal SharpTreeNode GetListRoot()
+
+    int Balance => Height(right) - Height(left);
+
+    static int Height(SharpTreeNode node) => node != null ? node.height : 0;
+
+    internal SharpTreeNode GetListRoot()
 		{
 			SharpTreeNode node = this;
 			while (node.listParent != null)
-				node = node.listParent;
-			return node;
+        {
+            node = node.listParent;
+        }
+
+        return node;
 		}
-		
-		#region Debugging
-		[Conditional("DEBUG")]
-		void CheckRootInvariants()
-		{
-			GetListRoot().CheckInvariants();
-		}
-		
-		[Conditional("DATACONSISTENCYCHECK")]
+
+    #region Debugging
+    [Conditional("DEBUG")]
+    void CheckRootInvariants() => GetListRoot().CheckInvariants();
+
+    [Conditional("DATACONSISTENCYCHECK")]
 		void CheckInvariants()
 		{
 			Debug.Assert(left == null || left.listParent == this);
 			Debug.Assert(right == null || right.listParent == this);
 			Debug.Assert(height == 1 + Math.Max(Height(left), Height(right)));
-			Debug.Assert(Math.Abs(this.Balance) <= 1);
-			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (isVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
-			if (left != null) left.CheckInvariants();
-			if (right != null) right.CheckInvariants();
+			Debug.Assert(Math.Abs(Balance) <= 1);
+			Debug.Assert(totalListLength == -1 || totalListLength == (left != null ? left.totalListLength : 0) + (IsVisible ? 1 : 0) + (right != null ? right.totalListLength : 0));
+			left?.CheckInvariants();
+			right?.CheckInvariants();
 		}
-		
-		[Conditional("DEBUG")]
-		static void DumpTree(SharpTreeNode node)
-		{
-			node.GetListRoot().DumpTree();
-		}
-		
-		[Conditional("DEBUG")]
+
+    [Conditional("DEBUG")]
+    static void DumpTree(SharpTreeNode node) => node.GetListRoot().DumpTree();
+
+    [Conditional("DEBUG")]
 		void DumpTree()
 		{
 			Debug.Indent();
-			if (left != null)
-				left.DumpTree();
+			left?.DumpTree();
 			Debug.Unindent();
-			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, isVisible);
+			Debug.WriteLine("{0}, totalListLength={1}, height={2}, Balance={3}, isVisible={4}", ToString(), totalListLength, height, Balance, IsVisible);
 			Debug.Indent();
-			if (right != null)
-				right.DumpTree();
+			right?.DumpTree();
 			Debug.Unindent();
 		}
 		#endregion
@@ -95,10 +85,13 @@ namespace ICSharpCode.TreeView
 					if (node.left != null) {
 						index -= node.left.totalListLength;
 					}
-					if (node.isVisible) {
+					if (node.IsVisible) {
 						if (index == 0)
-							return node;
-						index--;
+                    {
+                        return node;
+                    }
+
+                    index--;
 					}
 					node = node.right;
 				}
@@ -111,10 +104,15 @@ namespace ICSharpCode.TreeView
 			while (node.listParent != null) {
 				if (node == node.listParent.right) {
 					if (node.listParent.left != null)
-						index += node.listParent.left.GetTotalListLength();
-					if (node.listParent.isVisible)
-						index++;
-				}
+                {
+                    index += node.listParent.left.GetTotalListLength();
+                }
+
+                if (node.listParent.IsVisible)
+                {
+                    index++;
+                }
+            }
 				node = node.listParent;
 			}
 			return index;
@@ -163,8 +161,11 @@ namespace ICSharpCode.TreeView
 		internal int GetTotalListLength()
 		{
 			if (totalListLength >= 0)
-				return totalListLength;
-			int length = (isVisible ? 1 : 0);
+        {
+            return totalListLength;
+        }
+
+        int length = (IsVisible ? 1 : 0);
 			if (left != null) {
 				length += left.GetTotalListLength();
 			}
@@ -187,11 +188,11 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode b = right.left;
 			SharpTreeNode newTop = right;
 			
-			if (b != null) b.listParent = this;
-			this.right = b;
+			b?.listParent = this;
+			right = b;
 			newTop.left = this;
-			newTop.listParent = this.listParent;
-			this.listParent = newTop;
+			newTop.listParent = listParent;
+			listParent = newTop;
 			// rebalance the 'this' node - this is necessary in some bulk insertion cases:
 			newTop.left = Rebalance(this);
 			return newTop;
@@ -210,11 +211,11 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode b = left.right;
 			SharpTreeNode newTop = left;
 			
-			if (b != null) b.listParent = this;
-			this.left = b;
+			b?.listParent = this;
+			left = b;
 			newTop.right = this;
-			newTop.listParent = this.listParent;
-			this.listParent = newTop;
+			newTop.listParent = listParent;
+			listParent = newTop;
 			newTop.right = Rebalance(this);
 			return newTop;
 		}
@@ -254,8 +255,11 @@ namespace ICSharpCode.TreeView
 				// insert before pos.right's leftmost:
 				pos = pos.right;
 				while (pos.left != null)
-					pos = pos.left;
-				Debug.Assert(pos.left == null);
+            {
+                pos = pos.left;
+            }
+
+            Debug.Assert(pos.left == null);
 				pos.left = newNode;
 				newNode.listParent = pos;
 			}
@@ -270,16 +274,18 @@ namespace ICSharpCode.TreeView
 			// All removed nodes will be reorganized in a separate tree, do not delete
 			// regions that don't belong together in the tree model!
 			
-			List<SharpTreeNode> removedSubtrees = new List<SharpTreeNode>();
+			List<SharpTreeNode> removedSubtrees = [];
 			SharpTreeNode oldPos;
 			SharpTreeNode pos = start;
 			do {
 				// recalculate the endAncestors every time, because the tree might have been rebalanced
-				HashSet<SharpTreeNode> endAncestors = new HashSet<SharpTreeNode>();
+				HashSet<SharpTreeNode> endAncestors = [];
 				for (SharpTreeNode tmp = end; tmp != null; tmp = tmp.listParent)
-					endAncestors.Add(tmp);
-				
-				removedSubtrees.Add(pos);
+            {
+                endAncestors.Add(tmp);
+            }
+
+            removedSubtrees.Add(pos);
 				if (!endAncestors.Contains(pos)) {
 					// we can remove pos' right subtree in a single step:
 					if (pos.right != null) {
@@ -306,8 +312,11 @@ namespace ICSharpCode.TreeView
 		{
 			SharpTreeNode tmp = first;
 			while (tmp.right != null)
-				tmp = tmp.right;
-			InsertNodeAfter(tmp, second);
+        {
+            tmp = tmp.right;
+        }
+
+        InsertNodeAfter(tmp, second);
 			return tmp.GetListRoot();
 		}
 		
@@ -316,8 +325,11 @@ namespace ICSharpCode.TreeView
 			if (right != null) {
 				SharpTreeNode node = right;
 				while (node.left != null)
-					node = node.left;
-				return node;
+            {
+                node = node.left;
+            }
+
+            return node;
 			} else {
 				SharpTreeNode node = this;
 				SharpTreeNode oldNode;
@@ -344,9 +356,11 @@ namespace ICSharpCode.TreeView
 			} else {
 				SharpTreeNode tmp = node.right;
 				while (tmp.left != null)
-					tmp = tmp.left;
-				// First replace tmp with tmp.right
-				balancingNode = tmp.listParent;
+            {
+                tmp = tmp.left;
+            }
+            // First replace tmp with tmp.right
+            balancingNode = tmp.listParent;
 				tmp.ReplaceWith(tmp.right);
 				tmp.right = null;
 				Debug.Assert(tmp.left == null);
@@ -354,21 +368,25 @@ namespace ICSharpCode.TreeView
 				// Now move node's children to tmp:
 				tmp.left = node.left; node.left = null;
 				tmp.right = node.right; node.right = null;
-				if (tmp.left != null) tmp.left.listParent = tmp;
-				if (tmp.right != null) tmp.right.listParent = tmp;
+				tmp.left?.listParent = tmp;
+				tmp.right?.listParent = tmp;
 				// Then replace node with tmp
 				node.ReplaceWith(tmp);
 				if (balancingNode == node)
-					balancingNode = tmp;
-			}
+            {
+                balancingNode = tmp;
+            }
+        }
 			Debug.Assert(node.listParent == null);
 			Debug.Assert(node.left == null);
 			Debug.Assert(node.right == null);
 			node.height = 1;
 			node.totalListLength = -1;
 			if (balancingNode != null)
-				RebalanceUntilRoot(balancingNode);
-		}
+        {
+            RebalanceUntilRoot(balancingNode);
+        }
+    }
 		
 		void ReplaceWith(SharpTreeNode node)
 		{
@@ -379,8 +397,7 @@ namespace ICSharpCode.TreeView
 					Debug.Assert(listParent.right == this);
 					listParent.right = node;
 				}
-				if (node != null)
-					node.listParent = listParent;
+				node?.listParent = listParent;
 				listParent = null;
 			} else {
 				// this was a root node
@@ -388,12 +405,11 @@ namespace ICSharpCode.TreeView
 				node.listParent = null;
 				if (treeFlattener != null) {
 					Debug.Assert(node.treeFlattener == null);
-					node.treeFlattener = this.treeFlattener;
-					this.treeFlattener = null;
+					node.treeFlattener = treeFlattener;
+					treeFlattener = null;
 					node.treeFlattener.root = node;
 				}
 			}
 		}
 		#endregion
 	}
-}

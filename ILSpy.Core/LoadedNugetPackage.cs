@@ -18,99 +18,85 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO.Compression;
 using System.IO;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+public class LoadedNugetPackage : INotifyPropertyChanged
 {
-	public class LoadedNugetPackage : INotifyPropertyChanged
-	{
-		public List<Entry> Entries { get; } = new List<Entry>();
-		public List<Entry> SelectedEntries { get; } = new List<Entry>();
+    public List<Entry> Entries { get; } = [];
+    public List<Entry> SelectedEntries { get; } = [];
 
-		public LoadedNugetPackage(string file)
-		{
-			using (var archive = ZipFile.OpenRead(file)) {
-				foreach (var entry in archive.Entries) {
-					switch (Path.GetExtension(entry.FullName)) {
-						case ".dll":
-						case ".exe":
-							var memory = new MemoryStream();
-							entry.Open().CopyTo(memory);
-							memory.Position = 0;
-							var e = new Entry(Uri.UnescapeDataString(entry.FullName), memory);
-							e.PropertyChanged += EntryPropertyChanged;
-							Entries.Add(e);
-							break;
-					}
-				}
-			}
-		}
+    public LoadedNugetPackage(string file)
+    {
+        using var archive = ZipFile.OpenRead(file);
+        foreach (var entry in archive.Entries)
+        {
+            switch (Path.GetExtension(entry.FullName))
+            {
+                case ".dll":
+                case ".exe":
+                    var memory = new MemoryStream();
+                    entry.Open().CopyTo(memory);
+                    memory.Position = 0;
+                    var e = new Entry(Uri.UnescapeDataString(entry.FullName), memory);
+                    e.PropertyChanged += EntryPropertyChanged;
+                    Entries.Add(e);
+                    break;
+            }
+        }
+    }
 
-		void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(Entry.IsSelected)) {
-				var entry = (Entry)sender;
-				if (entry.IsSelected)
-					SelectedEntries.Add(entry);
-				else
-					SelectedEntries.Remove(entry);
-				OnPropertyChanged(nameof(SelectedEntries));
-			}
-		}
+    void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Entry.IsSelected))
+        {
+            var entry = (Entry)sender;
+            if (entry.IsSelected)
+            {
+                SelectedEntries.Add(entry);
+            }
+            else
+            {
+                SelectedEntries.Remove(entry);
+            }
 
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			PropertyChanged?.Invoke(this, e);
-		}
+            OnPropertyChanged(nameof(SelectedEntries));
+        }
+    }
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-		}
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
-		public event PropertyChangedEventHandler PropertyChanged;
-	}
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-	public class Entry : INotifyPropertyChanged
-	{
-		public string Name { get; }
+    public event PropertyChangedEventHandler PropertyChanged;
+}
 
-		public bool IsSelected {
-			get { return isSelected; }
-			set {
-				if (isSelected != value) {
-					isSelected = value;
-					OnPropertyChanged();
-				}
-			}
-		}
+public class Entry(string name, Stream stream) : INotifyPropertyChanged
+{
+    public string Name { get; } = name;
 
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			PropertyChanged?.Invoke(this, e);
-		}
+    public bool IsSelected
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-		}
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
-		public Stream Stream { get; }
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-		bool isSelected;
+    public Stream Stream { get; } = stream;
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		public Entry(string name, Stream stream)
-		{
-			this.Name = name;
-			this.Stream = stream;
-		}
-	}
+    public event PropertyChangedEventHandler PropertyChanged;
 }

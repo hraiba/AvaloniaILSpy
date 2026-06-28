@@ -19,57 +19,47 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ICSharpCode.ILSpy.Options
-{
+namespace ICSharpCode.ILSpy.Options;
+
 	public class MiscSettings : INotifyPropertyChanged
 	{
-		bool allowMultipleInstances;
-        bool loadPreviousAssemblies;
-
-        /// <summary>
-        /// Allow multiple instances.
-        /// </summary>
-        public bool AllowMultipleInstances
+    /// <summary>
+    /// Allow multiple instances.
+    /// </summary>
+    public bool AllowMultipleInstances
 		{
-			get { return allowMultipleInstances; }
-			set {
-				if (allowMultipleInstances != value) {
-					allowMultipleInstances = value;
+			get;
+        set {
+				if (field != value) {
+					field = value;
 					OnPropertyChanged();
 				}
 			}
 		}
 
-        /// <summary>
-        /// Load assemblies that were loaded in the previous instance
-        /// </summary>
-        public bool LoadPreviousAssemblies
+    /// <summary>
+    /// Load assemblies that were loaded in the previous instance
+    /// </summary>
+    public bool LoadPreviousAssemblies
+    {
+        get;
+        set
         {
-            get { return loadPreviousAssemblies; }
-            set
+            if (field != value)
             {
-                if (loadPreviousAssemblies != value)
-                {
-                    loadPreviousAssemblies = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        #region INotifyPropertyChanged Implementation
+    #region INotifyPropertyChanged Implementation
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			PropertyChanged?.Invoke(this, e);
-		}
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
-		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-		}
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 
-		#endregion
-	}
+    #endregion
 }

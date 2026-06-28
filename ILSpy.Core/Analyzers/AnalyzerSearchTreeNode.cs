@@ -18,17 +18,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Analyzers.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	class AnalyzerSearchTreeNode : AnalyzerTreeNode
 	{
-		private readonly ThreadingSupport threading = new ThreadingSupport();
+		private readonly ThreadingSupport threading = new();
 		readonly ISymbol symbol;
 		readonly IAnalyzer analyzer;
 		readonly string analyzerHeader;
@@ -37,7 +36,7 @@ namespace ICSharpCode.ILSpy.Analyzers
 		{
 			this.symbol = symbol;
 			this.analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-			this.LazyLoading = true;
+			LazyLoading = true;
 			this.analyzerHeader = analyzerHeader;
 		}
 
@@ -45,12 +44,9 @@ namespace ICSharpCode.ILSpy.Analyzers
 
 		public override object Icon => Images.Search;
 
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
+    protected override void LoadChildren() => threading.LoadChildren(this, FetchChildren);
 
-		protected IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
+    protected IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			if (symbol is IEntity) {
 				var context = new AnalyzerContext() {
@@ -68,34 +64,32 @@ namespace ICSharpCode.ILSpy.Analyzers
 
 		AnalyzerTreeNode SymbolTreeNodeFactory(ISymbol symbol)
 		{
-			if (symbol == null) {
-				throw new ArgumentNullException(nameof(symbol));
-			}
+        ArgumentNullException.ThrowIfNull(symbol);
 
-			switch (symbol) {
+        switch (symbol) {
 				case IModule module:
 					return new AnalyzedModuleTreeNode(module) {
-						Language = this.Language
+						Language = Language
 					};
 				case ITypeDefinition td:
 					return new AnalyzedTypeTreeNode(td) {
-						Language = this.Language
+						Language = Language
 					};
 				case IField fd:
 					return new AnalyzedFieldTreeNode(fd) {
-						Language = this.Language
+						Language = Language
 					};
 				case IMethod md:
 					return new AnalyzedMethodTreeNode(md) {
-						Language = this.Language
+						Language = Language
 					};
 				case IProperty pd:
 					return new AnalyzedPropertyTreeNode(pd) {
-						Language = this.Language
+						Language = Language
 					};
 				case IEvent ed:
 					return new AnalyzedEventTreeNode(ed) {
-						Language = this.Language
+						Language = Language
 					};
 				default:
 					throw new ArgumentOutOfRangeException(nameof(symbol), $"Symbol {symbol.GetType().FullName} is not supported.");
@@ -105,10 +99,10 @@ namespace ICSharpCode.ILSpy.Analyzers
 		protected override void OnIsVisibleChanged()
 		{
 			base.OnIsVisibleChanged();
-			if (!this.IsVisible && threading.IsRunning) {
-				this.LazyLoading = true;
+			if (!IsVisible && threading.IsRunning) {
+				LazyLoading = true;
 				threading.Cancel();
-				this.Children.Clear();
+				Children.Clear();
 			}
 		}
 
@@ -118,14 +112,15 @@ namespace ICSharpCode.ILSpy.Analyzers
 			bool manualAdd = false;
 			foreach (var asm in addedAssemblies) {
 				if (!asm.IsAutoLoaded)
-					manualAdd = true;
-			}
+            {
+                manualAdd = true;
+            }
+        }
 			if (removedAssemblies.Count > 0 || manualAdd) {
-				this.LazyLoading = true;
+				LazyLoading = true;
 				threading.Cancel();
-				this.Children.Clear();
+				Children.Clear();
 			}
 			return true;
 		}
 	}
-}

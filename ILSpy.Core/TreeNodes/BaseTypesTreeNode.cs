@@ -16,17 +16,15 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
 using System.Reflection.Metadata;
-using Avalonia.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>
@@ -39,19 +37,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.module = module;
 			this.type = type;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Text => "Base Types";
 
 		public override object Icon => Images.SuperTypes;
 
-		protected override void LoadChildren()
-		{
-			AddBaseTypes(this.Children, module, type);
-		}
+    protected override void LoadChildren() => AddBaseTypes(Children, module, type);
 
-		internal static void AddBaseTypes(SharpTreeNodeCollection children, MetadataFile module, ITypeDefinition typeDefinition)
+    internal static void AddBaseTypes(SharpTreeNodeCollection children, MetadataFile module, ITypeDefinition typeDefinition)
 		{
 			var typeDef = module.Metadata.GetTypeDefinition((TypeDefinitionHandle)typeDefinition.MetadataToken);
 			var baseTypes = typeDefinition.DirectBaseTypes.ToArray();
@@ -72,9 +67,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
-			foreach (ILSpyTreeNode child in this.Children) {
+			foreach (ILSpyTreeNode child in Children) {
 				child.Decompile(language, output, options);
 			}
 		}
 	}
-}

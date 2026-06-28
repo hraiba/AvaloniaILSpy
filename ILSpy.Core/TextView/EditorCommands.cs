@@ -18,43 +18,24 @@
 
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	[ExportContextMenuEntry(Header = nameof(Resources.Copy), Category = nameof(Resources.Editor))]
 	sealed class CopyContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.TextView != null;
-		}
+    public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return context.TextView != null && context.TextView.textEditor.SelectionLength > 0;
-		}
+    public bool IsEnabled(TextViewContext context) => context.TextView?.textEditor.SelectionLength > 0;
 
-		public void Execute(TextViewContext context)
-		{
-			context.TextView.textEditor.Copy();
-		}
-	}
+    public void Execute(TextViewContext context) => context.TextView.textEditor.Copy();
+}
 
 	[ExportContextMenuEntry(Header = nameof(Resources.Select), Category = nameof(Resources.Editor))]
 	sealed class SelectAllContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.TextView != null;
-		}
+    public bool IsVisible(TextViewContext context) => context.TextView != null;
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return context.TextView != null;
-		}
+    public bool IsEnabled(TextViewContext context) => context.TextView != null;
 
-		public void Execute(TextViewContext context)
-		{
-			context.TextView.textEditor.SelectAll();
-		}
-	}
+    public void Execute(TextViewContext context) => context.TextView.textEditor.SelectAll();
 }

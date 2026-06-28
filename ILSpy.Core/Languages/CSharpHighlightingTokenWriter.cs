@@ -23,8 +23,8 @@ using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.CSharp.Syntax;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	class CSharpHighlightingTokenWriter : DecoratingTokenWriter
 	{
 		ISmartTextOutput textOutput;
@@ -70,38 +70,38 @@ namespace ICSharpCode.ILSpy
 
 			//this.defaultTextColor = ???;
 
-			this.visibilityKeywordsColor = highlighting.GetNamedColor("Visibility");
-			this.namespaceKeywordsColor = highlighting.GetNamedColor("NamespaceKeywords");
-			this.structureKeywordsColor = highlighting.GetNamedColor("Keywords");
-			this.gotoKeywordsColor = highlighting.GetNamedColor("GotoKeywords");
-			this.queryKeywordsColor = highlighting.GetNamedColor("QueryKeywords");
-			this.exceptionKeywordsColor = highlighting.GetNamedColor("ExceptionKeywords");
-			this.checkedKeywordColor = highlighting.GetNamedColor("CheckedKeyword");
-			this.unsafeKeywordsColor = highlighting.GetNamedColor("UnsafeKeywords");
-			this.valueTypeKeywordsColor = highlighting.GetNamedColor("ValueTypeKeywords");
-			this.referenceTypeKeywordsColor = highlighting.GetNamedColor("ReferenceTypeKeywords");
-			this.operatorKeywordsColor = highlighting.GetNamedColor("OperatorKeywords");
-			this.parameterModifierColor = highlighting.GetNamedColor("ParameterModifiers");
-			this.modifiersColor = highlighting.GetNamedColor("Modifiers");
-			this.accessorKeywordsColor = highlighting.GetNamedColor("GetSetAddRemove");
+			visibilityKeywordsColor = highlighting.GetNamedColor("Visibility");
+			namespaceKeywordsColor = highlighting.GetNamedColor("NamespaceKeywords");
+			structureKeywordsColor = highlighting.GetNamedColor("Keywords");
+			gotoKeywordsColor = highlighting.GetNamedColor("GotoKeywords");
+			queryKeywordsColor = highlighting.GetNamedColor("QueryKeywords");
+			exceptionKeywordsColor = highlighting.GetNamedColor("ExceptionKeywords");
+			checkedKeywordColor = highlighting.GetNamedColor("CheckedKeyword");
+			unsafeKeywordsColor = highlighting.GetNamedColor("UnsafeKeywords");
+			valueTypeKeywordsColor = highlighting.GetNamedColor("ValueTypeKeywords");
+			referenceTypeKeywordsColor = highlighting.GetNamedColor("ReferenceTypeKeywords");
+			operatorKeywordsColor = highlighting.GetNamedColor("OperatorKeywords");
+			parameterModifierColor = highlighting.GetNamedColor("ParameterModifiers");
+			modifiersColor = highlighting.GetNamedColor("Modifiers");
+			accessorKeywordsColor = highlighting.GetNamedColor("GetSetAddRemove");
 
-			this.referenceTypeColor = highlighting.GetNamedColor("ReferenceTypes");
-			this.valueTypeColor = highlighting.GetNamedColor("ValueTypes");
-			this.interfaceTypeColor = highlighting.GetNamedColor("InterfaceTypes");
-			this.enumerationTypeColor = highlighting.GetNamedColor("EnumTypes");
-			this.typeParameterTypeColor = highlighting.GetNamedColor("TypeParameters");
-			this.delegateTypeColor = highlighting.GetNamedColor("DelegateTypes");
-			this.methodDeclarationColor = this.methodCallColor = highlighting.GetNamedColor("MethodCall");
+			referenceTypeColor = highlighting.GetNamedColor("ReferenceTypes");
+			valueTypeColor = highlighting.GetNamedColor("ValueTypes");
+			interfaceTypeColor = highlighting.GetNamedColor("InterfaceTypes");
+			enumerationTypeColor = highlighting.GetNamedColor("EnumTypes");
+			typeParameterTypeColor = highlighting.GetNamedColor("TypeParameters");
+			delegateTypeColor = highlighting.GetNamedColor("DelegateTypes");
+			methodDeclarationColor = methodCallColor = highlighting.GetNamedColor("MethodCall");
 			//this.eventDeclarationColor = this.eventAccessColor = defaultTextColor;
 			//this.propertyDeclarationColor = this.propertyAccessColor = defaultTextColor;
-			this.fieldDeclarationColor = this.fieldAccessColor = highlighting.GetNamedColor("FieldAccess");
+			fieldDeclarationColor = fieldAccessColor = highlighting.GetNamedColor("FieldAccess");
 			//this.variableDeclarationColor = this.variableAccessColor = defaultTextColor;
 			//this.parameterDeclarationColor = this.parameterAccessColor = defaultTextColor;
-			this.valueKeywordColor = highlighting.GetNamedColor("NullOrValueKeywords");
-			this.thisKeywordColor = highlighting.GetNamedColor("ThisOrBaseReference");
-			this.trueKeywordColor = highlighting.GetNamedColor("TrueFalse");
-			this.typeKeywordsColor = highlighting.GetNamedColor("TypeKeywords");
-			this.attributeKeywordsColor = highlighting.GetNamedColor("AttributeKeywords");
+			valueKeywordColor = highlighting.GetNamedColor("NullOrValueKeywords");
+			thisKeywordColor = highlighting.GetNamedColor("ThisOrBaseReference");
+			trueKeywordColor = highlighting.GetNamedColor("TrueFalse");
+			typeKeywordsColor = highlighting.GetNamedColor("TypeKeywords");
+			attributeKeywordsColor = highlighting.GetNamedColor("AttributeKeywords");
 			//this.externAliasKeywordColor = ...;
 		}
 
@@ -112,10 +112,15 @@ namespace ICSharpCode.ILSpy
 				case "namespace":
 				case "using":
 					if (role == UsingStatement.UsingKeywordRole)
-						color = structureKeywordsColor;
-					else
-						color = namespaceKeywordsColor;
-					break;
+                {
+                    color = structureKeywordsColor;
+                }
+                else
+                {
+                    color = namespaceKeywordsColor;
+                }
+
+                break;
 				case "this":
 				case "base":
 					color = thisKeywordColor;
@@ -146,18 +151,30 @@ namespace ICSharpCode.ILSpy
 					break;
 				case "where":
 					if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					else
-						color = structureKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+                else
+                {
+                    color = structureKeywordsColor;
+                }
+
+                break;
 				case "in":
 					if (nodeStack.PeekOrDefault() is ForeachStatement)
-						color = structureKeywordsColor;
-					else if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					else
-						color = parameterModifierColor;
-					break;
+                {
+                    color = structureKeywordsColor;
+                }
+                else if (nodeStack.PeekOrDefault() is QueryClause)
+                {
+                    color = queryKeywordsColor;
+                }
+                else
+                {
+                    color = parameterModifierColor;
+                }
+
+                break;
 				case "as":
 				case "is":
 				case "new":
@@ -175,8 +192,11 @@ namespace ICSharpCode.ILSpy
 					break;
 				case "when":
 					if (role == CatchClause.WhenKeywordRole)
-						color = exceptionKeywordsColor;
-					break;
+                {
+                    color = exceptionKeywordsColor;
+                }
+
+                break;
 				case "get":
 				case "set":
 				case "add":
@@ -185,8 +205,11 @@ namespace ICSharpCode.ILSpy
 						role == PropertyDeclaration.SetKeywordRole ||
 						role == CustomEventDeclaration.AddKeywordRole ||
 						role == CustomEventDeclaration.RemoveKeywordRole)
-						color = accessorKeywordsColor;
-					break;
+                {
+                    color = accessorKeywordsColor;
+                }
+
+                break;
 				case "abstract":
 				case "const":
 				case "event":
@@ -229,13 +252,19 @@ namespace ICSharpCode.ILSpy
 				case "on":
 				case "equals":
 					if (nodeStack.PeekOrDefault() is QueryClause)
-						color = queryKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+
+                break;
 				case "ascending":
 				case "descending":
 					if (nodeStack.PeekOrDefault() is QueryOrdering)
-						color = queryKeywordsColor;
-					break;
+                {
+                    color = queryKeywordsColor;
+                }
+
+                break;
 				case "explicit":
 				case "implicit":
 				case "operator":
@@ -255,8 +284,11 @@ namespace ICSharpCode.ILSpy
 					break;
 			}
 			if (nodeStack.PeekOrDefault() is AttributeSection)
-				color = attributeKeywordsColor;
-			if (color != null) {
+        {
+            color = attributeKeywordsColor;
+        }
+
+        if (color != null) {
 				textOutput.BeginSpan(color);
 			}
 			base.WriteKeyword(role, keyword);
@@ -270,10 +302,10 @@ namespace ICSharpCode.ILSpy
 			HighlightingColor color = null;
 			switch (type) {
 				case "new":
-                case "notnull":
-                    // Not sure if reference type or value type
-                    color = referenceTypeKeywordsColor;
-                    break;
+            case "notnull":
+                // Not sure if reference type or value type
+                color = referenceTypeKeywordsColor;
+                break;
 				case "bool":
 				case "byte":
 				case "char":
@@ -289,10 +321,10 @@ namespace ICSharpCode.ILSpy
 				case "uint":
 				case "ushort":
 				case "ulong":
-                case "unmanaged":
-                    color = valueTypeKeywordsColor;
+            case "unmanaged":
+                color = valueTypeKeywordsColor;
 					break;
-                case "class":
+            case "class":
 				case "object":
 				case "string":
 				case "void":
@@ -312,10 +344,16 @@ namespace ICSharpCode.ILSpy
 		{
 			HighlightingColor color = null;
 			if (identifier.Name == "value" && identifier.Ancestors.OfType<Accessor>().FirstOrDefault() is Accessor accessor && accessor.Role != PropertyDeclaration.GetterRole)
-				color = valueKeywordColor;
-			if ((identifier.Name == "dynamic" || identifier.Name == "var") && identifier.Parent is AstType)
-				color = queryKeywordsColor;
-			switch (GetCurrentDefinition()) {
+        {
+            color = valueKeywordColor;
+        }
+
+        if ((identifier.Name == "dynamic" || identifier.Name == "var") && identifier.Parent is AstType)
+        {
+            color = queryKeywordsColor;
+        }
+
+        switch (GetCurrentDefinition()) {
 				case ITypeDefinition t:
 					switch (t.Kind) {
 						case TypeKind.Delegate:
@@ -399,15 +437,22 @@ namespace ICSharpCode.ILSpy
 		ISymbol GetCurrentDefinition()
 		{
 			if (nodeStack == null || nodeStack.Count == 0)
-				return null;
+        {
+            return null;
+        }
 
-			var node = nodeStack.Peek();
+        var node = nodeStack.Peek();
 			if (node is Identifier)
-				node = node.Parent;
-            if (Decompiler.TextTokenWriter.IsDefinition(ref node))
-                return node.GetSymbol();
+        {
+            node = node.Parent;
+        }
 
-			return null;
+        if (Decompiler.TextTokenWriter.IsDefinition(ref node))
+        {
+            return node.GetSymbol();
+        }
+
+        return null;
 		}
 
 		ISymbol GetCurrentMemberReference()
@@ -423,12 +468,14 @@ namespace ICSharpCode.ILSpy
 			if (node is IdentifierExpression && node.Role == Roles.TargetExpression && node.Parent is InvocationExpression && symbol is IMember member) {
 				var declaringType = member.DeclaringType;
 				if (declaringType != null && declaringType.Kind == TypeKind.Delegate)
-					return null;
-			}
+            {
+                return null;
+            }
+        }
 			return symbol;
 		}
 
-		Stack<AstNode> nodeStack = new Stack<AstNode>();
+		Stack<AstNode> nodeStack = new();
 
 		public override void StartNode(AstNode node)
 		{
@@ -442,4 +489,3 @@ namespace ICSharpCode.ILSpy
 			nodeStack.Pop();
 		}
 	}
-}

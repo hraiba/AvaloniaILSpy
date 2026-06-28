@@ -25,16 +25,13 @@ using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Util;
 using ICSharpCode.Decompiler.Metadata;
-using ICSharpCode.TreeView;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.Controls;
-using Microsoft.Win32;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ResourcesFileTreeNodeFactory : IResourceNodeFactory
 	{
@@ -46,11 +43,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public ILSpyTreeNode CreateNode(string key, object data)
-		{
-			return null;
-		}
-	}
+    public ILSpyTreeNode CreateNode(string key, object data) => null;
+}
 
 	sealed class ResourcesFileTreeNode : ResourceTreeNode
 	{
@@ -60,30 +54,32 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public ResourcesFileTreeNode(Resource er)
 			: base(er)
 		{
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
-		public override object Icon {
-			get { return Images.ResourceResourcesFile; }
-		}
+    public override object Icon => Images.ResourceResourcesFile;
 
-		protected override void LoadChildren()
+    protected override void LoadChildren()
 		{
 			Stream s = Resource.TryOpenStream();
-			if (s == null) return;
-			s.Position = 0;
+			if (s == null)
+        {
+            return;
+        }
+
+        s.Position = 0;
 			try {
-                foreach (var entry in new ResourcesFile(s).OrderBy(e => e.Key, NaturalStringComparer.Instance)) {
+            foreach (var entry in new ResourcesFile(s).OrderBy(e => e.Key, NaturalStringComparer.Instance)) {
 					ProcessResourceEntry(entry);
 				}
 			} catch (BadImageFormatException) {
-                // ignore errors
-            }
-            catch (EndOfStreamException)
-            {
-                // ignore errors
-            }
+            // ignore errors
         }
+        catch (EndOfStreamException)
+        {
+            // ignore errors
+        }
+    }
 
 		private void ProcessResourceEntry(KeyValuePair<string, object> entry)
 		{
@@ -115,88 +111,83 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override async Task<bool> Save(DecompilerTextView textView)
 		{
 			Stream s = Resource.TryOpenStream();
-			if (s == null) return false;
-            SaveFileDialog dlg = new SaveFileDialog();
-			dlg.Title = "Save file";
-            dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
-            dlg.Filters = new List<FileDialogFilter>()
-            {
-                new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
-                new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
-            };
-            var filename = await dlg.ShowAsync(App.Current.GetMainWindow());
-            if (!string.IsNullOrEmpty(filename)) {
-                s.Position = 0;
-                if (filename.Contains("resources")) {
-                    using (var fs = File.OpenWrite(filename)) {
-                        s.CopyTo(fs);
-                    }
-                } else {
-                    try
-                    {
-                        using (var writer = new ResXResourceWriter(File.OpenWrite(filename)))
-                        {
-                            foreach (var entry in new ResourcesFile(s))
-                            {
-                                writer.AddResource(entry.Key, entry.Value);
-                            }
-                        }
-                    }
-                    catch (BadImageFormatException)
-                    {
-                        // ignore errors
-                    }
-                    catch (EndOfStreamException)
-                    {
-                        // ignore errors
-                    }
-                }
-            }
-            return true;
+			if (s == null)
+        {
+            return false;
         }
 
+        SaveFileDialog dlg = new();
+			dlg.Title = "Save file";
+        dlg.InitialFileName = DecompilerTextView.CleanUpName(Resource.Name, Language.FileExtension);
+        dlg.Filters =
+        [
+            new FileDialogFilter(){ Name="Resources file(*.resources)", Extensions = { "resources" } },
+            new FileDialogFilter(){ Name="Resource XML file(*.resx)", Extensions = { "resx" } }
+        ];
+        var filename = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
+        if (!string.IsNullOrEmpty(filename)) {
+            s.Position = 0;
+            if (filename.Contains("resources")) {
+                using var fs = File.OpenWrite(filename);
+                s.CopyTo(fs);
+            } else {
+                try
+                {
+                    using var writer = new ResXResourceWriter(File.OpenWrite(filename));
+                    foreach (var entry in new ResourcesFile(s))
+                    {
+                        writer.AddResource(entry.Key, entry.Value);
+                    }
+                }
+                catch (BadImageFormatException)
+                {
+                    // ignore errors
+                }
+                catch (EndOfStreamException)
+                {
+                    // ignore errors
+                }
+            }
+        }
+        return true;
+    }
 
-        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
 			base.Decompile(language, output, options);
 			if (stringTableEntries.Count != 0) {
-				ISmartTextOutput smartOutput = output as ISmartTextOutput;
-				if (null != smartOutput) {
-					smartOutput.AddUIElement(
-						delegate {
-							return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
-						}
-					);
-				}
-				output.WriteLine();
+            if (output is ISmartTextOutput smartOutput)
+            {
+                smartOutput.AddUIElement(
+                    delegate
+                    {
+                        return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
+                    }
+                );
+            }
+            output.WriteLine();
 				output.WriteLine();
 			}
 			if (otherEntries.Count != 0) {
-				ISmartTextOutput smartOutput = output as ISmartTextOutput;
-				if (null != smartOutput) {
-					smartOutput.AddUIElement(
-						delegate {
-							return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
-						}
-					);
-				}
-				output.WriteLine();
+            if (output is ISmartTextOutput smartOutput)
+            {
+                smartOutput.AddUIElement(
+                    delegate
+                    {
+                        return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
+                    }
+                );
+            }
+            output.WriteLine();
 			}
 		}
 
-		internal class SerializedObjectRepresentation
-		{
-			public SerializedObjectRepresentation(string key, string type, string value)
-			{
-				this.Key = key;
-				this.Type = type;
-				this.Value = value;
-			}
-
-			public string Key { get; private set; }
-			public string Type { get; private set; }
-			public string Value { get; private set; }
-		}
+		internal class SerializedObjectRepresentation(string key, string type, string value)
+    {
+        public string Key { get; } = key;
+        public string Type { get; private set; } = type;
+        public string Value { get; } = value;
+    }
 	}
-}

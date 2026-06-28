@@ -16,15 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
-using Avalonia.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
@@ -34,43 +32,42 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public ResourceListTreeNode(PEFile module)
 		{
-			this.LazyLoading = true;
+			LazyLoading = true;
 			this.module = module;
 		}
-		
-		public override object Text {
-            get { return Resources._Resources; }
-        }
 
-        public override object Icon {
-			get { return Images.FolderClosed; }
-		}
+    public override object Text => Resources._Resources;
 
-		public override object ExpandedIcon {
-			get { return Images.FolderOpen; }
-		}
-		
-		protected override void LoadChildren()
+    public override object Icon => Images.FolderClosed;
+
+    public override object ExpandedIcon => Images.FolderOpen;
+
+    protected override void LoadChildren()
 		{
 			foreach (Resource r in module.Resources.OrderBy(m => m.Name, NaturalStringComparer.Instance))
-				this.Children.Add(ResourceTreeNode.Create(r));
-		}
+        {
+            Children.Add(ResourceTreeNode.Create(r));
+        }
+    }
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
-				return FilterResult.MatchAndRecurse;
-			else
-				return FilterResult.Recurse;
-		}
+        {
+            return FilterResult.MatchAndRecurse;
+        }
+        else
+        {
+            return FilterResult.Recurse;
+        }
+    }
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			EnsureLazyChildren();
-            foreach (ILSpyTreeNode child in this.Children) {
+        foreach (ILSpyTreeNode child in Children) {
 				child.Decompile(language, output, options);
 				output.WriteLine();
 			}
 		}
 	}
-}

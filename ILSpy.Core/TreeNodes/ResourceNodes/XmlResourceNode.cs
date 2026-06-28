@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Xaml
-{
+namespace ICSharpCode.ILSpy.Xaml;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class XmlResourceNodeFactory : IResourceNodeFactory
 	{
@@ -37,51 +37,62 @@ namespace ICSharpCode.ILSpy.Xaml
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 		
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in xmlFileExtensions)
+        {
+            return null;
+        }
+
+        foreach (string fileExt in xmlFileExtensions)
 			{
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new XmlResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new XmlResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}
 	
-	sealed class XmlResourceEntryNode : ResourceEntryNode
+	sealed class XmlResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
 		string xml;
-		
-		public XmlResourceEntryNode(string key, Stream data)
-			: base(key, data)
-		{
-		}
-		
-		public override object Icon
+
+    public override object Icon
 		{
 			get
 			{
 				string text = (string)Text;
 				if (text.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXml;
-				else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXsd;
-				else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXslt;
-				else
-					return Images.Resource;
-			}
+            {
+                return Images.ResourceXml;
+            }
+            else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
+            {
+                return Images.ResourceXsd;
+            }
+            else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
+            {
+                return Images.ResourceXslt;
+            }
+            else
+            {
+                return Images.Resource;
+            }
+        }
 		}
 
 		public override bool View(DecompilerTextView textView)
 		{
-			AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+			AvaloniaEditTextOutput output = new();
 			IHighlightingDefinition highlighting = null;
 			
 			textView.RunWithCancellation(
@@ -90,10 +101,9 @@ namespace ICSharpCode.ILSpy.Xaml
 						try {
 							// cache read XAML because stream will be closed after first read
 							if (xml == null) {
-								using (var reader = new StreamReader(Data)) {
-									xml = reader.ReadToEnd();
-								}
-							}
+                                using var reader = new StreamReader(Data);
+                                xml = reader.ReadToEnd();
+                            }
 							output.Write(xml);
 							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
 						}
@@ -106,4 +116,3 @@ namespace ICSharpCode.ILSpy.Xaml
 			return true;
 		}
 	}
-}

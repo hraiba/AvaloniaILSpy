@@ -12,18 +12,12 @@ using ICSharpCode.ILSpy.Controls.FileLoaders;
 
 namespace ICSharpCode.ILSpy;
 
-class AssemblyListSnapshot
+class AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
 {
-    readonly ImmutableArray<LoadedAssembly> assemblies;
     Dictionary<string, MetadataFile>? asmLookupByFullName;
     Dictionary<string, MetadataFile>? asmLookupByShortName;
     Dictionary<string, List<(MetadataFile module, Version version)>>? asmLookupByShortNameGrouped;
-    public ImmutableArray<LoadedAssembly> Assemblies => assemblies;
-
-    public AssemblyListSnapshot(ImmutableArray<LoadedAssembly> assemblies)
-    {
-        this.assemblies = assemblies;
-    }
+    public ImmutableArray<LoadedAssembly> Assemblies { get; } = assemblies;
 
     public async Task<MetadataFile?> TryGetModuleAsync(IAssemblyReference reference, string tfm)
     {
@@ -40,7 +34,10 @@ class AssemblyListSnapshot
             lookup = LazyInit.GetOrSet(ref isWinRT ? ref asmLookupByShortName : ref asmLookupByFullName, lookup);
         }
         if (lookup.TryGetValue(key, out MetadataFile? module))
+        {
             return module;
+        }
+
         return null;
     }
 
@@ -54,23 +51,32 @@ class AssemblyListSnapshot
         }
 
         if (!lookup.TryGetValue(reference.Name, out var candidates))
+        {
             return null;
+        }
+
         return candidates.FirstOrDefault(c => c.version >= reference.Version).module ?? candidates.Last().module;
     }
 
     private async Task<Dictionary<string, MetadataFile>> CreateLoadedAssemblyLookupAsync(bool shortNames)
     {
         var result = new Dictionary<string, MetadataFile>(StringComparer.OrdinalIgnoreCase);
-        foreach (LoadedAssembly loaded in assemblies)
+        foreach (LoadedAssembly loaded in Assemblies)
         {
             try
             {
                 var module = await loaded.GetMetadataFileOrNullAsync().ConfigureAwait(false);
                 if (module == null)
+                {
                     continue;
+                }
+
                 var reader = module.Metadata;
-                if (reader == null || !reader.IsAssembly)
+                if (reader?.IsAssembly != true)
+                {
                     continue;
+                }
+
                 string tfm = await loaded.GetTargetFrameworkIdAsync().ConfigureAwait(false);
                 if (tfm.StartsWith(".NETFramework,Version=v4.", StringComparison.Ordinal))
                 {
@@ -95,14 +101,17 @@ class AssemblyListSnapshot
     {
         var result = new Dictionary<string, List<(MetadataFile module, Version version)>>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (LoadedAssembly loaded in assemblies)
+        foreach (LoadedAssembly loaded in Assemblies)
         {
             try
             {
                 var module = await loaded.GetMetadataFileOrNullAsync().ConfigureAwait(false);
                 var reader = module?.Metadata;
-                if (reader == null || !reader.IsAssembly)
+                if (reader?.IsAssembly != true)
+                {
                     continue;
+                }
+
                 var asmDef = reader.GetAssemblyDefinition();
                 var asmDefName = reader.GetString(asmDef.Name);
 
@@ -110,7 +119,7 @@ class AssemblyListSnapshot
 
                 if (!result.TryGetValue(asmDefName, out var existing))
                 {
-                    existing = new List<(MetadataFile module, Version version)>();
+                    existing = [];
                     result.Add(asmDefName, existing);
                     existing.Add(line);
                     continue;
@@ -134,9 +143,9 @@ class AssemblyListSnapshot
     /// </summary>
     public async Task<IList<LoadedAssembly>> GetAllAssembliesAsync()
     {
-        var results = new List<LoadedAssembly>(assemblies.Length);
+        var results = new List<LoadedAssembly>(Assemblies.Length);
 
-        foreach (var asm in assemblies)
+        foreach (var asm in Assemblies)
         {
             LoadResult result;
             try
@@ -168,10 +177,16 @@ class AssemblyListSnapshot
             foreach (var entry in folder.Entries)
             {
                 if (!entry.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !entry.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
                     continue;
+                }
+
                 var asm = folder.ResolveFileName(entry.Name);
                 if (asm == null)
+                {
                     continue;
+                }
+
                 results.Add(asm);
             }
         }

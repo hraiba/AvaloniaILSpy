@@ -6,89 +6,86 @@ using Avalonia.Controls;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
-using System;
 using Avalonia.Markup.Xaml;
 
-namespace TestPlugin
+namespace TestPlugin;
+
+[ExportOptionPage(Title = "TestPlugin", Order = 0)]
+partial class CustomOptionPage : UserControl, IOptionPage
 {
-	[ExportOptionPage(Title = "TestPlugin", Order = 0)]
-	partial class CustomOptionPage : UserControl, IOptionPage
-	{
-		static readonly XNamespace ns = "http://www.ilspy.net/testplugin";
-		
-		public CustomOptionPage()
-		{
-			InitializeComponent();
-		}
+    static readonly XNamespace ns = "http://www.ilspy.net/testplugin";
 
-        private void InitializeComponent()
+    public CustomOptionPage()
+    {
+        InitializeComponent();
+    }
+
+    private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+    public void Load(ILSpySettings settings)
+    {
+        // For loading options, use ILSpySetting's indexer.
+        // If the specified section does exist, the indexer will return a new empty element.
+        XElement element = settings[ns + "CustomOptions"];
+        // Now load the options from the XML document:
+        var options = new Options();
+        options.UselessOption1 = (bool?)element.Attribute("useless1") ?? options.UselessOption1;
+        options.UselessOption2 = (double?)element.Attribute("useless2") ?? options.UselessOption2;
+        DataContext = options;
+    }
+
+    public void Save(XElement root)
+    {
+        Options options = (Options)DataContext;
+        // Save the options back into XML:
+        var section = new XElement(ns + "CustomOptions");
+        section.SetAttributeValue("useless1", options.UselessOption1);
+        section.SetAttributeValue("useless2", options.UselessOption2);
+
+        // Replace the existing section in the settings file, or add a new section,
+        // if required.
+        XElement existingElement = root.Element(ns + "CustomOptions");
+        if (existingElement != null)
         {
-            AvaloniaXamlLoader.Load(this);
+            existingElement.ReplaceWith(section);
         }
+        else
+        {
+            root.Add(section);
+        }
+    }
+}
 
-        public void Load(ILSpySettings settings)
-		{
-			// For loading options, use ILSpySetting's indexer.
-			// If the specified section does exist, the indexer will return a new empty element.
-			XElement e = settings[ns + "CustomOptions"];
-			// Now load the options from the XML document:
-			Options s = new Options();
-			s.UselessOption1 = (bool?)e.Attribute("useless1") ?? s.UselessOption1;
-			s.UselessOption2 = (double?)e.Attribute("useless2") ?? s.UselessOption2;
-			this.DataContext = s;
-		}
-		
-		public void Save(XElement root)
-		{
-			Options s = (Options)this.DataContext;
-			// Save the options back into XML:
-			XElement section = new XElement(ns + "CustomOptions");
-			section.SetAttributeValue("useless1", s.UselessOption1);
-			section.SetAttributeValue("useless2", s.UselessOption2);
-			
-			// Replace the existing section in the settings file, or add a new section,
-			// if required.
-			XElement existingElement = root.Element(ns + "CustomOptions");
-			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
-		}
-	}
-	
-	class Options : INotifyPropertyChanged
-	{
-		bool uselessOption1;
-		
-		public bool UselessOption1 {
-			get { return uselessOption1; }
-			set {
-				if (uselessOption1 != value) {
-					uselessOption1 = value;
-					OnPropertyChanged("UselessOption1");
-				}
-			}
-		}
-		
-		double uselessOption2;
-		
-		public double UselessOption2 {
-			get { return uselessOption2; }
-			set {
-				if (uselessOption2 != value) {
-					uselessOption2 = value;
-					OnPropertyChanged("UselessOption2");
-				}
-			}
-		}
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
+class Options : INotifyPropertyChanged
+{
+    public bool UselessOption1
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged(nameof(UselessOption1));
+            }
+        }
+    }
+
+    public double UselessOption2
+    {
+        get;
+        set
+        {
+            if (field != value)
+            {
+                field = value;
+                OnPropertyChanged(nameof(UselessOption2));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }

@@ -2,33 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using Avalonia.Controls;
-using Avalonia;
 
-namespace ICSharpCode.TreeView
-{
-	public class SharpGridView : ListBox
-	{
-		static SharpGridView()
-		{
-			//ItemContainerStyleKey =
-			//	new ComponentResourceKey(typeof(SharpTreeView), "GridViewItemContainerStyleKey");
+namespace ICSharpCode.TreeView;
 
-		}
-
-		public SharpGridView()
-		{
-			
-		}
-
-
-		//public static ResourceKey ItemContainerStyleKey { get; private set; }
-
-		//protected override object ItemContainerDefaultStyleKey
-		//{
-		//	get
-		//	{
-		//		return ItemContainerStyleKey;
-		//	}
-		//}
-	}
-}
+public class SharpGridView : ListBox;

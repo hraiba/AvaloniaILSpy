@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Media.Immutable;
-using Avalonia.Media.Imaging;
 
-namespace Avalonia
-{
+namespace Avalonia;
+
 	public static class SystemParameters
 	{
 		public const double MinimumHorizontalDragDistance = 2.0;
@@ -36,48 +30,44 @@ namespace Avalonia
 		public static Color  ControlDarkDarkColor {get;} = Color.FromUInt32(0xFF696969);
 		public static Color  HighlightColor {get;} = Color.FromUInt32(0xFF3399FF);
 
-		// /// <summary>
-		// /// pull out values from system.drawing
-		// /// </summary>
-		// /// <returns></returns>
-		// public static string[] GetColors()
-		// {
-		//     string ToString(object obj)
-		//     {
-		//         if(obj is ISolidColorBrush b)
-		//         {
-		//             return $"new ImmutableSolidColorBrush(Color.FromUInt32(0x{b.Color.ToUint32().ToString("X")}));;
-		//         }
-		//         else if(obj is Color c)
-		//             return $"Color.FromUInt32(0x{c.ToUint32().ToString("X")});;
-		//         else
-		//             return obj.ToString();
-		//     }
-		//     return Array.ConvertAll(typeof(SystemColors).GetProperties(), p => string.Format("{0} \{get;\} = {1}", p.Name, ToString(p.GetValue(null))));
-		// }
+    // /// <summary>
+    // /// pull out values from system.drawing
+    // /// </summary>
+    // /// <returns></returns>
+    // public static string[] GetColors()
+    // {
+    //     string ToString(object obj)
+    //     {
+    //         if(obj is ISolidColorBrush b)
+    //         {
+    //             return $"new ImmutableSolidColorBrush(Color.FromUInt32(0x{b.Color.ToUint32().ToString("X")}));;
+    //         }
+    //         else if(obj is Color c)
+    //             return $"Color.FromUInt32(0x{c.ToUint32().ToString("X")});;
+    //         else
+    //             return obj.ToString();
+    //     }
+    //     return Array.ConvertAll(typeof(SystemColors).GetProperties(), p => string.Format("{0} \{get;\} = {1}", p.Name, ToString(p.GetValue(null))));
+    // }
 
-		public static Color ToAvaloniaColor(this System.Drawing.Color color)
-		{
-			return new Color(color.A, color.R, color.G, color.B);
-		}
+    public static Color ToAvaloniaColor(this System.Drawing.Color color) => new(color.A, color.R, color.G, color.B);
 
-		//public static IBrush ToAvaloniaBrush(this System.Drawing.Brush brush)
-		//{
-		//	if (brush is System.Drawing.SolidBrush solidbrush) {
-		//		return new ImmutableSolidColorBrush(solidbrush.Color.ToAvaloniaColor());
-		//	}
-		//	else if(brush is System.Drawing.TextureBrush textureBrush) {
-		//		using (var imageStream = new MemoryStream()) {
-		//			var image = textureBrush.Image;
-		//			image.Save(imageStream, System.Drawing.Imaging.ImageFormat.Bmp);
+    //public static IBrush ToAvaloniaBrush(this System.Drawing.Brush brush)
+    //{
+    //	if (brush is System.Drawing.SolidBrush solidbrush) {
+    //		return new ImmutableSolidColorBrush(solidbrush.Color.ToAvaloniaColor());
+    //	}
+    //	else if(brush is System.Drawing.TextureBrush textureBrush) {
+    //		using (var imageStream = new MemoryStream()) {
+    //			var image = textureBrush.Image;
+    //			image.Save(imageStream, System.Drawing.Imaging.ImageFormat.Bmp);
 
-		//			var avaloniaBitmap = new Bitmap(imageStream);
-		//			return new ImageBrush(avaloniaBitmap);
-		//		}
+    //			var avaloniaBitmap = new Bitmap(imageStream);
+    //			return new ImageBrush(avaloniaBitmap);
+    //		}
 
-		//	} else {
-		//		throw new NotSupportedException();
-		//	}
-		//}
-	}
+    //	} else {
+    //		throw new NotSupportedException();
+    //	}
+    //}
 }

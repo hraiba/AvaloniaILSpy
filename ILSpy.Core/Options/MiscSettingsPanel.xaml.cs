@@ -18,65 +18,55 @@
 
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy.Options
-{
-    /// <summary>
-    /// Interaction logic for MiscSettingsPanel.xaml
-    /// </summary>
-    [ExportOptionPage(Title = nameof(Properties.Resources.Misc), Order = 30)]
-    public partial class MiscSettingsPanel : UserControl, IOptionPage
+namespace ICSharpCode.ILSpy.Options;
+
+/// <summary>
+/// Interaction logic for MiscSettingsPanel.xaml
+/// </summary>
+[ExportOptionPage(Title = nameof(Properties.Resources.Misc), Order = 30)]
+public partial class MiscSettingsPanel : UserControl, IOptionPage
 	{
 		public MiscSettingsPanel()
 		{
 			InitializeComponent();
 		}
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-		}
+    private void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-		public void Load(ILSpySettings settings)
-		{
-			this.DataContext = LoadMiscSettings(settings);
-		}
+    public void Load(ILSpySettings settings) => DataContext = LoadMiscSettings(settings);
 
-		static MiscSettings currentMiscSettings;
+    public static MiscSettings CurrentMiscSettings { get => field ??= LoadMiscSettings(ILSpySettings.Load()); private set; }
 
-		public static MiscSettings CurrentMiscSettings {
-			get {
-				return currentMiscSettings ?? (currentMiscSettings = LoadMiscSettings(ILSpySettings.Load()));
-			}
-		}
-
-		public static MiscSettings LoadMiscSettings(ILSpySettings settings)
+    public static MiscSettings LoadMiscSettings(ILSpySettings settings)
 		{
 			XElement e = settings["MiscSettings"];
 			var s = new MiscSettings();
 			s.AllowMultipleInstances = (bool?)e.Attribute("AllowMultipleInstances") ?? false;
-            s.LoadPreviousAssemblies = (bool?)e.Attribute(nameof(s.LoadPreviousAssemblies)) ?? true;
+        s.LoadPreviousAssemblies = (bool?)e.Attribute(nameof(s.LoadPreviousAssemblies)) ?? true;
 
-            return s;
+        return s;
 		}
 
 		public void Save(XElement root)
 		{
-			var s = (MiscSettings)this.DataContext;
+			var s = (MiscSettings)DataContext;
 
 			var section = new XElement("MiscSettings");
 			section.SetAttributeValue("AllowMultipleInstances", s.AllowMultipleInstances);
-            section.SetAttributeValue(nameof(s.LoadPreviousAssemblies), s.LoadPreviousAssemblies);
+        section.SetAttributeValue(nameof(s.LoadPreviousAssemblies), s.LoadPreviousAssemblies);
 
-            XElement existingElement = root.Element("MiscSettings");
+        XElement existingElement = root.Element("MiscSettings");
 			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
+        {
+            existingElement.ReplaceWith(section);
+        }
+        else
+        {
+            root.Add(section);
+        }
 
-			currentMiscSettings = null; // invalidate cached settings
+        CurrentMiscSettings = null; // invalidate cached settings
 		}
 	}
-}

@@ -26,36 +26,33 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Xaml
-{
+namespace ICSharpCode.ILSpy.Xaml;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class XamlResourceNodeFactory : IResourceNodeFactory
 	{
-		public ILSpyTreeNode CreateNode(Resource resource)
-		{
-			return null;
-		}
-		
-		public ILSpyTreeNode CreateNode(string key, object data)
+    public ILSpyTreeNode CreateNode(Resource resource) => null;
+
+    public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (key.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) && data is Stream)
-				return new XamlResourceEntryNode(key, (Stream)data);
-			else
-				return null;
-		}
+        {
+            return new XamlResourceEntryNode(key, (Stream)data);
+        }
+        else
+        {
+            return null;
+        }
+    }
 	}
 	
-	sealed class XamlResourceEntryNode : ResourceEntryNode
+	sealed class XamlResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
 		string xaml;
-		
-		public XamlResourceEntryNode(string key, Stream data) : base(key, data)
+
+    public override bool View(DecompilerTextView textView)
 		{
-		}
-		
-		public override bool View(DecompilerTextView textView)
-		{
-			AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+			AvaloniaEditTextOutput output = new();
 			IHighlightingDefinition highlighting = null;
 			
 			textView.RunWithCancellation(
@@ -64,10 +61,9 @@ namespace ICSharpCode.ILSpy.Xaml
 						try {
 							// cache read XAML because stream will be closed after first read
 							if (xaml == null) {
-								using (var reader = new StreamReader(Data)) {
-									xaml = reader.ReadToEnd();
-								}
-							}
+                                using var reader = new StreamReader(Data);
+                                xaml = reader.ReadToEnd();
+                            }
 							output.Write(xaml);
 							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
 						} catch (Exception ex) {
@@ -79,4 +75,3 @@ namespace ICSharpCode.ILSpy.Xaml
 			return true;
 		}
 	}
-}

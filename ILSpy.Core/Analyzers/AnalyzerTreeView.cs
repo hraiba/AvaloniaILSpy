@@ -26,32 +26,30 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Analyzers.TreeNodes;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
 	public class AnalyzerTreeView : SharpTreeView, IPane
 	{
-		static AnalyzerTreeView instance;
-
-		public static AnalyzerTreeView Instance
+    public static AnalyzerTreeView Instance
 		{
 			get
 			{
-				if (instance == null) {
+				if (field == null) {
 					Dispatcher.UIThread.VerifyAccess();
-					instance = new AnalyzerTreeView();
+					field = new AnalyzerTreeView();
 				}
-				return instance;
+				return field;
 			}
 		}
 
 		private AnalyzerTreeView()
 		{
-			this.ShowRoot = false;
-			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
-			this.BorderThickness = new Thickness(0);
+			ShowRoot = false;
+			Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
+			BorderThickness = new Thickness(0);
 			ContextMenuProvider.Add(this);
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 		}
@@ -59,45 +57,53 @@ namespace ICSharpCode.ILSpy.Analyzers
 		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Reset) {
-				this.Root.Children.Clear();
+				Root.Children.Clear();
 			} else {
-				List<LoadedAssembly> removedAssemblies = new List<LoadedAssembly>();
+				List<LoadedAssembly> removedAssemblies = [];
 				if (e.OldItems != null)
-					removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
-				List<LoadedAssembly> addedAssemblies = new List<LoadedAssembly>();
+            {
+                removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
+            }
+
+            List<LoadedAssembly> addedAssemblies = [];
 				if (e.NewItems != null)
-					addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
-				((AnalyzerRootNode)this.Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+            {
+                addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
+            }
+
+            ((AnalyzerRootNode)Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 			}
 		}
 
 		public void Show()
 		{
 			if (VisualRoot == null)
-				MainWindow.Instance.ShowInBottomPane("Analyzer", this);
-		}
+        {
+            MainWindow.Instance.ShowInBottomPane("Analyzer", this);
+        }
+    }
 
 		public void Show(AnalyzerTreeNode node)
 		{
 			Show();
 
 			node.IsExpanded = true;
-			this.Root.Children.Add(node);
-			this.SelectedItem = node;
-			this.FocusNode(node);
+			Root.Children.Add(node);
+			SelectedItem = node;
+			FocusNode(node);
 		}
 
 		public void ShowOrFocus(AnalyzerTreeNode node)
 		{
 			if (node is AnalyzerEntityTreeNode) {
 				var an = node as AnalyzerEntityTreeNode;
-				var found = this.Root.Children.OfType<AnalyzerEntityTreeNode>().FirstOrDefault(n => n.Member == an.Member);
+				var found = Root.Children.OfType<AnalyzerEntityTreeNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					Show();
 					
 					found.IsExpanded = true;
-					this.SelectedItem = found;
-					this.FocusNode(found);
+					SelectedItem = found;
+					FocusNode(found);
 					return;
 				}
 			}
@@ -106,24 +112,25 @@ namespace ICSharpCode.ILSpy.Analyzers
 
 		public void Analyze(IEntity entity)
 		{
-			if (entity == null) {
-				throw new ArgumentNullException(nameof(entity));
-			}
+        ArgumentNullException.ThrowIfNull(entity);
 
-            if (entity.MetadataToken.IsNil)
-            {
-                MessageBox.Show(Properties.Resources.CannotAnalyzeMissingRef, "ILSpy");
-                return;
-            }
+        if (entity.MetadataToken.IsNil)
+        {
+            MessageBox.Show(Properties.Resources.CannotAnalyzeMissingRef, "ILSpy");
+            return;
+        }
 
-            switch (entity) {
+        switch (entity) {
 				case ITypeDefinition td:
 					ShowOrFocus(new AnalyzedTypeTreeNode(td));
 					break;
 				case IField fd:
-                    if (!fd.IsConst)
-                        ShowOrFocus(new AnalyzedFieldTreeNode(fd));
-					break;
+                if (!fd.IsConst)
+                {
+                    ShowOrFocus(new AnalyzedFieldTreeNode(fd));
+                }
+
+                break;
 				case IMethod md:
 					ShowOrFocus(new AnalyzedMethodTreeNode(md));
 					break;
@@ -138,22 +145,18 @@ namespace ICSharpCode.ILSpy.Analyzers
 			}
 		}
 
-		void IPane.Closed()
-		{
-			this.Root.Children.Clear();
-		}
-		
-		sealed class AnalyzerRootNode : AnalyzerTreeNode
+    void IPane.Closed() => Root.Children.Clear();
+
+    sealed class AnalyzerRootNode : AnalyzerTreeNode
 		{
 			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 			{
-				this.Children.RemoveAll(
-					delegate(SharpTreeNode n) {
-						AnalyzerTreeNode an = n as AnalyzerTreeNode;
-						return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
-					});
+				Children.RemoveAll(
+                    n =>
+                    {
+                        return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+                    });
 				return true;
 			}
 		}
 	}
-}

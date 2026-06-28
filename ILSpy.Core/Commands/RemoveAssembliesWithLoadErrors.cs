@@ -16,29 +16,29 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources._RemoveAssembliesWithLoadErrors), MenuCategory = nameof(Resources.Remove), MenuOrder = 2.6)]
-    class RemoveAssembliesWithLoadErrors : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
-			return MainWindow.Instance.CurrentAssemblyList?.GetAssemblies().Any(l => l.HasLoadError) == true;
-		}
+namespace ICSharpCode.ILSpy;
 
-		public override void Execute(object parameter)
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources._RemoveAssembliesWithLoadErrors), MenuCategory = nameof(Resources.Remove), MenuOrder = 2.6)]
+class RemoveAssembliesWithLoadErrors : SimpleCommand
+	{
+    public override bool CanExecute(object parameter) => MainWindow.Instance.CurrentAssemblyList?.GetAssemblies().Any(l => l.HasLoadError) == true;
+
+    public override void Execute(object parameter)
 		{
 			foreach (var asm in MainWindow.Instance.CurrentAssemblyList.GetAssemblies()) {
-				if (!asm.HasLoadError) continue;
-				var node = MainWindow.Instance.AssemblyListTreeNode.FindAssemblyNode(asm);
-				if (node != null && node.CanDelete())
-					node.Delete();
-			}
+				if (!asm.HasLoadError)
+            {
+                continue;
+            }
+
+            var node = MainWindow.Instance.AssemblyListTreeNode.FindAssemblyNode(asm);
+				if (node?.CanDelete() == true)
+            {
+                node.Delete();
+            }
+        }
 		}
 	}
-}

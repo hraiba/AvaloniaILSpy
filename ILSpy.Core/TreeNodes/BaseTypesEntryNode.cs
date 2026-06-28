@@ -26,8 +26,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly MetadataFile module;
@@ -39,18 +39,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public BaseTypesEntryNode(MetadataFile module, EntityHandle handle, IType type, bool isInterface)
 		{
 			if (handle.IsNil)
-				throw new ArgumentNullException(nameof(handle));
-			this.module = module ?? throw new ArgumentNullException(nameof(module));
+        {
+            throw new ArgumentNullException(nameof(handle));
+        }
+
+        this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.handle = handle;
 			this.type = type;
 			this.isInterface = isInterface;
-			this.LazyLoading = true;
+			LazyLoading = true;
 			TryResolve(module, handle, type);
 		}
 
 		ITypeDefinition TryResolve(MetadataFile module, EntityHandle handle, IType type, bool mayRetry = true)
 		{
-			DecompilerTypeSystem typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver(),
+			DecompilerTypeSystem typeSystem = new(module, module.GetAssemblyResolver(),
 				TypeSystemOptions.Default | TypeSystemOptions.Uncached);
 			var t = typeSystem.MainModule.ResolveEntity(handle) as ITypeDefinition;
 			if (t != null) {
@@ -68,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override bool ShowExpander => showExpander && base.ShowExpander;
 
-		public override object Text => this.Language.TypeToString(type, includeNamespace: true) + handle.ToSuffixString();
+		public override object Text => Language.TypeToString(type, includeNamespace: true) + handle.ToSuffixString();
 
 		public override object Icon => isInterface ? Images.Interface : Images.Class;
 
@@ -76,7 +79,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			var t = TryResolve(module, handle, type, false);
 			if (t != null) {
-				BaseTypesTreeNode.AddBaseTypes(this.Children, t.ParentModule.MetadataFile, t);
+				BaseTypesTreeNode.AddBaseTypes(Children, t.ParentModule.MetadataFile, t);
 			}
 		}
 
@@ -98,15 +101,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.WriteCommentLine(output, language.TypeToString(type, includeNamespace: true));
 
-		IEntity IMemberTreeNode.Member {
-			get {
-				return TryResolve(module, handle, type, false);
-			}
-		}
-	}
+    IEntity IMemberTreeNode.Member => TryResolve(module, handle, type, false);
 }

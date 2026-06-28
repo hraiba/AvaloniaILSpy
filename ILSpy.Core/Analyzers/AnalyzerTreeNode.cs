@@ -21,44 +21,37 @@ using System.Collections.Specialized;
 using System.Linq;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	public abstract class AnalyzerTreeNode : SharpTreeNode
 	{
-		private Language language;
-
-		public Language Language {
-			get { return language; }
-			set {
-				if (language != value) {
-					language = value;
-					foreach (var child in this.Children.OfType<AnalyzerTreeNode>())
-						child.Language = value;
-				}
+    public Language Language {
+			get;
+        set {
+				if (field != value) {
+					field = value;
+					foreach (var child in Children.OfType<AnalyzerTreeNode>())
+                {
+                    child.Language = value;
+                }
+            }
 			}
 		}
 
-		public override bool CanDelete()
-		{
-			return Parent != null && Parent.IsRoot;
-		}
+    public override bool CanDelete() => Parent?.IsRoot == true;
 
-		public override void DeleteCore()
-		{
-			Parent.Children.Remove(this);
-		}
+    public override void DeleteCore() => Parent.Children.Remove(this);
 
-		public override void Delete()
-		{
-			DeleteCore();
-		}
+    public override void Delete() => DeleteCore();
 
-		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+    protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
-					a.Language = this.Language;
-			}
+            {
+                a.Language = Language;
+            }
+        }
 			base.OnChildrenChanged(e);
 		}
 
@@ -67,4 +60,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		/// </summary>
 		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
 	}
-}

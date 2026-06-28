@@ -17,49 +17,48 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
+	public sealed class MethodTreeNode(IMethod method) : ILSpyTreeNode, IMemberTreeNode
 	{
-		public IMethod MethodDefinition { get; }
+    public IMethod MethodDefinition { get; } = method ?? throw new ArgumentNullException(nameof(method));
 
-		public MethodTreeNode(IMethod method)
-		{
-			this.MethodDefinition = method ?? throw new ArgumentNullException(nameof(method));
-		}
+    public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();
 
-		public override object Text => GetText(MethodDefinition, Language) + MethodDefinition.MetadataToken.ToSuffixString();
+    public static object GetText(IMethod method, Language language) => language.MethodToString(method, false, false, false);
 
-		public static object GetText(IMethod method, Language language)
-		{
-			return language.MethodToString(method, false, false, false);
-		}
-
-		public override object Icon => GetIcon(MethodDefinition);
+    public override object Icon => GetIcon(MethodDefinition);
 
 		public static IBitmap GetIcon(IMethod method)
 		{
 			if (method.IsOperator)
-				return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Accessibility), false);
+        {
+            return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Accessibility), false);
+        }
 
-			if (method.IsExtensionMethod)
-				return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Accessibility), false);
+        if (method.IsExtensionMethod)
+        {
+            return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Accessibility), false);
+        }
 
-			if (method.IsConstructor)
-				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Accessibility), method.IsStatic);
+        if (method.IsConstructor)
+        {
+            return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Accessibility), method.IsStatic);
+        }
 
-			if (!method.HasBody && method.HasAttribute(KnownAttribute.DllImport))
-				return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Accessibility), true);
+        if (!method.HasBody && method.HasAttribute(KnownAttribute.DllImport))
+        {
+            return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Accessibility), true);
+        }
 
-			return Images.GetIcon(method.IsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
+        return Images.GetIcon(method.IsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
 				GetOverlayIcon(method.Accessibility), method.IsStatic);
 		}
 
@@ -83,20 +82,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			language.DecompileMethod(MethodDefinition, output, options);
-		}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => language.DecompileMethod(MethodDefinition, output, options);
 
-		public override FilterResult Filter(FilterSettings settings)
+    public override FilterResult Filter(FilterSettings settings)
 		{
-            if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
-                return FilterResult.Hidden;
-            if (settings.SearchTermMatches(MethodDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(MethodDefinition)))
-                return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        if (settings.ShowApiLevel == ApiVisibility.PublicOnly && !IsPublicAPI)
+        {
+            return FilterResult.Hidden;
+        }
+
+        if (settings.SearchTermMatches(MethodDefinition.Name) && (settings.ShowApiLevel == ApiVisibility.All || settings.Language.ShowMember(MethodDefinition)))
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
 		public override bool IsPublicAPI {
 			get {
@@ -113,4 +116,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		IEntity IMemberTreeNode.Member => MethodDefinition;
 	}
-}

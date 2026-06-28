@@ -21,28 +21,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection.Metadata;
 using ICSharpCode.Decompiler.DebugInfo;
-using ICSharpCode.Decompiler.Metadata;
 
 namespace ICSharpCode.ILSpy.DebugInfo
 {
-    class PortableDebugInfoProvider : IDebugInfoProvider
+    class PortableDebugInfoProvider(string pdbFileName, MetadataReaderProvider provider) : IDebugInfoProvider
     {
-        string pdbFileName;
-        MetadataReaderProvider provider;
+        readonly MetadataReaderProvider provider = provider;
 
         bool hasError;
-
-        public PortableDebugInfoProvider(string pdbFileName, MetadataReaderProvider provider)
-        {
-            this.pdbFileName = pdbFileName;
-            this.provider = provider;
-        }
 
         public string Description
         {
             get
             {
-                if (pdbFileName == null)
+                if (SourceFileName == null)
                 {
                     if (hasError)
                         return "Error while loading the PDB stream embedded in this assembly";
@@ -51,13 +43,13 @@ namespace ICSharpCode.ILSpy.DebugInfo
                 else
                 {
                     if (hasError)
-                        return $"Error while loading portable PDB: {pdbFileName}";
-                    return $"Loaded from portable PDB: {pdbFileName}";
+                        return $"Error while loading portable PDB: {SourceFileName}";
+                    return $"Loaded from portable PDB: {SourceFileName}";
                 }
             }
         }
 
-        public string SourceFileName => pdbFileName;
+        public string SourceFileName { get; } = pdbFileName;
 
         public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle method)
         {

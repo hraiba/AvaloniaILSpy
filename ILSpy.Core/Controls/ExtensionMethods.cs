@@ -20,8 +20,8 @@ using System;
 using Avalonia;
 using Avalonia.Markup.Xaml;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	/// <summary>
 	/// ExtensionMethods used in ILSpy.
 	/// </summary>
@@ -34,47 +34,37 @@ namespace ICSharpCode.ILSpy.Controls
 		/// having a XAML file as context.</remarks>
 		public static void SetValueToExtension(this AvaloniaObject targetObject, AvaloniaProperty property, MarkupExtension markupExtension)
 		{
-			// This method was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
-			
-			if (targetObject == null)
-				throw new ArgumentNullException(nameof(targetObject));
-			if (property == null)
-				throw new ArgumentNullException(nameof(property));
-			if (markupExtension == null)
-				throw new ArgumentNullException(nameof(markupExtension));
-			
-			var serviceProvider = new SetValueToExtensionServiceProvider(targetObject, property);
+        // This method was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
+
+        ArgumentNullException.ThrowIfNull(targetObject);
+        ArgumentNullException.ThrowIfNull(property);
+        ArgumentNullException.ThrowIfNull(markupExtension);
+
+        var serviceProvider = new SetValueToExtensionServiceProvider(targetObject, property);
 			targetObject.SetValue(property, markupExtension.ProvideValue(serviceProvider));
 		}
 		
-		sealed class SetValueToExtensionServiceProvider : IServiceProvider, IProvideValueTarget
+		sealed class SetValueToExtensionServiceProvider(AvaloniaObject targetObject, AvaloniaProperty property) : IServiceProvider, IProvideValueTarget
 		{
 			// This class was copied from ICSharpCode.Core.Presentation (with permission to switch license to X11)
 			
-			readonly AvaloniaObject targetObject;
-			readonly AvaloniaProperty targetProperty;
-			
-			public SetValueToExtensionServiceProvider(AvaloniaObject targetObject, AvaloniaProperty property)
-			{
-				this.targetObject = targetObject;
-				this.targetProperty = property;
-			}
-			
-			public object GetService(Type serviceType)
+			readonly AvaloniaObject targetObject = targetObject;
+			readonly AvaloniaProperty targetProperty = property;
+
+        public object GetService(Type serviceType)
 			{
 				if (serviceType == typeof(IProvideValueTarget))
-					return this;
-				else
-					return null;
-			}
-			
-			public object TargetObject {
-				get { return targetObject; }
-			}
-			
-			public object TargetProperty {
-				get { return targetProperty; }
-			}
-		}
+            {
+                return this;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public object TargetObject => targetObject;
+
+        public object TargetProperty => targetProperty;
+    }
 	}
-}

@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ImageResourceNodeFactory : IResourceNodeFactory
 	{
@@ -36,45 +36,45 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in imageFileExtensions) {
+        {
+            return null;
+        }
+
+        foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new ImageResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new ImageResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}
 
-	sealed class ImageResourceEntryNode : ResourceEntryNode
+	sealed class ImageResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
-		public ImageResourceEntryNode(string key, Stream data)
-			: base(key, data)
-		{
-		}
+    public override object Icon => Images.ResourceImage;
 
-		public override object Icon
-		{
-			get { return Images.ResourceImage; }
-		}
-
-		public override bool View(DecompilerTextView textView)
+    public override bool View(DecompilerTextView textView)
 		{
 			try {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				Data.Position = 0;
-                IBitmap image = new Bitmap(Data);
-                output.AddUIElement(() => new Image { Source = image });
+            IBitmap image = new Bitmap(Data);
+            output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
-                output.AddButton(Images.Save, Resources.Save, async delegate {
-                    await Save(null);
-                });
+            output.AddButton(Images.Save, Resources.Save, async delegate {
+                await Save(null);
+            });
 				textView.ShowNode(output, this);
 				return true;
 			}
@@ -83,4 +83,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

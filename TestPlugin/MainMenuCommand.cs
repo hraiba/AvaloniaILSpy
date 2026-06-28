@@ -3,8 +3,8 @@
 
 using ICSharpCode.ILSpy;
 
-namespace TestPlugin
-{
+namespace TestPlugin;
+
 	// Menu: menu into which the item is added
 	// MenuIcon: optional, icon to use for the menu item. Must be embedded as "Resource" (WPF-style resource) in the same assembly as the command type.
 	// Header: text on the menu item
@@ -25,4 +25,3 @@ namespace TestPlugin
 			}
 		}
 	}
-}

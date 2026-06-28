@@ -21,8 +21,8 @@ using System.Reflection.Metadata;
 using Avalonia.Interactivity;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
@@ -41,37 +41,38 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.parentAssembly = parentAssembly ?? throw new ArgumentNullException(nameof(parentAssembly));
 			if (r.IsNil)
-				throw new ArgumentNullException(nameof(r));
-			this.metadata = module;
-			this.handle = r;
-			this.reference = module.GetModuleReference(r);
-			this.moduleName = metadata.GetString(reference.Name);
+        {
+            throw new ArgumentNullException(nameof(r));
+        }
+
+        metadata = module;
+			handle = r;
+			reference = module.GetModuleReference(r);
+			moduleName = metadata.GetString(reference.Name);
 
 			foreach (var h in module.AssemblyFiles) {
 				var file = module.GetAssemblyFile(h);
 				if (module.StringComparer.Equals(file.Name, moduleName)) {
 					this.file = file;
-					this.fileHandle = h;
-					this.containsMetadata = file.ContainsMetadata;
+					fileHandle = h;
+					containsMetadata = file.ContainsMetadata;
 					break;
 				}
 			}
 		}
-		
-		public override object Text {
-			get { return moduleName + ((EntityHandle)handle).ToSuffixString(); }
-		}
 
-		public override object Icon => Images.Library;
+    public override object Text => moduleName + ((EntityHandle)handle).ToSuffixString();
+
+    public override object Icon => Images.Library;
 
 		public override void ActivateItem(RoutedEventArgs e)
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
-			if (assemblyListNode != null && containsMetadata) {
-				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedModule(parentAssembly.LoadedAssembly.GetPEFileOrNull(), metadata.GetString(reference.Name))));
-				e.Handled = true;
-			}
-		}
+        if (parentAssembly.Parent is AssemblyListTreeNode assemblyListNode && containsMetadata)
+        {
+            assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedModule(parentAssembly.LoadedAssembly.GetPEFileOrNull(), metadata.GetString(reference.Name))));
+            e.Handled = true;
+        }
+    }
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
@@ -79,4 +80,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			language.WriteCommentLine(output, containsMetadata ? "contains metadata" : "contains no metadata");
 		}
 	}
-}

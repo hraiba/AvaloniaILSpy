@@ -3,17 +3,11 @@
 
 using Avalonia.Controls.Primitives;
 using Avalonia;
-using Avalonia.Media;
-using Avalonia.Controls;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	public class GeneralAdorner : VisualLayerManager
 	{
-		public GeneralAdorner()
-		{
-		}
-
 		protected override Size MeasureOverride(Size constraint)
 		{
 			if (Child != null) {
@@ -32,4 +26,3 @@ namespace ICSharpCode.TreeView
 			return new Size();
 		}
 	}
-}

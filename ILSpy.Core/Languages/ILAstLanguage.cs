@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
@@ -30,47 +28,32 @@ using ICSharpCode.Decompiler.IL.Transforms;
 using ICSharpCode.Decompiler.TypeSystem;
 
 using SRM = System.Reflection.Metadata;
-using static System.Reflection.Metadata.PEReaderExtensions;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 #if DEBUG
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
-	abstract class ILAstLanguage : Language
+	abstract class ILAstLanguage(string name) : Language
 	{
 		public event EventHandler StepperUpdated;
 
-		protected virtual void OnStepperUpdated(EventArgs e = null)
-		{
-			StepperUpdated?.Invoke(this, e ?? new EventArgs());
-		}
+    protected virtual void OnStepperUpdated(EventArgs e = null) => StepperUpdated?.Invoke(this, e ?? new EventArgs());
 
-		public Stepper Stepper { get; set; } = new Stepper();
+    public Stepper Stepper { get; set; } = new Stepper();
 
-		readonly string name;
-		
-		protected ILAstLanguage(string name)
-		{
-			this.name = name;
-		}
-		
-		public override string Name { get { return name; } }
+    public override string Name { get; } = name;
 
-		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
+    internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
 		{
 			yield return new TypedIL();
 			yield return new BlockIL(CSharpDecompiler.GetILTransforms());
 		}
-		
-		public override string FileExtension {
-			get {
-				return ".il";
-			}
-		}
 
-		public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+    public override string FileExtension => ".il";
+
+    public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 		{
 			base.DecompileMethod(method, output, options);
 			new ReflectionDisassembler(output, options.CancellationToken)
@@ -89,32 +72,33 @@ namespace ICSharpCode.ILSpy
 				var module = method.ParentModule.MetadataFile;
 				var methodDef = module.Metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
-					return;
-				var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
-				ILReader reader = new ILReader(typeSystem.MainModule);
+            {
+                return;
+            }
+
+            var typeSystem = new DecompilerTypeSystem(module, module.GetAssemblyResolver());
+				ILReader reader = new(typeSystem.MainModule);
 				var methodBody = module.GetMethodBody(methodDef.RelativeVirtualAddress);
 				reader.WriteTypedIL((SRM.MethodDefinitionHandle)method.MetadataToken, methodBody, output, cancellationToken: options.CancellationToken);
 			}
 		}
 
-		class BlockIL : ILAstLanguage
+		class BlockIL(IReadOnlyList<IILTransform> transforms) : ILAstLanguage("ILAst")
 		{
-			readonly IReadOnlyList<IILTransform> transforms;
+			readonly IReadOnlyList<IILTransform> transforms = transforms;
 
-			public BlockIL(IReadOnlyList<IILTransform> transforms) : base("ILAst")
-			{
-				this.transforms = transforms;
-			}
-
-			public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
+        public override void DecompileMethod(IMethod method, ITextOutput output, DecompilationOptions options)
 			{
 				base.DecompileMethod(method, output, options);
 				var module = method.ParentModule.MetadataFile;
 				var metadata = module.Metadata;
 				var methodDef = metadata.GetMethodDefinition((SRM.MethodDefinitionHandle)method.MetadataToken);
 				if (!methodDef.HasBody())
-					return;
-				IAssemblyResolver assemblyResolver = module.GetAssemblyResolver();
+            {
+                return;
+            }
+
+            IAssemblyResolver assemblyResolver = module.GetAssemblyResolver();
 				var typeSystem = new DecompilerTypeSystem(module, assemblyResolver);
 				var reader = new ILReader(typeSystem.MainModule);
 				reader.UseDebugSymbols = options.DecompilerSettings.UseDebugSymbols;
@@ -148,4 +132,3 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 	#endif
-}

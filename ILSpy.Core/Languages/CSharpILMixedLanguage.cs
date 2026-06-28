@@ -23,8 +23,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
-using System.Threading;
-using System.Windows;
 using Avalonia.Media;
 using AvaloniaEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -36,28 +34,26 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.Decompiler.Util;
 
-namespace ICSharpCode.ILSpy
-{
-	using SequencePoint = ICSharpCode.Decompiler.DebugInfo.SequencePoint;
+namespace ICSharpCode.ILSpy;
+
+	using SequencePoint = Decompiler.DebugInfo.SequencePoint;
 
 	[Export(typeof(Language))]
 	class CSharpILMixedLanguage : ILLanguage
 	{
 		public override string Name => "IL with C#";
 
-		protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
-		{
-			return new ReflectionDisassembler(output, 
-				new MixedMethodBodyDisassembler(output, options) {
-					DetectControlStructure = detectControlStructure,
-					ShowSequencePoints = options.DecompilerSettings.ShowDebugInfo
-				},
-				options.CancellationToken);
-		}
+    protected override ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options) => new(output,
+            new MixedMethodBodyDisassembler(output, options)
+            {
+                DetectControlStructure = detectControlStructure,
+                ShowSequencePoints = options.DecompilerSettings.ShowDebugInfo
+            },
+            options.CancellationToken);
 
-		static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
+    static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilationOptions options)
 		{
-			CSharpDecompiler decompiler = new CSharpDecompiler(module, module.GetAssemblyResolver(), options.DecompilerSettings);
+			CSharpDecompiler decompiler = new(module, module.GetAssemblyResolver(), options.DecompilerSettings);
 			decompiler.CancellationToken = options.CancellationToken;
 			return decompiler;
 		}
@@ -65,39 +61,33 @@ namespace ICSharpCode.ILSpy
 		static void WriteCode(TextWriter output, DecompilerSettings settings, SyntaxTree syntaxTree, IDecompilerTypeSystem typeSystem)
 		{
 			syntaxTree.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
-            TokenWriter tokenWriter = new TextWriterTokenWriter(output) { IndentationString = settings.CSharpFormattingOptions.IndentationString };
-            tokenWriter = TokenWriter.WrapInWriterThatSetsLocationsInAST(tokenWriter);
+        TokenWriter tokenWriter = new TextWriterTokenWriter(output) { IndentationString = settings.CSharpFormattingOptions.IndentationString };
+        tokenWriter = TokenWriter.WrapInWriterThatSetsLocationsInAST(tokenWriter);
 			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(tokenWriter, settings.CSharpFormattingOptions));
 		}
 
-		class MixedMethodBodyDisassembler : MethodBodyDisassembler
+		class MixedMethodBodyDisassembler(ITextOutput output, DecompilationOptions options) : MethodBodyDisassembler(output, options.CancellationToken)
 		{
-			readonly DecompilationOptions options;
+			readonly DecompilationOptions options = options;
 			// list sorted by IL offset
 			IList<SequencePoint> sequencePoints;
 			// lines of raw c# source code
 			string[] codeLines;
 
-			public MixedMethodBodyDisassembler(ITextOutput output, DecompilationOptions options)
-				: base(output, options.CancellationToken)
-			{
-				this.options = options;
-			}
-
-			public override void Disassemble(MetadataFile module, MethodDefinitionHandle handle)
+        public override void Disassemble(MetadataFile module, MethodDefinitionHandle handle)
 			{
 				try {
 					var csharpOutput = new StringWriter();
 					var decompiler = CreateDecompiler(module, options);
 					var st = decompiler.Decompile(handle);
 					WriteCode(csharpOutput, options.DecompilerSettings, st, decompiler.TypeSystem);
-                    var mapping = decompiler.CreateSequencePoints(st).FirstOrDefault(kvp => (kvp.Key.MoveNextMethod ?? kvp.Key.Method).MetadataToken == handle);
-                    this.sequencePoints = mapping.Value ?? (IList<SequencePoint>)EmptyList<SequencePoint>.Instance;
-					this.codeLines = csharpOutput.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                var mapping = decompiler.CreateSequencePoints(st).FirstOrDefault(kvp => (kvp.Key.MoveNextMethod ?? kvp.Key.Method).MetadataToken == handle);
+                sequencePoints = mapping.Value ?? (IList<SequencePoint>)EmptyList<SequencePoint>.Instance;
+					codeLines = csharpOutput.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 					base.Disassemble(module, handle);
 				} finally {
-					this.sequencePoints = null;
-					this.codeLines = null;
+					sequencePoints = null;
+					codeLines = null;
 				}
 			}
 
@@ -114,13 +104,21 @@ namespace ICSharpCode.ILSpy
 								int startColumn = 1;
 								int endColumn = text.Length + 1;
 								if (line == info.StartLine)
-									startColumn = info.StartColumn;
-								if (line == info.EndLine)
-									endColumn = info.EndColumn;
-								WriteHighlightedCommentLine(highlightingOutput, text, startColumn - 1, endColumn - 1, info.StartLine == info.EndLine);
+                            {
+                                startColumn = info.StartColumn;
+                            }
+
+                            if (line == info.EndLine)
+                            {
+                                endColumn = info.EndColumn;
+                            }
+
+                            WriteHighlightedCommentLine(highlightingOutput, text, startColumn - 1, endColumn - 1, info.StartLine == info.EndLine);
 							} else
-								WriteCommentLine(output, codeLines[line - 1]);
-						}
+                        {
+                            WriteCommentLine(output, codeLines[line - 1]);
+                        }
+                    }
 					} else {
 						output.Write("// ");
 						highlightingOutput?.BeginSpan(gray);
@@ -131,7 +129,7 @@ namespace ICSharpCode.ILSpy
 				base.WriteInstruction(output, metadata, methodDefinition, ref blob, methodRva);
 			}
 
-			HighlightingColor gray = new HighlightingColor { Foreground = new SimpleHighlightingBrush(Colors.DarkGray) };
+			HighlightingColor gray = new() { Foreground = new SimpleHighlightingBrush(Colors.DarkGray) };
 
 			void WriteHighlightedCommentLine(ISmartTextOutput output, string text, int startColumn, int endColumn, bool isSingleLine)
 			{
@@ -146,10 +144,15 @@ namespace ICSharpCode.ILSpy
 				output.Write("// ");
 				output.BeginSpan(gray);
 				if (isSingleLine)
-					output.Write(text.Substring(0, startColumn).TrimStart());
-				else
-					output.Write(text.Substring(0, startColumn));
-				output.EndSpan();
+            {
+                output.Write(text.Substring(0, startColumn).TrimStart());
+            }
+            else
+            {
+                output.Write(text.Substring(0, startColumn));
+            }
+
+            output.EndSpan();
 				output.Write(text.Substring(startColumn, endColumn - startColumn));
 				output.BeginSpan(gray);
 				output.Write(text.Substring(endColumn));
@@ -157,10 +160,6 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 			}
 
-			void WriteCommentLine(ITextOutput output, string text)
-			{
-				output.WriteLine("// " + text);
-			}
-		}
+        void WriteCommentLine(ITextOutput output, string text) => output.WriteLine("// " + text);
+    }
 	}
-}

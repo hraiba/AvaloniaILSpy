@@ -21,8 +21,8 @@ using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	sealed class AnalyzedPropertyTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly IProperty analyzedProperty;
@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		{
 			this.analyzedProperty = analyzedProperty ?? throw new ArgumentNullException(nameof(analyzedProperty));
 			this.prefix = prefix;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Icon => PropertyTreeNode.GetIcon(analyzedProperty);
@@ -43,21 +43,25 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		protected override void LoadChildren()
 		{
 			if (analyzedProperty.CanGet)
-				this.Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Getter, "get"));
-			if (analyzedProperty.CanSet)
-				this.Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Setter, "set"));
-			//foreach (var accessor in analyzedProperty.OtherMethods)
-			//	this.Children.Add(new AnalyzedPropertyAccessorTreeNode(accessor, null));
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Getter, "get"));
+        }
 
-			var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
+        if (analyzedProperty.CanSet)
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedProperty.Setter, "set"));
+        }
+        //foreach (var accessor in analyzedProperty.OtherMethods)
+        //	this.Children.Add(new AnalyzedPropertyAccessorTreeNode(accessor, null));
+
+        var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedProperty)) {
-					this.Children.Add(new AnalyzerSearchTreeNode(analyzedProperty, analyzer, lazy.Metadata.Header));
+					Children.Add(new AnalyzerSearchTreeNode(analyzedProperty, analyzer, lazy.Metadata.Header));
 				}
 			}
 		}
 
 		public override IEntity Member => analyzedProperty;
 	}
-}

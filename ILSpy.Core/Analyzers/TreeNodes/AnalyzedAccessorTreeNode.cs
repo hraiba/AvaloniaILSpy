@@ -18,8 +18,8 @@
 
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	class AnalyzedAccessorTreeNode : AnalyzedMethodTreeNode
 	{
 		readonly string name;
@@ -36,4 +36,3 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 
 		public override object Text => name;
 	}
-}

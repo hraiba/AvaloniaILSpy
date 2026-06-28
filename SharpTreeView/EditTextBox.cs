@@ -3,22 +3,18 @@
 
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia;
 using Avalonia.Interactivity;
-using System;
 using Avalonia.Controls.Primitives;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	class EditTextBox : TextBox
 	{
 		public SharpTreeViewItem Item { get; set; }
 
-		public SharpTreeNode Node {
-			get { return Item.Node; }
-		}
+    public SharpTreeNode Node => Item.Node;
 
-		protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
 		{
 			base.OnApplyTemplate(e);
 			Init();
@@ -60,16 +56,7 @@ namespace ICSharpCode.TreeView
 				}
 				Node.RaisePropertyChanged("Text");
 
-				//if (Node.SaveEditText(Text)) {
-				//    Node.IsEditing = false;
-				//    Node.RaisePropertyChanged("Text");
-				//}
-				//else {
-				//    Init();
-				//}
-
 				commiting = false;
 			}
 		}
 	}
-}

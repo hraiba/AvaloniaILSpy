@@ -6,8 +6,8 @@ using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Allows language specific search for matching brackets.
 	/// </summary>
@@ -22,78 +22,64 @@ namespace ICSharpCode.ILSpy.TextView
 
 	public class DefaultBracketSearcher : IBracketSearcher
 	{
-		public static readonly DefaultBracketSearcher DefaultInstance = new DefaultBracketSearcher();
+		public static readonly DefaultBracketSearcher DefaultInstance = new();
 
-		public BracketSearchResult SearchBracket(IDocument document, int offset)
-		{
-			return null;
-		}
-	}
+    public BracketSearchResult SearchBracket(IDocument document, int offset) => null;
+}
 
 	/// <summary>
 	/// Describes a pair of matching brackets found by <see cref="IBracketSearcher"/>.
 	/// </summary>
-	public class BracketSearchResult
-	{
-		public int OpeningBracketOffset { get; private set; }
+	public class BracketSearchResult(int openingBracketOffset, int openingBracketLength,
+                                   int closingBracketOffset, int closingBracketLength)
+{
+    public int OpeningBracketOffset { get; } = openingBracketOffset;
 
-		public int OpeningBracketLength { get; private set; }
+    public int OpeningBracketLength { get; private set; } = openingBracketLength;
 
-		public int ClosingBracketOffset { get; private set; }
+    public int ClosingBracketOffset { get; } = closingBracketOffset;
 
-		public int ClosingBracketLength { get; private set; }
-
-		public BracketSearchResult(int openingBracketOffset, int openingBracketLength,
-								   int closingBracketOffset, int closingBracketLength)
-		{
-			this.OpeningBracketOffset = openingBracketOffset;
-			this.OpeningBracketLength = openingBracketLength;
-			this.ClosingBracketOffset = closingBracketOffset;
-			this.ClosingBracketLength = closingBracketLength;
-		}
-	}
+    public int ClosingBracketLength { get; private set; } = closingBracketLength;
+}
 
 	public class BracketHighlightRenderer : IBackgroundRenderer
 	{
 		BracketSearchResult result;
 		IPen borderPen;
 		IBrush backgroundBrush;
-        global::AvaloniaEdit.Rendering.TextView textView;
+    global::AvaloniaEdit.Rendering.TextView textView;
 
 		public void SetHighlight(BracketSearchResult result)
 		{
 			if (this.result != result) {
 				this.result = result;
-				textView.InvalidateLayer(this.Layer);
+				textView.InvalidateLayer(Layer);
 			}
 		}
 
 		public BracketHighlightRenderer(global::AvaloniaEdit.Rendering.TextView textView)
 		{
-			if (textView == null)
-				throw new ArgumentNullException("textView");
+        ArgumentNullException.ThrowIfNull(textView);
 
-			this.borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
+        borderPen = new Pen(new SolidColorBrush(Color.FromArgb(52, 0, 0, 255)), 1).ToImmutable();
 
-			this.backgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0, 0, 255)).ToImmutable();
+			backgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0, 0, 255)).ToImmutable();
 
 			this.textView = textView;
 
 			this.textView.BackgroundRenderers.Add(this);
 		}
 
-		public KnownLayer Layer {
-			get {
-				return KnownLayer.Selection;
-			}
-		}
+    public KnownLayer Layer => KnownLayer.Selection;
 
-		public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
+    public void Draw(global::AvaloniaEdit.Rendering.TextView textView, DrawingContext drawingContext)
 		{
-			if (this.result == null)
-				return;
+			if (result == null)
+        {
+            return;
+        }
 
-			BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder();
+        BackgroundGeometryBuilder builder = new();
 
 			builder.CornerRadius = 1;
 
@@ -107,4 +93,3 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 	}
-}

@@ -19,25 +19,23 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
-	class CommandWrapper : ICommand
+namespace ICSharpCode.ILSpy;
+
+	class CommandWrapper(ICommand wrappedCommand) : ICommand
 	{
-		private readonly ICommand wrappedCommand;
+		private readonly ICommand wrappedCommand = wrappedCommand;
 
-		public CommandWrapper(ICommand wrappedCommand)
+    public static ICommand Unwrap(ICommand command)
 		{
-			this.wrappedCommand = wrappedCommand;
-		}
-
-		public static ICommand Unwrap(ICommand command)
-		{
-			CommandWrapper w = command as CommandWrapper;
-			if (w != null)
-				return w.wrappedCommand;
-			else
-				return command;
-		}
+        if (command is CommandWrapper w)
+        {
+            return w.wrappedCommand;
+        }
+        else
+        {
+            return command;
+        }
+    }
 
 		public event EventHandler CanExecuteChanged
 		{
@@ -45,14 +43,7 @@ namespace ICSharpCode.ILSpy
 			remove { wrappedCommand.CanExecuteChanged -= value; }
 		}
 
-		public void Execute(object parameter)
-		{
-			wrappedCommand.Execute(parameter);
-		}
+    public void Execute(object parameter) => wrappedCommand.Execute(parameter);
 
-		public bool CanExecute(object parameter)
-		{
-			return wrappedCommand.CanExecute(parameter);
-		}
-	}
+    public bool CanExecute(object parameter) => wrappedCommand.CanExecute(parameter);
 }

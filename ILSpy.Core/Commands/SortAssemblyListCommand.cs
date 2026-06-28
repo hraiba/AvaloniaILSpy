@@ -21,42 +21,45 @@ using System.Collections.Generic;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources.SortAssembly_listName), MenuIcon = "Images/Sort.png", MenuCategory = nameof(Resources.View))]
-    [ExportToolbarCommand(ToolTip = nameof(Resources.SortAssemblyListName), ToolbarIcon = "Images/Sort.png", ToolbarCategory = nameof(Resources.View))]
-    sealed class SortAssemblyListCommand : SimpleCommand, IComparer<LoadedAssembly>
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources.SortAssembly_listName), MenuIcon = "Images/Sort.png", MenuCategory = nameof(Resources.View))]
+[ExportToolbarCommand(ToolTip = nameof(Resources.SortAssemblyListName), ToolbarIcon = "Images/Sort.png", ToolbarCategory = nameof(Resources.View))]
+sealed class SortAssemblyListCommand : SimpleCommand, IComparer<LoadedAssembly>
 	{
 		public override void Execute(object parameter)
 		{
 			using (MainWindow.Instance.treeView.LockUpdates())
-				MainWindow.Instance.CurrentAssemblyList.Sort(this);
-		}
+        {
+            MainWindow.Instance.CurrentAssemblyList.Sort(this);
+        }
+    }
 
-		int IComparer<LoadedAssembly>.Compare(LoadedAssembly x, LoadedAssembly y)
-		{
-			return string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCulture);
-		}
-	}
+    int IComparer<LoadedAssembly>.Compare(LoadedAssembly x, LoadedAssembly y) => string.Compare(x.ShortName, y.ShortName, StringComparison.CurrentCulture);
+}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources._CollapseTreeNodes), MenuIcon = "Images/CollapseAll.png", MenuCategory = nameof(Resources.View))]
-    [ExportToolbarCommand(ToolTip = nameof(Resources.CollapseTreeNodes), ToolbarIcon = "Images/CollapseAll.png", ToolbarCategory = nameof(Resources.View))]
-    sealed class CollapseAllCommand : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._View), Header = nameof(Resources._CollapseTreeNodes), MenuIcon = "Images/CollapseAll.png", MenuCategory = nameof(Resources.View))]
+[ExportToolbarCommand(ToolTip = nameof(Resources.CollapseTreeNodes), ToolbarIcon = "Images/CollapseAll.png", ToolbarCategory = nameof(Resources.View))]
+sealed class CollapseAllCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
 			using (MainWindow.Instance.treeView.LockUpdates())
-				CollapseChildren(MainWindow.Instance.treeView.Root);
+        {
+            CollapseChildren(MainWindow.Instance.treeView.Root);
+        }
 
-			void CollapseChildren(SharpTreeNode node)
+        void CollapseChildren(SharpTreeNode node)
 			{
 				foreach (var child in node.Children) {
 					if (!child.IsExpanded)
-						continue;
-					CollapseChildren(child);
+                {
+                    continue;
+                }
+
+                CollapseChildren(child);
 					child.IsExpanded = false;
 				}
 			}
 		}
 	}
-}

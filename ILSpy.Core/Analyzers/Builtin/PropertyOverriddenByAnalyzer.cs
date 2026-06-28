@@ -16,17 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows properties that override a property.
 	/// </summary>
@@ -39,31 +35,35 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			var scope = context.GetScopeOf((IProperty)analyzedSymbol);
 			foreach (var type in scope.GetTypesInScope(context.CancellationToken)) {
 				foreach (var result in AnalyzeType((IProperty)analyzedSymbol, type))
-					yield return result;
-			}
+            {
+                yield return result;
+            }
+        }
 		}
 
 		IEnumerable<IEntity> AnalyzeType(IProperty analyzedEntity, ITypeDefinition type)
 		{
-            var token = analyzedEntity.MetadataToken;
-            var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
-            var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
-            var allTypes = type.GetAllBaseTypeDefinitions();
-            if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
-                yield break;
+        var token = analyzedEntity.MetadataToken;
+        var declaringTypeToken = analyzedEntity.DeclaringTypeDefinition.MetadataToken;
+        var module = analyzedEntity.DeclaringTypeDefinition.ParentModule.MetadataFile;
+        var allTypes = type.GetAllBaseTypeDefinitions();
+        if (!allTypes.Any(t => t.MetadataToken == declaringTypeToken && t.ParentModule.MetadataFile == module))
+        {
+            yield break;
+        }
 
-			foreach (var property in type.Properties) {
-				if (!property.IsOverride) continue;
-                var baseMembers = InheritanceHelper.GetBaseMembers(property, false);
-                if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
-                    yield return property;
+        foreach (var property in type.Properties) {
+				if (!property.IsOverride)
+            {
+                continue;
+            }
+
+            var baseMembers = InheritanceHelper.GetBaseMembers(property, false);
+            if (baseMembers.Any(p => p.MetadataToken == token && p.ParentModule.MetadataFile == module)) {
+                yield return property;
 				}
 			}
 		}
 
-		public bool Show(ISymbol entity)
-		{
-			return entity is IProperty property && property.IsOverridable && property.DeclaringType.Kind != TypeKind.Interface;
-		}
-	}
+    public bool Show(ISymbol entity) => entity is IProperty property && property.IsOverridable && property.DeclaringType.Kind != TypeKind.Interface;
 }

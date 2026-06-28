@@ -18,8 +18,8 @@
 
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Interface implemented by all tree nodes
 	/// (both in main tree view and in analyzer)
@@ -33,4 +33,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// </summary>
 		IEntity Member { get; }
 	}
-}

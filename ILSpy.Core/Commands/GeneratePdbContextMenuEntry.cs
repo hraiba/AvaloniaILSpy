@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using Avalonia.Controls;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
@@ -30,48 +29,52 @@ using ICSharpCode.Decompiler.DebugInfo;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	[ExportContextMenuEntry(Header = "Generate portable PDB")]
 	class GeneratePdbContextMenuEntry : IContextMenuEntry
 	{
 		public void Execute(TextViewContext context)
 		{
 			var assembly = (context.SelectedTreeNodes?.FirstOrDefault() as AssemblyTreeNode)?.LoadedAssembly;
-			if (assembly == null) return;
-			GeneratePdbForAssembly(assembly);
+			if (assembly == null)
+        {
+            return;
+        }
+
+        GeneratePdbForAssembly(assembly);
 		}
 
 		public bool IsEnabled(TextViewContext context) => true;
 
-		public bool IsVisible(TextViewContext context)
-		{
-			return context.SelectedTreeNodes?.Length == 1
-				&& context.SelectedTreeNodes?.FirstOrDefault() is AssemblyTreeNode tn
-				&& !tn.LoadedAssembly.HasLoadError;
-		}
+    public bool IsVisible(TextViewContext context) => context.SelectedTreeNodes?.Length == 1
+            && context.SelectedTreeNodes?.FirstOrDefault() is AssemblyTreeNode tn
+            && !tn.LoadedAssembly.HasLoadError;
 
-		internal static async void GeneratePdbForAssembly(LoadedAssembly assembly)
+    internal static async void GeneratePdbForAssembly(LoadedAssembly assembly)
 		{
 			var file = assembly.GetPEFileOrNull();
 			if (!PortablePdbWriter.HasCodeViewDebugDirectoryEntry(file)) {
 				await MessageBox.Show($"Cannot create PDB file for {Path.GetFileName(assembly.FileName)}, because it does not contain a PE Debug Directory Entry of type 'CodeView'.");
 				return;
 			}
-			SaveFileDialog dlg = new SaveFileDialog();
+			SaveFileDialog dlg = new();
 			dlg.Title = "Save file";
 			dlg.InitialFileName = DecompilerTextView.CleanUpName(assembly.ShortName, ".pdb") + ".pdb";
-			dlg.Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Portable PDB", Extensions = { "pdb" } }, new FileDialogFilter { Name = "All files", Extensions = { "*" } } };
-            dlg.Directory = Path.GetDirectoryName(assembly.FileName);
-            string fileName = await dlg.ShowAsync(App.Current.GetMainWindow());
-            if (string.IsNullOrEmpty(fileName)) return;
-			DecompilationOptions options = new DecompilationOptions();
+			dlg.Filters = [new FileDialogFilter { Name = "Portable PDB", Extensions = { "pdb" } }, new FileDialogFilter { Name = "All files", Extensions = { "*" } }];
+        dlg.Directory = Path.GetDirectoryName(assembly.FileName);
+        string fileName = await dlg.ShowAsync(Avalonia.Application.Current.GetMainWindow());
+        if (string.IsNullOrEmpty(fileName))
+        {
+            return;
+        }
+
+        DecompilationOptions options = new();
 			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				Stopwatch stopwatch = Stopwatch.StartNew();
-				using (FileStream stream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write)) {
+				using (FileStream stream = new(fileName, FileMode.OpenOrCreate, FileAccess.Write)) {
 					try {
 						var decompiler = new CSharpDecompiler(file, assembly.GetAssemblyResolver(), options.DecompilerSettings);
 						PortablePdbWriter.WritePdb(file, decompiler, options.DecompilerSettings, stream);
@@ -91,21 +94,21 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.GeneratePortable), MenuCategory = "Save")]
-    class GeneratePdbMainMenuEntry : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.GeneratePortable), MenuCategory = "Save")]
+class GeneratePdbMainMenuEntry : SimpleCommand
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return MainWindow.Instance.SelectedNodes?.Count() == 1
-				&& MainWindow.Instance.SelectedNodes?.FirstOrDefault() is AssemblyTreeNode tn
-				&& !tn.LoadedAssembly.HasLoadError;
-		}
+    public override bool CanExecute(object parameter) => MainWindow.Instance.SelectedNodes?.Count() == 1
+            && MainWindow.Instance.SelectedNodes?.FirstOrDefault() is AssemblyTreeNode tn
+            && !tn.LoadedAssembly.HasLoadError;
 
-		public override void Execute(object parameter)
+    public override void Execute(object parameter)
 		{
 			var assembly = (MainWindow.Instance.SelectedNodes?.FirstOrDefault() as AssemblyTreeNode)?.LoadedAssembly;
-			if (assembly == null) return;
-			GeneratePdbContextMenuEntry.GeneratePdbForAssembly(assembly);
+			if (assembly == null)
+        {
+            return;
+        }
+
+        GeneratePdbContextMenuEntry.GeneratePdbForAssembly(assembly);
 		}
 	}
-}

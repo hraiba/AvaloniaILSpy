@@ -20,59 +20,52 @@ using System.Collections;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using AvaloniaEdit;
-using System;
 using Avalonia.Markup.Xaml;
 using Avalonia.Controls.Presenters;
 using System.Collections.Generic;
-using Avalonia.Layout;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	/// <summary>
 	/// Interaction logic for ResourceObjectTable.xaml
 	/// </summary>
 	public partial class ResourceObjectTable : UserControl, IRoutedCommandBindable
-    {
+{
 		internal DataGrid resourceListView;
 
-        public IList<RoutedCommandBinding> CommandBindings { get; } = new List<RoutedCommandBinding>();
+    public IList<RoutedCommandBinding> CommandBindings { get; } = [];
 
-        public ResourceObjectTable(IEnumerable resources, ContentPresenter contentPresenter)
-        {
-            InitializeComponent();
-            resourceListView.Items = resources;
-        }
+    public ResourceObjectTable(IEnumerable resources, ContentPresenter contentPresenter)
+    {
+        InitializeComponent();
+        resourceListView.Items = resources;
+    }
 
 		private void InitializeComponent()
 		{
 			AvaloniaXamlLoader.Load(this);
 			resourceListView = this.FindControl<DataGrid>("resourceListView");
-            CommandBindings.Add(new RoutedCommandBinding(global::AvaloniaEdit.ApplicationCommands.Copy, ExecuteCopy, CanExecuteCopy));
-        }
+        CommandBindings.Add(new RoutedCommandBinding(global::AvaloniaEdit.ApplicationCommands.Copy, ExecuteCopy, CanExecuteCopy));
+    }
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToVisualTree(e);
-            var size = e.Parent.Bounds;
-            Width = size.Width - 45;
-            MaxHeight = size.Height;
-        }
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        var size = e.Parent.Bounds;
+        Width = size.Width - 45;
+        MaxHeight = size.Height;
+    }
 
 		void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
 		{
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new();
 			foreach (var item in resourceListView.SelectedItems)
 			{
 				sb.AppendLine(item.ToString());
 			}
-			App.Current.Clipboard.SetTextAsync(sb.ToString());
+        Application.Current.Clipboard.SetTextAsync(sb.ToString());
 		}
-		
-		void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args)
-		{
-			args.CanExecute = true;
-		}
-	}
+
+    void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args) => args.CanExecute = true;
 }

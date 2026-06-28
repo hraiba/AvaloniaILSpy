@@ -18,12 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using Avalonia.Controls;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	using Pair = KeyValuePair<int, Lazy<IControl>>;
 	
 	/// <summary>
@@ -40,35 +39,49 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			if (this.UIElements == null)
-				return -1;
-			int r = this.UIElements.BinarySearch(new Pair(startOffset, null), this);
+			if (UIElements == null)
+        {
+            return -1;
+        }
+
+        int r = UIElements.BinarySearch(new Pair(startOffset, null), this);
 			// If the element isn't found, BinarySearch returns the complement of "insertion position".
 			// We use this to find the next element (if there wasn't any exact match).
 			if (r < 0)
-				r = ~r;
-			if (r < this.UIElements.Count)
-				return this.UIElements[r].Key;
-			else
-				return -1;
-		}
+        {
+            r = ~r;
+        }
+
+        if (r < UIElements.Count)
+        {
+            return UIElements[r].Key;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 		
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			if (this.UIElements == null)
-				return null;
-			int r = UIElements.BinarySearch(new Pair(offset, null), this);
+			if (UIElements == null)
+        {
+            return null;
+        }
+
+        int r = UIElements.BinarySearch(new Pair(offset, null), this);
 			if (r >= 0)
-				return new InlineObjectElement(0, this.UIElements[r].Value.Value);
-			else
-				return null;
-		}
-		
-		int IComparer<Pair>.Compare(Pair x, Pair y)
-		{
-			// Compare (offset,Lazy<UIElement>) pairs by the offset.
-			// Used in BinarySearch()
-			return x.Key.CompareTo(y.Key);
-		}
-	}
+        {
+            return new InlineObjectElement(0, UIElements[r].Value.Value);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    int IComparer<Pair>.Compare(Pair x, Pair y) =>
+        // Compare (offset,Lazy<UIElement>) pairs by the offset.
+        // Used in BinarySearch()
+        x.Key.CompareTo(y.Key);
 }

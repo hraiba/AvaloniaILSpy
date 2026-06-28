@@ -21,8 +21,8 @@ using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	internal sealed class AnalyzedEventTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly IEvent analyzedEvent;
@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		{
 			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 			this.prefix = prefix;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override IEntity Member => analyzedEvent;
@@ -45,20 +45,28 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		protected override void LoadChildren()
 		{
 			if (analyzedEvent.CanAdd)
-				this.Children.Add(new AnalyzedAccessorTreeNode(analyzedEvent.AddAccessor, "add"));
-			if (analyzedEvent.CanRemove)
-				this.Children.Add(new AnalyzedAccessorTreeNode(analyzedEvent.RemoveAccessor, "remove"));
-			if (TryFindBackingField(analyzedEvent, out var backingField))
-				this.Children.Add(new AnalyzedFieldTreeNode(backingField));
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedEvent.AddAccessor, "add"));
+        }
 
-			//foreach (var accessor in analyzedEvent.OtherMethods)
-			//	this.Children.Add(new AnalyzedAccessorTreeNode(accessor, null));
+        if (analyzedEvent.CanRemove)
+        {
+            Children.Add(new AnalyzedAccessorTreeNode(analyzedEvent.RemoveAccessor, "remove"));
+        }
 
-			var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
+        if (TryFindBackingField(analyzedEvent, out var backingField))
+        {
+            Children.Add(new AnalyzedFieldTreeNode(backingField));
+        }
+
+        //foreach (var accessor in analyzedEvent.OtherMethods)
+        //	this.Children.Add(new AnalyzedAccessorTreeNode(accessor, null));
+
+        var analyzers = App.ExportProvider.GetExports<IAnalyzer, IAnalyzerMetadata>("Analyzer");
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedEvent)) {
-					this.Children.Add(new AnalyzerSearchTreeNode(analyzedEvent, analyzer, lazy.Metadata.Header));
+					Children.Add(new AnalyzerSearchTreeNode(analyzedEvent, analyzer, lazy.Metadata.Header));
 				}
 			}
 		}
@@ -75,4 +83,3 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 			return false;
 		}
 	}
-}

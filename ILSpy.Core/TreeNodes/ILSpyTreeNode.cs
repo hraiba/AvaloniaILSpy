@@ -23,70 +23,66 @@ using System.Threading.Tasks;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
 	public abstract class ILSpyTreeNode : SharpTreeNode
 	{
-		FilterSettings filterSettings;
-		bool childrenNeedFiltering;
+    bool childrenNeedFiltering;
 
 		public FilterSettings FilterSettings
 		{
-			get { return filterSettings; }
-			set
+			get;
+        set
 			{
-				if (filterSettings != value) {
-					filterSettings = value;
+				if (field != value) {
+					field = value;
 					OnFilterSettingsChanged();
 				}
 			}
 		}
 
-		public Language Language
-		{
-			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
-		}
+    public Language Language => FilterSettings != null ? FilterSettings.Language : Languages.AllLanguages[0];
 
-		public virtual FilterResult Filter(FilterSettings settings)
+    public virtual FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
-				return FilterResult.Match;
-			else
-				return FilterResult.Hidden;
-		}
+        {
+            return FilterResult.Match;
+        }
+        else
+        {
+            return FilterResult.Hidden;
+        }
+    }
 
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 
-		/// <summary>
-		/// Used to implement special view logic for some items.
-		/// This method is called on the main thread when only a single item is selected.
-		/// If it returns false, normal decompilation is used to view the item.
-		/// </summary>
-		public virtual bool View(TextView.DecompilerTextView textView)
-		{
-			return false;
-		}
+    /// <summary>
+    /// Used to implement special view logic for some items.
+    /// This method is called on the main thread when only a single item is selected.
+    /// If it returns false, normal decompilation is used to view the item.
+    /// </summary>
+    public virtual bool View(TextView.DecompilerTextView textView) => false;
 
-		/// <summary>
-		/// Used to implement special save logic for some items.
-		/// This method is called on the main thread when only a single item is selected.
-		/// If it returns false, normal decompilation is used to save the item.
-		/// </summary>
-		public virtual Task<bool> Save(TextView.DecompilerTextView textView)
-		{
-            return Task.FromResult(false);
-		}
+    /// <summary>
+    /// Used to implement special save logic for some items.
+    /// This method is called on the main thread when only a single item is selected.
+    /// If it returns false, normal decompilation is used to save the item.
+    /// </summary>
+    public virtual Task<bool> Save(TextView.DecompilerTextView textView) => Task.FromResult(false);
 
-		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
+    protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
 			if (e.NewItems != null) {
 				if (IsVisible) {
 					foreach (ILSpyTreeNode node in e.NewItems)
-						ApplyFilterToChild(node);
-				} else {
+                {
+                    ApplyFilterToChild(node);
+                }
+            } else {
 					childrenNeedFiltering = true;
 				}
 			}
@@ -96,25 +92,30 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		void ApplyFilterToChild(ILSpyTreeNode child)
 		{
 			FilterResult r;
-			if (this.FilterSettings == null)
-				r = FilterResult.Match;
-			else
-				r = child.Filter(this.FilterSettings);
-			switch (r) {
+			if (FilterSettings == null)
+        {
+            r = FilterResult.Match;
+        }
+        else
+        {
+            r = child.Filter(FilterSettings);
+        }
+
+        switch (r) {
 				case FilterResult.Hidden:
 					child.IsHidden = true;
 					break;
 				case FilterResult.Match:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.FilterSettings = StripSearchTerm(FilterSettings);
 					child.IsHidden = false;
 					break;
 				case FilterResult.Recurse:
-					child.FilterSettings = this.FilterSettings;
+					child.FilterSettings = FilterSettings;
 					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
 				case FilterResult.MatchAndRecurse:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
+					child.FilterSettings = StripSearchTerm(FilterSettings);
 					child.EnsureChildrenFiltered();
 					child.IsHidden = child.Children.All(c => c.IsHidden);
 					break;
@@ -126,8 +127,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		static FilterSettings StripSearchTerm(FilterSettings filterSettings)
 		{
 			if (filterSettings == null)
-				return null;
-			if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
 				filterSettings = filterSettings.Clone();
 				filterSettings.SearchTerm = null;
 			}
@@ -138,9 +142,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			RaisePropertyChanged("Text");
 			if (IsVisible) {
-				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
-					ApplyFilterToChild(node);
-			} else {
+				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
+            {
+                ApplyFilterToChild(node);
+            }
+        } else {
 				childrenNeedFiltering = true;
 			}
 		}
@@ -156,33 +162,33 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			EnsureLazyChildren();
 			if (childrenNeedFiltering) {
 				childrenNeedFiltering = false;
-				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
-					ApplyFilterToChild(node);
-			}
-		}
-		
-		public virtual bool IsPublicAPI {
-			get { return true; }
+				foreach (ILSpyTreeNode node in Children.OfType<ILSpyTreeNode>())
+            {
+                ApplyFilterToChild(node);
+            }
+        }
 		}
 
-		public virtual bool IsAutoLoaded
-		{
-			get { return false; }
-		}
-		
-		public override Avalonia.Media.IBrush Foreground {
+    public virtual bool IsPublicAPI => true;
+
+    public virtual bool IsAutoLoaded => false;
+
+    public override Avalonia.Media.IBrush Foreground {
 			get {
 				if (IsPublicAPI)
-					if (IsAutoLoaded) {
+            {
+                if (IsAutoLoaded) {
 						// HACK: should not be hard coded?
 						return Avalonia.Media.Brushes.SteelBlue;
 					}
 					else {
 						return base.Foreground;
 					}
-				else
-					return Avalonia.SystemColors.GrayTextBrush;
-			}
+            }
+            else
+            {
+                return Avalonia.SystemColors.GrayTextBrush;
+            }
+        }
 		}
 	}
-}

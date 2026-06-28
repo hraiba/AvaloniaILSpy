@@ -19,15 +19,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Base interface for all analyzers. You can register an analyzer for any <see cref="ISymbol"/> by implementing
 	/// this interface and adding an <see cref="ExportAnalyzerAttribute"/>.
@@ -65,8 +62,11 @@ namespace ICSharpCode.ILSpy.Analyzers
 		public MethodBodyBlock GetMethodBody(IMethod method)
 		{
 			if (!method.HasBody || method.MetadataToken.IsNil)
-				return null;
-			var module = method.ParentModule.MetadataFile;
+        {
+            return null;
+        }
+
+        var module = method.ParentModule.MetadataFile;
 			var md = module.Metadata.GetMethodDefinition((MethodDefinitionHandle)method.MetadataToken);
 			try {
 				return module.GetMethodBody(md.RelativeVirtualAddress);
@@ -75,11 +75,8 @@ namespace ICSharpCode.ILSpy.Analyzers
 			}
 		}
 
-		public AnalyzerScope GetScopeOf(IEntity entity)
-		{
-			return new AnalyzerScope(AssemblyList, entity);
-		}
-	}
+    public AnalyzerScope GetScopeOf(IEntity entity) => new(AssemblyList, entity);
+}
 
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
@@ -98,4 +95,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 		string Header { get; }
 		int Order { get; }
 	}
-}

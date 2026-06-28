@@ -16,97 +16,72 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
 using ICSharpCode.ILSpy.Controls;
-using ICSharpCode.TreeView;
-using Mono.Cecil;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// Interaction logic for NugetPackageBrowserDialog.xaml
+/// </summary>
+public partial class NugetPackageBrowserDialog : DialogWindow, INotifyPropertyChanged
 {
-	/// <summary>
-	/// Interaction logic for NugetPackageBrowserDialog.xaml
-	/// </summary>
-	public partial class NugetPackageBrowserDialog : DialogWindow, INotifyPropertyChanged
-	{
-		public LoadedNugetPackage Package { get; }
+    public LoadedNugetPackage Package { get; }
 
-		internal Button okButton;
-		internal Button cancelButton;
+    internal Button okButton;
+    internal Button cancelButton;
 
-		public NugetPackageBrowserDialog()
-		{
-			InitializeComponent();
+    public NugetPackageBrowserDialog()
+    {
+        InitializeComponent();
 #if DEBUG
-			this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-		}
+    }
 
-		public NugetPackageBrowserDialog(LoadedNugetPackage package, WindowBase owner)
-		{
-			InitializeComponent();
-			Owner = owner;
+    public NugetPackageBrowserDialog(LoadedNugetPackage package, WindowBase owner)
+    {
+        InitializeComponent();
+        Owner = owner;
 #if DEBUG
-			this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-			this.Package = package;
-			this.Package.PropertyChanged += Package_PropertyChanged;
-			DataContext = this;
-		}
+        Package = package;
+        Package.PropertyChanged += Package_PropertyChanged;
+        DataContext = this;
+    }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-			okButton = this.FindControl<Button>("okButton");
-			cancelButton = this.FindControl<Button>("cancelButton");
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        okButton = this.FindControl<Button>("okButton");
+        cancelButton = this.FindControl<Button>("cancelButton");
 
-			okButton.Click += OKButton_Click;
-			cancelButton.Click += CancelButton_Click;
-		}
+        okButton.Click += OKButton_Click;
+        cancelButton.Click += CancelButton_Click;
+    }
 
-		public new event PropertyChangedEventHandler PropertyChanged;
+    public new event PropertyChangedEventHandler PropertyChanged;
 
-		void Package_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == nameof(Package.SelectedEntries)) {
-				OnPropertyChanged(new PropertyChangedEventArgs("HasSelection"));
-			}
-		}
+    void Package_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Package.SelectedEntries))
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasSelection)));
+        }
+    }
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(true);
-		}
+    void OKButton_Click(object sender, RoutedEventArgs e) => Close(true);
 
-		void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(false);
-		}
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			PropertyChanged?.Invoke(this, e);
-		}
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
-		public Entry[] SelectedItems {
-			get {
-				return Package.SelectedEntries.ToArray();
-			}
-		}
+    public Entry[] SelectedItems => [.. Package.SelectedEntries];
 
-		public bool HasSelection {
-			get { return SelectedItems.Length > 0; }
-		}
-	}
+    public bool HasSelection => SelectedItems.Length > 0;
 }

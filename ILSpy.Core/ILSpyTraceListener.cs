@@ -20,96 +20,108 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using ICSharpCode.TreeView;
 using System.Linq;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+class ILSpyTraceListener : DefaultTraceListener
 {
-	class ILSpyTraceListener : DefaultTraceListener
-	{
-		[Conditional("DEBUG")]
-		public static void Install()
-		{
-			//TODO: This was debug listeners
-			Trace.Listeners.Clear();
-			Trace.Listeners.Add(new ILSpyTraceListener());
-		}
+    [Conditional("DEBUG")]
+    public static void Install()
+    {
+        //TODO: This was debug listeners
+        Trace.Listeners.Clear();
+        Trace.Listeners.Add(new ILSpyTraceListener());
+    }
 
-		public ILSpyTraceListener()
-		{
-			base.AssertUiEnabled = false;
-		}
+    public ILSpyTraceListener()
+    {
+        AssertUiEnabled = false;
+    }
 
-		HashSet<string> ignoredStacks = new HashSet<string>();
-		bool dialogIsOpen;
+    HashSet<string> ignoredStacks = [];
+    bool dialogIsOpen;
 
-		public override void Fail(string message)
-		{
-			this.Fail(message, null);
-		}
+    public override void Fail(string message) => Fail(message, null);
 
-		public override void Fail(string message, string detailMessage)
-		{
-			base.Fail(message, detailMessage); // let base class write the assert to the debug console
-			string topFrame = "";
-			string stackTrace = "";
-			try {
-				stackTrace = new StackTrace(true).ToString();
-				var frames = stackTrace.Split('\r', '\n')
-					.Where(f => f.Length > 0)
-					.SkipWhile(f => f.Contains("ILSpyTraceListener") || f.Contains("System.Diagnostics"))
-					.ToList();
-				topFrame = frames[0];
-				stackTrace = string.Join(Environment.NewLine, frames);
-			} catch { }
-			lock (ignoredStacks) {
-				if (ignoredStacks.Contains(topFrame))
-					return;
-				if (dialogIsOpen)
-					return;
-				dialogIsOpen = true;
-			}
-			// We might be unable to display a dialog here, e.g. because
-			// we're on the UI thread but dispatcher processing is disabled.
-			// In any case, we don't want to pump messages while the dialog is displaying,
-			// so we create a separate UI thread for the dialog:
-			int result = 0;
-			var thread = new Thread(() => result = ShowAssertionDialog(message, detailMessage, stackTrace));
-			thread.SetApartmentState(ApartmentState.STA);
-			thread.Start();
-			thread.Join();
-			if (result == 0) { // throw
-				throw new AssertionFailedException(message);
-			} else if (result == 1) { // debug
-				Debugger.Break();
-			} else if (result == 2) { // ignore
-			} else if (result == 3) {
-				lock (ignoredStacks) {
-					ignoredStacks.Add(topFrame);
-				}
-			}
-		}
+    public override void Fail(string message, string detailMessage)
+    {
+        base.Fail(message, detailMessage); // let base class write the assert to the debug console
+        string topFrame = "";
+        string stackTrace = "";
+        try
+        {
+            stackTrace = new StackTrace(true).ToString();
+            var frames = stackTrace.Split('\r', '\n')
+                .Where(f => f.Length > 0)
+                .SkipWhile(f => f.Contains("ILSpyTraceListener") || f.Contains("System.Diagnostics"))
+                .ToList();
+            topFrame = frames[0];
+            stackTrace = string.Join(Environment.NewLine, frames);
+        }
+        catch { }
+        lock (ignoredStacks)
+        {
+            if (ignoredStacks.Contains(topFrame))
+            {
+                return;
+            }
 
-		int ShowAssertionDialog(string message, string detailMessage, string stackTrace)
-		{
-			message = message + Environment.NewLine + detailMessage + Environment.NewLine + stackTrace;
-			string[] buttonTexts = { "Throw", "Debug", "Ignore", "Ignore All" };
-			CustomDialog inputBox = new CustomDialog("Assertion Failed", message.TakeStartEllipsis(750), -1, 2, buttonTexts);
-			//inputBox.StartPosition = Avalonia.Forms.FormStartPosition.CenterScreen;
-			inputBox.ShowInTaskbar = true; // make this window more visible, because it effectively interrupts the decompilation process.
-			try {
-				inputBox.ShowDialog(MainWindow.Instance);
-				return inputBox.Result;
-			} finally {
-				dialogIsOpen = false;
-				//inputBox.Dispose();
-			}
-		}
-	}
+            if (dialogIsOpen)
+            {
+                return;
+            }
 
-	class AssertionFailedException : Exception
-	{
-		public AssertionFailedException(string message) : base(message) { }
-	}
+            dialogIsOpen = true;
+        }
+        // We might be unable to display a dialog here, e.g. because
+        // we're on the UI thread but dispatcher processing is disabled.
+        // In any case, we don't want to pump messages while the dialog is displaying,
+        // so we create a separate UI thread for the dialog:
+        int result = 0;
+        var thread = new Thread(() => result = ShowAssertionDialog(message, detailMessage, stackTrace));
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+        if (result == 0)
+        { // throw
+            throw new AssertionFailedException(message);
+        }
+        else if (result == 1)
+        { // debug
+            Debugger.Break();
+        }
+        else if (result == 2)
+        { // ignore
+        }
+        else if (result == 3)
+        {
+            lock (ignoredStacks)
+            {
+                ignoredStacks.Add(topFrame);
+            }
+        }
+    }
+
+    int ShowAssertionDialog(string message, string detailMessage, string stackTrace)
+    {
+        message = message + Environment.NewLine + detailMessage + Environment.NewLine + stackTrace;
+        string[] buttonTexts = { "Throw", "Debug", "Ignore", "Ignore All" };
+        CustomDialog inputBox = new("Assertion Failed", message.TakeStartEllipsis(750), -1, 2, buttonTexts);
+        //inputBox.StartPosition = Avalonia.Forms.FormStartPosition.CenterScreen;
+        inputBox.ShowInTaskbar = true; // make this window more visible, because it effectively interrupts the decompilation process.
+        try
+        {
+            inputBox.ShowDialog(MainWindow.Instance);
+            return inputBox.Result;
+        }
+        finally
+        {
+            dialogIsOpen = false;
+            //inputBox.Dispose();
+        }
+    }
 }
+
+class AssertionFailedException(string message) : Exception(message);

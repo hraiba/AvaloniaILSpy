@@ -23,271 +23,289 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls.FileLoaders;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// A list of assemblies.
+/// </summary>
+public sealed class AssemblyList
 {
-	/// <summary>
-	/// A list of assemblies.
-	/// </summary>
-	public sealed class AssemblyList
-	{
-		readonly string listName;
-        public AssemblyListManager Manager {get;}
-        
-		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
-		bool dirty;
-		internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly>();
-		internal readonly ConcurrentDictionary<string, LoadedAssembly> moduleLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
+    public AssemblyListManager Manager { get; }
 
-		/// <summary>
-		/// The assemblies in this list.
-		/// Needs locking for multi-threaded access!
-		/// Write accesses are allowed on the GUI thread only (but still need locking!)
-		/// </summary>
-		/// <remarks>
-		/// Technically read accesses need locking when done on non-GUI threads... but whenever possible, use the
-		/// thread-safe <see cref="GetAssemblies()"/> method.
-		/// </remarks>
-		internal readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
-		
-		public AssemblyList(AssemblyListManager manager, string listName)
-		{
-			this.listName = listName;
-            Manager = manager ?? throw new ArgumentNullException(nameof(manager));
-			assemblies.CollectionChanged += Assemblies_CollectionChanged;
-		}
-		
-		/// <summary>
-		/// Loads an assembly list from XML.
-		/// </summary>
-		public AssemblyList(AssemblyListManager manager, XElement listElement)
-			: this(manager, (string)listElement.Attribute("name"))
-		{
-			foreach (var asm in listElement.Elements("Assembly")) {
-				OpenAssembly((string)asm);
-			}
-			this.dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
-		}
-		
-		/// <summary>
-		/// Gets the loaded assemblies. This method is thread-safe.
-		/// </summary>
-		public LoadedAssembly[] GetAssemblies()
-		{
-			lock (assemblies) {
-				return assemblies.ToArray();
-			}
-		}
-		
-		/// <summary>
-		/// Saves this assembly list to XML.
-		/// </summary>
-		internal XElement SaveAsXml()
-		{
-			return new XElement(
-				"List",
-				new XAttribute("name", this.ListName),
-				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
-			);
-		}
-		
-		/// <summary>
-		/// Gets the name of this list.
-		/// </summary>
-		public string ListName {
-			get { return listName; }
-		}
-		
-		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			ClearCache();
-			// Whenever the assembly list is modified, mark it as dirty
-			// and enqueue a task that saves it once the UI has finished modifying the assembly list.
-			if (!dirty) {
-				dirty = true;
-				Dispatcher.UIThread.InvokeAsync(
-					new Action(
-						delegate {
-							dirty = false;
-							AssemblyListManager.SaveList(this);
-							ClearCache();
-						}),
-					DispatcherPriority.Background
-				);
-			}
-		}
+    /// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
+    bool dirty;
+    internal readonly ConcurrentDictionary<(string assemblyName, bool isWinRT), LoadedAssembly> assemblyLookupCache = new();
+    internal readonly ConcurrentDictionary<string, LoadedAssembly> moduleLookupCache = new();
 
-		internal void RefreshSave()
-		{
-			if (!dirty) {
-				dirty = true;
-				Dispatcher.UIThread.InvokeAsync(
-					new Action(
-						delegate {
-							dirty = false;
-							AssemblyListManager.SaveList(this);
-						}),
-					DispatcherPriority.Background
-				);
-			}
-		}
-		
-		internal void ClearCache()
-		{
-			assemblyLookupCache.Clear();
-		}
+    /// <summary>
+    /// The assemblies in this list.
+    /// Needs locking for multi-threaded access!
+    /// Write accesses are allowed on the GUI thread only (but still need locking!)
+    /// </summary>
+    /// <remarks>
+    /// Technically read accesses need locking when done on non-GUI threads... but whenever possible, use the
+    /// thread-safe <see cref="GetAssemblies()"/> method.
+    /// </remarks>
+    internal readonly ObservableCollection<LoadedAssembly> assemblies = [];
 
-		public LoadedAssembly Open(string assemblyUri, bool isAutoLoaded = false)
-		{
-			if (assemblyUri.StartsWith("nupkg://", StringComparison.OrdinalIgnoreCase)) {
-				string fileName = assemblyUri.Substring("nupkg://".Length);
-				int separator = fileName.LastIndexOf(';');
-				string componentName = null;
-				if (separator > -1) {
-					componentName = fileName.Substring(separator + 1);
-					fileName = fileName.Substring(0, separator);
-					LoadedNugetPackage package = new LoadedNugetPackage(fileName);
-					var entry = package.Entries.FirstOrDefault(e => e.Name == componentName);
-					if (entry != null) {
-						return OpenAssembly(assemblyUri, entry.Stream, true);
-					}
-				}
-				return null;
-			} else {
-				return OpenAssembly(assemblyUri, isAutoLoaded);
-			}
-		}
+    public AssemblyList(AssemblyListManager manager, string listName)
+    {
+        ListName = listName;
+        Manager = manager ?? throw new ArgumentNullException(nameof(manager));
+        assemblies.CollectionChanged += Assemblies_CollectionChanged;
+    }
 
-		/// <summary>
-		/// Opens an assembly from disk.
-		/// Returns the existing assembly node if it is already loaded.
-		/// </summary>
-		public LoadedAssembly OpenAssembly(string file, bool isAutoLoaded = false)
-		{
-			Dispatcher.UIThread.VerifyAccess();
-			
-			file = Path.GetFullPath(file);
-			
-			foreach (LoadedAssembly asm in this.assemblies) {
-				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
-			
-			var newAsm = new LoadedAssembly(this, file);
-			newAsm.IsAutoLoaded = isAutoLoaded;
-			lock (assemblies) {
-				this.assemblies.Add(newAsm);
-			}
-			return newAsm;
-		}
+    /// <summary>
+    /// Loads an assembly list from XML.
+    /// </summary>
+    public AssemblyList(AssemblyListManager manager, XElement listElement)
+        : this(manager, (string)listElement.Attribute("name"))
+    {
+        foreach (var asm in listElement.Elements("Assembly"))
+        {
+            OpenAssembly((string)asm);
+        }
+        dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
+    }
 
-		/// <summary>
-		/// Opens an assembly from a stream.
-		/// </summary>
-		public LoadedAssembly OpenAssembly(string file, Stream stream, bool isAutoLoaded = false)
-		{
-			Dispatcher.UIThread.VerifyAccess();
+    /// <summary>
+    /// Gets the loaded assemblies. This method is thread-safe.
+    /// </summary>
+    public LoadedAssembly[] GetAssemblies()
+    {
+        lock (assemblies)
+        {
+            return [.. assemblies];
+        }
+    }
 
-			foreach (LoadedAssembly asm in this.assemblies) {
-				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
+    /// <summary>
+    /// Saves this assembly list to XML.
+    /// </summary>
+    internal XElement SaveAsXml() => new(
+            "List",
+            new XAttribute("name", ListName),
+            assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
+        );
 
-			var newAsm = new LoadedAssembly(this, file, stream);
-			newAsm.IsAutoLoaded = isAutoLoaded;
-			lock (assemblies) {
-				this.assemblies.Add(newAsm);
-			}
-			return newAsm;
-		}
+    /// <summary>
+    /// Gets the name of this list.
+    /// </summary>
+    public string ListName { get; }
 
-		/// <summary>
-		/// Replace the assembly object model from a crafted stream, without disk I/O
-		/// Returns null if it is not already loaded.
-		/// </summary>
-		public LoadedAssembly HotReplaceAssembly(string file, Stream stream)
-		{
-			Dispatcher.UIThread.VerifyAccess();
-			file = Path.GetFullPath(file);
+    void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        ClearCache();
+        // Whenever the assembly list is modified, mark it as dirty
+        // and enqueue a task that saves it once the UI has finished modifying the assembly list.
+        if (!dirty)
+        {
+            dirty = true;
+            Dispatcher.UIThread.InvokeAsync(
+                new Action(
+                    delegate
+                    {
+                        dirty = false;
+                        AssemblyListManager.SaveList(this);
+                        ClearCache();
+                    }),
+                DispatcherPriority.Background
+            );
+        }
+    }
 
-			var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
-			if (target == null)
-				return null;
+    internal void RefreshSave()
+    {
+        if (!dirty)
+        {
+            dirty = true;
+            Dispatcher.UIThread.InvokeAsync(
+                new Action(
+                    delegate
+                    {
+                        dirty = false;
+                        AssemblyListManager.SaveList(this);
+                    }),
+                DispatcherPriority.Background
+            );
+        }
+    }
 
-			var index = this.assemblies.IndexOf(target);
-			var newAsm = new LoadedAssembly(this, file, stream);
-			newAsm.IsAutoLoaded = target.IsAutoLoaded;
-			lock (assemblies) {
-				this.assemblies.Remove(target);
-				this.assemblies.Insert(index, newAsm);
-			}
-			return newAsm;
-		}
+    internal void ClearCache() => assemblyLookupCache.Clear();
 
-		public LoadedAssembly ReloadAssembly(string file)
-		{
-			Dispatcher.UIThread.VerifyAccess();
-			file = Path.GetFullPath(file);
+    public LoadedAssembly Open(string assemblyUri, bool isAutoLoaded = false)
+    {
+        if (assemblyUri.StartsWith("nupkg://", StringComparison.OrdinalIgnoreCase))
+        {
+            string fileName = assemblyUri.Substring("nupkg://".Length);
+            int separator = fileName.LastIndexOf(';');
+            string componentName = null;
+            if (separator > -1)
+            {
+                componentName = fileName.Substring(separator + 1);
+                fileName = fileName.Substring(0, separator);
+                LoadedNugetPackage package = new(fileName);
+                var entry = package.Entries.FirstOrDefault(e => e.Name == componentName);
+                if (entry != null)
+                {
+                    return OpenAssembly(assemblyUri, entry.Stream, true);
+                }
+            }
+            return null;
+        }
+        else
+        {
+            return OpenAssembly(assemblyUri, isAutoLoaded);
+        }
+    }
 
-			var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
-			if (target == null)
-				return null;
+    /// <summary>
+    /// Opens an assembly from disk.
+    /// Returns the existing assembly node if it is already loaded.
+    /// </summary>
+    public LoadedAssembly OpenAssembly(string file, bool isAutoLoaded = false)
+    {
+        Dispatcher.UIThread.VerifyAccess();
 
-			var index = this.assemblies.IndexOf(target);
-			var newAsm = new LoadedAssembly(this, file);
-			newAsm.IsAutoLoaded = target.IsAutoLoaded;
-			lock (assemblies) {
-				this.assemblies.Remove(target);
-				this.assemblies.Insert(index, newAsm);
-			}
-			return newAsm;
-		}
-		
-		public void Unload(LoadedAssembly assembly)
-		{
-			Dispatcher.UIThread.VerifyAccess();
-			lock (assemblies) {
-				assemblies.Remove(assembly);
-			}
-			RequestGC();
-		}
-		
-		static bool gcRequested;
-		
-		void RequestGC()
-		{
-			if (gcRequested) return;
-			gcRequested = true;
-			Dispatcher.UIThread.InvokeAsync(new Action(
-				delegate {
-					gcRequested = false;
-					GC.Collect();
-				}), DispatcherPriority.ContextIdle);
-		}
-		
-		public void Sort(IComparer<LoadedAssembly> comparer)
-		{
-			Sort(0, int.MaxValue, comparer);
-		}
-		
-		public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
-		{
-			Dispatcher.UIThread.VerifyAccess();
-			lock (assemblies) {
-				List<LoadedAssembly> list = new List<LoadedAssembly>(assemblies);
-				list.Sort(index, Math.Min(count, list.Count - index), comparer);
-				assemblies.Clear();
-				assemblies.AddRange(list);
-			}
-		}
+        file = Path.GetFullPath(file);
+
+        foreach (LoadedAssembly asm in assemblies)
+        {
+            if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
+            {
+                return asm;
+            }
+        }
+
+        var newAsm = new LoadedAssembly(this, file);
+        newAsm.IsAutoLoaded = isAutoLoaded;
+        lock (assemblies)
+        {
+            assemblies.Add(newAsm);
+        }
+        return newAsm;
+    }
+
+    /// <summary>
+    /// Opens an assembly from a stream.
+    /// </summary>
+    public LoadedAssembly OpenAssembly(string file, Stream stream, bool isAutoLoaded = false)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+
+        foreach (LoadedAssembly asm in assemblies)
+        {
+            if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
+            {
+                return asm;
+            }
+        }
+
+        var newAsm = new LoadedAssembly(this, file, stream);
+        newAsm.IsAutoLoaded = isAutoLoaded;
+        lock (assemblies)
+        {
+            assemblies.Add(newAsm);
+        }
+        return newAsm;
+    }
+
+    /// <summary>
+    /// Replace the assembly object model from a crafted stream, without disk I/O
+    /// Returns null if it is not already loaded.
+    /// </summary>
+    public LoadedAssembly HotReplaceAssembly(string file, Stream stream)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        file = Path.GetFullPath(file);
+
+        var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
+        if (target == null)
+        {
+            return null;
+        }
+
+        var index = assemblies.IndexOf(target);
+        var newAsm = new LoadedAssembly(this, file, stream);
+        newAsm.IsAutoLoaded = target.IsAutoLoaded;
+        lock (assemblies)
+        {
+            assemblies.Remove(target);
+            assemblies.Insert(index, newAsm);
+        }
+        return newAsm;
+    }
+
+    public LoadedAssembly ReloadAssembly(string file)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        file = Path.GetFullPath(file);
+
+        var target = assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
+        if (target == null)
+        {
+            return null;
+        }
+
+        var index = assemblies.IndexOf(target);
+        var newAsm = new LoadedAssembly(this, file);
+        newAsm.IsAutoLoaded = target.IsAutoLoaded;
+        lock (assemblies)
+        {
+            assemblies.Remove(target);
+            assemblies.Insert(index, newAsm);
+        }
+        return newAsm;
+    }
+
+    public void Unload(LoadedAssembly assembly)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        lock (assemblies)
+        {
+            assemblies.Remove(assembly);
+        }
+        RequestGC();
+    }
+
+    static bool gcRequested;
+
+    void RequestGC()
+    {
+        if (gcRequested)
+        {
+            return;
+        }
+
+        gcRequested = true;
+        Dispatcher.UIThread.InvokeAsync(new Action(
+            delegate
+            {
+                gcRequested = false;
+                GC.Collect();
+            }), DispatcherPriority.ContextIdle);
+    }
+
+    public void Sort(IComparer<LoadedAssembly> comparer) => Sort(0, int.MaxValue, comparer);
+
+    public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
+    {
+        Dispatcher.UIThread.VerifyAccess();
+        lock (assemblies)
+        {
+            List<LoadedAssembly> list = [.. assemblies];
+            list.Sort(index, Math.Min(count, list.Count - index), comparer);
+            assemblies.Clear();
+            assemblies.AddRange(list);
+        }
+    }
 
 
-		public bool ApplyWinRTProjections { get; set; }
-		public bool UseDebugSymbols { get; set; }
-		public FileLoaderRegistry LoaderRegistry => this.Manager.LoaderRegistry;
-	}
+    public bool ApplyWinRTProjections { get; set; }
+    public bool UseDebugSymbols { get; set; }
+    public FileLoaderRegistry LoaderRegistry => Manager.LoaderRegistry;
 }

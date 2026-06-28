@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class CursorResourceNodeFactory : IResourceNodeFactory
 	{
@@ -36,62 +36,61 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			Stream stream = resource.TryOpenStream();
 			if (stream == null)
-				return null;
-			return CreateNode(resource.Name, stream);
+        {
+            return null;
+        }
+
+        return CreateNode(resource.Name, stream);
 		}
 
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
 			if (!(data is Stream))
-			    return null;
-			foreach (string fileExt in imageFileExtensions) {
+        {
+            return null;
+        }
+
+        foreach (string fileExt in imageFileExtensions) {
 				if (key.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
-					return new CursorResourceEntryNode(key, (Stream)data);
-			}
+            {
+                return new CursorResourceEntryNode(key, (Stream)data);
+            }
+        }
 			return null;
 		}
 	}
 
-	sealed class CursorResourceEntryNode : ResourceEntryNode
+	sealed class CursorResourceEntryNode(string key, Stream data) : ResourceEntryNode(key, data)
 	{
-		public CursorResourceEntryNode(string key, Stream data)
-			: base(key, data)
-		{
-		}
+    public override object Icon => Images.ResourceImage;
 
-		public override object Icon
-		{
-			get { return Images.ResourceImage; }
-		}
-
-		public override bool View(DecompilerTextView textView)
+    public override bool View(DecompilerTextView textView)
 		{
 			try {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				Data.Position = 0;
-                Bitmap image;
+            Bitmap image;
 
-                //HACK: windows imaging does not understand that .cur files have the same layout as .ico
-                // so load to data, and modify the ResourceType in the header to make look like an icon...
-                MemoryStream s = Data as MemoryStream;
-				if (null == s)
-				{
-					// data was stored in another stream type (e.g. PinnedBufferedMemoryStream)
-					s = new MemoryStream();
-					Data.CopyTo(s);
-				}
-				byte[] curData = s.ToArray();
+            //HACK: windows imaging does not understand that .cur files have the same layout as .ico
+            // so load to data, and modify the ResourceType in the header to make look like an icon...
+            if (Data is not MemoryStream s)
+            {
+                // data was stored in another stream type (e.g. PinnedBufferedMemoryStream)
+                s = new MemoryStream();
+                Data.CopyTo(s);
+            }
+            byte[] curData = s.ToArray();
 				curData[2] = 1;
 				using (Stream stream = new MemoryStream(curData)) {
-                    image = new Bitmap(stream);
-                }
+                image = new Bitmap(stream);
+            }
 
 				output.AddUIElement(() => new Image { Source = image });
 				output.WriteLine();
-                output.AddButton(Images.Save, Resources.Save, async delegate {
-                    await Save(null);
-                });
-                textView.ShowNode(output, this);
+            output.AddButton(Images.Save, Resources.Save, async delegate {
+                await Save(null);
+            });
+            textView.ShowNode(output, this);
 				return true;
 			}
 			catch (Exception) {
@@ -99,4 +98,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
-}

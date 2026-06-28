@@ -18,13 +18,12 @@
 
 using System.Collections.Generic;
 using Avalonia.Interactivity;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	/// <summary>
 	/// Base class for entity nodes.
 	/// </summary>
@@ -35,21 +34,22 @@ namespace ICSharpCode.ILSpy.Analyzers
 		public override void ActivateItem(RoutedEventArgs e)
 		{
 			e.Handled = true;
-			MainWindow.Instance.JumpToReference(this.Member);
+			MainWindow.Instance.JumpToReference(Member);
 		}
 
 		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 		{
 			foreach (LoadedAssembly asm in removedAssemblies) {
-				if (this.Member.ParentModule.MetadataFile == asm.GetPEFileOrNull())
-					return false; // remove this node
-			}
-			this.Children.RemoveAll(
-				delegate(SharpTreeNode n) {
-					AnalyzerTreeNode an = n as AnalyzerTreeNode;
-					return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
-				});
+				if (Member.ParentModule.MetadataFile == asm.GetPEFileOrNull())
+            {
+                return false; // remove this node
+            }
+        }
+			Children.RemoveAll(
+                n =>
+                {
+                    return n is not AnalyzerTreeNode an || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+                });
 			return true;
 		}
 	}
-}

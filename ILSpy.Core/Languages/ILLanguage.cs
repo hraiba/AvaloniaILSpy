@@ -20,18 +20,15 @@ using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using System.ComponentModel.Composition;
-using System.Reflection.PortableExecutable;
 using System.Reflection.Metadata;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using System.Linq;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.Decompiler.Util;
 using ICSharpCode.Decompiler.Solution;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	/// <summary>
 	/// IL language support.
 	/// </summary>
@@ -43,24 +40,20 @@ namespace ICSharpCode.ILSpy
 	public class ILLanguage : Language
 	{
 		protected bool detectControlStructure = true;
-		
-		public override string Name {
-			get { return "IL"; }
-		}
-		
-		public override string FileExtension {
-			get { return ".il"; }
-		}
-		
-		protected virtual ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
+
+    public override string Name => "IL";
+
+    public override string FileExtension => ".il";
+
+    protected virtual ReflectionDisassembler CreateDisassembler(ITextOutput output, DecompilationOptions options)
 		{
-            output.IndentationString = options.DecompilerSettings.CSharpFormattingOptions.IndentationString;
-            return new ReflectionDisassembler(output, options.CancellationToken) {
+        output.IndentationString = options.DecompilerSettings.CSharpFormattingOptions.IndentationString;
+        return new ReflectionDisassembler(output, options.CancellationToken) {
 				DetectControlStructure = detectControlStructure,
 				ShowSequencePoints = options.DecompilerSettings.ShowDebugInfo,
 				ShowMetadataTokens = Options.DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens,
-                ShowMetadataTokensInBase10 = Options.DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokensInBase10,
-                ExpandMemberDefinitions = options.DecompilerSettings.ExpandMemberDefinitions
+            ShowMetadataTokensInBase10 = Options.DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokensInBase10,
+            ExpandMemberDefinitions = options.DecompilerSettings.ExpandMemberDefinitions
 			};
 		}
 
@@ -165,10 +158,16 @@ namespace ICSharpCode.ILSpy
 				dis.AssemblyResolver = module.GetAssemblyResolver();
 				dis.DebugInfo = module.GetDebugInfoOrNull();
 				if (options.FullDecompilation)
-					dis.WriteAssemblyReferences(metadata);
-				if (metadata.IsAssembly)
-					dis.WriteAssemblyHeader(module);
-				output.WriteLine();
+            {
+                dis.WriteAssemblyReferences(metadata);
+            }
+
+            if (metadata.IsAssembly)
+            {
+                dis.WriteAssemblyHeader(module);
+            }
+
+            output.WriteLine();
 				dis.WriteModuleHeader(module);
 				if (options.FullDecompilation) {
 					output.WriteLine();
@@ -179,4 +178,3 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 	}
-}

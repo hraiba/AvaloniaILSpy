@@ -18,14 +18,13 @@
 
 using System;
 using System.Linq;
-using SRM = System.Reflection.Metadata;
 using Avalonia.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// References folder.
 	/// </summary>
@@ -38,29 +37,28 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.module = module;
 			this.parentAssembly = parentAssembly;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
-		
-		public override object Text {
-			get { return Resources.References; }
-		}
-		
-		public override object Icon {
-			get { return Images.ReferenceFolderClosed; }
-		}
-		
-		public override object ExpandedIcon {
-			get { return Images.ReferenceFolderOpen; }
-		}
-		
-		protected override void LoadChildren()
+
+    public override object Text => Resources.References;
+
+    public override object Icon => Images.ReferenceFolderClosed;
+
+    public override object ExpandedIcon => Images.ReferenceFolderOpen;
+
+    protected override void LoadChildren()
 		{
 			var metadata = module.Metadata;
 			foreach (var r in module.AssemblyReferences.OrderBy(r => r.Name))
-				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
-			foreach (var r in metadata.GetModuleReferences().OrderBy(r => metadata.GetString(metadata.GetModuleReference(r).Name)))
-				this.Children.Add(new ModuleReferenceTreeNode(parentAssembly, r, metadata));
-		}
+        {
+            Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
+        }
+
+        foreach (var r in metadata.GetModuleReferences().OrderBy(r => metadata.GetString(metadata.GetModuleReference(r).Name)))
+        {
+            Children.Add(new ModuleReferenceTreeNode(parentAssembly, r, metadata));
+        }
+    }
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
@@ -69,26 +67,27 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			output.WriteLine();
 			language.WriteCommentLine(output, "Referenced assemblies (in metadata order):");
 			// Show metadata order of references
-			foreach (var node in this.Children.OfType<ILSpyTreeNode>())
-				node.Decompile(language, output, options);
-
-            output.WriteLine();
-            output.WriteLine();
-            // Show full assembly load log:
-            language.WriteCommentLine(output, "Assembly load log including transitive references:");
-            var info = parentAssembly.LoadedAssembly.LoadedAssemblyReferencesInfo;
-            foreach (var asm in info.Entries)
-            {
-                language.WriteCommentLine(output, asm.FullName);
-                output.Indent();
-                foreach (var item in asm.Messages)
-                {
-                    language.WriteCommentLine(output, $"{item.Item1}: {item.Item2}");
-                }
-                output.Unindent();
-                output.WriteLine();
-            }
-
+			foreach (var node in Children.OfType<ILSpyTreeNode>())
+        {
+            node.Decompile(language, output, options);
         }
+
+        output.WriteLine();
+        output.WriteLine();
+        // Show full assembly load log:
+        language.WriteCommentLine(output, "Assembly load log including transitive references:");
+        var info = parentAssembly.LoadedAssembly.LoadedAssemblyReferencesInfo;
+        foreach (var asm in info.Entries)
+        {
+            language.WriteCommentLine(output, asm.FullName);
+            output.Indent();
+            foreach (var item in asm.Messages)
+            {
+                language.WriteCommentLine(output, $"{item.Item1}: {item.Item2}");
+            }
+            output.Unindent();
+            output.WriteLine();
+        }
+
     }
 }

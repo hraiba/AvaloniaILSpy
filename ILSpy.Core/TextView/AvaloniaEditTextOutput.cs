@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
-using System.Windows;
 using Avalonia.Controls;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Folding;
@@ -32,8 +31,8 @@ using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 using TextLocation = ICSharpCode.Decompiler.CSharp.Syntax.TextLocation;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>
@@ -49,22 +48,23 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class DefinitionLookup
 	{
-		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
+		internal Dictionary<object, int> definitions = [];
 
 		public int GetDefinitionPosition(object definition)
 		{
 			int val;
 			if (definitions.TryGetValue(definition, out val))
-				return val;
-			else
-				return -1;
-		}
+        {
+            return val;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 
-		public void AddDefinition(object definition, int offset)
-		{
-			definitions[definition] = offset;
-		}
-	}
+    public void AddDefinition(object definition, int offset) => definitions[definition] = offset;
+}
 
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
@@ -73,7 +73,7 @@ namespace ICSharpCode.ILSpy.TextView
 	{
 		int lastLineStart = 0;
 		int lineNumber = 1;
-		readonly StringBuilder b = new StringBuilder();
+		readonly StringBuilder b = new();
 
 		/// <summary>Current indentation level</summary>
 		int indent;
@@ -82,23 +82,20 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public string IndentationString { get; set; } = "\t";
 
-		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
+		internal readonly List<VisualLineElementGenerator> elementGenerators = [];
 
-		/// <summary>List of all references that were written to the output</summary>
-		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-
-		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
-		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
+    /// <summary>Stack of the fold markers that are open but not closed yet</summary>
+    Stack<NewFolding> openFoldings = new();
 
 		/// <summary>List of all foldings that were written to the output</summary>
-		internal readonly List<NewFolding> Foldings = new List<NewFolding>();
+		internal readonly List<NewFolding> Foldings = [];
 
-		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		internal readonly DefinitionLookup DefinitionLookup = new();
 
-        internal bool EnableHyperlinks { get; set; }
+    internal bool EnableHyperlinks { get; set; }
 
-        /// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
-        internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = new List<KeyValuePair<int, Lazy<IControl>>>();
+    /// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
+    internal readonly List<KeyValuePair<int, Lazy<IControl>>> UIElements = [];
 
 		public RichTextModel HighlightingModel { get; } = new RichTextModel();
 
@@ -106,37 +103,26 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 		}
 
-		/// <summary>
-		/// Gets the list of references (hyperlinks).
-		/// </summary>
-		internal TextSegmentCollection<ReferenceSegment> References {
-			get { return references; }
-		}
+    /// <summary>
+    /// Gets the list of references (hyperlinks).
+    /// </summary>
+    internal TextSegmentCollection<ReferenceSegment> References { get; } = [];
 
-		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
-		{
-			elementGenerators.Add(elementGenerator);
-		}
+    public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) => elementGenerators.Add(elementGenerator);
 
-		/// <summary>
-		/// Controls the maximum length of the text.
-		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
-		/// thus aborting the decompilation.
-		/// </summary>
-		public int LengthLimit = int.MaxValue;
+    /// <summary>
+    /// Controls the maximum length of the text.
+    /// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
+    /// thus aborting the decompilation.
+    /// </summary>
+    public int LengthLimit = int.MaxValue;
 
-		public int TextLength {
-			get { return b.Length; }
-		}
+    public int TextLength => b.Length;
 
-		public TextLocation Location {
-			get {
-				return new TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
-			}
-		}
+    public TextLocation Location => new(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 
-		#region Text Document
-		TextDocument textDocument;
+    #region Text Document
+    TextDocument textDocument;
 
 		/// <summary>
 		/// Prepares the TextDocument.
@@ -165,19 +151,13 @@ namespace ICSharpCode.ILSpy.TextView
 			textDocument.SetOwnerThread(System.Threading.Thread.CurrentThread); // acquire ownership
 			return textDocument;
 		}
-		#endregion
+    #endregion
 
-		public void Indent()
-		{
-			indent++;
-		}
+    public void Indent() => indent++;
 
-		public void Unindent()
-		{
-			indent--;
-		}
+    public void Unindent() => indent--;
 
-		void WriteIndent()
+    void WriteIndent()
 		{
 			Debug.Assert(textDocument == null);
 			if (needsIndent) {
@@ -207,7 +187,7 @@ namespace ICSharpCode.ILSpy.TextView
 			needsIndent = true;
 			lastLineStart = b.Length;
 			lineNumber++;
-			if (this.TextLength > LengthLimit) {
+			if (TextLength > LengthLimit) {
 				throw new OutputLengthExceededException();
 			}
 		}
@@ -216,88 +196,88 @@ namespace ICSharpCode.ILSpy.TextView
 //'ITextOutput.WriteReference(MetadataFile, Handle, string, string, bool)'
 //
 public void WriteReference(
-    MetadataFile metadata,
-    Handle handle,
-    string text,
-    string protocol = "decompile",
-    bool isDefinition = false)
+MetadataFile metadata,
+Handle handle,
+string text,
+string protocol = "decompile",
+bool isDefinition = false)
 {
 
 }
-        public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
+    public void WriteReference(Decompiler.Disassembler.OpCodeInfo opCode, bool omitSuffix = false)
+    {
+        WriteIndent();
+			int start = TextLength;
+        if (omitSuffix)
         {
-            WriteIndent();
-			int start = this.TextLength;
-            if (omitSuffix)
+            int lastDot = opCode.Name.LastIndexOf('.');
+            if (lastDot > 0)
             {
-                int lastDot = opCode.Name.LastIndexOf('.');
-                if (lastDot > 0)
-                {
-                    b.Append(opCode.Name.Remove(lastDot + 1));
-                }
+                b.Append(opCode.Name.Remove(lastDot + 1));
             }
-            else
-            {
-                b.Append(opCode.Name);
-            }
-            int end = this.TextLength - 1;
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
+        }
+        else
+        {
+            b.Append(opCode.Name);
+        }
+        int end = TextLength - 1;
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = opCode });
 		}
 
 		public void WriteReference(PEFile module, Handle handle, string text, string protocol = "decompile", bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition((module, handle), this.TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
+				DefinitionLookup.AddDefinition((module, handle), TextLength);
         }
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = (module, handle), IsDefinition = isDefinition });
+    }
 
 		public void WriteReference(IType type, string text, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(type, this.TextLength);
+				DefinitionLookup.AddDefinition(type, TextLength);
 			}
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
-        }
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = type, IsDefinition = isDefinition });
+    }
 
-        public void WriteReference(IMember member, string text, bool isDefinition = false)
+    public void WriteReference(IMember member, string text, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(member, this.TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
+				DefinitionLookup.AddDefinition(member, TextLength);
         }
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = member, IsDefinition = isDefinition });
+    }
 
-        public void WriteLocalReference(string text, object reference, bool isDefinition = false)
+    public void WriteLocalReference(string text, object reference, bool isDefinition = false)
 		{
 			WriteIndent();
-			int start = this.TextLength;
+			int start = TextLength;
 			b.Append(text);
-			int end = this.TextLength;
+			int end = TextLength;
 			if (isDefinition) {
-				this.DefinitionLookup.AddDefinition(reference, this.TextLength);
-            }
-            references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
+				DefinitionLookup.AddDefinition(reference, TextLength);
         }
+        References.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = true, IsDefinition = isDefinition });
+    }
 
-        public void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false, bool isDefintion = false)
+    public void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false, bool isDefintion = false)
 		{
 			WriteIndent();
 			openFoldings.Push(
 				new NewFolding {
-					StartOffset = this.TextLength,
+					StartOffset = TextLength,
 					Name = collapsedText,
 					DefaultClosed = defaultCollapsed
 				});
@@ -306,29 +286,35 @@ public void WriteReference(
 		public void MarkFoldEnd()
 		{
 			NewFolding f = openFoldings.Pop();
-			f.EndOffset = this.TextLength;
-			this.Foldings.Add(f);
+			f.EndOffset = TextLength;
+			Foldings.Add(f);
 		}
 
 		public void AddUIElement(Func<IControl> element)
 		{
 			if (element != null) {
-				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
-					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
-				this.UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(this.TextLength, new Lazy<IControl>(element)));
+				if (UIElements.Count > 0 && UIElements.Last().Key == TextLength)
+            {
+                throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
+            }
+
+            UIElements.Add(new KeyValuePair<int, Lazy<IControl>>(TextLength, new Lazy<IControl>(element)));
 			}
 		}
 
-		readonly Stack<HighlightingColor> colorStack = new Stack<HighlightingColor>();
-		HighlightingColor currentColor = new HighlightingColor();
+		readonly Stack<HighlightingColor> colorStack = new();
+		HighlightingColor currentColor = new();
 		int currentColorBegin = -1;
 
 		public void BeginSpan(HighlightingColor highlightingColor)
 		{
 			WriteIndent();
 			if (currentColorBegin > -1)
-				HighlightingModel.SetHighlighting(currentColorBegin, b.Length - currentColorBegin, currentColor);
-			colorStack.Push(currentColor);
+        {
+            HighlightingModel.SetHighlighting(currentColorBegin, b.Length - currentColorBegin, currentColor);
+        }
+
+        colorStack.Push(currentColor);
 			currentColor = currentColor.Clone();
 			currentColorBegin = b.Length;
 			currentColor.MergeWith(highlightingColor);
@@ -342,4 +328,3 @@ public void WriteReference(
 			currentColorBegin = b.Length;
 		}
 	}
-}

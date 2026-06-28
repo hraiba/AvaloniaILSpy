@@ -21,106 +21,131 @@ using System.Threading;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy.TreeNodes
+namespace ICSharpCode.ILSpy.TreeNodes;
+
+[ExportContextMenuEntry(Header = nameof(Resources.SearchMSDN), Icon = "Images/SearchMsdn.png", Order = 9999)]
+internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
 {
-    [ExportContextMenuEntry(Header = nameof(Resources.SearchMSDN), Icon = "Images/SearchMsdn.png", Order = 9999)]
-    internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
+    private static string msdnAddress = "http://msdn.microsoft.com/{1}/library/{0}";
+
+    public bool IsVisible(TextViewContext context)
     {
-        private static string msdnAddress = "http://msdn.microsoft.com/{1}/library/{0}";
-
-        public bool IsVisible(TextViewContext context)
+        if (context.SelectedTreeNodes == null)
         {
-            if (context.SelectedTreeNodes == null)
+            return false;
+        }
+
+        return context.SelectedTreeNodes.All(
+            n => n is NamespaceTreeNode
+            || n is TypeTreeNode
+            || n is EventTreeNode
+            || n is FieldTreeNode
+            || n is PropertyTreeNode
+            || n is MethodTreeNode);
+    }
+
+    public bool IsEnabled(TextViewContext context)
+    {
+        if (context.SelectedTreeNodes == null)
+        {
+            return false;
+        }
+
+        foreach (var node in context.SelectedTreeNodes)
+        {
+            if (node is TypeTreeNode typeNode && !typeNode.IsPublicAPI)
+            {
                 return false;
+            }
 
-            return context.SelectedTreeNodes.All(
-                n => n is NamespaceTreeNode
-                || n is TypeTreeNode
-                || n is EventTreeNode
-                || n is FieldTreeNode
-                || n is PropertyTreeNode
-                || n is MethodTreeNode);
-        }
-
-        public bool IsEnabled(TextViewContext context)
-        {
-            if (context.SelectedTreeNodes == null)
+            if (node is EventTreeNode eventNode && (!eventNode.IsPublicAPI || !IsAccessible(eventNode.EventDefinition)))
+            {
                 return false;
-
-            foreach (var node in context.SelectedTreeNodes)
-            {
-                if (node is TypeTreeNode typeNode && !typeNode.IsPublicAPI)
-                    return false;
-
-                if (node is EventTreeNode eventNode && (!eventNode.IsPublicAPI || !IsAccessible(eventNode.EventDefinition)))
-                    return false;
-
-                if (node is FieldTreeNode fieldNode && (!fieldNode.IsPublicAPI || !IsAccessible(fieldNode.FieldDefinition)))
-                    return false;
-
-                if (node is PropertyTreeNode propertyNode && (!propertyNode.IsPublicAPI || !IsAccessible(propertyNode.PropertyDefinition)))
-                    return false;
-
-                if (node is MethodTreeNode methodNode && (!methodNode.IsPublicAPI || !IsAccessible(methodNode.MethodDefinition)))
-                    return false;
-
-                if (node is NamespaceTreeNode namespaceNode && string.IsNullOrEmpty(namespaceNode.Name))
-                    return false;
             }
 
-            return true;
-        }
-
-        bool IsAccessible(IEntity entity)
-        {
-            if (entity.DeclaringTypeDefinition == null)
+            if (node is FieldTreeNode fieldNode && (!fieldNode.IsPublicAPI || !IsAccessible(fieldNode.FieldDefinition)))
+            {
                 return false;
-            switch (entity.DeclaringTypeDefinition.Accessibility)
+            }
+
+            if (node is PropertyTreeNode propertyNode && (!propertyNode.IsPublicAPI || !IsAccessible(propertyNode.PropertyDefinition)))
             {
-                case Accessibility.Public:
-                case Accessibility.Protected:
-                case Accessibility.ProtectedOrInternal:
-                    return true;
-                default:
-                    return false;
+                return false;
+            }
+
+            if (node is MethodTreeNode methodNode && (!methodNode.IsPublicAPI || !IsAccessible(methodNode.MethodDefinition)))
+            {
+                return false;
+            }
+
+            if (node is NamespaceTreeNode namespaceNode && string.IsNullOrEmpty(namespaceNode.Name))
+            {
+                return false;
             }
         }
 
-        public void Execute(TextViewContext context)
+        return true;
+    }
+
+    bool IsAccessible(IEntity entity)
+    {
+        if (entity.DeclaringTypeDefinition == null)
         {
-            if (context.SelectedTreeNodes != null)
-            {
-                foreach (ILSpyTreeNode node in context.SelectedTreeNodes)
-                {
-                    SearchMsdn(node);
-                }
-            }
+            return false;
         }
 
-        public static void SearchMsdn(ILSpyTreeNode node)
+        switch (entity.DeclaringTypeDefinition.Accessibility)
         {
-            var address = string.Empty;
+            case Accessibility.Public:
+            case Accessibility.Protected:
+            case Accessibility.ProtectedOrInternal:
+                return true;
+            default:
+                return false;
+        }
+    }
 
-            var namespaceNode = node as NamespaceTreeNode;
-            if (namespaceNode != null)
-                address = string.Format(msdnAddress, namespaceNode.Name, Thread.CurrentThread.CurrentUICulture.Name);
-
-            if (node is IMemberTreeNode memberNode)
+    public void Execute(TextViewContext context)
+    {
+        if (context.SelectedTreeNodes != null)
+        {
+            foreach (ILSpyTreeNode node in context.SelectedTreeNodes)
             {
-                var member = memberNode.Member;
-                var memberName = string.Empty;
+                SearchMsdn(node);
+            }
+        }
+    }
 
-                if (member.DeclaringType == null)
-                    memberName = member.FullName;
-                else
-                    memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
+    public static void SearchMsdn(ILSpyTreeNode node)
+    {
+        var address = string.Empty;
 
-                address = string.Format(msdnAddress, memberName, Thread.CurrentThread.CurrentUICulture.Name);
+        if (node is NamespaceTreeNode namespaceNode)
+        {
+            address = string.Format(msdnAddress, namespaceNode.Name, Thread.CurrentThread.CurrentUICulture.Name);
+        }
+
+        if (node is IMemberTreeNode memberNode)
+        {
+            var member = memberNode.Member;
+            var memberName = string.Empty;
+
+            if (member.DeclaringType == null)
+            {
+                memberName = member.FullName;
+            }
+            else
+            {
+                memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
             }
 
-            address = address.ToLower();
-            if (!string.IsNullOrEmpty(address))
-                MainWindow.OpenLink(address);
+            address = string.Format(msdnAddress, memberName, Thread.CurrentThread.CurrentUICulture.Name);
+        }
+
+        address = address.ToLower();
+        if (!string.IsNullOrEmpty(address))
+        {
+            MainWindow.OpenLink(address);
         }
     }
 }

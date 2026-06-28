@@ -43,13 +43,13 @@ public class LoadedPackage
 
     public LoadedPackage(PackageKind kind, IEnumerable<PackageEntry> entries)
     {
-        this.Kind = kind;
-        this.Entries = entries.ToArray();
+        Kind = kind;
+        Entries = entries.ToArray();
         var topLevelEntries = new List<PackageEntry>();
         var folders = new Dictionary<string, PackageFolder>();
         var rootFolder = new PackageFolder(this, null, "");
         folders.Add("", rootFolder);
-        foreach (var entry in this.Entries)
+        foreach (var entry in Entries)
         {
             var (dirname, filename) = SplitName(entry.Name);
             if (!string.IsNullOrEmpty(filename))
@@ -57,21 +57,28 @@ public class LoadedPackage
                 GetFolder(dirname).Entries.Add(new FolderEntry(filename, entry));
             }
         }
-        this.RootFolder = rootFolder;
+        RootFolder = rootFolder;
 
         static (string, string) SplitName(string filename)
         {
             int pos = filename.LastIndexOfAny(new char[] { '/', '\\' });
             if (pos == -1)
+            {
                 return ("", filename); // file in root
+            }
             else
+            {
                 return (filename.Substring(0, pos), filename.Substring(pos + 1));
+            }
         }
 
         PackageFolder GetFolder(string name)
         {
             if (folders.TryGetValue(name, out var result))
+            {
                 return result;
+            }
+
             var (dirname, basename) = SplitName(name);
             PackageFolder parent = GetFolder(dirname);
             result = new PackageFolder(this, parent, basename);
@@ -99,7 +106,10 @@ public class LoadedPackage
         try
         {
             if (!SingleFileBundle.IsBundle(view, out long bundleHeaderOffset))
+            {
                 return null;
+            }
+
             var manifest = SingleFileBundle.ReadManifest(view, bundleHeaderOffset);
             var entries = manifest.Entries.Select(e => new BundleEntry(fileName, view, e)).ToList();
             var result = new LoadedPackage(PackageKind.Bundle, entries);
@@ -120,17 +130,11 @@ public class LoadedPackage
     /// <summary>
     /// Entry inside a package folder. Effectively renames the entry.
     /// </summary>
-    sealed class FolderEntry : PackageEntry
+    sealed class FolderEntry(string name, PackageEntry originalEntry) : PackageEntry
     {
-        readonly PackageEntry originalEntry;
-        public override string Name { get; }
+        readonly PackageEntry originalEntry = originalEntry;
+        public override string Name { get; } = name;
         public override string FullName => originalEntry.Name;
-
-        public FolderEntry(string name, PackageEntry originalEntry)
-        {
-            this.Name = name;
-            this.originalEntry = originalEntry;
-        }
 
         public override ManifestResourceAttributes Attributes => originalEntry.Attributes;
         public override string PackageQualifiedFileName => originalEntry.PackageQualifiedFileName;
@@ -139,19 +143,13 @@ public class LoadedPackage
         public override long? TryGetLength() => originalEntry.TryGetLength();
     }
 
-    sealed class ZipFileEntry : PackageEntry
+    sealed class ZipFileEntry(string zipFile, ZipArchiveEntry entry) : PackageEntry
     {
-        readonly string zipFile;
-        public override string Name { get; }
+        readonly string zipFile = zipFile;
+        public override string Name { get; } = entry.FullName;
         public override string PackageQualifiedFileName => $"zip://{zipFile};{Name}";
 
         public override string FullName => Name;
-
-        public ZipFileEntry(string zipFile, ZipArchiveEntry entry)
-        {
-            this.zipFile = zipFile;
-            this.Name = entry.FullName;
-        }
 
         public override Stream? TryOpenStream()
         {
@@ -159,7 +157,10 @@ public class LoadedPackage
             using var archive = ZipFile.OpenRead(zipFile);
             var entry = archive.GetEntry(Name);
             if (entry == null)
+            {
                 return null;
+            }
+
             var memoryStream = new MemoryStream();
             using (var s = entry.Open())
             {
@@ -175,23 +176,19 @@ public class LoadedPackage
             using var archive = ZipFile.OpenRead(zipFile);
             var entry = archive.GetEntry(Name);
             if (entry == null)
+            {
                 return null;
+            }
+
             return entry.Length;
         }
     }
 
-    sealed class BundleEntry : PackageEntry
+    sealed class BundleEntry(string bundleFile, MemoryMappedViewAccessor view, SingleFileBundle.Entry entry) : PackageEntry
     {
-        readonly string bundleFile;
-        readonly MemoryMappedViewAccessor view;
-        readonly SingleFileBundle.Entry entry;
-
-        public BundleEntry(string bundleFile, MemoryMappedViewAccessor view, SingleFileBundle.Entry entry)
-        {
-            this.bundleFile = bundleFile;
-            this.view = view;
-            this.entry = entry;
-        }
+        readonly string bundleFile = bundleFile;
+        readonly MemoryMappedViewAccessor view = view;
+        readonly SingleFileBundle.Entry entry = entry;
 
         public override string Name => entry.RelativePath;
         public override string FullName => Name;
@@ -221,10 +218,7 @@ public class LoadedPackage
             }
         }
 
-        public override long? TryGetLength()
-        {
-            return entry.Size;
-        }
+        public override long? TryGetLength() => entry.Size;
     }
 }
 
@@ -254,18 +248,17 @@ public sealed class PackageFolder : IAssemblyResolver
     public string Name { get; }
 
     readonly LoadedPackage package;
-    readonly PackageFolder? parent;
 
     internal PackageFolder(LoadedPackage package, PackageFolder? parent, string name)
     {
         this.package = package;
-        this.parent = parent;
-        this.Name = name;
+        Parent = parent;
+        Name = name;
     }
 
-    public PackageFolder? Parent => parent;
-    public List<PackageFolder> Folders { get; } = new List<PackageFolder>();
-    public List<PackageEntry> Entries { get; } = new List<PackageEntry>();
+    public PackageFolder? Parent { get; }
+    public List<PackageFolder> Folders { get; } = [];
+    public List<PackageEntry> Entries { get; } = [];
 
     public MetadataFile? Resolve(IAssemblyReference reference)
     {
@@ -274,7 +267,7 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNull();
         }
-        return parent?.Resolve(reference);
+        return Parent?.Resolve(reference);
     }
 
     public Task<MetadataFile?> ResolveAsync(IAssemblyReference reference)
@@ -284,9 +277,9 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNullAsync();
         }
-        if (parent != null)
+        if (Parent != null)
         {
-            return parent.ResolveAsync(reference);
+            return Parent.ResolveAsync(reference);
         }
         return Task.FromResult<MetadataFile?>(null);
     }
@@ -298,7 +291,7 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNull();
         }
-        return parent?.ResolveModule(mainModule, moduleName);
+        return Parent?.ResolveModule(mainModule, moduleName);
     }
 
     public Task<MetadataFile?> ResolveModuleAsync(MetadataFile mainModule, string moduleName)
@@ -308,23 +301,29 @@ public sealed class PackageFolder : IAssemblyResolver
         {
             return asm.GetMetadataFileOrNullAsync();
         }
-        if (parent != null)
+        if (Parent != null)
         {
-            return parent.ResolveModuleAsync(mainModule, moduleName);
+            return Parent.ResolveModuleAsync(mainModule, moduleName);
         }
         return Task.FromResult<MetadataFile?>(null);
     }
 
-    readonly Dictionary<string, LoadedAssembly?> assemblies = new Dictionary<string, LoadedAssembly?>(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string, LoadedAssembly?> assemblies = new(StringComparer.OrdinalIgnoreCase);
 
     public LoadedAssembly? ResolveFileName(string name)
     {
         if (package.LoadedAssembly == null)
+        {
             return null;
+        }
+
         lock (assemblies)
         {
             if (assemblies.TryGetValue(name, out var asm))
+            {
                 return asm;
+            }
+
             var entry = Entries.FirstOrDefault(e => string.Equals(name, e.Name, StringComparison.OrdinalIgnoreCase));
             if (entry != null)
             {

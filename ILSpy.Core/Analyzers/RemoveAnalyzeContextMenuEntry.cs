@@ -18,24 +18,24 @@
 
 using System.Linq;
 
-namespace ICSharpCode.ILSpy.Analyzers
-{
+namespace ICSharpCode.ILSpy.Analyzers;
+
 	[ExportContextMenuEntry(Header = "Remove", Icon = "Images/Delete.png", Category = "Analyze", Order = 200)]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return true;
-			return false;
+			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes?.All(n => n.Parent.IsRoot) == true)
+        {
+            return true;
+        }
+
+        return false;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
+    public bool IsEnabled(TextViewContext context) => true;
 
-		public void Execute(TextViewContext context)
+    public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {
@@ -44,4 +44,3 @@ namespace ICSharpCode.ILSpy.Analyzers
 			}
 		}
 	}
-}

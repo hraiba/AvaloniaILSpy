@@ -21,8 +21,8 @@ using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly ITypeDefinition analyzedType;
@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		public AnalyzedTypeTreeNode(ITypeDefinition analyzedType)
 		{
 			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Icon => TypeTreeNode.GetIcon(analyzedType);
@@ -43,11 +43,10 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedType)) {
-					this.Children.Add(new AnalyzerSearchTreeNode(analyzedType, analyzer, lazy.Metadata.Header));
+					Children.Add(new AnalyzerSearchTreeNode(analyzedType, analyzer, lazy.Metadata.Header));
 				}
 			}
 		}
 
 		public override IEntity Member => analyzedType;
 	}
-}

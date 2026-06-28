@@ -3,12 +3,11 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Layout;
 using Avalonia.Media;
 using System.Diagnostics;
 
-namespace ICSharpCode.TreeView
-{
+namespace ICSharpCode.TreeView;
+
 	class LinesRenderer : Control
 	{
 		static LinesRenderer()
@@ -18,12 +17,9 @@ namespace ICSharpCode.TreeView
 
 		static Pen pen;
 
-		SharpTreeNodeView NodeView
-		{
-			get { return TemplatedParent as SharpTreeNodeView; }
-		}
+    SharpTreeNodeView NodeView => TemplatedParent as SharpTreeNodeView;
 
-		public override void Render(DrawingContext dc)
+    public override void Render(DrawingContext dc)
 		{
 			if (NodeView.Node == null) {
 				// This seems to happen sometimes with DataContext==DisconnectedItem,
@@ -39,9 +35,12 @@ namespace ICSharpCode.TreeView
 				dc.DrawLine(pen, new Point(p.X, Bounds.Height / 2), new Point(p.X + 10, Bounds.Height / 2));
 			}
 
-			if (NodeView.Node.IsRoot) return;
+			if (NodeView.Node.IsRoot)
+        {
+            return;
+        }
 
-			if (NodeView.Node.IsLast) {
+        if (NodeView.Node.IsLast) {
 				dc.DrawLine(pen, p, new Point(p.X, Bounds.Height / 2));
 			}
 			else {
@@ -52,11 +51,14 @@ namespace ICSharpCode.TreeView
 			while (true) {
 				p = p.WithX(p.X - 19);
 				current = current.Parent;
-				if (p.X < 0) break;
-				if (!current.IsLast) {
+				if (p.X < 0)
+            {
+                break;
+            }
+
+            if (!current.IsLast) {
 					dc.DrawLine(pen, p, new Point(p.X, Bounds.Height));
 				}
 			}
 		}
 	}
-}

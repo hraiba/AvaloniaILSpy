@@ -18,163 +18,157 @@
 
 using Avalonia;
 using Avalonia.Controls;
-using Mono.Cecil;
-using Avalonia.Input;
 using System;
 using Avalonia.Interactivity;
-using ICSharpCode.TreeView;
 using Avalonia.Markup.Xaml;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// Interaction logic for OpenListDialog.xaml
+/// </summary>
+public partial class OpenListDialog : DialogWindow
 {
-	/// <summary>
-	/// Interaction logic for OpenListDialog.xaml
-	/// </summary>
-	public partial class OpenListDialog : DialogWindow
-	{
 
-		public const string DotNetCoreList = ".NET Core";
+    public const string DotNetCoreList = ".NET Core";
 
-		readonly AssemblyListManager manager;
+    readonly AssemblyListManager manager;
 
-		internal ListBox listView;
-		internal Button okButton;
-		internal Button cancelButton;
-		internal Button deleteButton;
-		internal Button createButton;
-		internal Button resetButton;
+    internal ListBox listView;
+    internal Button okButton;
+    internal Button cancelButton;
+    internal Button deleteButton;
+    internal Button createButton;
+    internal Button resetButton;
 
-		public OpenListDialog()
-		{
-			manager = MainWindow.Instance.assemblyListManager;
-			InitializeComponent();
+    public OpenListDialog()
+    {
+        manager = MainWindow.Instance.assemblyListManager;
+        InitializeComponent();
 #if DEBUG
-			this.AttachDevTools();
+        this.AttachDevTools();
 #endif
-		}
+    }
 
-		private void InitializeComponent()
-		{
-			AvaloniaXamlLoader.Load(this);
-			listView = this.FindControl<ListBox>("listView");
-			okButton = this.FindControl<Button>("okButton");
-			cancelButton = this.FindControl<Button>("cancelButton");
-			deleteButton = this.FindControl<Button>("deleteButton");
-			createButton = this.FindControl<Button>("createButton");
-			resetButton = this.FindControl<Button>("resetButton");
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+        listView = this.FindControl<ListBox>("listView");
+        okButton = this.FindControl<Button>("okButton");
+        cancelButton = this.FindControl<Button>("cancelButton");
+        deleteButton = this.FindControl<Button>("deleteButton");
+        createButton = this.FindControl<Button>("createButton");
+        resetButton = this.FindControl<Button>("resetButton");
 
-			listView.SelectionChanged += ListView_SelectionChanged;
-			listView.DoubleTapped += listView_MouseDoubleClick;
-			okButton.Click += OKButton_Click;
-			cancelButton.Click += CancelButton_Click;
-			deleteButton.Click += DeleteButton_Click;
-			createButton.Click += CreateButton_Click;
-			resetButton.Click += ResetButton_Click;
+        listView.SelectionChanged += ListView_SelectionChanged;
+        listView.DoubleTapped += listView_MouseDoubleClick;
+        okButton.Click += OKButton_Click;
+        cancelButton.Click += CancelButton_Click;
+        deleteButton.Click += DeleteButton_Click;
+        createButton.Click += CreateButton_Click;
+        resetButton.Click += ResetButton_Click;
 
-			TemplateApplied += (sender, e) => Application.Current.FocusManager.Focus(listView);
-			listView.TemplateApplied += listView_Loaded;
-		}
+        TemplateApplied += (sender, e) => Application.Current.FocusManager.Focus(listView);
+        listView.TemplateApplied += listView_Loaded;
+    }
 
-		private void listView_Loaded(object sender, EventArgs e)
-		{
-			listView.Items = manager.AssemblyLists;
-			CreateDefaultAssemblyLists();
-		}
+    private void listView_Loaded(object sender, EventArgs e)
+    {
+        listView.Items = manager.AssemblyLists;
+        CreateDefaultAssemblyLists();
+    }
 
-		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			okButton.IsEnabled = listView.SelectedItem != null;
-			deleteButton.IsEnabled = listView.SelectedItem != null;
-		}
+    void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        okButton.IsEnabled = listView.SelectedItem != null;
+        deleteButton.IsEnabled = listView.SelectedItem != null;
+    }
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
-			//this.DialogResult = true;
-			Close(true);
-		}
+    void OKButton_Click(object sender, RoutedEventArgs e) =>
+        //this.DialogResult = true;
+        Close(true);
 
-		void CancelButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close(false);
-		}
+    void CancelButton_Click(object sender, RoutedEventArgs e) => Close(false);
 
-		public string SelectedListName
-		{
-			get
-			{
-				return listView.SelectedItem.ToString();
-			}
-		}
+    public string SelectedListName => listView.SelectedItem.ToString();
 
-		private void CreateDefaultAssemblyLists()
-		{
-			if (!manager.AssemblyLists.Contains(DotNetCoreList))
-			{
-				AssemblyList netcore = new AssemblyList(manager, DotNetCoreList);
-				//AddToList(netcore, "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
-				AddToList(netcore, "netstandard.library");
-				if (netcore.assemblies.Count > 0)
-				{
-					manager.CreateList(netcore);
-				}
-			}
-		}
+    private void CreateDefaultAssemblyLists()
+    {
+        if (!manager.AssemblyLists.Contains(DotNetCoreList))
+        {
+            var netcore = new AssemblyList(manager, DotNetCoreList);
+            //AddToList(netcore, "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e");
+            AddToList(netcore, "netstandard.library");
+            if (netcore.assemblies.Count > 0)
+            {
+                manager.CreateList(netcore);
+            }
+        }
+    }
 
-		private void AddToList(AssemblyList list, string name)
-		{
-			//AssemblyNameReference reference = AssemblyNameReference.Parse(FullName);
-			string file = typeof(string).Assembly.Location;
-			if (file != null)
-				list.OpenAssembly(file);
-		}
+    private void AddToList(AssemblyList list, string name)
+    {
+        //AssemblyNameReference reference = AssemblyNameReference.Parse(FullName);
+        string file = typeof(string).Assembly.Location;
+        if (file != null)
+        {
+            list.OpenAssembly(file);
+        }
+    }
 
-		private async void CreateButton_Click(object sender, RoutedEventArgs e)
-		{
-			CreateListDialog dlg = new CreateListDialog();
-			dlg.Title = "Create List";
-			dlg.Closing += (s, args) =>
-			{
-				if (dlg.DialogResult == true)
-				{
-					if (manager.AssemblyLists.Contains(dlg.NewListName))
-					{
-						args.Cancel = true;
-						MessageBox.Show("A list with the same name was found.", "Error!", MessageBoxButton.OK);
-					}
-				}
-			};
-			if (await dlg.ShowDialog<bool>(this) == true)
-			{
-				manager.CreateList(new AssemblyList(manager ,dlg.NewListName));
-			}
-		}
+    private async void CreateButton_Click(object sender, RoutedEventArgs e)
+    {
+        var dlg = new CreateListDialog();
+        dlg.Title = "Create List";
+        dlg.Closing += (s, args) =>
+        {
+            if (dlg.DialogResult && manager.AssemblyLists.Contains(dlg.NewListName))
+            {
+                args.Cancel = true;
+                MessageBox.Show("A list with the same name was found.", "Error!", MessageBoxButton.OK);
+            }
+        };
+        if (await dlg.ShowDialog<bool>(this))
+        {
+            manager.CreateList(new AssemblyList(manager, dlg.NewListName));
+        }
+    }
 
-		private async void DeleteButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (listView.SelectedItem == null)
-				return;
-			if (await MessageBox.Show(this, "Are you sure that you want to delete the selected assembly list?",
+    private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (listView.SelectedItem == null)
+        {
+            return;
+        }
+
+        if (await MessageBox.Show(this, "Are you sure that you want to delete the selected assembly list?",
 "ILSpy", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, MessageBoxOptions.None) != MessageBoxResult.Yes)
-				return;
-			manager.DeleteList(listView.SelectedItem.ToString());
-		}
+        {
+            return;
+        }
 
-		private async void ResetButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (await MessageBox.Show(this, "Are you sure that you want to remove all assembly lists and recreate the default assembly lists?",
-				"ILSpy", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, MessageBoxOptions.None) != MessageBoxResult.Yes)
-				return;
-			manager.ClearAll();
-			CreateDefaultAssemblyLists();
-		}
+        manager.DeleteList(listView.SelectedItem.ToString());
+    }
 
-		private void listView_MouseDoubleClick(object sender, RoutedEventArgs e)
-		{
-			if (listView.SelectedItem != null)
-				//this.DialogResult = true;
-				this.Close(true);
-		}
+    private async void ResetButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (await MessageBox.Show(this, "Are you sure that you want to remove all assembly lists and recreate the default assembly lists?",
+            "ILSpy", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No, MessageBoxOptions.None) != MessageBoxResult.Yes)
+        {
+            return;
+        }
 
-	}
+        manager.ClearAll();
+        CreateDefaultAssemblyLists();
+    }
+
+    private void listView_MouseDoubleClick(object sender, RoutedEventArgs e)
+    {
+        if (listView.SelectedItem != null)
+        {
+            Close(true);
+        }
+    }
+
 }

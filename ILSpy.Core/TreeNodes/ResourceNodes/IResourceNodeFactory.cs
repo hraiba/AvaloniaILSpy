@@ -18,8 +18,8 @@
 
 using ICSharpCode.Decompiler.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// This interface allows plugins to create custom nodes for resources.
 	/// </summary>
@@ -28,4 +28,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		ILSpyTreeNode CreateNode(Resource resource);
 		ILSpyTreeNode CreateNode(string key, object data);
 	}
-}

@@ -20,273 +20,237 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Media;
 
-namespace ICSharpCode.ILSpy.Options
+namespace ICSharpCode.ILSpy.Options;
+
+/// <summary>
+/// Description of DisplaySettings.
+/// </summary>
+public class DisplaySettings : INotifyPropertyChanged
 {
-    /// <summary>
-    /// Description of DisplaySettings.
-    /// </summary>
-    public class DisplaySettings : INotifyPropertyChanged
+    public DisplaySettings()
     {
-        public DisplaySettings()
+    }
+
+    #region INotifyPropertyChanged implementation
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+    #endregion
+
+
+    public FontFamily SelectedFont
+    {
+        get;
+        set
         {
-        }
-
-        #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            PropertyChanged?.Invoke(this, e);
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-        FontFamily selectedFont;
-
-        public FontFamily SelectedFont
-        {
-            get { return selectedFont; }
-            set
+            if (field != value)
             {
-                if (selectedFont != value)
-                {
-                    selectedFont = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        double selectedFontSize;
-
-        public double SelectedFontSize
+    public double SelectedFontSize
+    {
+        get;
+        set
         {
-            get { return selectedFontSize; }
-            set
+            if (field != value)
             {
-                if (selectedFontSize != value)
-                {
-                    selectedFontSize = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool showLineNumbers;
-
-        public bool ShowLineNumbers
+    public bool ShowLineNumbers
+    {
+        get;
+        set
         {
-            get { return showLineNumbers; }
-            set
+            if (field != value)
             {
-                if (showLineNumbers != value)
-                {
-                    showLineNumbers = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool showMetadataTokens;
-
-        public bool ShowMetadataTokens
+    public bool ShowMetadataTokens
+    {
+        get;
+        set
         {
-            get { return showMetadataTokens; }
-            set
+            if (field != value)
             {
-                if (showMetadataTokens != value)
-                {
-                    showMetadataTokens = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool showMetadataTokensInBase10;
-
-        public bool ShowMetadataTokensInBase10
+    public bool ShowMetadataTokensInBase10
+    {
+        get;
+        set
         {
-            get { return showMetadataTokensInBase10; }
-            set
+            if (field != value)
             {
-                if (showMetadataTokensInBase10 != value)
-                {
-                    showMetadataTokensInBase10 = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool enableWordWrap;
-
-        public bool EnableWordWrap
+    public bool EnableWordWrap
+    {
+        get;
+        set
         {
-            get { return enableWordWrap; }
-            set
+            if (field != value)
             {
-                if (enableWordWrap != value)
-                {
-                    enableWordWrap = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool sortResults = true;
-
-        public bool SortResults
+    public bool SortResults
+    {
+        get;
+        set
         {
-            get { return sortResults; }
-            set
+            if (field != value)
             {
-                if (sortResults != value)
-                {
-                    sortResults = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = true;
 
-        bool foldBraces = false;
-
-        public bool FoldBraces
+    public bool FoldBraces
+    {
+        get;
+        set
         {
-            get { return foldBraces; }
-            set
+            if (field != value)
             {
-                if (foldBraces != value)
-                {
-                    foldBraces = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = false;
 
-        bool expandMemberDefinitions = false;
-
-        public bool ExpandMemberDefinitions
+    public bool ExpandMemberDefinitions
+    {
+        get;
+        set
         {
-            get { return expandMemberDefinitions; }
-            set
+            if (field != value)
             {
-                if (expandMemberDefinitions != value)
-                {
-                    expandMemberDefinitions = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = false;
 
-        bool expandUsingDeclarations = false;
-
-        public bool ExpandUsingDeclarations
+    public bool ExpandUsingDeclarations
+    {
+        get;
+        set
         {
-            get { return expandUsingDeclarations; }
-            set
+            if (field != value)
             {
-                if (expandUsingDeclarations != value)
-                {
-                    expandUsingDeclarations = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = false;
 
-        bool showDebugInfo;
-
-        public bool ShowDebugInfo
+    public bool ShowDebugInfo
+    {
+        get;
+        set
         {
-            get { return showDebugInfo; }
-            set
+            if (field != value)
             {
-                if (showDebugInfo != value)
-                {
-                    showDebugInfo = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        bool indentationUseTabs = true;
-
-        public bool IndentationUseTabs
+    public bool IndentationUseTabs
+    {
+        get;
+        set
         {
-            get { return indentationUseTabs; }
-            set
+            if (field != value)
             {
-                if (indentationUseTabs != value)
-                {
-                    indentationUseTabs = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = true;
 
-        int indentationTabSize = 4;
-
-        public int IndentationTabSize
+    public int IndentationTabSize
+    {
+        get;
+        set
         {
-            get { return indentationTabSize; }
-            set
+            if (field != value)
             {
-                if (indentationTabSize != value)
-                {
-                    indentationTabSize = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = 4;
 
-        int indentationSize = 4;
-
-        public int IndentationSize
+    public int IndentationSize
+    {
+        get;
+        set
         {
-            get { return indentationSize; }
-            set
+            if (field != value)
             {
-                if (indentationSize != value)
-                {
-                    indentationSize = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = 4;
 
-        bool highlightMatchingBraces = true;
-
-        public bool HighlightMatchingBraces
+    public bool HighlightMatchingBraces
+    {
+        get;
+        set
         {
-            get { return highlightMatchingBraces; }
-            set
+            if (field != value)
             {
-                if (highlightMatchingBraces != value)
-                {
-                    highlightMatchingBraces = value;
-                    OnPropertyChanged();
-                }
+                field = value;
+                OnPropertyChanged();
             }
         }
+    } = true;
 
-        public void CopyValues(DisplaySettings s)
-        {
-            this.SelectedFont = s.selectedFont;
-            this.SelectedFontSize = s.selectedFontSize;
-            this.ShowLineNumbers = s.showLineNumbers;
-            this.ShowMetadataTokens = s.showMetadataTokens;
-            this.ShowMetadataTokensInBase10 = s.showMetadataTokensInBase10;
-            this.ShowDebugInfo = s.showDebugInfo;
-            this.EnableWordWrap = s.enableWordWrap;
-            this.SortResults = s.sortResults;
-            this.FoldBraces = s.foldBraces;
-            this.ExpandMemberDefinitions = s.expandMemberDefinitions;
-            this.ExpandUsingDeclarations = s.expandUsingDeclarations;
-            this.IndentationUseTabs = s.indentationUseTabs;
-            this.IndentationTabSize = s.indentationTabSize;
-            this.IndentationSize = s.indentationSize;
-            this.HighlightMatchingBraces = s.highlightMatchingBraces;
-        }
+    public void CopyValues(DisplaySettings s)
+    {
+        SelectedFont = s.SelectedFont;
+        SelectedFontSize = s.SelectedFontSize;
+        ShowLineNumbers = s.ShowLineNumbers;
+        ShowMetadataTokens = s.ShowMetadataTokens;
+        ShowMetadataTokensInBase10 = s.ShowMetadataTokensInBase10;
+        ShowDebugInfo = s.ShowDebugInfo;
+        EnableWordWrap = s.EnableWordWrap;
+        SortResults = s.SortResults;
+        FoldBraces = s.FoldBraces;
+        ExpandMemberDefinitions = s.ExpandMemberDefinitions;
+        ExpandUsingDeclarations = s.ExpandUsingDeclarations;
+        IndentationUseTabs = s.IndentationUseTabs;
+        IndentationTabSize = s.IndentationTabSize;
+        IndentationSize = s.IndentationSize;
+        HighlightMatchingBraces = s.HighlightMatchingBraces;
     }
 }

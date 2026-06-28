@@ -16,14 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System.ComponentModel.Composition;
-using System.Drawing;
-using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Properties;
-
 // TODO: Support image list
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	
 	//[Export(typeof(IResourceNodeFactory))]
 	//sealed class ImageListResourceEntryNodeFactory : IResourceNodeFactory
@@ -85,4 +80,3 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	//		EnsureLazyChildren();
 	//	}
 	//}
-}

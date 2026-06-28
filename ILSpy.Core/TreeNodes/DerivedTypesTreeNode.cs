@@ -25,8 +25,8 @@ using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.Properties;
 using SRM = System.Reflection.Metadata;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Lists the sub types of a class.
 	/// </summary>
@@ -40,20 +40,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			this.list = list;
 			this.type = type;
-			this.LazyLoading = true;
-			this.threading = new ThreadingSupport();
+			LazyLoading = true;
+			threading = new ThreadingSupport();
 		}
 
 		public override object Text => Resources.DerivedTypes;
 
 		public override object Icon => Images.SubTypes;
 
-		protected override void LoadChildren()
-		{
-			threading.LoadChildren(this, FetchChildren);
-		}
+    protected override void LoadChildren() => threading.LoadChildren(this, FetchChildren);
 
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
+    IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			var assemblies = list.GetAssemblies().Select(node => node.GetPEFileOrNull()).Where(asm => asm != null).ToArray();
@@ -74,8 +71,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					foreach (var iface in td.GetInterfaceImplementations()) {
 						var ifaceImpl = metadata.GetInterfaceImplementation(iface);
 						if (IsSameType(metadata, ifaceImpl.Interface, definitionMetadata, metadataToken))
-							yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));
-					}
+                    {
+                        yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));
+                    }
+                }
 					SRM.EntityHandle baseType = td.GetBaseTypeOrNil();
 					if (!baseType.IsNil && IsSameType(metadata, baseType, definitionMetadata, metadataToken)) {
 						yield return new DerivedTypesEntryNode(list, assembly.GetDefinition(h));
@@ -85,16 +84,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			yield break;
 		}
 
-		static bool IsSameType(SRM.MetadataReader referenceMetadata, SRM.EntityHandle typeRef,
-			                   SRM.MetadataReader definitionMetadata, SRM.TypeDefinitionHandle typeDef)
-		{
-			// FullName contains only namespace, name and type parameter count, therefore this should suffice.
-			return typeRef.GetFullTypeName(referenceMetadata) == typeDef.GetFullTypeName(definitionMetadata);
-		}
+    static bool IsSameType(SRM.MetadataReader referenceMetadata, SRM.EntityHandle typeRef,
+                           SRM.MetadataReader definitionMetadata, SRM.TypeDefinitionHandle typeDef) =>
+        // FullName contains only namespace, name and type parameter count, therefore this should suffice.
+        typeRef.GetFullTypeName(referenceMetadata) == typeDef.GetFullTypeName(definitionMetadata);
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
-			threading.Decompile(language, output, options, EnsureLazyChildren);
-		}
-	}
+    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) => threading.Decompile(language, output, options, EnsureLazyChildren);
 }

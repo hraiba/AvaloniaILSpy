@@ -16,128 +16,141 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls.FileLoaders;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy;
+
+/// <summary>
+/// Manages the available assembly lists.
+/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
+/// </summary>
+public sealed class AssemblyListManager
 {
-	/// <summary>
-	/// Manages the available assembly lists.
-	/// 
-	/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
-	/// </summary>
-	public sealed class AssemblyListManager
-	{
-		public AssemblyListManager(ILSpySettings spySettings)
-		{
-			XElement doc = spySettings["AssemblyLists"];
-			foreach (var list in doc.Elements("List")) {
-				AssemblyLists.Add((string)list.Attribute("name"));
-			}
-		}
-		
-		public readonly ObservableCollection<string> AssemblyLists = new ObservableCollection<string>();
-        public FileLoaderRegistry LoaderRegistry {get;} = new();
-		
-		/// <summary>
-		/// Loads an assembly list from the ILSpySettings.
-		/// If no list with the specified name is found, the default list is loaded instead.
-		/// </summary>
-		public AssemblyList LoadList(ILSpySettings spySettings, string listName)
-		{
-			AssemblyList list = DoLoadList(spySettings, listName);
-			if (!AssemblyLists.Contains(list.ListName))
-				AssemblyLists.Add(list.ListName);
-			return list;
-		}
-		
-		AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
-		{
-			XElement doc = spySettings["AssemblyLists"];
-			if (listName != null) {
-				foreach (var list in doc.Elements("List")) {
-					if ((string)list.Attribute("name") == listName) {
-						return new AssemblyList(this, list);
-					}
-				}
-			}
-			XElement firstList = doc.Elements("List").FirstOrDefault();
-			if (firstList != null)
-				return new AssemblyList(this, firstList);
-			else
-				return new AssemblyList(this, listName ?? DefaultListName);
-		}
-		
-		public const string DefaultListName = "(Default)";
-		
-		/// <summary>
-		/// Saves the specifies assembly list into the config file.
-		/// </summary>
-		public static void SaveList(AssemblyList list)
-		{
-			ILSpySettings.Update(
-				delegate (XElement root) {
-					XElement doc = root.Element("AssemblyLists");
-					if (doc == null) {
-						doc = new XElement("AssemblyLists");
-						root.Add(doc);
-					}
-					XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
-					if (listElement != null)
-						listElement.ReplaceWith(list.SaveAsXml());
-					else
-						doc.Add(list.SaveAsXml());
-				});
-		}
+    public AssemblyListManager(ILSpySettings spySettings)
+    {
+        XElement doc = spySettings["AssemblyLists"];
+        foreach (var list in doc.Elements("List"))
+        {
+            AssemblyLists.Add((string)list.Attribute("name"));
+        }
+    }
 
-		public bool CreateList(AssemblyList list)
-		{
-			if (!AssemblyLists.Contains(list.ListName))
-			{
-				AssemblyLists.Add(list.ListName);
-				SaveList(list);
-				return true;
-			}
-			return false;
-		}
+    public readonly ObservableCollection<string> AssemblyLists = [];
+    public FileLoaderRegistry LoaderRegistry { get; } = new();
 
-		public bool DeleteList(string Name)
-		{
-			if (AssemblyLists.Contains(Name))
-			{
-				AssemblyLists.Remove(Name);
+    /// <summary>
+    /// Loads an assembly list from the ILSpySettings.
+    /// If no list with the specified name is found, the default list is loaded instead.
+    /// </summary>
+    public AssemblyList LoadList(ILSpySettings spySettings, string listName)
+    {
+        AssemblyList list = DoLoadList(spySettings, listName);
+        if (!AssemblyLists.Contains(list.ListName))
+        {
+            AssemblyLists.Add(list.ListName);
+        }
 
-				ILSpySettings.Update(
-					delegate(XElement root)
-					{
-						XElement doc = root.Element("AssemblyLists");
-						if (doc == null)
-						{
-							return;
-						}
-						XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
-						if (listElement != null)
-							listElement.Remove();
-					});
-				return true;
-			}
-			return false;
-		}
+        return list;
+    }
 
-		public void ClearAll()
-		{
-			AssemblyLists.Clear();
-			ILSpySettings.Update(
-				delegate (XElement root) {
-					XElement doc = root.Element("AssemblyLists");
-					if (doc == null) {
-						return;
-					}
-					doc.Remove();
-				});
-		}
-	}
+    AssemblyList DoLoadList(ILSpySettings spySettings, string listName)
+    {
+        XElement doc = spySettings["AssemblyLists"];
+        if (listName != null)
+        {
+            foreach (var list in doc.Elements("List"))
+            {
+                if ((string)list.Attribute("name") == listName)
+                {
+                    return new AssemblyList(this, list);
+                }
+            }
+        }
+        XElement firstList = doc.Elements("List").FirstOrDefault();
+        if (firstList != null)
+        {
+            return new AssemblyList(this, firstList);
+        }
+        else
+        {
+            return new AssemblyList(this, listName ?? DefaultListName);
+        }
+    }
+
+    public const string DefaultListName = "(Default)";
+
+    /// <summary>
+    /// Saves the specifies assembly list into the config file.
+    /// </summary>
+    public static void SaveList(AssemblyList list) =>
+        ILSpySettings.Update(
+            root =>
+            {
+                XElement doc = root.Element("AssemblyLists");
+                if (doc == null)
+                {
+                    doc = new XElement("AssemblyLists");
+                    root.Add(doc);
+                }
+                XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
+                if (listElement != null)
+                {
+                    listElement.ReplaceWith(list.SaveAsXml());
+                }
+                else
+                {
+                    doc.Add(list.SaveAsXml());
+                }
+            });
+
+    public bool CreateList(AssemblyList list)
+    {
+        if (!AssemblyLists.Contains(list.ListName))
+        {
+            AssemblyLists.Add(list.ListName);
+            SaveList(list);
+            return true;
+        }
+        return false;
+    }
+
+    public bool DeleteList(string Name)
+    {
+        if (AssemblyLists.Contains(Name))
+        {
+            AssemblyLists.Remove(Name);
+
+            ILSpySettings.Update(
+                root =>
+                {
+                    XElement doc = root.Element("AssemblyLists");
+                    if (doc == null)
+                    {
+                        return;
+                    }
+                    XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
+                    listElement?.Remove();
+                });
+            return true;
+        }
+        return false;
+    }
+
+    public void ClearAll()
+    {
+        AssemblyLists.Clear();
+        ILSpySettings.Update(
+            root =>
+            {
+                XElement doc = root.Element("AssemblyLists");
+                if (doc == null)
+                {
+                    return;
+                }
+                doc.Remove();
+            });
+    }
 }

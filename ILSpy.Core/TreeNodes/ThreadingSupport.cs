@@ -22,28 +22,24 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Avalonia.Threading;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Analyzers;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes;
+
 	/// <summary>
 	/// Adds threading support to nodes
 	/// </summary>
 	class ThreadingSupport
 	{
 		Task<List<SharpTreeNode>> loadChildrenTask;
-		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-		
-		public bool IsRunning {
-			get { return loadChildrenTask != null && !loadChildrenTask.IsCompleted; }
-		}
-		
-		public void Cancel()
+		CancellationTokenSource cancellationTokenSource = new();
+
+    public bool IsRunning => loadChildrenTask?.IsCompleted == false;
+
+    public void Cancel()
 		{
 			cancellationTokenSource.Cancel();
 			loadChildrenTask = null;
@@ -63,41 +59,49 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			Task<List<SharpTreeNode>> thisTask = null;
 			thisTask = new Task<List<SharpTreeNode>>(
 				delegate {
-					List<SharpTreeNode> result = new List<SharpTreeNode>();
+					List<SharpTreeNode> result = [];
 					foreach (SharpTreeNode child in fetchChildrenEnumerable) {
 						ct.ThrowIfCancellationRequested();
 						result.Add(child);
 						var newChild = child;
 						Dispatcher.UIThread.InvokeAsync(new Action(
-							delegate () {
-								// don't access "child" here the
-								// background thread might already be running the next loop iteration
-								if (loadChildrenTask == thisTask) {
-									node.Children.Insert(node.Children.Count - 1, newChild);
-								}
-							}), DispatcherPriority.Normal);
+                            () =>
+                            {
+                                // don't access "child" here the
+                                // background thread might already be running the next loop iteration
+                                if (loadChildrenTask == thisTask)
+                                {
+                                    node.Children.Insert(node.Children.Count - 1, newChild);
+                                }
+                            }), DispatcherPriority.Normal);
 					}
 					return result;
 				}, ct);
 			loadChildrenTask = thisTask;
 			thisTask.Start();
 			thisTask.ContinueWith(
-				delegate (Task continuation) {
-					Dispatcher.UIThread.InvokeAsync(new Action(
-                        delegate {
-							if (loadChildrenTask == thisTask) {
-								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
-								node.RaisePropertyChanged(nameof(node.Text));
-							}
-							if (continuation.Exception != null) { // observe exception even when task isn't current
-								if (loadChildrenTask == thisTask) {
-									foreach (Exception ex in continuation.Exception.InnerExceptions) {
-										node.Children.Add(new ErrorTreeNode(ex.ToString()));
-									}
-								}
-							}
-						}), DispatcherPriority.Normal);
-        });
+                (Task continuation) =>
+                {
+                    Dispatcher.UIThread.InvokeAsync(new Action(
+                    delegate
+                    {
+                        if (loadChildrenTask == thisTask)
+                        {
+                            node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
+                            node.RaisePropertyChanged(nameof(node.Text));
+                        }
+                        if (continuation.Exception != null)
+                        { // observe exception even when task isn't current
+                            if (loadChildrenTask == thisTask)
+                            {
+                                foreach (Exception ex in continuation.Exception.InnerExceptions)
+                                {
+                                    node.Children.Add(new ErrorTreeNode(ex.ToString()));
+                                }
+                            }
+                        }
+                    }), DispatcherPriority.Normal);
+                });
 			
 			// Give the task a bit time to complete before we return to WPF - this keeps "Loading..."
 			// from showing up for very short waits.
@@ -120,68 +124,52 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
-			public override object Text {
-                get { return Resources.Loading; }
-            }
+        public override object Text => Resources.Loading;
 
-            public override FilterResult Filter(FilterSettings settings)
-			{
-				return FilterResult.Match;
-			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+        public override FilterResult Filter(FilterSettings settings) => FilterResult.Match;
+
+        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}
 		
-		sealed class ErrorTreeNode : ILSpyTreeNode
+		sealed class ErrorTreeNode(string text) : ILSpyTreeNode
 		{
-			readonly string text;
-			
-			public override object Text {
-				get { return text; }
-			}
-			
-			public ErrorTreeNode(string text)
-			{
-				this.text = text;
-			}
-			
-			public override FilterResult Filter(FilterSettings settings)
-			{
-				return FilterResult.Match;
-			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+			readonly string text = text;
+
+        public override object Text => text;
+
+        public override FilterResult Filter(FilterSettings settings) => FilterResult.Match;
+
+        public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
 		}
 
-        [ExportContextMenuEntry(Header = nameof(Resources.CopyErrorMessage))]
-        sealed class CopyErrorMessageContextMenu : IContextMenuEntry
+    [ExportContextMenuEntry(Header = nameof(Resources.CopyErrorMessage))]
+    sealed class CopyErrorMessageContextMenu : IContextMenuEntry
 		{
 			public bool IsVisible(TextViewContext context)
 			{
-				if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is ErrorTreeNode))
-					return true;
-				return false;
+				if (context.SelectedTreeNodes?.All(n => n is ErrorTreeNode) == true)
+            {
+                return true;
+            }
+
+            return false;
 			}
 
-			public bool IsEnabled(TextViewContext context)
-			{
-				return true;
-			}
+        public bool IsEnabled(TextViewContext context) => true;
 
-			public void Execute(TextViewContext context)
+        public void Execute(TextViewContext context)
 			{
-				StringBuilder builder = new StringBuilder();
+				StringBuilder builder = new();
 				if (context.SelectedTreeNodes != null) {
 					foreach (var node in context.SelectedTreeNodes.OfType<ErrorTreeNode>()) {
 						builder.AppendLine(node.Text.ToString());
 					}
 				}
-				App.Current.Clipboard.SetTextAsync(builder.ToString());
+            Avalonia.Application.Current.Clipboard.SetTextAsync(builder.ToString());
 			}
 		}
 	}
-}

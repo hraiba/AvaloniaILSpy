@@ -24,34 +24,34 @@ using System.Text.RegularExpressions;
 using Avalonia.Controls;
 using System.Xml;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Renders XML documentation into a WPF <see cref="TextBlock"/>.
 	/// </summary>
 	public class XmlDocRenderer
 	{
-		readonly StringBuilder ret = new StringBuilder();
-		
-		public void AppendText(string text)
-		{
-			ret.Append(text);
-		}
-		
-		public void AddXmlDocumentation(string xmlDocumentation)
+		readonly StringBuilder ret = new();
+
+    public void AppendText(string text) => ret.Append(text);
+
+    public void AddXmlDocumentation(string xmlDocumentation)
 		{
 			if (xmlDocumentation == null)
-				return;
-			Debug.WriteLine(xmlDocumentation);
+        {
+            return;
+        }
+
+        Debug.WriteLine(xmlDocumentation);
 			try {
-				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
+				XmlTextReader r = new(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
 				AddXmlDocumentation(r);
 			} catch (XmlException) {
 			}
 		}
 		
-		static readonly Regex whitespace = new Regex(@"\s+");
+		static readonly Regex whitespace = new(@"\s+");
 		
 		public void AddXmlDocumentation(XmlReader xml)
 		{
@@ -128,10 +128,6 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return cref;
 		}
-		
-		public TextBlock CreateTextBlock()
-		{
-			return new TextBlock { Text = ret.ToString() };
-		}
-	}
+
+    public TextBlock CreateTextBlock() => new() { Text = ret.ToString() };
 }

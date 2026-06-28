@@ -21,8 +21,8 @@ using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls;
+
 	//[MarkupExtensionReturnType(typeof(Color))]
 	public class ControlColor : MarkupExtension
 	{
@@ -45,8 +45,11 @@ namespace ICSharpCode.ILSpy.Controls
 		public ControlColor(float color)
 		{
 			if (!(color >= 105 && color <= 255))
-				throw new ArgumentOutOfRangeException(nameof(color));
-			this.Color = color;
+        {
+            throw new ArgumentOutOfRangeException(nameof(color));
+        }
+
+        Color = color;
 		}
 		
 		public override object ProvideValue(IServiceProvider serviceProvider)
@@ -67,14 +70,7 @@ namespace ICSharpCode.ILSpy.Controls
 			return Add(Multiple(c, (1 - Highlight)), Multiple(SystemColors.HighlightColor, Highlight));
 		}
 
-		static Color Multiple(Color c, float multiplier)
-		{
-			return new Color((byte)((float)c.A * multiplier), (byte)((float)c.R * multiplier), (byte)((float)c.G * multiplier), (byte)((float)c.B * multiplier));
-		}
+    static Color Multiple(Color c, float multiplier) => new((byte)((float)c.A * multiplier), (byte)((float)c.R * multiplier), (byte)((float)c.G * multiplier), (byte)((float)c.B * multiplier));
 
-		static Color Add(Color c1, Color c2)
-		{
-			return new Color((byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A));
-		}
-	}
+    static Color Add(Color c1, Color c2) => new((byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A), (byte)(c1.A + c2.A));
 }

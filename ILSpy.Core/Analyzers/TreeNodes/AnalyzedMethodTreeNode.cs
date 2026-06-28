@@ -21,8 +21,8 @@ using System.Linq;
 using ICSharpCode.Decompiler.TypeSystem;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
-{
+namespace ICSharpCode.ILSpy.Analyzers.TreeNodes;
+
 	internal class AnalyzedMethodTreeNode : AnalyzerEntityTreeNode
 	{
 		readonly IMethod analyzedMethod;
@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 		{
 			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.prefix = prefix;
-			this.LazyLoading = true;
+			LazyLoading = true;
 		}
 
 		public override object Icon => MethodTreeNode.GetIcon(analyzedMethod);
@@ -45,11 +45,10 @@ namespace ICSharpCode.ILSpy.Analyzers.TreeNodes
 			foreach (var lazy in analyzers.OrderBy(item => item.Metadata.Order)) {
 				var analyzer = lazy.Value;
 				if (analyzer.Show(analyzedMethod)) {
-					this.Children.Add(new AnalyzerSearchTreeNode(analyzedMethod, analyzer, lazy.Metadata.Header));
+					Children.Add(new AnalyzerSearchTreeNode(analyzedMethod, analyzer, lazy.Metadata.Header));
 				}
 			}
 		}
 
 		public override IEntity Member => analyzedMethod;
 	}
-}

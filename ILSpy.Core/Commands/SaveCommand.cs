@@ -16,17 +16,15 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using Avalonia.Input;
 using ICSharpCode.ILSpy.Properties;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources._SaveCode), MenuIcon = "Images/SaveFile.png", MenuCategory = nameof(Resources.Save), MenuOrder = 0)]
-    sealed class SaveCommand : CommandWrapper
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources._SaveCode), MenuIcon = "Images/SaveFile.png", MenuCategory = nameof(Resources.Save), MenuOrder = 0)]
+sealed class SaveCommand : CommandWrapper
 	{
 		public SaveCommand()
 			: base(ApplicationCommands.Save)
 		{
 		}
 	}
-}

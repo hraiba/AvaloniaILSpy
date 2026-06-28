@@ -26,50 +26,52 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Properties;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile), MenuCategory = nameof(Resources.Open), MenuOrder = 2.5)]
-    sealed class DecompileAllCommand : SimpleCommand
+namespace ICSharpCode.ILSpy;
+
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile), MenuCategory = nameof(Resources.Open), MenuOrder = 2.5)]
+sealed class DecompileAllCommand : SimpleCommand
 	{
-		public override bool CanExecute(object parameter)
-		{
-			return System.IO.Directory.Exists("c:\\temp\\decompiled");
-		}
+    public override bool CanExecute(object parameter) => System.IO.Directory.Exists("c:\\temp\\decompiled");
 
-		public override void Execute(object parameter)
-		{
-			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() => {
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
-				Parallel.ForEach(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct }, delegate(LoadedAssembly asm) {
-					if (!asm.HasLoadError) {
-						Stopwatch w = Stopwatch.StartNew();
-						Exception exception = null;
-						using (var writer = new System.IO.StreamWriter("c:\\temp\\decompiled\\" + asm.ShortName + ".cs")) {
-							try {
-                                new CSharpLanguage().DecompileAssembly(asm, new Decompiler.PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
-                            }
-                            catch (Exception ex) {
-								writer.WriteLine(ex.ToString());
-								exception = ex;
-							}
-						}
-						lock (output) {
-							output.Write(asm.ShortName + " - " + w.Elapsed);
-							if (exception != null) {
-								output.Write(" - ");
-								output.Write(exception.GetType().Name);
-							}
-							output.WriteLine();
-						}
-					}
-				});
-				return output;
-			}, ct)).Then(output => MainWindow.Instance.TextView.ShowText(output)).HandleExceptions();
-		}
-	}
+    public override void Execute(object parameter) => MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvaloniaEditTextOutput>.Factory.StartNew(() =>
+    {
+        AvaloniaEditTextOutput output = new();
+        Parallel.ForEach(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct }, asm =>
+        {
+            if (!asm.HasLoadError)
+            {
+                Stopwatch w = Stopwatch.StartNew();
+                Exception exception = null;
+                using (var writer = new System.IO.StreamWriter("c:\\temp\\decompiled\\" + asm.ShortName + ".cs"))
+                {
+                    try
+                    {
+                        new CSharpLanguage().DecompileAssembly(asm, new PlainTextOutput(writer), new DecompilationOptions() { FullDecompilation = true, CancellationToken = ct });
+                    }
+                    catch (Exception ex)
+                    {
+                        writer.WriteLine(ex.ToString());
+                        exception = ex;
+                    }
+                }
+                lock (output)
+                {
+                    output.Write(asm.ShortName + " - " + w.Elapsed);
+                    if (exception != null)
+                    {
+                        output.Write(" - ");
+                        output.Write(exception.GetType().Name);
+                    }
+                    output.WriteLine();
+                }
+            }
+        });
+        return output;
+    }, ct)).Then(output => MainWindow.Instance.TextView.ShowText(output)).HandleExceptions();
+}
 
-    [ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile100x), MenuCategory = nameof(Resources.Open), MenuOrder = 2.6)]
-    sealed class Decompile100TimesCommand : SimpleCommand
+[ExportMainMenuCommand(Menu = nameof(Resources._File), Header = nameof(Resources.DEBUGDecompile100x), MenuCategory = nameof(Resources.Open), MenuOrder = 2.6)]
+sealed class Decompile100TimesCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
@@ -86,13 +88,12 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 				w.Stop();
-				AvaloniaEditTextOutput output = new AvaloniaEditTextOutput();
+				AvaloniaEditTextOutput output = new();
 				double msPerRun = w.Elapsed.TotalMilliseconds / numRuns;
 				output.Write($"Average time: {msPerRun.ToString("f1")}ms\n");
 				return output;
 			}, ct)).Then(output => MainWindow.Instance.TextView.ShowText(output)).HandleExceptions();
 		}
 	}
-}
 
 #endif

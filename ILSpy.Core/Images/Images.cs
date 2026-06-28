@@ -23,13 +23,13 @@ using System.Collections.Generic;
 using Avalonia.Controls.Platform.Surfaces;
 using Avalonia.Platform;
 
-namespace ICSharpCode.ILSpy
-{
-    static class Images
+namespace ICSharpCode.ILSpy;
+
+static class Images
 	{
 		static IBitmap LoadBitmap(string name)
 		{
-			Bitmap image = new Bitmap("Images/" + name + ".png");
+			Bitmap image = new("Images/" + name + ".png");
 			//image.Freeze();
 			return image;
 		}
@@ -103,33 +103,37 @@ namespace ICSharpCode.ILSpy
 
 		public static IBitmap LoadImage(object part, string icon)
 		{
-            IBitmap image;
-            var assembly = part.GetType().Assembly;
+        IBitmap image;
+        var assembly = part.GetType().Assembly;
 			if (assembly == typeof(Images).Assembly) {
 				image = new Bitmap(icon);
 			} else {
 				var name = assembly.GetName();
-                var embededResourceStream = assembly.GetManifestResourceStream(icon);
-                image = new Bitmap(embededResourceStream);
-            }
+            var embededResourceStream = assembly.GetManifestResourceStream(icon);
+            image = new Bitmap(embededResourceStream);
+        }
 			return image;
 		}
 
 
-		private static readonly TypeIconCache typeIconCache = new TypeIconCache();
-		private static readonly MemberIconCache memberIconCache = new MemberIconCache();
+		private static readonly TypeIconCache typeIconCache = new();
+		private static readonly MemberIconCache memberIconCache = new();
 
 		public static IBitmap GetIcon(TypeIcon icon, AccessOverlayIcon overlay, bool isStatic = false)
 		{
 			lock (typeIconCache)
-				return typeIconCache.GetIcon(icon, overlay, isStatic);
-		}
+        {
+            return typeIconCache.GetIcon(icon, overlay, isStatic);
+        }
+    }
 
 		public static IBitmap GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)
 		{
 			lock (memberIconCache)
-				return memberIconCache.GetIcon(icon, overlay, isStatic);
-		}
+        {
+            return memberIconCache.GetIcon(icon, overlay, isStatic);
+        }
+    }
 
 		#region icon caches & overlay management
 
@@ -137,12 +141,12 @@ namespace ICSharpCode.ILSpy
 		{
 			public TypeIconCache()
 			{
-				PreloadPublicIconToCache(TypeIcon.Class, Images.Class);
-				PreloadPublicIconToCache(TypeIcon.Enum, Images.Enum);
-				PreloadPublicIconToCache(TypeIcon.Struct, Images.Struct);
-				PreloadPublicIconToCache(TypeIcon.Interface, Images.Interface);
-				PreloadPublicIconToCache(TypeIcon.Delegate, Images.Delegate);
-				PreloadPublicIconToCache(TypeIcon.StaticClass, Images.StaticClass);
+				PreloadPublicIconToCache(TypeIcon.Class, Class);
+				PreloadPublicIconToCache(TypeIcon.Enum, Enum);
+				PreloadPublicIconToCache(TypeIcon.Struct, Struct);
+				PreloadPublicIconToCache(TypeIcon.Interface, Interface);
+				PreloadPublicIconToCache(TypeIcon.Delegate, Delegate);
+				PreloadPublicIconToCache(TypeIcon.StaticClass, StaticClass);
 			}
 
 			protected override IBitmap GetBaseImage(TypeIcon icon)
@@ -150,26 +154,26 @@ namespace ICSharpCode.ILSpy
 				IBitmap baseImage;
 				switch (icon) {
 					case TypeIcon.Class:
-						baseImage = Images.Class;
+						baseImage = Class;
 						break;
 					case TypeIcon.Enum:
-						baseImage = Images.Enum;
+						baseImage = Enum;
 						break;
 					case TypeIcon.Struct:
-						baseImage = Images.Struct;
+						baseImage = Struct;
 						break;
 					case TypeIcon.Interface:
-						baseImage = Images.Interface;
+						baseImage = Interface;
 						break;
 					case TypeIcon.Delegate:
-						baseImage = Images.Delegate;
+						baseImage = Delegate;
 						break;
 					case TypeIcon.StaticClass:
-						baseImage = Images.StaticClass;
+						baseImage = StaticClass;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(icon), $"TypeIcon.{icon} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(icon), $"TypeIcon.{icon} is not supported!");
+            }
 
 				return baseImage;
 			}
@@ -179,19 +183,19 @@ namespace ICSharpCode.ILSpy
 		{
 			public MemberIconCache()
 			{
-				PreloadPublicIconToCache(MemberIcon.Field, Images.Field);
-				PreloadPublicIconToCache(MemberIcon.FieldReadOnly, Images.FieldReadOnly);
-				PreloadPublicIconToCache(MemberIcon.Literal, Images.Literal);
-				PreloadPublicIconToCache(MemberIcon.EnumValue, Images.EnumValue);
-				PreloadPublicIconToCache(MemberIcon.Property, Images.Property);
-				PreloadPublicIconToCache(MemberIcon.Indexer, Images.Indexer);
-				PreloadPublicIconToCache(MemberIcon.Method, Images.Method);
-				PreloadPublicIconToCache(MemberIcon.Constructor, Images.Constructor);
-				PreloadPublicIconToCache(MemberIcon.VirtualMethod, Images.VirtualMethod);
-				PreloadPublicIconToCache(MemberIcon.Operator, Images.Operator);
-				PreloadPublicIconToCache(MemberIcon.ExtensionMethod, Images.ExtensionMethod);
-				PreloadPublicIconToCache(MemberIcon.PInvokeMethod, Images.PInvokeMethod);
-				PreloadPublicIconToCache(MemberIcon.Event, Images.Event);
+				PreloadPublicIconToCache(MemberIcon.Field, Field);
+				PreloadPublicIconToCache(MemberIcon.FieldReadOnly, FieldReadOnly);
+				PreloadPublicIconToCache(MemberIcon.Literal, Literal);
+				PreloadPublicIconToCache(MemberIcon.EnumValue, EnumValue);
+				PreloadPublicIconToCache(MemberIcon.Property, Property);
+				PreloadPublicIconToCache(MemberIcon.Indexer, Indexer);
+				PreloadPublicIconToCache(MemberIcon.Method, Method);
+				PreloadPublicIconToCache(MemberIcon.Constructor, Constructor);
+				PreloadPublicIconToCache(MemberIcon.VirtualMethod, VirtualMethod);
+				PreloadPublicIconToCache(MemberIcon.Operator, Operator);
+				PreloadPublicIconToCache(MemberIcon.ExtensionMethod, ExtensionMethod);
+				PreloadPublicIconToCache(MemberIcon.PInvokeMethod, PInvokeMethod);
+				PreloadPublicIconToCache(MemberIcon.Event, Event);
 			}
 
 			protected override IBitmap GetBaseImage(MemberIcon icon)
@@ -199,66 +203,61 @@ namespace ICSharpCode.ILSpy
 				IBitmap baseImage;
 				switch (icon) {
 					case MemberIcon.Field:
-						baseImage = Images.Field;
+						baseImage = Field;
 						break;
 					case MemberIcon.FieldReadOnly:
-						baseImage = Images.FieldReadOnly;
+						baseImage = FieldReadOnly;
 						break;
 					case MemberIcon.Literal:
-						baseImage = Images.Literal;
+						baseImage = Literal;
 						break;
 					case MemberIcon.EnumValue:
-						baseImage = Images.Literal;
+						baseImage = Literal;
 						break;
 					case MemberIcon.Property:
-						baseImage = Images.Property;
+						baseImage = Property;
 						break;
 					case MemberIcon.Indexer:
-						baseImage = Images.Indexer;
+						baseImage = Indexer;
 						break;
 					case MemberIcon.Method:
-						baseImage = Images.Method;
+						baseImage = Method;
 						break;
 					case MemberIcon.Constructor:
-						baseImage = Images.Constructor;
+						baseImage = Constructor;
 						break;
 					case MemberIcon.VirtualMethod:
-						baseImage = Images.VirtualMethod;
+						baseImage = VirtualMethod;
 						break;
 					case MemberIcon.Operator:
-						baseImage = Images.Operator;
+						baseImage = Operator;
 						break;
 					case MemberIcon.ExtensionMethod:
-						baseImage = Images.ExtensionMethod;
+						baseImage = ExtensionMethod;
 						break;
 					case MemberIcon.PInvokeMethod:
-						baseImage = Images.PInvokeMethod;
+						baseImage = PInvokeMethod;
 						break;
 					case MemberIcon.Event:
-						baseImage = Images.Event;
+						baseImage = Event;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(icon), $"MemberIcon.{icon} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(icon), $"MemberIcon.{icon} is not supported!");
+            }
 
 				return baseImage;
 			}
 		}
 
-        private class WbFb : IFramebufferPlatformSurface
-        {
-            WriteableBitmap _bitmap;
-            public ILockedFramebuffer Lock() => _bitmap.Lock();
+    private class WbFb(WriteableBitmap bitmap) : IFramebufferPlatformSurface
+    {
+        WriteableBitmap _bitmap = bitmap;
+        public ILockedFramebuffer Lock() => _bitmap.Lock();
+    }
 
-            public WbFb(WriteableBitmap bitmap)
-            {
-                _bitmap = bitmap;
-            }
-        }
-
-        private abstract class IconCache<T>
+    private abstract class IconCache<T>
 		{
-			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap>();
+			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, IBitmap> cache = [];
 
 			protected void PreloadPublicIconToCache(T icon, IBitmap image)
 			{
@@ -296,58 +295,56 @@ namespace ICSharpCode.ILSpy
 						overlayImage = null;
 						break;
 					case AccessOverlayIcon.Protected:
-						overlayImage = Images.OverlayProtected;
+						overlayImage = OverlayProtected;
 						break;
 					case AccessOverlayIcon.Internal:
-						overlayImage = Images.OverlayInternal;
+						overlayImage = OverlayInternal;
 						break;
 					case AccessOverlayIcon.ProtectedInternal:
-						overlayImage = Images.OverlayProtectedInternal;
+						overlayImage = OverlayProtectedInternal;
 						break;
 					case AccessOverlayIcon.Private:
-						overlayImage = Images.OverlayPrivate;
+						overlayImage = OverlayPrivate;
 						break;
 					case AccessOverlayIcon.PrivateProtected:
-						overlayImage = Images.OverlayPrivateProtected;
+						overlayImage = OverlayPrivateProtected;
 						break;
 					case AccessOverlayIcon.CompilerControlled:
-						overlayImage = Images.OverlayCompilerControlled;
+						overlayImage = OverlayCompilerControlled;
 						break;
 					default:
-                        throw new ArgumentOutOfRangeException(nameof(overlay), $"AccessOverlayIcon.{overlay} is not supported!");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(overlay), $"AccessOverlayIcon.{overlay} is not supported!");
+            }
 				return overlayImage;
 			}
 
-			private static readonly Rect iconRect = new Rect(0, 0, 16, 16);
+			private static readonly Rect iconRect = new(0, 0, 16, 16);
 
-            private static IBitmap CreateOverlayImage(IBitmap baseImage, IBitmap overlay, bool isStatic)
+        private static IBitmap CreateOverlayImage(IBitmap baseImage, IBitmap overlay, bool isStatic)
 			{
-                var image = new WriteableBitmap(new PixelSize(16, 16), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Unpremul);
+            var image = new WriteableBitmap(new PixelSize(16, 16), new Vector(96, 96), PixelFormat.Rgba8888, AlphaFormat.Unpremul);
 
-                using (var rt = AvaloniaLocator.Current.GetService<IPlatformRenderInterface>().CreateRenderTarget(new[] { new WbFb(image)})) {
+            using (var rt = AvaloniaLocator.Current.GetService<IPlatformRenderInterface>().CreateRenderTarget(new[] { new WbFb(image)})) {
 
-                    using (var ctx = rt.CreateDrawingContext(null)) {
+                using var ctx = rt.CreateDrawingContext(null);
+                ctx.DrawBitmap(baseImage.PlatformImpl, 1.0, iconRect, iconRect);
 
-                        ctx.DrawBitmap(baseImage.PlatformImpl, 1.0, iconRect, iconRect);
-
-                        if (overlay != null) {
-                            ctx.DrawBitmap(overlay.PlatformImpl, 1.0, iconRect, iconRect);
-                        }
-
-                        if (isStatic) {
-                            ctx.DrawBitmap(Images.OverlayStatic.PlatformImpl, 1.0, iconRect, iconRect);
-                        }
-
-                    }
-
+                if (overlay != null)
+                {
+                    ctx.DrawBitmap(overlay.PlatformImpl, 1.0, iconRect, iconRect);
                 }
 
-                // TODO: image.Freeze()
-                return image;
+                if (isStatic)
+                {
+                    ctx.DrawBitmap(OverlayStatic.PlatformImpl, 1.0, iconRect, iconRect);
+                }
+
             }
+
+            // TODO: image.Freeze()
+            return image;
         }
+    }
 
 		#endregion
 	}
-}

@@ -19,8 +19,8 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy;
+
 	public abstract class SimpleCommand : ICommand
 	{
 		//TODO:
@@ -32,9 +32,5 @@ namespace ICSharpCode.ILSpy
 
 		public abstract void Execute(object parameter);
 
-		public virtual bool CanExecute(object parameter)
-		{
-			return true;
-		}
-	}
+    public virtual bool CanExecute(object parameter) => true;
 }

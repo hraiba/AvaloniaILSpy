@@ -14,7 +14,7 @@ namespace ICSharpCode.ILSpy.Controls.FileLoaders;
 
 public sealed class FileLoaderRegistry
 {
-    readonly List<IFileLoader> registeredLoaders = new List<IFileLoader>();
+    readonly List<IFileLoader> registeredLoaders = [];
 
     public IReadOnlyList<IFileLoader> RegisteredLoaders => registeredLoaders;
 
@@ -46,7 +46,10 @@ public sealed class XamarinCompressedFileLoader : IFileLoader
         // Read compressed file header
         var magic = fileReader.ReadUInt32();
         if (magic != CompressedDataMagic)
+        {
             return null;
+        }
+
         _ = fileReader.ReadUInt32(); // skip index into descriptor table, unused
         int uncompressedLength = (int)fileReader.ReadUInt32();
         int compressedLength = (int)stream.Length;  // Ensure we read all of compressed data
@@ -60,17 +63,15 @@ public sealed class XamarinCompressedFileLoader : IFileLoader
             // Decompress
             LZ4Codec.Decode(src, 0, compressedLength, dst, 0, uncompressedLength);
             // Load module from decompressed data buffer
-            using (var uncompressedStream = new MemoryStream(dst, writable: false))
-            {
-                MetadataReaderOptions options = context.ApplyWinRTProjections
-                    ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
-                    : MetadataReaderOptions.None;
+            using var uncompressedStream = new MemoryStream(dst, writable: false);
+            MetadataReaderOptions options = context.ApplyWinRTProjections
+                ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
+                : MetadataReaderOptions.None;
 
-                return new LoadResult
-                {
-                    MetadataFile = new PEFile(fileName, uncompressedStream, PEStreamOptions.PrefetchEntireImage, metadataOptions: options)
-                };
-            }
+            return new LoadResult
+            {
+                MetadataFile = new PEFile(fileName, uncompressedStream, PEStreamOptions.PrefetchEntireImage, metadataOptions: options)
+            };
         }
         finally
         {
@@ -148,7 +149,7 @@ public sealed class PEFileLoader : IFileLoader
             ? MetadataReaderOptions.ApplyWindowsRuntimeProjections
             : MetadataReaderOptions.None;
         stream.Position = 0;
-        PEFile module = new PEFile(fileName, stream, PEStreamOptions.PrefetchEntireImage | PEStreamOptions.LeaveOpen, metadataOptions: options);
+        PEFile module = new(fileName, stream, PEStreamOptions.PrefetchEntireImage | PEStreamOptions.LeaveOpen, metadataOptions: options);
         return Task.FromResult(new LoadResult { MetadataFile = module });
     }
 }

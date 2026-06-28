@@ -17,17 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
-using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.TypeSystem;
 
-namespace ICSharpCode.ILSpy.Analyzers.Builtin
-{
+namespace ICSharpCode.ILSpy.Analyzers.Builtin;
+
 	/// <summary>
 	/// Shows entities that are used by a method.
 	/// </summary>
@@ -47,8 +45,10 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 				var methods = type.GetMembers(m => m is IMethod, Options).OfType<IMethod>();
 				foreach (var method in methods) {
 					if (IsUsedInMethod((IMethod)analyzedSymbol, method, mappingInfo, context))
-						yield return method;
-				}
+                {
+                    yield return method;
+                }
+            }
 
 				foreach (var property in type.Properties) {
 					if (property.CanGet && IsUsedInMethod((IMethod)analyzedSymbol, property.Getter, mappingInfo, context)) {
@@ -79,18 +79,18 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			}
 		}
 
-		bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context)
-		{
-			return ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
-		}
+    bool IsUsedInMethod(IMethod analyzedEntity, IMethod method, CodeMappingInfo mappingInfo, AnalyzerContext context) => ScanMethodBody(analyzedEntity, method, context.GetMethodBody(method));
 
-		static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
+    static bool ScanMethodBody(IMethod analyzedMethod, IMethod method, MethodBodyBlock methodBody)
 		{
 			if (methodBody == null)
-				return false;
-			var mainModule = (MetadataModule)method.ParentModule;
+        {
+            return false;
+        }
+
+        var mainModule = (MetadataModule)method.ParentModule;
 			var blob = methodBody.GetILReader();
-			var genericContext = new Decompiler.TypeSystem.GenericContext();
+			var genericContext = new GenericContext();
 
 			while (blob.RemainingBytes > 0) {
 				var opCode = blob.DecodeOpCode();
@@ -100,9 +100,12 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 					case OperandType.Sig:
 					case OperandType.Tok:
 						var member = MetadataTokenHelpers.EntityHandleOrNil(blob.ReadInt32());
-						if (member.IsNil) continue;
+						if (member.IsNil)
+                    {
+                        continue;
+                    }
 
-						switch (member.Kind) {
+                    switch (member.Kind) {
 							case HandleKind.MethodDefinition:
 							case HandleKind.MethodSpecification:
 							case HandleKind.MemberReference:
@@ -122,4 +125,3 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin
 			return false;
 		}
 	}
-}

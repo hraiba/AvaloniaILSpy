@@ -21,8 +21,8 @@ using Avalonia.Input;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView;
+
 	/// <summary>
 	/// Creates hyperlinks in the text view.
 	/// </summary>
@@ -38,33 +38,38 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public ReferenceElementGenerator(Action<ReferenceSegment> referenceClicked, Predicate<ReferenceSegment> isLink)
 		{
-			if (referenceClicked == null)
-				throw new ArgumentNullException(nameof(referenceClicked));
-			if (isLink == null)
-				throw new ArgumentNullException(nameof(isLink));
-			this.referenceClicked = referenceClicked;
+        ArgumentNullException.ThrowIfNull(referenceClicked);
+        ArgumentNullException.ThrowIfNull(isLink);
+        this.referenceClicked = referenceClicked;
 			this.isLink = isLink;
 		}
 		
 		public override int GetFirstInterestedOffset(int startOffset)
 		{
-			if (this.References == null)
-				return -1;
-			// inform AvalonEdit about the next position where we want to build a hyperlink
-			var segment = this.References.FindFirstSegmentWithStartAfter(startOffset);
+			if (References == null)
+        {
+            return -1;
+        }
+        // inform AvalonEdit about the next position where we want to build a hyperlink
+        var segment = References.FindFirstSegmentWithStartAfter(startOffset);
 			return segment != null ? segment.StartOffset : -1;
 		}
 		
 		public override VisualLineElement ConstructElement(int offset)
 		{
-			if (this.References == null)
-				return null;
-			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
+			if (References == null)
+        {
+            return null;
+        }
+
+        foreach (var segment in References.FindSegmentsContaining(offset)) {
 				// skip all non-links
 				if (!isLink(segment))
-					continue;
-				// ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
-				int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
+            {
+                continue;
+            }
+            // ensure that hyperlinks don't span several lines (VisualLineElements can't contain line breaks)
+            int endOffset = Math.Min(segment.EndOffset, CurrentContext.VisualLine.LastDocumentLine.EndOffset);
 				// don't create hyperlinks with length 0
 				if (offset < endOffset) {
 					return new VisualLineReferenceText(CurrentContext.VisualLine, endOffset - offset, this, segment);
@@ -72,49 +77,36 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return null;
 		}
-		
-		internal void JumpToReference(ReferenceSegment referenceSegment)
-		{
-			referenceClicked(referenceSegment);
-		}
-	}
-	
-	/// <summary>
-	/// VisualLineElement that represents a piece of text and is a clickable link.
-	/// </summary>
-	sealed class VisualLineReferenceText : VisualLineText
-	{
-        private static readonly Cursor HandCursor = new Cursor(StandardCursorType.Hand);
 
-        readonly ReferenceElementGenerator parent;
-		readonly ReferenceSegment referenceSegment;
-		
-		/// <summary>
-		/// Creates a visual line text element with the specified length.
-		/// It uses the <see cref="ITextRunConstructionContext.VisualLine"/> and its
-		/// <see cref="VisualLineElement.RelativeTextOffset"/> to find the actual text string.
-		/// </summary>
-		public VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : base(parentVisualLine, length)
-		{
-			this.parent = parent;
-			this.referenceSegment = referenceSegment;
-		}
-		
-		/// <inheritdoc/>
-		protected override void OnQueryCursor(PointerEventArgs e)
+    internal void JumpToReference(ReferenceSegment referenceSegment) => referenceClicked(referenceSegment);
+}
+
+/// <summary>
+/// VisualLineElement that represents a piece of text and is a clickable link.
+/// </summary>
+/// <remarks>
+/// Creates a visual line text element with the specified length.
+/// It uses the <see cref="ITextRunConstructionContext.VisualLine"/> and its
+/// <see cref="VisualLineElement.RelativeTextOffset"/> to find the actual text string.
+/// </remarks>
+sealed class VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : VisualLineText(parentVisualLine, length)
+	{
+    private static readonly Cursor HandCursor = new(StandardCursorType.Hand);
+
+    readonly ReferenceElementGenerator parent = parent;
+		readonly ReferenceSegment referenceSegment = referenceSegment;
+
+    /// <inheritdoc/>
+    protected override void OnQueryCursor(PointerEventArgs e)
 		{
 			e.Handled = true;
 
-            if (e.Source is InputElement inputElement)
-            {
-                inputElement.Cursor = referenceSegment.IsLocal ? Cursor.Default : HandCursor;
-            }
+        if (e.Source is InputElement inputElement)
+        {
+            inputElement.Cursor = referenceSegment.IsLocal ? Cursor.Default : HandCursor;
         }
-		
-		/// <inheritdoc/>
-		protected override VisualLineText CreateInstance(int length)
-		{
-			return new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
-		}
-	}
+    }
+
+    /// <inheritdoc/>
+    protected override VisualLineText CreateInstance(int length) => new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
 }
