@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy.AvaloniaEdit;
 		{
 			if (markers == null)
         {
-            return Enumerable.Empty<ITextMarker>();
+            return [];
         }
         else
         {

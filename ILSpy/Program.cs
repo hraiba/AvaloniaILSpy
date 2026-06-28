@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy;
         public bool IsEnabled(LogEventLevel level, string area) => true;
 
 			public void Log(LogEventLevel level, string area, object source, string messageTemplate) =>
-				Log(level, area, source, messageTemplate, Array.Empty<object>());
+				Log(level, area, source, messageTemplate, []);
 
 			public void Log<T0>(LogEventLevel level, string area, object source, string messageTemplate, T0 propertyValue0) =>
 				Log(level, area, source, messageTemplate, [propertyValue0]);

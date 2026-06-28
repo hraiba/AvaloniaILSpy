@@ -29,154 +29,167 @@ using Microsoft.DiaSymReader;
 
 namespace ICSharpCode.ILSpy.DebugInfo;
 
-	class DiaSymNativeDebugInfoProvider : IDebugInfoProvider, ISymReaderMetadataProvider
-	{
-		PEFile module;
-    Stream stream;
-		MetadataReader metadata;
-		ISymUnmanagedReader5 reader;
+class DiaSymNativeDebugInfoProvider : IDebugInfoProvider, ISymReaderMetadataProvider
+{
+   readonly PEFile module;
+   readonly Stream stream;
+   readonly MetadataReader metadata;
+   readonly ISymUnmanagedReader5 reader;
 
-		public DiaSymNativeDebugInfoProvider(PEFile module, string pdbFileName, Stream stream)
-		{
-			this.module = module;
+    public DiaSymNativeDebugInfoProvider(PEFile module, string pdbFileName, Stream stream)
+    {
+        this.module = module;
         SourceFileName = pdbFileName;
-			this.stream = stream;
-			metadata = module.Metadata;
-			reader = SymUnmanagedReaderFactory.CreateReader<ISymUnmanagedReader5>(stream, this);
-		}
+        this.stream = stream;
+        metadata = module.Metadata;
+        reader = SymUnmanagedReaderFactory.CreateReader<ISymUnmanagedReader5>(stream, this);
+    }
 
-		public string Description => $"Loaded from PDB file: {SourceFileName}";
+    public string Description => $"Loaded from PDB file: {SourceFileName}";
 
     public string SourceFileName { get; }
 
     public IList<Decompiler.DebugInfo.SequencePoint> GetSequencePoints(MethodDefinitionHandle handle)
-		{
-			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
-			if (method == null || method.GetSequencePointCount(out int count) != 0)
+    {
+        var method = reader.GetMethod(MetadataTokens.GetToken(handle));
+        if (method == null || method.GetSequencePointCount(out int count) != 0)
         {
             return Empty<Decompiler.DebugInfo.SequencePoint>.Array;
         }
 
         var sequencePoints = new Decompiler.DebugInfo.SequencePoint[count];
-			var points = method.GetSequencePoints();
-			int i = 0;
-			var buffer = new char[1024];
-			foreach (var point in points) {
-				string url;
-				if (point.Document.GetUrl(buffer.Length, out int length, buffer) == 0) {
-					url = new string(buffer, 0, length - 1);
-				} else {
-					url = "";
-				}
-				sequencePoints[i] = new Decompiler.DebugInfo.SequencePoint() {
-					Offset = point.Offset,
-					StartLine = point.StartLine,
-					StartColumn = point.StartColumn,
-					EndLine = point.EndLine,
-					EndColumn = point.EndColumn,
-					DocumentUrl = url
-				};
-				
-				i++;
-			}
-			return sequencePoints;
-		}
+        var points = method.GetSequencePoints();
+        int i = 0;
+        var buffer = new char[1024];
+        foreach (var point in points)
+        {
+            string url;
+            if (point.Document.GetUrl(buffer.Length, out int length, buffer) == 0)
+            {
+                url = new string(buffer, 0, length - 1);
+            }
+            else
+            {
+                url = "";
+            }
+            sequencePoints[i] = new Decompiler.DebugInfo.SequencePoint()
+            {
+                Offset = point.Offset,
+                StartLine = point.StartLine,
+                StartColumn = point.StartColumn,
+                EndLine = point.EndLine,
+                EndColumn = point.EndColumn,
+                DocumentUrl = url
+            };
 
-		public IList<Variable> GetVariables(MethodDefinitionHandle handle)
-		{
-			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
-			var scopes = new Queue<ISymUnmanagedScope>(new[] { method.GetRootScope() });
-			var variables = new List<Variable>();
+            i++;
+        }
+        return sequencePoints;
+    }
 
-			while (scopes.Count > 0) {
-				var scope = scopes.Dequeue();
+    public IList<Variable> GetVariables(MethodDefinitionHandle handle)
+    {
+        var method = reader.GetMethod(MetadataTokens.GetToken(handle));
+        var scopes = new Queue<ISymUnmanagedScope>(new[] { method.GetRootScope() });
+        var variables = new List<Variable>();
 
-				foreach (var local in scope.GetLocals()) {
-					variables.Add(new Variable(variables.Count, local.GetName()));
-				}
+        while (scopes.Count > 0)
+        {
+            var scope = scopes.Dequeue();
 
-				foreach (var s in scope.GetChildren())
+            foreach (var local in scope.GetLocals())
+            {
+                variables.Add(new Variable(variables.Count, local.GetName()));
+            }
+
+            foreach (var s in scope.GetChildren())
             {
                 scopes.Enqueue(s);
             }
         }
 
-			return variables;
-		}
+        return variables;
+    }
 
     public bool TryGetExtraTypeInfo(MethodDefinitionHandle method, int index, out PdbExtraTypeInfo extraTypeInfo) => throw new NotImplementedException();
 
     public bool TryGetName(MethodDefinitionHandle handle, int index, out string name)
-		{
-			var method = reader.GetMethod(MetadataTokens.GetToken(handle));
-			var scopes = new Queue<ISymUnmanagedScope>(new[] { method.GetRootScope() });
-			name = null;
+    {
+        var method = reader.GetMethod(MetadataTokens.GetToken(handle));
+        var scopes = new Queue<ISymUnmanagedScope>([method.GetRootScope()]);
+        name = null;
 
-			while (scopes.Count > 0) {
-				var scope = scopes.Dequeue();
+        while (scopes.Count > 0)
+        {
+            var scope = scopes.Dequeue();
 
-				foreach (var local in scope.GetLocals()) {
-					if (local.GetSlot() == index) {
-						name = local.GetName();
-						return true;
-					}
-				}
+            foreach (var local in scope.GetLocals())
+            {
+                if (local.GetSlot() == index)
+                {
+                    name = local.GetName();
+                    return true;
+                }
+            }
 
-				foreach (var s in scope.GetChildren())
+            foreach (var s in scope.GetChildren())
             {
                 scopes.Enqueue(s);
             }
         }
 
-			return false;
-		}
+        return false;
+    }
 
-		unsafe bool ISymReaderMetadataProvider.TryGetStandaloneSignature(int standaloneSignatureToken, out byte* signature, out int length)
-		{
-			var handle = (StandaloneSignatureHandle)MetadataTokens.Handle(standaloneSignatureToken);
-			if (handle.IsNil) {
-				signature = null;
-				length = 0;
-				return false;
-			}
+    unsafe bool ISymReaderMetadataProvider.TryGetStandaloneSignature(int standaloneSignatureToken, out byte* signature, out int length)
+    {
+        var handle = (StandaloneSignatureHandle)MetadataTokens.Handle(standaloneSignatureToken);
+        if (handle.IsNil)
+        {
+            signature = null;
+            length = 0;
+            return false;
+        }
 
-			var sig = metadata.GetStandaloneSignature(handle);
-			var blob = metadata.GetBlobReader(sig.Signature);
+        var sig = metadata.GetStandaloneSignature(handle);
+        var blob = metadata.GetBlobReader(sig.Signature);
 
-			signature = blob.StartPointer;
-			length = blob.Length;
-			return true;
-		}
+        signature = blob.StartPointer;
+        length = blob.Length;
+        return true;
+    }
 
-		bool ISymReaderMetadataProvider.TryGetTypeDefinitionInfo(int typeDefinitionToken, out string namespaceName, out string typeName, out TypeAttributes attributes)
-		{
-			var handle = (TypeDefinitionHandle)MetadataTokens.Handle(typeDefinitionToken);
-			if (handle.IsNil) {
-				namespaceName = null;
-				typeName = null;
-				attributes = 0;
-				return false;
-			}
+    bool ISymReaderMetadataProvider.TryGetTypeDefinitionInfo(int typeDefinitionToken, out string namespaceName, out string typeName, out TypeAttributes attributes)
+    {
+        var handle = (TypeDefinitionHandle)MetadataTokens.Handle(typeDefinitionToken);
+        if (handle.IsNil)
+        {
+            namespaceName = null;
+            typeName = null;
+            attributes = 0;
+            return false;
+        }
 
-			var typeDefinition = metadata.GetTypeDefinition(handle);
-			namespaceName = metadata.GetString(typeDefinition.Namespace);
-			typeName = metadata.GetString(typeDefinition.Name);
-			attributes = typeDefinition.Attributes;
-			return true;
-		}
+        var typeDefinition = metadata.GetTypeDefinition(handle);
+        namespaceName = metadata.GetString(typeDefinition.Namespace);
+        typeName = metadata.GetString(typeDefinition.Name);
+        attributes = typeDefinition.Attributes;
+        return true;
+    }
 
-		bool ISymReaderMetadataProvider.TryGetTypeReferenceInfo(int typeReferenceToken, out string namespaceName, out string typeName)
-		{
-			var handle = (TypeReferenceHandle)MetadataTokens.Handle(typeReferenceToken);
-			if (handle.IsNil) {
-				namespaceName = null;
-				typeName = null;
-				return false;
-			}
+    bool ISymReaderMetadataProvider.TryGetTypeReferenceInfo(int typeReferenceToken, out string namespaceName, out string typeName)
+    {
+        var handle = (TypeReferenceHandle)MetadataTokens.Handle(typeReferenceToken);
+        if (handle.IsNil)
+        {
+            namespaceName = null;
+            typeName = null;
+            return false;
+        }
 
-			var typeReference = metadata.GetTypeReference(handle);
-			namespaceName = metadata.GetString(typeReference.Namespace);
-			typeName = metadata.GetString(typeReference.Name);
-			return true;
-		}
-	}
+        var typeReference = metadata.GetTypeReference(handle);
+        namespaceName = metadata.GetString(typeReference.Namespace);
+        typeName = metadata.GetString(typeReference.Name);
+        return true;
+    }
+}

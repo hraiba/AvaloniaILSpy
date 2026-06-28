@@ -30,9 +30,9 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
 	{
 		public IEnumerable<ISymbol> Analyze(ISymbol analyzedSymbol, AnalyzerContext context)
 		{
-        if (!(analyzedSymbol is ITypeDefinition attributeType))
+        if (analyzedSymbol is not ITypeDefinition attributeType)
         {
-            return Array.Empty<ISymbol>();
+            return [];
         }
 
         var scope = context.GetScopeOf(attributeType);
@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.Analyzers.Builtin;
         }
     }
 
-    bool IsBuiltinAttribute(ITypeDefinition attributeType, out KnownAttribute knownAttribute)
+    static bool IsBuiltinAttribute(ITypeDefinition attributeType, out KnownAttribute knownAttribute)
     {
         knownAttribute = attributeType.IsBuiltinAttribute();
         switch (knownAttribute)
